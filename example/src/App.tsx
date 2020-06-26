@@ -4,8 +4,6 @@ import ReactNativeHealthkit, {
   HKCharacteristicTypeIdentifier,
   HKQuantityTypeIdentifier,
   QuantitySample,
-  HKOtherUnit,
-  HKUnit,
   HKUnitNonSI,
 } from '@kingstinct/react-native-healthkit';
 
