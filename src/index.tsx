@@ -1,4 +1,8 @@
-import { NativeModules } from 'react-native';
+import {
+  NativeModules,
+  NativeEventEmitter,
+  EmitterSubscription,
+} from 'react-native';
 
 export enum HKCharacteristicTypeIdentifier {
   fitzpatrickSkinType = 'HKCharacteristicTypeIdentifierFitzpatrickSkinType',
@@ -7,7 +11,7 @@ export enum HKCharacteristicTypeIdentifier {
   dateOfBirth = 'HKCharacteristicTypeIdentifierDateOfBirth',
 }
 
-export enum SIPrefix {
+export enum HKUnitSIPrefix {
   Pico = 'p',
   Nano = 'n',
   Micro = 'mc',
@@ -22,7 +26,7 @@ export enum SIPrefix {
   Tera = 'T',
 }
 
-export enum SIUnit {
+export enum HKUnitSI {
   Grams = 'g',
   Joules = 'J',
   Kelvin = 'K',
@@ -33,7 +37,7 @@ export enum SIUnit {
   Siemens = 'S',
 }
 
-export enum NonSIUnit {
+export enum HKUnitNonSI {
   Atmospheres = 'atm',
   CentimetersOfWater = 'cmAq',
   Count = 'count',
@@ -70,9 +74,9 @@ export enum OtherUnit {
   Mmol_glucose = 'mol<180.15588000005408>',
 }
 
-export type HKUnit = SIUnit | NonSIUnit | OtherUnit;
+export type HKUnit = HKUnitSI | HKUnitNonSI | OtherUnit;
 
-export const UnitWithPrefix = (prefix: SIPrefix, unit: SIUnit) => {
+export const UnitWithPrefix = (prefix: HKUnitSIPrefix, unit: HKUnitSI) => {
   return `${prefix}${unit}` as HKUnit;
 };
 
@@ -245,6 +249,7 @@ type TypeToUnitMapping = {
 type ReactNativeHealthkitTypeNative = {
   isHealthDataAvailable(): Promise<boolean>;
   getBloodType(): Promise<HKBloodType>;
+  getDateOfBirth(): Promise<number>;
   getBiologicalSex(): Promise<HKBiologicalSex>;
   getFitzpatrickSkinType(): Promise<HKFitzpatrickSkinType>;
   authorizationStatusFor(
@@ -258,12 +263,13 @@ type ReactNativeHealthkitTypeNative = {
     write: WritePermssions | {},
     read: ReadPermssions | {}
   ): Promise<boolean>;
+  observe(identifier: HKQuantityTypeIdentifier, unit: HKUnit): Promise<boolean>;
   writeSample: (
     identifier: HKQuantityTypeIdentifier,
     unit: HKUnit,
     value: number,
-    start: number,
-    end: number,
+    start: string,
+    end: string,
     metadata: any
   ) => Promise<boolean>;
   getLastSamples: (
@@ -274,8 +280,8 @@ type ReactNativeHealthkitTypeNative = {
   getSamplesBetween: (
     identifier: HKQuantityTypeIdentifier,
     unit: HKUnit,
-    from: Date,
-    to: Date
+    from: string,
+    to: string
   ) => Promise<QuantitySampleRaw[]>;
   getPreferredUnits: (
     identifiers: [HKQuantityTypeIdentifier]
@@ -305,6 +311,10 @@ const deserializeSample = (sample: QuantitySampleRaw): QuantitySample => {
   };
 };
 
+const HealthkitEmitter = new NativeEventEmitter(
+  NativeModules.ReactNativeHealthkit
+);
+
 const getLastSamples = async (
   identifier: HKQuantityTypeIdentifier,
   limit: number = 1,
@@ -318,6 +328,24 @@ const getLastSamples = async (
 export default {
   ...Native,
   getPreferredUnit,
+  getDateOfBirth: async () => {
+    const dateOfBirth = await Native.getDateOfBirth();
+    return new Date(dateOfBirth * 1000);
+  },
+  getSamplesBetween: async (
+    identifier: HKQuantityTypeIdentifier,
+    unit: HKUnit,
+    from: Date,
+    to: Date = new Date()
+  ) => {
+    const samples = await Native.getSamplesBetween(
+      identifier,
+      unit,
+      from.toISOString(),
+      to.toISOString()
+    );
+    return samples.map(deserializeSample);
+  },
   getLastSamples,
   getLastSample: async (
     identifier: HKQuantityTypeIdentifier,
@@ -325,6 +353,36 @@ export default {
   ) => {
     const samples = await getLastSamples(identifier, 1, unit);
     return samples[0];
+  },
+  on: async (
+    identifier: HKQuantityTypeIdentifier,
+    callback: (samples: QuantitySample[]) => void,
+    unit?: HKUnit
+  ) => {
+    let actualUnit = unit || (await getPreferredUnit(identifier));
+    const listener = ({
+      samples,
+      sampleTypeIdentifier,
+    }: {
+      samples: QuantitySampleRaw[];
+      sampleTypeIdentifier: HKQuantityTypeIdentifier;
+    }) => {
+      if (sampleTypeIdentifier === identifier) {
+        callback(samples.map(deserializeSample));
+      }
+    };
+    const subscription = HealthkitEmitter.addListener(
+      'onQueryUpdated',
+      listener
+    );
+    await Native.observe(identifier, actualUnit).catch((error) => {
+      HealthkitEmitter.removeSubscription(subscription);
+      throw new error();
+    });
+    return subscription;
+  },
+  off: (subscription: EmitterSubscription) => {
+    HealthkitEmitter.removeSubscription(subscription);
   },
   writeSample: (
     identifier: HKQuantityTypeIdentifier,
@@ -336,11 +394,17 @@ export default {
       metadata?: any;
     }
   ) => {
-    const start =
-      (options?.start || options?.end || new Date()).valueOf() / 1000;
-    const end = (options?.end || options?.start || new Date()).valueOf() / 1000;
+    const start = options?.start || options?.end || new Date();
+    const end = options?.end || options?.start || new Date();
     const metadata = options?.metadata || {};
 
-    return Native.writeSample(identifier, unit, value, start, end, metadata);
+    return Native.writeSample(
+      identifier,
+      unit,
+      value,
+      start.toISOString(),
+      end.toISOString(),
+      metadata
+    );
   },
 };

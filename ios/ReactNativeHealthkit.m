@@ -1,6 +1,7 @@
 #import <React/RCTBridgeModule.h>
+#import <React/RCTEventEmitter.h>
 
-@interface RCT_EXTERN_MODULE(ReactNativeHealthkit, NSObject)
+@interface RCT_EXTERN_MODULE(ReactNativeHealthkit, RCTEventEmitter)
 
 RCT_EXTERN_METHOD(isHealthDataAvailable:(RCTPromiseResolveBlock)resolve
 withRejecter:(RCTPromiseRejectBlock)reject)
@@ -45,8 +46,8 @@ reject:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(writeSample:(NSString)sampleTypeIdentifier
                   unitString:(NSString)unitString
                   value:(double)value
-                  start:(double)start
-                  end:(double)end
+                  start:(NSDate)start
+                  end:(NSDate)end
                   metadata:(NSDictionary)metadata
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
@@ -60,6 +61,11 @@ RCT_EXTERN_METHOD(getSamplesBetween:(NSString)sampleTypeIdentifier
                   reject:(RCTPromiseRejectBlock)reject
 )
 
+RCT_EXTERN_METHOD(observe:(NSString)sampleTypeIdentifier
+                  unitString:(NSString)unitString
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
 
 
 @end

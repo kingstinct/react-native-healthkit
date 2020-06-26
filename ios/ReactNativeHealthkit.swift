@@ -1,45 +1,51 @@
 import HealthKit;
 
+let INIT_ERROR = "HEALTHKIT_INIT_ERROR"
+let INIT_ERROR_MESSAGE = "HealthKit not initialized"
+let TYPE_IDENTIFIER_ERROR = "HEALTHKIT_TYPE_IDENTIFIER_NOT_RECOGNIZED_ERROR"
+let GENERIC_ERROR = "HEALTHKIT_ERROR";
+
+let HKCharacteristicTypeIdentifier_PREFIX = "HKCharacteristicTypeIdentifier"
+let HKQuantityTypeIdentifier_PREFIX = "HKQuantityTypeIdentifier"
 
 @objc(ReactNativeHealthkit)
-class ReactNativeHealthkit: NSObject {
+class ReactNativeHealthkit: RCTEventEmitter {
     var _store : HKHealthStore?
     
     override init() {
         if(HKHealthStore.isHealthDataAvailable()){
             self._store = HKHealthStore.init();
         }
-        
     }
     
-    func objectTypeFromString(str: String) -> HKObjectType? {
-        if(str.starts(with: "HKCharacteristicTypeIdentifier")){
-            let identifier = HKCharacteristicTypeIdentifier.init(rawValue: str);
+    func objectTypeFromString(typeIdentifier: String) -> HKObjectType? {
+        if(typeIdentifier.starts(with: HKCharacteristicTypeIdentifier_PREFIX)){
+            let identifier = HKCharacteristicTypeIdentifier.init(rawValue: typeIdentifier);
             return HKObjectType.characteristicType(forIdentifier: identifier) as HKObjectType?
         }
         
-        if(str.starts(with: "HKQuantityTypeIdentifier")){
-            let identifier = HKQuantityTypeIdentifier.init(rawValue: str);
+        if(typeIdentifier.starts(with: HKQuantityTypeIdentifier_PREFIX)){
+            let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
             return HKObjectType.quantityType(forIdentifier: identifier) as HKObjectType?
         }
         
         return nil;
     }
     
-    func sampleTypeFromString(str: String) -> HKSampleType? {
-        if(str.starts(with: "HKQuantityTypeIdentifier")){
-            let identifier = HKQuantityTypeIdentifier.init(rawValue: str);
+    func sampleTypeFromString(typeIdentifier: String) -> HKSampleType? {
+        if(typeIdentifier.starts(with: HKQuantityTypeIdentifier_PREFIX)){
+            let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
             return HKSampleType.quantityType(forIdentifier: identifier) as HKSampleType?
         }
         
         return nil;
     }
     
-    func objectTypesFromDictionary(toShare: NSDictionary) -> Set<HKObjectType> {
+    func objectTypesFromDictionary(typeIdentifiers: NSDictionary) -> Set<HKObjectType> {
         var share = Set<HKObjectType>();
-        for item in toShare {
+        for item in typeIdentifiers {
             if(item.value as! Bool){
-                let objectType = objectTypeFromString(str: item.key as! String);
+                let objectType = objectTypeFromString(typeIdentifier: item.key as! String);
                 if(objectType != nil){
                     share.insert(objectType!);
                 }
@@ -48,15 +54,14 @@ class ReactNativeHealthkit: NSObject {
         return share;
     }
     
-    func sampleTypesFromDictionary(toShare: NSDictionary) -> Set<HKSampleType> {
+    func sampleTypesFromDictionary(typeIdentifiers: NSDictionary) -> Set<HKSampleType> {
         var share = Set<HKSampleType>();
-        for item in toShare {
+        for item in typeIdentifiers {
             if(item.value as! Bool){
-                let sampleType = sampleTypeFromString(str: item.key as! String);
+                let sampleType = sampleTypeFromString(typeIdentifier: item.key as! String);
                 if(sampleType != nil){
                  share.insert(sampleType!);
                 }
-                
             }
         }
         return share;
@@ -71,26 +76,22 @@ class ReactNativeHealthkit: NSObject {
     @objc(getRequestStatusForAuthorization:read:resolve:withRejecter:)
     func getRequestStatusForAuthorization(toShare: NSDictionary, read: NSDictionary, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
-            reject("Error", "HealthKit not initialized properly", nil);
-            return;
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
-        let share = sampleTypesFromDictionary(toShare: toShare);
-        let toRead = objectTypesFromDictionary(toShare: read);
+        let share = sampleTypesFromDictionary(typeIdentifiers: toShare);
+        let toRead = objectTypesFromDictionary(typeIdentifiers: read);
         store.getRequestStatusForAuthorization(toShare: share, read: toRead) { (status: HKAuthorizationRequestStatus, error: Error?) in
-            if(error != nil){
-                reject("Error", error?.localizedDescription, error);
+            guard let err = error else {
+                return resolve(status.rawValue);
             }
-            else {
-                resolve(status.rawValue);
-            }
+            reject(GENERIC_ERROR, err.localizedDescription, err);
         }
     }
     
     @objc(getPreferredUnits:resolve:reject:)
     func getPreferredUnits(forIdentifiers: NSArray, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
-            reject("Error", "HealthKit not initialized properly", nil);
-            return;
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         var quantityTypes = Set<HKQuantityType>();
         for identifierString in forIdentifiers {
@@ -139,73 +140,67 @@ class ReactNativeHealthkit: NSObject {
     @objc(getBiologicalSex:withRejecter:)
     func getBiologicalSex(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
-            reject("Error", "HealthKit not initialized properly", nil);
-            return;
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
         do {
             let bioSex = try store.biologicalSex();
             resolve(bioSex.biologicalSex.rawValue);
         } catch {
-            reject("Error", error.localizedDescription, error);
+            reject(GENERIC_ERROR, error.localizedDescription, error);
         }
     }
     
     @objc(getDateOfBirth:withRejecter:)
     func getDateOfBirth(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
-            reject("Error", "HealthKit not initialized properly", nil);
-            return;
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
         do {
             let dateOfBirth = try store.dateOfBirth();
             resolve(dateOfBirth.timeIntervalSince1970);
         } catch {
-            reject("Error", error.localizedDescription, error);
+            reject(GENERIC_ERROR, error.localizedDescription, error);
         }
     }
     
     @objc(getBloodType:withRejecter:)
     func getBloodType(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
-            reject("Error", "HealthKit not initialized properly", nil);
-            return;
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
         do {
             let bloodType = try store.bloodType();
             resolve(bloodType.bloodType.rawValue);
         } catch {
-            reject("Error", error.localizedDescription, error);
+            reject(GENERIC_ERROR, error.localizedDescription, error);
         }
     }
     
     @objc(getFitzpatrickSkinType:withRejecter:)
     func getFitzpatrickSkinType(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
-            reject("Error", "HealthKit not initialized properly", nil);
-            return;
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
         do {
             let fitzpatrickSkinType = try store.fitzpatrickSkinType();
             resolve(fitzpatrickSkinType.skinType.rawValue);
         } catch {
-            reject("Error", error.localizedDescription, error);
+            reject(GENERIC_ERROR, error.localizedDescription, error);
         }
     }
     
     @objc(authorizationStatusFor:withResolver:withRejecter:)
-    func authorizationStatusFor(objectType: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func authorizationStatusFor(typeIdentifier: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
-            reject("Error", "HealthKit not initialized properly", nil);
-            return;
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
-        guard let objectType = objectTypeFromString(str: objectType) else {
-            reject("Error", "Got invalid object type", nil);
-            return;
+        guard let objectType = objectTypeFromString(typeIdentifier: typeIdentifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
         }
         
         let authStatus = store.authorizationStatus(for: objectType);
@@ -213,16 +208,15 @@ class ReactNativeHealthkit: NSObject {
     }
     
     @objc(writeSample:unitString:value:start:end:metadata:resolve:reject:)
-    func writeSample(sampleTypeIdentifier: String, unitString: String, value: Double, start: Double, end: Double, metadata: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+    func writeSample(sampleTypeIdentifier: String, unitString: String, value: Double, start: Date, end: Date, metadata: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         guard let store = _store else {
-            reject("Error", "HealthKit not initialized properly", nil);
-            return;
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
         let identifier = HKQuantityTypeIdentifier.init(rawValue: sampleTypeIdentifier);
         
         guard let type = HKObjectType.quantityType(forIdentifier: identifier) else {
-            return;
+            return reject(TYPE_IDENTIFIER_ERROR, sampleTypeIdentifier, nil);
         }
 
         let unit = HKUnit.init(from: unitString);
@@ -230,30 +224,79 @@ class ReactNativeHealthkit: NSObject {
         let sample = HKQuantitySample.init(
             type: type,
             quantity: quantity,
-            start: Date.init(timeIntervalSince1970: start),
-            end: Date.init(timeIntervalSince1970: end),
+            start: start,
+            end: end,
             metadata: metadata as? Dictionary<String, Any>
         )
         
         store.save(sample) { (success: Bool, error: Error?) in
             guard let err = error else {
-                resolve(success);
+                return resolve(success);
+            }
+            reject(GENERIC_ERROR, err.localizedDescription, error);
+        }
+    }
+    
+    override func supportedEvents() -> [String]! {
+      return ["onQueryUpdated"]
+    }
+    
+    @objc(observe:unitString:resolve:reject:)
+    func observe(sampleTypeIdentifier: String, unitString: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock){
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+        }
+        
+        guard let sampleType = sampleTypeFromString(typeIdentifier: sampleTypeIdentifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, sampleTypeIdentifier, nil);
+        }
+        
+        let predicate = HKQuery.predicateForSamples(withStart: Date.init(), end: nil)
+        
+        var anchor: HKQueryAnchor? = nil;
+        
+        func responder(query: HKAnchoredObjectQuery, allSamples: [HKSample]?, deletedObjects: [HKDeletedObject]?, newAnchor: HKQueryAnchor?, error: Error?) -> Void {
+            anchor = newAnchor;
+            guard let err = error else {
+                let serializedSamples: NSMutableArray = [];
+                
+                for s in allSamples! {
+                    let serialized = self.serializeSample(sample: s, unitString: unitString, sampleTypeIdentifier: sampleTypeIdentifier);
+                    serializedSamples.add(serialized)
+                }
+                
+                DispatchQueue.main.async {
+                    self.sendEvent(withName: "onQueryUpdated", body: [
+                        "sampleTypeIdentifier": sampleTypeIdentifier,
+                        "samples": serializedSamples
+                    ]);
+                }
+                
                 return;
             }
-            reject("Error", err.localizedDescription, error);
+            reject(GENERIC_ERROR, err.localizedDescription, err);
         }
+        let query = HKAnchoredObjectQuery(type: sampleType, predicate: predicate, anchor: anchor, limit: HKObjectQueryNoLimit) { (query: HKAnchoredObjectQuery, samples: [HKSample]?, deletedObjects: [HKDeletedObject]?, newAnchor: HKQueryAnchor?, error: Error?) in
+            guard let err = error else {
+                resolve(true);
+                return responder(query: query, allSamples: samples, deletedObjects: deletedObjects, newAnchor: newAnchor, error: error);
+            }
+            reject(GENERIC_ERROR, err.localizedDescription, err);
+        }
+        
+        query.updateHandler = responder;
+        
+        store.execute(query);
     }
     
     @objc(getSamplesBetween:unitString:from:to:resolve:reject:)
     func getSamplesBetween(sampleTypeIdentifier: String, unitString: String, from: Date, to: Date, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
-            reject("Error", "HealthKit not initialized properly", nil);
-            return;
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
-        guard let sampleType = sampleTypeFromString(str: sampleTypeIdentifier) else {
-            reject("Error", "Couldnt find identifier", nil);
-            return;
+        guard let sampleType = sampleTypeFromString(typeIdentifier: sampleTypeIdentifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, sampleTypeIdentifier, nil);
         }
         
         let predicate = HKQuery.predicateForSamples(withStart: from, end: to, options: HKQueryOptions.strictEndDate)
@@ -261,8 +304,7 @@ class ReactNativeHealthkit: NSObject {
         let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
                 guard let samples = sample else {
-                    resolve(nil);
-                    return;
+                    return resolve([]);
                 }
                 let arr: NSMutableArray = [];
                 
@@ -271,10 +313,9 @@ class ReactNativeHealthkit: NSObject {
                     arr.add(serialized)
                 }
                 
-                resolve(arr);
-                return;
+                return resolve(arr);
             }
-            reject("Error", err.localizedDescription, err);
+            reject(GENERIC_ERROR, err.localizedDescription, err);
         }
         
         store.execute(q);
@@ -283,20 +324,17 @@ class ReactNativeHealthkit: NSObject {
     @objc(getLastSamples:limit:unitString:resolve:reject:)
     func getLastSamples(sampleTypeIdentifier: String, limit: NSInteger, unitString: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
-            reject("Error", "HealthKit not initialized properly", nil);
-            return;
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
-        guard let sampleType = sampleTypeFromString(str: sampleTypeIdentifier) else {
-            reject("Error", "Couldnt find identifier", nil);
-            return;
+        guard let sampleType = sampleTypeFromString(typeIdentifier: sampleTypeIdentifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, sampleTypeIdentifier, nil);
         }
         
         let q = HKSampleQuery(sampleType: sampleType, predicate: nil, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
                 guard let samples = sample else {
-                    resolve(nil);
-                    return;
+                    return resolve([]);
                 }
                 let arr: NSMutableArray = [];
                 
@@ -305,10 +343,9 @@ class ReactNativeHealthkit: NSObject {
                     arr.add(serialized)
                 }
                 
-                resolve(arr);
-                return;
+                return resolve(arr);
             }
-            reject("Error", err.localizedDescription, err);
+            reject(GENERIC_ERROR, err.localizedDescription, err);
         }
         
         store.execute(q);
@@ -317,25 +354,17 @@ class ReactNativeHealthkit: NSObject {
     @objc(requestAuthorization:read:resolve:withRejecter:)
     func requestAuthorization(toShare: NSDictionary, read: NSDictionary, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
-            reject("Error", "HealthKit not initialized properly", nil);
-            return;
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
-        let share = sampleTypesFromDictionary(toShare: toShare);
-        let toRead = objectTypesFromDictionary(toShare: read);
+        let share = sampleTypesFromDictionary(typeIdentifiers: toShare);
+        let toRead = objectTypesFromDictionary(typeIdentifiers: read);
         
         store.requestAuthorization(toShare: share, read: toRead) { (success: Bool, error: Error?) in
-            if(error != nil){
-                reject("Error", error?.localizedDescription, error);
+            guard let err = error else {
+                return resolve(success);
             }
-            else {
-                resolve(success);
-            }
-            
+            reject(GENERIC_ERROR, err.localizedDescription, err);
         }
     }
-    
-    
-    
-    
 }
