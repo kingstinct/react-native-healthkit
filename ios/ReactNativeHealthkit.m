@@ -6,6 +6,9 @@
 RCT_EXTERN_METHOD(isHealthDataAvailable:(RCTPromiseResolveBlock)resolve
 withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(supportsHealthRecords:(RCTPromiseResolveBlock)resolve
+withRejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(requestAuthorization:(NSDictionary)toShare
                   read:NSDictionary
                   resolve:(RCTPromiseResolveBlock)resolve
@@ -16,7 +19,7 @@ RCT_EXTERN_METHOD(getRequestStatusForAuthorization:(NSDictionary)toShare
                 resolve:(RCTPromiseResolveBlock)resolve
                 withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(getLastSamples:(NSString)sampleTypeIdentifier
+RCT_EXTERN_METHOD(getLastSamples:(NSString)typeIdentifier
                     limit:(NSInteger)limit
                     unitString:(NSString)unitString
                     resolve:(RCTPromiseResolveBlock)resolve
@@ -34,7 +37,7 @@ RCT_EXTERN_METHOD(getBloodType:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(getDateOfBirth:(RCTPromiseResolveBlock)resolve
 withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(authorizationStatusFor:(NSString)sampleTypeIdentifier
+RCT_EXTERN_METHOD(authorizationStatusFor:(NSString)typeIdentifier
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
@@ -43,7 +46,7 @@ resolve:(RCTPromiseResolveBlock)resolve
 reject:(RCTPromiseRejectBlock)reject)
 
 
-RCT_EXTERN_METHOD(writeSample:(NSString)sampleTypeIdentifier
+RCT_EXTERN_METHOD(writeSample:(NSString)typeIdentifier
                   unitString:(NSString)unitString
                   value:(double)value
                   start:(NSDate)start
@@ -53,7 +56,7 @@ RCT_EXTERN_METHOD(writeSample:(NSString)sampleTypeIdentifier
                   reject:(RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(getSamplesBetween:(NSString)sampleTypeIdentifier
+RCT_EXTERN_METHOD(getSamplesBetween:(NSString)typeIdentifier
                   unitString:(NSString)unitString
                   start:(NSDate)start
                   end:(NSDate)end
@@ -61,7 +64,7 @@ RCT_EXTERN_METHOD(getSamplesBetween:(NSString)sampleTypeIdentifier
                   reject:(RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(observe:(NSString)sampleTypeIdentifier
+RCT_EXTERN_METHOD(observe:(NSString)typeIdentifier
                   unitString:(NSString)unitString
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject

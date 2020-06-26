@@ -70,13 +70,13 @@ export enum HKUnitNonSI {
   Yard = 'yd',
 }
 
-export enum OtherUnit {
+export enum HKOtherUnit {
   Mmol_glucose = 'mol<180.15588000005408>',
 }
 
-export type HKUnit = HKUnitSI | HKUnitNonSI | OtherUnit;
+export type HKUnit = HKUnitSI | HKUnitNonSI | HKOtherUnit;
 
-export const UnitWithPrefix = (prefix: HKUnitSIPrefix, unit: HKUnitSI) => {
+export const SIUnitWithPrefix = (prefix: HKUnitSIPrefix, unit: HKUnitSI) => {
   return `${prefix}${unit}` as HKUnit;
 };
 
@@ -327,6 +327,20 @@ const getLastSamples = async (
 
 export default {
   ...Native,
+  requestAuthorization: (
+    read: (HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier)[],
+    write: HKQuantityTypeIdentifier[] = []
+  ): Promise<boolean> => {
+    const readPermissions = read.reduce((obj, cur) => {
+      return { ...obj, [cur]: true };
+    }, {});
+
+    const writePermissions = write.reduce((obj, cur) => {
+      return { ...obj, [cur]: true };
+    }, {});
+
+    return Native.requestAuthorization(writePermissions, readPermissions);
+  },
   getPreferredUnit,
   getDateOfBirth: async () => {
     const dateOfBirth = await Native.getDateOfBirth();
@@ -362,12 +376,12 @@ export default {
     let actualUnit = unit || (await getPreferredUnit(identifier));
     const listener = ({
       samples,
-      sampleTypeIdentifier,
+      typeIdentifier,
     }: {
       samples: QuantitySampleRaw[];
-      sampleTypeIdentifier: HKQuantityTypeIdentifier;
+      typeIdentifier: HKQuantityTypeIdentifier;
     }) => {
-      if (sampleTypeIdentifier === identifier) {
+      if (typeIdentifier === identifier) {
         callback(samples.map(deserializeSample));
       }
     };

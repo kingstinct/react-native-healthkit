@@ -73,6 +73,15 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
     
     @available(iOS 12.0, *)
+    @objc(supportsHealthRecords:withRejecter:)
+    func supportsHealthRecords(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+        }
+        resolve(store.supportsHealthRecords());
+    }
+    
+    @available(iOS 12.0, *)
     @objc(getRequestStatusForAuthorization:read:resolve:withRejecter:)
     func getRequestStatusForAuthorization(toShare: NSDictionary, read: NSDictionary, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
@@ -113,7 +122,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
     }
     
-    func serializeSample(sample: HKSample, unitString: String, sampleTypeIdentifier: String) -> NSDictionary {
+    func serializeSample(sample: HKSample, unitString: String, typeIdentifier: String) -> NSDictionary {
         let endDate = sample.endDate.timeIntervalSince1970;
         let startDate = sample.startDate.timeIntervalSince1970;
         let defaultDictionary: NSDictionary = [
@@ -121,7 +130,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
             "startDate": startDate,
         ]
         
-        if(sampleTypeIdentifier.starts(with: "HKQuantityTypeIdentifier")){
+        if(typeIdentifier.starts(with: "HKQuantityTypeIdentifier")){
             let unit = HKUnit.init(from: unitString);
             let s = sample as! HKQuantitySample;
             let quantity = s.quantity.doubleValue(for: unit);
@@ -208,15 +217,15 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
     
     @objc(writeSample:unitString:value:start:end:metadata:resolve:reject:)
-    func writeSample(sampleTypeIdentifier: String, unitString: String, value: Double, start: Date, end: Date, metadata: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+    func writeSample(typeIdentifier: String, unitString: String, value: Double, start: Date, end: Date, metadata: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
-        let identifier = HKQuantityTypeIdentifier.init(rawValue: sampleTypeIdentifier);
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
         
         guard let type = HKObjectType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, sampleTypeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
         }
 
         let unit = HKUnit.init(from: unitString);
@@ -242,13 +251,13 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
     
     @objc(observe:unitString:resolve:reject:)
-    func observe(sampleTypeIdentifier: String, unitString: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock){
+    func observe(typeIdentifier: String, unitString: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock){
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
-        guard let sampleType = sampleTypeFromString(typeIdentifier: sampleTypeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, sampleTypeIdentifier, nil);
+        guard let sampleType = sampleTypeFromString(typeIdentifier: typeIdentifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
         }
         
         let predicate = HKQuery.predicateForSamples(withStart: Date.init(), end: nil)
@@ -261,13 +270,13 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 let serializedSamples: NSMutableArray = [];
                 
                 for s in allSamples! {
-                    let serialized = self.serializeSample(sample: s, unitString: unitString, sampleTypeIdentifier: sampleTypeIdentifier);
+                    let serialized = self.serializeSample(sample: s, unitString: unitString, typeIdentifier: typeIdentifier);
                     serializedSamples.add(serialized)
                 }
                 
                 DispatchQueue.main.async {
                     self.sendEvent(withName: "onQueryUpdated", body: [
-                        "sampleTypeIdentifier": sampleTypeIdentifier,
+                        "typeIdentifier": typeIdentifier,
                         "samples": serializedSamples
                     ]);
                 }
@@ -290,13 +299,13 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
     
     @objc(getSamplesBetween:unitString:from:to:resolve:reject:)
-    func getSamplesBetween(sampleTypeIdentifier: String, unitString: String, from: Date, to: Date, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func getSamplesBetween(typeIdentifier: String, unitString: String, from: Date, to: Date, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
-        guard let sampleType = sampleTypeFromString(typeIdentifier: sampleTypeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, sampleTypeIdentifier, nil);
+        guard let sampleType = sampleTypeFromString(typeIdentifier: typeIdentifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
         }
         
         let predicate = HKQuery.predicateForSamples(withStart: from, end: to, options: HKQueryOptions.strictEndDate)
@@ -309,7 +318,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 let arr: NSMutableArray = [];
                 
                 for s in samples {
-                    let serialized = self.serializeSample(sample: s, unitString: unitString, sampleTypeIdentifier: sampleTypeIdentifier);
+                    let serialized = self.serializeSample(sample: s, unitString: unitString, typeIdentifier: typeIdentifier);
                     arr.add(serialized)
                 }
                 
@@ -322,13 +331,13 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
     
     @objc(getLastSamples:limit:unitString:resolve:reject:)
-    func getLastSamples(sampleTypeIdentifier: String, limit: NSInteger, unitString: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func getLastSamples(typeIdentifier: String, limit: NSInteger, unitString: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
-        guard let sampleType = sampleTypeFromString(typeIdentifier: sampleTypeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, sampleTypeIdentifier, nil);
+        guard let sampleType = sampleTypeFromString(typeIdentifier: typeIdentifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
         }
         
         let q = HKSampleQuery(sampleType: sampleType, predicate: nil, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
@@ -339,7 +348,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 let arr: NSMutableArray = [];
                 
                 for s in samples {
-                    let serialized = self.serializeSample(sample: s, unitString: unitString, sampleTypeIdentifier: sampleTypeIdentifier);
+                    let serialized = self.serializeSample(sample: s, unitString: unitString, typeIdentifier: typeIdentifier);
                     arr.add(serialized)
                 }
                 

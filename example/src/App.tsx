@@ -4,6 +4,8 @@ import ReactNativeHealthkit, {
   HKCharacteristicTypeIdentifier,
   HKQuantityTypeIdentifier,
   QuantitySample,
+  HKOtherUnit,
+  HKUnit,
   HKUnitNonSI,
 } from '@kingstinct/react-native-healthkit';
 
@@ -19,28 +21,31 @@ export default function App() {
 
   React.useEffect(() => {
     ReactNativeHealthkit.requestAuthorization(
-      {
-        [HKQuantityTypeIdentifier.waistCircumference]: true,
-        [HKQuantityTypeIdentifier.activeEnergyBurned]: true,
-      },
-      {
-        [HKCharacteristicTypeIdentifier.biologicalSex]: true,
-        [HKCharacteristicTypeIdentifier.bloodType]: true,
-        [HKCharacteristicTypeIdentifier.dateOfBirth]: true,
-        [HKCharacteristicTypeIdentifier.fitzpatrickSkinType]: true,
-        [HKQuantityTypeIdentifier.waistCircumference]: true,
-        [HKQuantityTypeIdentifier.bodyMassIndex]: true,
-        [HKQuantityTypeIdentifier.bodyMass]: true,
-        [HKQuantityTypeIdentifier.bloodGlucose]: true,
-        [HKQuantityTypeIdentifier.activeEnergyBurned]: true,
-      }
+      [
+        HKCharacteristicTypeIdentifier.biologicalSex,
+        HKCharacteristicTypeIdentifier.bloodType,
+        HKCharacteristicTypeIdentifier.dateOfBirth,
+        HKCharacteristicTypeIdentifier.fitzpatrickSkinType,
+        HKQuantityTypeIdentifier.waistCircumference,
+        HKQuantityTypeIdentifier.bodyMassIndex,
+        HKQuantityTypeIdentifier.bodyMass,
+        HKQuantityTypeIdentifier.heartRate,
+        HKQuantityTypeIdentifier.bloodGlucose,
+        HKQuantityTypeIdentifier.activeEnergyBurned,
+      ],
+      [
+        HKQuantityTypeIdentifier.waistCircumference,
+        HKQuantityTypeIdentifier.activeEnergyBurned,
+        HKQuantityTypeIdentifier.bloodGlucose,
+        HKQuantityTypeIdentifier.bodyFatPercentage,
+      ]
     ).then((result) => {
       // setResult(result);
       setAuthorizationStatus(result);
       ReactNativeHealthkit.writeSample(
-        HKQuantityTypeIdentifier.activeEnergyBurned,
-        HKUnitNonSI.Kilocalories,
-        99
+        HKQuantityTypeIdentifier.bodyFatPercentage,
+        HKUnitNonSI.Percent,
+        6.7
       ).then((/*success*/) => {
         ReactNativeHealthkit.getDateOfBirth().then(setDateOfBirth);
 
@@ -49,14 +54,17 @@ export default function App() {
         ).then(setBodyMass);*/
 
         ReactNativeHealthkit.getLastSamples(
-          HKQuantityTypeIdentifier.activeEnergyBurned,
+          HKQuantityTypeIdentifier.bodyFatPercentage,
           2
         ).then(setActiveEnergyBurned);
       });
 
-      ReactNativeHealthkit.on(HKQuantityTypeIdentifier.bodyMass, (samples) => {
-        setBodyMass(samples);
-      });
+      ReactNativeHealthkit.on(
+        HKQuantityTypeIdentifier.bodyFatPercentage,
+        (samples) => {
+          setBodyMass(samples);
+        }
+      );
     });
   }, []);
 
