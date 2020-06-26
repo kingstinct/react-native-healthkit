@@ -297,6 +297,10 @@ class ReactNativeHealthkit: RCTEventEmitter {
         
         store.execute(query);
     }
+
+    @objc static func requiresMainQueueSetup() -> Bool {
+        return false
+    }
     
     @objc(getSamplesBetween:unitString:from:to:resolve:reject:)
     func getSamplesBetween(typeIdentifier: String, unitString: String, from: Date, to: Date, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
