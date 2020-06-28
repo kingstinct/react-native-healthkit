@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import ReactNativeHealthkit, {
+import ReactNativeHealthkit from 'src/index.ios';
+import {
   HKCharacteristicTypeIdentifier,
   HKQuantityTypeIdentifier,
   QuantitySample,
   HKUnitNonSI,
-} from '@kingstinct/react-native-healthkit';
+} from 'src/types';
 
 export default function App() {
   const [activeEnergyBurned, setActiveEnergyBurned] = React.useState<

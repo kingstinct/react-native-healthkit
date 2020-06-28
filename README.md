@@ -1,20 +1,26 @@
 # @kingstinct/react-native-healthkit
 
-React Native bindings for HealthKit. Built natively for TypeScript and mapping as much as possible directly to Healthkit which means it's easy to access most of the data.
+React Native bindings for HealthKit. Built natively for TypeScript and mapping as much as possible directly to how Healthkit serializes and introduce as little magic on top as possible - which makes it easy to keep it up to date with all current healthkit features - and since it maps fairly directly the official documentation will make sense as well.
 
 ## Installation
 
 ```sh
 npm install @kingstinct/react-native-healthkit
+cd ios
+pod install
 ```
 
 or
 
 ```sh
 yarn add @kingstinct/react-native-healthkit
+cd ios
+pod install
 ```
 
 Remember to set `NSHealthUpdateUsageDescription` and `NSHealthShareUsageDescription` in your `Info.plist` as well as enable the HealthKit capability for the project in Xcode. During runtime you need to check if HealthKit is available on the device with `isHealthDataAvailable` and request permissions with `requestAuthorization`;
+
+Since this package is using Swift you might also need to add a bridging header in your project if you haven't already, you can [find more about that in the official React Native docs](https://reactnative.dev/docs/native-modules-ios#exporting-swift)
 
 ## Usage
 

@@ -32,7 +32,8 @@
   "keywords": [
     "react-native",
     "ios",
-    "android"
+    "healthkit",
+    "typescript"
   ],
   "repository": "https://github.com/kingstinct/react-native-healthkit",
   "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
