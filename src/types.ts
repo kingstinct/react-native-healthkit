@@ -1,5 +1,3 @@
-import type { EmitterSubscription } from 'react-native';
-
 // Straight mapping to https://developer.apple.com/documentation/healthkit/hkcharacteristictypeidentifier
 export enum HKCharacteristicTypeIdentifier {
   fitzpatrickSkinType = 'HKCharacteristicTypeIdentifierFitzpatrickSkinType',
@@ -246,6 +244,8 @@ export type TypeToUnitMapping = {
   [key in HKQuantityTypeIdentifier]: HKUnit;
 };
 
+type UnsubscribeFunction = () => Promise<boolean>;
+
 export type ReactNativeHealthkit = {
   isHealthDataAvailable(): Promise<boolean>;
   getBloodType(): Promise<HKBloodType>;
@@ -257,15 +257,14 @@ export type ReactNativeHealthkit = {
     type: HKQuantityTypeIdentifier | HKCharacteristicTypeIdentifier
   ): Promise<boolean>;
   getRequestStatusForAuthorization(
-    write: WritePermssions | {},
-    read: ReadPermssions | {}
+    read: (HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier)[],
+    write?: HKQuantityTypeIdentifier[]
   ): Promise<HKAuthorizationRequestStatus>;
   requestAuthorization: (
     read: (HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier)[],
     write?: HKQuantityTypeIdentifier[]
   ) => Promise<boolean>;
-  observe(identifier: HKQuantityTypeIdentifier, unit: HKUnit): Promise<boolean>;
-  writeSample: (
+  save: (
     identifier: HKQuantityTypeIdentifier,
     unit: HKUnit,
     value: number,
@@ -298,6 +297,5 @@ export type ReactNativeHealthkit = {
     identifier: HKQuantityTypeIdentifier,
     callback: (samples: QuantitySample[]) => void,
     unit?: HKUnit
-  ) => Promise<EmitterSubscription>;
-  off: (subscription: EmitterSubscription) => void;
+  ) => Promise<UnsubscribeFunction>;
 };

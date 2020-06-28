@@ -8,9 +8,6 @@ const notAvailableError =
 
 const Healthkit: ReactNativeHealthkit = {
   isHealthDataAvailable: () => Promise.resolve(false),
-  observe: () => {
-    throw new Error(notAvailableError);
-  },
   getRequestStatusForAuthorization: () => {
     throw new Error(notAvailableError);
   },
@@ -50,10 +47,7 @@ const Healthkit: ReactNativeHealthkit = {
   on: () => {
     throw new Error(notAvailableError);
   },
-  off: () => {
-    throw new Error(notAvailableError);
-  },
-  writeSample: () => {
+  save: () => {
     throw new Error(notAvailableError);
   },
 };

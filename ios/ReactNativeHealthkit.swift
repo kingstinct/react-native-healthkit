@@ -11,8 +11,11 @@ let HKQuantityTypeIdentifier_PREFIX = "HKQuantityTypeIdentifier"
 @objc(ReactNativeHealthkit)
 class ReactNativeHealthkit: RCTEventEmitter {
     var _store : HKHealthStore?
+    var _runningQueries : Dictionary<String, HKQuery>;
     
     override init() {
+        self._runningQueries = Dictionary<String, HKQuery>();
+        
         if(HKHealthStore.isHealthDataAvailable()){
             self._store = HKHealthStore.init();
         }
@@ -216,8 +219,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
         resolve(authStatus.rawValue);
     }
     
-    @objc(writeSample:unitString:value:start:end:metadata:resolve:reject:)
-    func writeSample(typeIdentifier: String, unitString: String, value: Double, start: Date, end: Date, metadata: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+    @objc(save:unitString:value:start:end:metadata:resolve:reject:)
+    func save(typeIdentifier: String, unitString: String, value: Double, start: Date, end: Date, metadata: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
@@ -285,9 +288,12 @@ class ReactNativeHealthkit: RCTEventEmitter {
             }
             reject(GENERIC_ERROR, err.localizedDescription, err);
         }
+        
+        let queryId = UUID().uuidString
+        
         let query = HKAnchoredObjectQuery(type: sampleType, predicate: predicate, anchor: anchor, limit: HKObjectQueryNoLimit) { (query: HKAnchoredObjectQuery, samples: [HKSample]?, deletedObjects: [HKDeletedObject]?, newAnchor: HKQueryAnchor?, error: Error?) in
             guard let err = error else {
-                resolve(true);
+                resolve(queryId);
                 return responder(query: query, allSamples: samples, deletedObjects: deletedObjects, newAnchor: newAnchor, error: error);
             }
             reject(GENERIC_ERROR, err.localizedDescription, err);
@@ -296,9 +302,29 @@ class ReactNativeHealthkit: RCTEventEmitter {
         query.updateHandler = responder;
         
         store.execute(query);
+        
+        self._runningQueries.updateValue(query, forKey: queryId);
+    }
+    
+    @objc(stopObserving:resolve:reject:)
+    func stopObserving(queryId: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+        }
+        
+        guard let query = self._runningQueries[queryId] else {
+            reject("Error", "Query with id " + queryId + " not found", nil);
+            return;
+        }
+        
+        store.stop(query);
+        
+        self._runningQueries.removeValue(forKey: queryId);
+        
+        resolve(true);
     }
 
-    @objc static func requiresMainQueueSetup() -> Bool {
+    @objc static override func requiresMainQueueSetup() -> Bool {
         return false
     }
     

@@ -1,8 +1,4 @@
-import {
-  NativeModules,
-  NativeEventEmitter,
-  EmitterSubscription,
-} from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
 import type { ReactNativeHealthkit } from './types';
 import type {
   HKQuantityTypeIdentifier,
@@ -39,8 +35,9 @@ type ReactNativeHealthkitTypeNative = {
     write: WritePermssions | {},
     read: ReadPermssions | {}
   ): Promise<boolean>;
-  observe(identifier: HKQuantityTypeIdentifier, unit: HKUnit): Promise<boolean>;
-  writeSample: (
+  observe(identifier: HKQuantityTypeIdentifier, unit: HKUnit): Promise<string>;
+  stopObserving(queryId: string): Promise<boolean>;
+  save: (
     identifier: HKQuantityTypeIdentifier,
     unit: HKUnit,
     value: number,
@@ -99,6 +96,20 @@ const getLastSamples = async (
 
 const Healthkit: ReactNativeHealthkit = {
   ...Native,
+  getRequestStatusForAuthorization: (read, write = []) => {
+    const readPermissions = read.reduce((obj, cur) => {
+      return { ...obj, [cur]: true };
+    }, {});
+
+    const writePermissions = write.reduce((obj, cur) => {
+      return { ...obj, [cur]: true };
+    }, {});
+
+    return Native.getRequestStatusForAuthorization(
+      writePermissions,
+      readPermissions
+    );
+  },
   requestAuthorization: (
     read: (HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier)[],
     write: HKQuantityTypeIdentifier[] = []
@@ -161,16 +172,19 @@ const Healthkit: ReactNativeHealthkit = {
       'onQueryUpdated',
       listener
     );
-    await Native.observe(identifier, actualUnit).catch((error) => {
-      HealthkitEmitter.removeSubscription(subscription);
-      throw new error();
-    });
-    return subscription;
+
+    const queryId = await Native.observe(identifier, actualUnit).catch(
+      (error) => {
+        subscription.remove();
+        return Promise.reject(error);
+      }
+    );
+    return () => {
+      subscription.remove();
+      return Native.stopObserving(queryId);
+    };
   },
-  off: (subscription: EmitterSubscription) => {
-    HealthkitEmitter.removeSubscription(subscription);
-  },
-  writeSample: (
+  save: (
     identifier: HKQuantityTypeIdentifier,
     unit: HKUnit,
     value: number,
@@ -184,7 +198,7 @@ const Healthkit: ReactNativeHealthkit = {
     const end = options?.end || options?.start || new Date();
     const metadata = options?.metadata || {};
 
-    return Native.writeSample(
+    return Native.save(
       identifier,
       unit,
       value,

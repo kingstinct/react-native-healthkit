@@ -46,7 +46,7 @@ resolve:(RCTPromiseResolveBlock)resolve
 reject:(RCTPromiseRejectBlock)reject)
 
 
-RCT_EXTERN_METHOD(writeSample:(NSString)typeIdentifier
+RCT_EXTERN_METHOD(save:(NSString)typeIdentifier
                   unitString:(NSString)unitString
                   value:(double)value
                   start:(NSDate)start
@@ -70,5 +70,9 @@ RCT_EXTERN_METHOD(observe:(NSString)typeIdentifier
                   reject:(RCTPromiseRejectBlock)reject
 )
 
+RCT_EXTERN_METHOD(stopObserving:(NSString)queryId
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
 
 @end

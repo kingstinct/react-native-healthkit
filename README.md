@@ -2,6 +2,11 @@
 
 React Native bindings for HealthKit. Built natively for TypeScript and mapping as much as possible directly to how Healthkit serializes and introduce as little magic on top as possible - which makes it easy to keep it up to date with all current healthkit features - and since it maps fairly directly the official documentation will make sense as well.
 
+* With TypeScript bindings
+* Promises all the way
+* Maps as directly to Healthkit as possible - uses native Healthkit serialized formats where applicable.
+* Providing sensible defaults. Read units based on devices preferred unit by default.
+
 ## Installation
 
 ```sh
@@ -40,14 +45,14 @@ Since this package is using Swift you might also need to add a bridging header i
   /* Listen to data */
   await HealthKit.requestAuthorization([HKQuantityTypeIdentifier.heartRate]); // request read permission for bodyFatPercentage
 
-  HealthKit.on(HKQuantityTypeIdentifier.heartRate, (samples) => {
+  const unsubscribe = HealthKit.on(HKQuantityTypeIdentifier.heartRate, (samples) => {
     console.log(samples) // |{ quantity: 80, unit: 'count/min', ... }]
   });
 
   /* write data */
   await HealthKit.requestAuthorization([], [HKQuantityTypeIdentifier.bodyFatPercentage]); // request write permission for bodyFatPercentage
 
-  await HealthKit.writeSample(HKQuantityTypeIdentifier.bodyFatPercentage, HKOtherUnits.Mmol_glucose, 15.7); // write data
+  await HealthKit.save(HKQuantityTypeIdentifier.bodyFatPercentage, HKUnitNonSI.Percent, 15.7); // write data
 ```
 
 ## Contributing
