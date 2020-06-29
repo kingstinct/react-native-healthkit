@@ -330,6 +330,10 @@ export type ReactNativeHealthkit = {
     identifier: HKQuantityTypeIdentifier,
     unit?: HKUnit
   ) => Promise<QuantitySample>;
+  useLastSample: (
+    identifier: HKQuantityTypeIdentifier,
+    unit?: HKUnit
+  ) => QuantitySample | null;
   getLastSamples: (
     identifier: HKQuantityTypeIdentifier,
     limit?: number,

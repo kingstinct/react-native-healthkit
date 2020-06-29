@@ -17,6 +17,7 @@ import type {
   HKStatisticsOptions,
   HKWheelchairUse,
 } from './types';
+import { useState, useEffect } from 'react';
 
 type ReactNativeHealthkitTypeNative = {
   isHealthDataAvailable(): Promise<boolean>;
@@ -98,154 +99,202 @@ const getLastSamples = async (
   return samples.map((s) => deserializeSample(s));
 };
 
+const on = async (
+  identifier: HKQuantityTypeIdentifier,
+  callback: (samples: QuantitySample[]) => void,
+  unit?: HKUnit
+) => {
+  let actualUnit = unit || (await getPreferredUnit(identifier));
+  const listener = ({
+    samples,
+    typeIdentifier,
+  }: {
+    samples: QuantitySampleRaw[];
+    typeIdentifier: HKQuantityTypeIdentifier;
+  }) => {
+    if (typeIdentifier === identifier) {
+      callback(samples.map(deserializeSample));
+    }
+  };
+  const subscription = HealthkitEmitter.addListener('onQueryUpdated', listener);
+
+  const queryId = await Native.observe(identifier, actualUnit).catch(
+    (error) => {
+      subscription.remove();
+      return Promise.reject(error);
+    }
+  );
+  return () => {
+    subscription.remove();
+    return Native.stopObserving(queryId);
+  };
+};
+
+const getLastSample = async (
+  identifier: HKQuantityTypeIdentifier,
+  unit?: HKUnit
+) => {
+  const samples = await getLastSamples(identifier, 1, unit);
+  return samples[0];
+};
+
+const useLastSample = (identifier: HKQuantityTypeIdentifier, unit?: HKUnit) => {
+  const [lastSample, setLastSample] = useState<QuantitySample | null>(null);
+
+  useEffect(() => {
+    let cancelSubscription: (() => Promise<boolean>) | null = null;
+
+    const init = async () => {
+      let actualUnit = unit || (await getPreferredUnit(identifier));
+
+      getLastSample(identifier, actualUnit).then(setLastSample);
+
+      cancelSubscription = await on(
+        identifier,
+        (samples) => {
+          const sample = samples[samples.length - 1];
+          setLastSample(sample);
+        },
+        actualUnit
+      );
+    };
+    init();
+
+    return () => {
+      if (cancelSubscription) {
+        cancelSubscription();
+      }
+    };
+  }, [identifier, unit]);
+
+  return lastSample;
+};
+
+const save = (
+  identifier: HKQuantityTypeIdentifier,
+  unit: HKUnit,
+  value: number,
+  options?: {
+    start?: Date;
+    end?: Date;
+    metadata?: any;
+  }
+) => {
+  const start = options?.start || options?.end || new Date();
+  const end = options?.end || options?.start || new Date();
+  const metadata = options?.metadata || {};
+
+  return Native.save(
+    identifier,
+    unit,
+    value,
+    start.toISOString(),
+    end.toISOString(),
+    metadata
+  );
+};
+
+const getStatsBetween = async (
+  identifier: HKQuantityTypeIdentifier,
+  options: HKStatisticsOptions[],
+  from: Date,
+  to?: Date,
+  unit?: HKUnit
+) => {
+  const actualUnit = unit || (await getPreferredUnit(identifier));
+  const toDate = to || new Date();
+  const {
+    mostRecentQuantityDateInterval,
+    ...rawResponse
+  } = await Native.getStatsBetween(
+    identifier,
+    actualUnit,
+    from.toISOString(),
+    toDate.toISOString(),
+    options
+  );
+
+  const response = {
+    ...rawResponse,
+    ...(mostRecentQuantityDateInterval
+      ? {
+          mostRecentQuantityDateInterval: {
+            from: new Date(mostRecentQuantityDateInterval.from),
+            to: new Date(mostRecentQuantityDateInterval.to),
+          },
+        }
+      : {}),
+  };
+
+  return response;
+};
+
+const requestAuthorization = (
+  read: (HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier)[],
+  write: HKQuantityTypeIdentifier[] = []
+): Promise<boolean> => {
+  const readPermissions = read.reduce((obj, cur) => {
+    return { ...obj, [cur]: true };
+  }, {});
+
+  const writePermissions = write.reduce((obj, cur) => {
+    return { ...obj, [cur]: true };
+  }, {});
+
+  return Native.requestAuthorization(writePermissions, readPermissions);
+};
+
+const getDateOfBirth = async () => {
+  const dateOfBirth = await Native.getDateOfBirth();
+  return new Date(dateOfBirth);
+};
+
+const getSamplesBetween = async (
+  identifier: HKQuantityTypeIdentifier,
+  unit: HKUnit,
+  from: Date,
+  to: Date = new Date()
+) => {
+  const samples = await Native.getSamplesBetween(
+    identifier,
+    unit,
+    from.toISOString(),
+    to.toISOString()
+  );
+  return samples.map(deserializeSample);
+};
+
+const getRequestStatusForAuthorization = (
+  read: (HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier)[],
+  write: HKQuantityTypeIdentifier[] = []
+) => {
+  const readPermissions = read.reduce((obj, cur) => {
+    return { ...obj, [cur]: true };
+  }, {});
+
+  const writePermissions = write.reduce((obj, cur) => {
+    return { ...obj, [cur]: true };
+  }, {});
+
+  return Native.getRequestStatusForAuthorization(
+    writePermissions,
+    readPermissions
+  );
+};
+
 const Healthkit: ReactNativeHealthkit = {
   ...Native,
-  getStatsBetween: async (
-    identifier: HKQuantityTypeIdentifier,
-    options: HKStatisticsOptions[],
-    from: Date,
-    to?: Date,
-    unit?: HKUnit
-  ) => {
-    const actualUnit = unit || (await getPreferredUnit(identifier));
-    const toDate = to || new Date();
-    const {
-      mostRecentQuantityDateInterval,
-      ...rawResponse
-    } = await Native.getStatsBetween(
-      identifier,
-      actualUnit,
-      from.toISOString(),
-      toDate.toISOString(),
-      options
-    );
-
-    const response = {
-      ...rawResponse,
-      ...(mostRecentQuantityDateInterval
-        ? {
-            mostRecentQuantityDateInterval: {
-              from: new Date(mostRecentQuantityDateInterval.from),
-              to: new Date(mostRecentQuantityDateInterval.to),
-            },
-          }
-        : {}),
-    };
-
-    return response;
-  },
-  getRequestStatusForAuthorization: (read, write = []) => {
-    const readPermissions = read.reduce((obj, cur) => {
-      return { ...obj, [cur]: true };
-    }, {});
-
-    const writePermissions = write.reduce((obj, cur) => {
-      return { ...obj, [cur]: true };
-    }, {});
-
-    return Native.getRequestStatusForAuthorization(
-      writePermissions,
-      readPermissions
-    );
-  },
-
-  requestAuthorization: (
-    read: (HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier)[],
-    write: HKQuantityTypeIdentifier[] = []
-  ): Promise<boolean> => {
-    const readPermissions = read.reduce((obj, cur) => {
-      return { ...obj, [cur]: true };
-    }, {});
-
-    const writePermissions = write.reduce((obj, cur) => {
-      return { ...obj, [cur]: true };
-    }, {});
-
-    return Native.requestAuthorization(writePermissions, readPermissions);
-  },
-  getPreferredUnit,
-  getDateOfBirth: async () => {
-    const dateOfBirth = await Native.getDateOfBirth();
-    return new Date(dateOfBirth);
-  },
-  getSamplesBetween: async (
-    identifier: HKQuantityTypeIdentifier,
-    unit: HKUnit,
-    from: Date,
-    to: Date = new Date()
-  ) => {
-    const samples = await Native.getSamplesBetween(
-      identifier,
-      unit,
-      from.toISOString(),
-      to.toISOString()
-    );
-    return samples.map(deserializeSample);
-  },
+  getDateOfBirth,
+  getLastSample,
   getLastSamples,
-  getLastSample: async (
-    identifier: HKQuantityTypeIdentifier,
-    unit?: HKUnit
-  ) => {
-    const samples = await getLastSamples(identifier, 1, unit);
-    return samples[0];
-  },
-  on: async (
-    identifier: HKQuantityTypeIdentifier,
-    callback: (samples: QuantitySample[]) => void,
-    unit?: HKUnit
-  ) => {
-    let actualUnit = unit || (await getPreferredUnit(identifier));
-    const listener = ({
-      samples,
-      typeIdentifier,
-    }: {
-      samples: QuantitySampleRaw[];
-      typeIdentifier: HKQuantityTypeIdentifier;
-    }) => {
-      if (typeIdentifier === identifier) {
-        callback(samples.map(deserializeSample));
-      }
-    };
-    const subscription = HealthkitEmitter.addListener(
-      'onQueryUpdated',
-      listener
-    );
-
-    const queryId = await Native.observe(identifier, actualUnit).catch(
-      (error) => {
-        subscription.remove();
-        return Promise.reject(error);
-      }
-    );
-    return () => {
-      subscription.remove();
-      return Native.stopObserving(queryId);
-    };
-  },
-  save: (
-    identifier: HKQuantityTypeIdentifier,
-    unit: HKUnit,
-    value: number,
-    options?: {
-      start?: Date;
-      end?: Date;
-      metadata?: any;
-    }
-  ) => {
-    const start = options?.start || options?.end || new Date();
-    const end = options?.end || options?.start || new Date();
-    const metadata = options?.metadata || {};
-
-    return Native.save(
-      identifier,
-      unit,
-      value,
-      start.toISOString(),
-      end.toISOString(),
-      metadata
-    );
-  },
+  getPreferredUnit,
+  getRequestStatusForAuthorization,
+  getSamplesBetween,
+  getStatsBetween,
+  on,
+  requestAuthorization,
+  save,
+  useLastSample,
 };
 
 export default Healthkit;

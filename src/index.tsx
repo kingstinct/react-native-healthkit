@@ -6,50 +6,29 @@ const notAvailableError =
   Platform.OS +
   '" not supported, use isHealthDataAvailable to check for availability before using it';
 
+const UnavailableFn = () => {
+  throw new Error(notAvailableError);
+};
+
 const Healthkit: ReactNativeHealthkit = {
   isHealthDataAvailable: () => Promise.resolve(false),
-  getRequestStatusForAuthorization: () => {
-    throw new Error(notAvailableError);
-  },
-  getPreferredUnits: () => {
-    throw new Error(notAvailableError);
-  },
-  getFitzpatrickSkinType: () => {
-    throw new Error(notAvailableError);
-  },
-  getBloodType: () => {
-    throw new Error(notAvailableError);
-  },
-  authorizationStatusFor: () => {
-    throw new Error(notAvailableError);
-  },
-  getBiologicalSex: () => {
-    throw new Error(notAvailableError);
-  },
-  requestAuthorization: () => {
-    throw new Error(notAvailableError);
-  },
-  getPreferredUnit: () => {
-    throw new Error(notAvailableError);
-  },
-  getDateOfBirth: () => {
-    throw new Error(notAvailableError);
-  },
-  getSamplesBetween: () => {
-    throw new Error(notAvailableError);
-  },
-  getLastSamples: () => {
-    throw new Error(notAvailableError);
-  },
-  getLastSample: () => {
-    throw new Error(notAvailableError);
-  },
-  on: () => {
-    throw new Error(notAvailableError);
-  },
-  save: () => {
-    throw new Error(notAvailableError);
-  },
+  useLastSample: UnavailableFn,
+  getRequestStatusForAuthorization: UnavailableFn,
+  getPreferredUnits: UnavailableFn,
+  getFitzpatrickSkinType: UnavailableFn,
+  getWheelchairUse: UnavailableFn,
+  getStatsBetween: UnavailableFn,
+  getBloodType: UnavailableFn,
+  authorizationStatusFor: UnavailableFn,
+  getBiologicalSex: UnavailableFn,
+  requestAuthorization: UnavailableFn,
+  getPreferredUnit: UnavailableFn,
+  getDateOfBirth: UnavailableFn,
+  getSamplesBetween: UnavailableFn,
+  getLastSamples: UnavailableFn,
+  getLastSample: UnavailableFn,
+  on: UnavailableFn,
+  save: UnavailableFn,
 };
 
 export default Healthkit;

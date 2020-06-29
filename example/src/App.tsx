@@ -19,9 +19,7 @@ const DisplayQuantity: React.FunctionComponent<{
 }> = ({ title, sample }) => {
   return (
     <DataTable.Row accessibilityStates={[]}>
-      <DataTable.Cell accessibilityStates={[]} style={{ fontWeight: 'bold' }}>
-        {title}
-      </DataTable.Cell>
+      <DataTable.Cell accessibilityStates={[]}>{title}</DataTable.Cell>
       <DataTable.Cell
         style={{ paddingRight: 10 }}
         accessibilityStates={[]}
@@ -45,9 +43,7 @@ const DisplayStat: React.FunctionComponent<{
 }> = ({ title, sample }) => {
   return (
     <DataTable.Row accessibilityStates={[]}>
-      <DataTable.Cell accessibilityStates={[]} style={{ fontWeight: 'bold' }}>
-        {title}
-      </DataTable.Cell>
+      <DataTable.Cell accessibilityStates={[]}>{title}</DataTable.Cell>
       <DataTable.Cell
         style={{ paddingRight: 10 }}
         accessibilityStates={[]}

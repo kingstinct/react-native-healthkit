@@ -6,6 +6,7 @@ React Native bindings for HealthKit. Built natively for TypeScript and mapping a
 * Promises all the way
 * Maps as directly to Healthkit as possible - uses native Healthkit serialized formats where applicable.
 * Providing sensible defaults. Read units based on devices preferred unit by default.
+* React hook support with `useLastSample`
 
 ## Installation
 
@@ -53,6 +54,10 @@ Since this package is using Swift you might also need to add a bridging header i
   await HealthKit.requestAuthorization([], [HKQuantityTypeIdentifier.bodyFatPercentage]); // request write permission for bodyFatPercentage
 
   await HealthKit.save(HKQuantityTypeIdentifier.bodyFatPercentage, HKUnitNonSI.Percent, 15.7); // write data
+
+
+  /* useLastSample hook, always listening to latest sample */
+  const lastBodyFatSample = HealthKit.useLastSample(HKQuantityTypeIdentifier.bodyFatPercentage);
 ```
 
 ## Contributing
