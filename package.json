@@ -1,6 +1,6 @@
 {
   "name": "@kingstinct/react-native-healthkit",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "React Native bindings for HealthKit",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -33,7 +33,8 @@
     "react-native",
     "ios",
     "healthkit",
-    "typescript"
+    "typescript",
+    "react-hooks"
   ],
   "repository": "https://github.com/kingstinct/react-native-healthkit",
   "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
