@@ -75,4 +75,16 @@ RCT_EXTERN_METHOD(stopObserving:(NSString)queryId
                   reject:(RCTPromiseRejectBlock)reject
 )
 
+RCT_EXTERN_METHOD(getStatsBetween:(NSString)typeIdentifier
+                  unitString:(NSString)unitString
+                  from:(NSDate)from
+                  to:(NSDate)to
+                  options:(NSArray)options
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(getWheelchairUse:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+
 @end

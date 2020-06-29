@@ -6,8 +6,12 @@ import {
   HKQuantityTypeIdentifier,
   QuantitySample,
   HKUnitNonSI,
+  HKStatisticsOptions,
+  StatsResponse,
+  Quantity,
 } from '../../src/types';
 import { DataTable } from 'react-native-paper';
+import dayjs from 'dayjs';
 
 const DisplayQuantity: React.FunctionComponent<{
   title: string;
@@ -23,7 +27,7 @@ const DisplayQuantity: React.FunctionComponent<{
         accessibilityStates={[]}
         numeric
       >
-        {sample ? sample.quantity : '-'}
+        {sample ? sample.quantity.toFixed(1) : '-'}
       </DataTable.Cell>
       <DataTable.Cell accessibilityStates={[]}>
         {sample ? sample.unit : '-'}
@@ -35,6 +39,30 @@ const DisplayQuantity: React.FunctionComponent<{
   );
 };
 
+const DisplayStat: React.FunctionComponent<{
+  title: string;
+  sample: Quantity | undefined;
+}> = ({ title, sample }) => {
+  return (
+    <DataTable.Row accessibilityStates={[]}>
+      <DataTable.Cell accessibilityStates={[]} style={{ fontWeight: 'bold' }}>
+        {title}
+      </DataTable.Cell>
+      <DataTable.Cell
+        style={{ paddingRight: 10 }}
+        accessibilityStates={[]}
+        numeric
+      >
+        {sample ? sample.quantity.toFixed(1) : '-'}
+      </DataTable.Cell>
+      <DataTable.Cell accessibilityStates={[]}>
+        {sample ? sample.unit : '-'}
+      </DataTable.Cell>
+      <DataTable.Cell accessibilityStates={[]}>N/A</DataTable.Cell>
+    </DataTable.Row>
+  );
+};
+
 export default function App() {
   const [bodyFat, setBodyFat] = React.useState<QuantitySample | null>(null);
   const [bodyWeight, setBodyWeight] = React.useState<QuantitySample | null>(
@@ -42,6 +70,10 @@ export default function App() {
   );
   const [heartRate, setHeartRate] = React.useState<QuantitySample | null>(null);
   const [dateOfBirth, setDateOfBirth] = React.useState<Date | null>(null);
+  const [
+    statsResponse,
+    setStatsResponse,
+  ] = React.useState<StatsResponse | null>(null);
   const [authorizationStatus, setAuthorizationStatus] = React.useState<
     boolean | null
   >(null);
@@ -87,10 +119,23 @@ export default function App() {
         ReactNativeHealthkit.getLastSample(
           HKQuantityTypeIdentifier.heartRate
         ).then(setHeartRate);
-      });
 
-      ReactNativeHealthkit.on(HKQuantityTypeIdentifier.heartRate, (samples) => {
-        setHeartRate(samples[0]);
+        ReactNativeHealthkit.getStatsBetween(
+          HKQuantityTypeIdentifier.heartRate,
+          [
+            HKStatisticsOptions.discreteAverage,
+            HKStatisticsOptions.discreteMax,
+            HKStatisticsOptions.discreteMin,
+          ],
+          dayjs().startOf('day').toDate()
+        ).then(setStatsResponse);
+
+        ReactNativeHealthkit.on(
+          HKQuantityTypeIdentifier.heartRate,
+          (samples) => {
+            setHeartRate(samples[0]);
+          }
+        );
       });
     });
   }, []);
@@ -98,7 +143,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text>authorizationStatus: {JSON.stringify(authorizationStatus)}</Text>
-      <Text>Date of birth: {dateOfBirth?.toISOString()}</Text>
+      <Text>Date of birth: {dateOfBirth?.toLocaleDateString()}</Text>
       <DataTable>
         <DataTable.Header accessibilityStates={[]}>
           <DataTable.Title accessibilityStates={[]}>Metric</DataTable.Title>
@@ -115,6 +160,9 @@ export default function App() {
         <DisplayQuantity sample={bodyFat} title="Body fat" />
         <DisplayQuantity sample={bodyWeight} title="Weight" />
         <DisplayQuantity sample={heartRate} title="Heart rate" />
+        <DisplayStat sample={statsResponse?.averageQuantity} title="Avg. HR" />
+        <DisplayStat sample={statsResponse?.maximumQuantity} title="High HR" />
+        <DisplayStat sample={statsResponse?.minimumQuantity} title="Low HR" />
       </DataTable>
     </View>
   );

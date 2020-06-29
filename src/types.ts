@@ -23,6 +23,13 @@ export enum HKUnitSIPrefix {
   Tera = 'T',
 }
 
+// Maps directly to https://developer.apple.com/documentation/healthkit/hkwheelchairuse
+export enum HKWheelchairUse {
+  notSet = 0,
+  no = 1,
+  yes = 2,
+}
+
 export enum HKUnitSI {
   Grams = 'g',
   Joules = 'J',
@@ -78,8 +85,8 @@ export const SIUnitWithPrefix = (prefix: HKUnitSIPrefix, unit: HKUnitSI) => {
 };
 
 export type QuantitySampleRaw = {
-  startDate: number;
-  endDate: number;
+  startDate: string;
+  endDate: string;
   quantity: number;
   unit: HKUnit;
 };
@@ -240,6 +247,42 @@ export enum HKFitzpatrickSkinType {
   VI = 6,
 }
 
+export enum HKStatisticsOptions {
+  cumulativeSum = 'cumulativeSum',
+  discreteAverage = 'discreteAverage',
+  discreteMax = 'discreteMax',
+  discreteMin = 'discreteMin',
+  discreteMostRecent = 'discreteMostRecent',
+  duration = 'duration',
+  mostRecent = 'mostRecent',
+  separateBySource = 'separateBySource',
+}
+
+export type Quantity = {
+  unit: HKUnit;
+  quantity: number;
+};
+
+export type StatsResponseRaw = {
+  averageQuantity?: Quantity;
+  maximumQuantity?: Quantity;
+  minimumQuantity?: Quantity;
+  sumQuantity?: Quantity;
+  mostRecentQuantity?: Quantity;
+  mostRecentQuantityDateInterval?: { from: string; to: string };
+  duration?: Quantity;
+};
+
+export type StatsResponse = {
+  averageQuantity?: Quantity;
+  maximumQuantity?: Quantity;
+  minimumQuantity?: Quantity;
+  sumQuantity?: Quantity;
+  mostRecentQuantity?: Quantity;
+  mostRecentQuantityDateInterval?: { from: Date; to: Date };
+  duration?: Quantity;
+};
+
 export type TypeToUnitMapping = {
   [key in HKQuantityTypeIdentifier]: HKUnit;
 };
@@ -251,11 +294,20 @@ export type ReactNativeHealthkit = {
   getBloodType(): Promise<HKBloodType>;
   getDateOfBirth(): Promise<Date>;
   getBiologicalSex(): Promise<HKBiologicalSex>;
-
+  getWheelchairUse: () => Promise<HKWheelchairUse>;
   getFitzpatrickSkinType(): Promise<HKFitzpatrickSkinType>;
+  getStatsBetween: (
+    identifier: HKQuantityTypeIdentifier,
+    options: HKStatisticsOptions[],
+    from: Date,
+    to?: Date,
+    unit?: HKUnit
+  ) => Promise<StatsResponse>;
+
   authorizationStatusFor(
     type: HKQuantityTypeIdentifier | HKCharacteristicTypeIdentifier
   ): Promise<boolean>;
+
   getRequestStatusForAuthorization(
     read: (HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier)[],
     write?: HKQuantityTypeIdentifier[]

@@ -12,18 +12,21 @@ import type {
   HKAuthorizationRequestStatus,
   QuantitySampleRaw,
   QuantitySample,
+  TypeToUnitMapping,
+  StatsResponseRaw,
+  HKStatisticsOptions,
+  HKWheelchairUse,
 } from './types';
-
-type TypeToUnitMapping = {
-  [key in HKQuantityTypeIdentifier]: HKUnit;
-};
 
 type ReactNativeHealthkitTypeNative = {
   isHealthDataAvailable(): Promise<boolean>;
   getBloodType(): Promise<HKBloodType>;
-  getDateOfBirth(): Promise<number>;
+  getDateOfBirth(): Promise<string>;
   getBiologicalSex(): Promise<HKBiologicalSex>;
   getFitzpatrickSkinType(): Promise<HKFitzpatrickSkinType>;
+  getWheelchairUse: () => Promise<HKWheelchairUse>;
+  observe(identifier: HKQuantityTypeIdentifier, unit: HKUnit): Promise<string>;
+  stopObserving(queryId: string): Promise<boolean>;
   authorizationStatusFor(
     type: HKQuantityTypeIdentifier | HKCharacteristicTypeIdentifier
   ): Promise<boolean>;
@@ -35,8 +38,6 @@ type ReactNativeHealthkitTypeNative = {
     write: WritePermssions | {},
     read: ReadPermssions | {}
   ): Promise<boolean>;
-  observe(identifier: HKQuantityTypeIdentifier, unit: HKUnit): Promise<string>;
-  stopObserving(queryId: string): Promise<boolean>;
   save: (
     identifier: HKQuantityTypeIdentifier,
     unit: HKUnit,
@@ -56,6 +57,13 @@ type ReactNativeHealthkitTypeNative = {
     from: string,
     to: string
   ) => Promise<QuantitySampleRaw[]>;
+  getStatsBetween: (
+    identifier: HKQuantityTypeIdentifier,
+    unit: HKUnit,
+    from: string,
+    to: string,
+    options: HKStatisticsOptions[]
+  ) => Promise<StatsResponseRaw>;
   getPreferredUnits: (
     identifiers: [HKQuantityTypeIdentifier]
   ) => Promise<TypeToUnitMapping>;
@@ -68,15 +76,11 @@ const getPreferredUnit = async (type: HKQuantityTypeIdentifier) => {
   return unit[type];
 };
 
-const iosTimestampToDate = (timestamp: number): Date => {
-  return new Date(timestamp * 1000);
-};
-
 const deserializeSample = (sample: QuantitySampleRaw): QuantitySample => {
   return {
     ...sample,
-    startDate: iosTimestampToDate(sample.startDate),
-    endDate: iosTimestampToDate(sample.endDate),
+    startDate: new Date(sample.startDate),
+    endDate: new Date(sample.endDate),
   };
 };
 
@@ -96,6 +100,40 @@ const getLastSamples = async (
 
 const Healthkit: ReactNativeHealthkit = {
   ...Native,
+  getStatsBetween: async (
+    identifier: HKQuantityTypeIdentifier,
+    options: HKStatisticsOptions[],
+    from: Date,
+    to?: Date,
+    unit?: HKUnit
+  ) => {
+    const actualUnit = unit || (await getPreferredUnit(identifier));
+    const toDate = to || new Date();
+    const {
+      mostRecentQuantityDateInterval,
+      ...rawResponse
+    } = await Native.getStatsBetween(
+      identifier,
+      actualUnit,
+      from.toISOString(),
+      toDate.toISOString(),
+      options
+    );
+
+    const response = {
+      ...rawResponse,
+      ...(mostRecentQuantityDateInterval
+        ? {
+            mostRecentQuantityDateInterval: {
+              from: new Date(mostRecentQuantityDateInterval.from),
+              to: new Date(mostRecentQuantityDateInterval.to),
+            },
+          }
+        : {}),
+    };
+
+    return response;
+  },
   getRequestStatusForAuthorization: (read, write = []) => {
     const readPermissions = read.reduce((obj, cur) => {
       return { ...obj, [cur]: true };
@@ -110,6 +148,7 @@ const Healthkit: ReactNativeHealthkit = {
       readPermissions
     );
   },
+
   requestAuthorization: (
     read: (HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier)[],
     write: HKQuantityTypeIdentifier[] = []
@@ -127,7 +166,7 @@ const Healthkit: ReactNativeHealthkit = {
   getPreferredUnit,
   getDateOfBirth: async () => {
     const dateOfBirth = await Native.getDateOfBirth();
-    return new Date(dateOfBirth * 1000);
+    return new Date(dateOfBirth);
   },
   getSamplesBetween: async (
     identifier: HKQuantityTypeIdentifier,

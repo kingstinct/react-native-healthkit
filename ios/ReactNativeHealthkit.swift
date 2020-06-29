@@ -9,12 +9,15 @@ let HKCharacteristicTypeIdentifier_PREFIX = "HKCharacteristicTypeIdentifier"
 let HKQuantityTypeIdentifier_PREFIX = "HKQuantityTypeIdentifier"
 
 @objc(ReactNativeHealthkit)
+@available(iOS 10.0, *)
 class ReactNativeHealthkit: RCTEventEmitter {
     var _store : HKHealthStore?
     var _runningQueries : Dictionary<String, HKQuery>;
+    var _dateFormatter : ISO8601DateFormatter;
     
     override init() {
         self._runningQueries = Dictionary<String, HKQuery>();
+        self._dateFormatter = ISO8601DateFormatter();
         
         if(HKHealthStore.isHealthDataAvailable()){
             self._store = HKHealthStore.init();
@@ -126,8 +129,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
     
     func serializeSample(sample: HKSample, unitString: String, typeIdentifier: String) -> NSDictionary {
-        let endDate = sample.endDate.timeIntervalSince1970;
-        let startDate = sample.startDate.timeIntervalSince1970;
+        let endDate = _dateFormatter.string(from: sample.endDate)
+        let startDate = _dateFormatter.string(from: sample.startDate);
         let defaultDictionary: NSDictionary = [
             "endDate": endDate,
             "startDate": startDate,
@@ -171,7 +174,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         
         do {
             let dateOfBirth = try store.dateOfBirth();
-            resolve(dateOfBirth.timeIntervalSince1970);
+            resolve(_dateFormatter.string(from: dateOfBirth));
         } catch {
             reject(GENERIC_ERROR, error.localizedDescription, error);
         }
@@ -200,6 +203,22 @@ class ReactNativeHealthkit: RCTEventEmitter {
         do {
             let fitzpatrickSkinType = try store.fitzpatrickSkinType();
             resolve(fitzpatrickSkinType.skinType.rawValue);
+        } catch {
+            reject(GENERIC_ERROR, error.localizedDescription, error);
+        }
+    }
+    
+    
+    @available(iOS 10.0, *)
+    @objc(getWheelchairUse:withRejecter:)
+    func getWheelchairUse(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+        }
+        
+        do {
+            let wheelchairUse = try store.wheelchairUse();
+            resolve(wheelchairUse.wheelchairUse.rawValue);
         } catch {
             reject(GENERIC_ERROR, error.localizedDescription, error);
         }
@@ -277,11 +296,13 @@ class ReactNativeHealthkit: RCTEventEmitter {
                     serializedSamples.add(serialized)
                 }
                 
-                DispatchQueue.main.async {
-                    self.sendEvent(withName: "onQueryUpdated", body: [
-                        "typeIdentifier": typeIdentifier,
-                        "samples": serializedSamples
-                    ]);
+                if(serializedSamples.count > 0){
+                    DispatchQueue.main.async {
+                        self.sendEvent(withName: "onQueryUpdated", body: [
+                            "typeIdentifier": typeIdentifier,
+                            "samples": serializedSamples
+                        ]);
+                    }
                 }
                 
                 return;
@@ -326,6 +347,114 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
     @objc static override func requiresMainQueueSetup() -> Bool {
         return false
+    }
+    
+    @objc(getStatsBetween:unitString:from:to:options:resolve:reject:)
+    func getStatsBetween(typeIdentifier: String, unitString: String, from: Date, to: Date, options: NSArray, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+        }
+        
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
+        guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+        }
+        
+        let predicate = HKQuery.predicateForSamples(withStart: from, end: to, options: HKQueryOptions.strictEndDate)
+        
+        var opts = HKStatisticsOptions.init();
+        
+        for o in options {
+            let str = o as! String;
+            if(str == "cumulativeSum"){
+                opts.insert(HKStatisticsOptions.cumulativeSum)
+            }
+            else if(str == "discreteAverage"){
+                opts.insert(HKStatisticsOptions.discreteAverage)
+            }else if(str == "discreteMax"){
+                opts.insert(HKStatisticsOptions.discreteMax)
+            }
+            else if(str == "discreteMin"){
+                opts.insert(HKStatisticsOptions.discreteMin)
+            }
+            if #available(iOS 12, *) {
+                    if(str == "discreteMostRecent"){
+                        opts.insert(HKStatisticsOptions.discreteMostRecent)
+                    }
+            }
+            if #available(iOS 13, *) {
+                if(str == "duration"){
+                    opts.insert(HKStatisticsOptions.duration)
+                }
+                if(str == "mostRecent"){
+                    opts.insert(HKStatisticsOptions.mostRecent)
+                }
+            }
+            
+            if(str == "separateBySource"){
+                opts.insert(HKStatisticsOptions.separateBySource)
+            }
+        }
+        
+        let query = HKStatisticsQuery.init(quantityType: quantityType, quantitySamplePredicate: predicate, options: opts) { (query, stats: HKStatistics?, error: Error?) in
+            if let gottenStats = stats {
+                var dic = Dictionary<String, Any>()
+                let unit = HKUnit.init(from: unitString);
+                if let averageQuantity = gottenStats.averageQuantity() {
+                    dic.updateValue([
+                        "unit": unit.unitString,
+                        "quantity": averageQuantity.doubleValue(for: unit),
+                    ], forKey: "averageQuantity")
+                }
+                if let maximumQuantity = gottenStats.maximumQuantity() {
+                    dic.updateValue([
+                        "unit": unit.unitString,
+                        "quantity": maximumQuantity.doubleValue(for: unit),
+                    ], forKey: "maximumQuantity")
+                }
+                if let minimumQuantity = gottenStats.minimumQuantity() {
+                    dic.updateValue([
+                        "unit": unit.unitString,
+                        "quantity": minimumQuantity.doubleValue(for: unit),
+                    ], forKey: "minimumQuantity")
+                }
+                if let sumQuantity = gottenStats.sumQuantity() {
+                    dic.updateValue([
+                        "unit": unit.unitString,
+                        "quantity": sumQuantity.doubleValue(for: unit),
+                    ], forKey: "sumQuantity")
+                }
+                if #available(iOS 12, *) {
+                    if let mostRecent = gottenStats.mostRecentQuantity() {
+                        dic.updateValue([
+                            "unit": unit.unitString,
+                            "quantity": mostRecent.doubleValue(for: unit),
+                        ], forKey: "mostRecentQuantity")
+                    }
+                    
+                    
+                    if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
+                        dic.updateValue([
+                            "start": self._dateFormatter.string(from: mostRecentDateInterval.start),
+                            "end": self._dateFormatter.string(from: mostRecentDateInterval.end),
+                        ], forKey: "mostRecentQuantityDateInterval")
+                    }
+                }
+                if #available(iOS 13, *) {
+                    let durationUnit = HKUnit.second();
+                    if let duration = gottenStats.duration() {
+                        dic.updateValue([
+                            "unit": durationUnit.unitString,
+                            "quantity": duration.doubleValue(for: durationUnit),
+                        ], forKey: "duration")
+                    }
+                }
+                
+                resolve(dic);
+            }
+        }
+        
+        store.execute(query);
     }
     
     @objc(getSamplesBetween:unitString:from:to:resolve:reject:)
