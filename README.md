@@ -1,12 +1,6 @@
 # @kingstinct/react-native-healthkit
 
-React Native bindings for HealthKit. Built natively for TypeScript and mapping as much as possible directly to how Healthkit serializes and introduce as little magic on top as possible - which makes it easy to keep it up to date with all current healthkit features - and since it maps fairly directly the official documentation will make sense as well.
-
-* With TypeScript bindings
-* Promises all the way
-* Maps as directly to Healthkit as possible - uses native Healthkit serialized formats where applicable.
-* Providing sensible defaults. Read units based on devices preferred unit by default.
-* React hook support with `useLastSample`
+React Native bindings for HealthKit with full TypeScript and Promise support. Keeping TypeScript mappings as close as possible to HealthKit - both in regards to naming and serialization. This will make it easier to keep this library up-to-date with HealthKit as well as browsing the official documentation (and if something - metadata properties for example - is not typed it will still be accessible).
 
 ## Installation
 
@@ -31,14 +25,14 @@ Since this package is using Swift you might also need to add a bridging header i
 ## Usage
 
 ```TypeScript
-  import HealthKit from '@kingstinct/react-native-healthkit';
+  import HealthKit, { HKUnit, HKQuantityTypeIdentifier, HKInsulinDeliveryReason, HKCategoryTypeIdentifier } from '@kingstinct/react-native-healthkit';
 
   const isAvailable = await HealthKit.isHealthDataAvailable();
 
   /* Read latest sample of any data */
   await HealthKit.requestAuthorization([HKQuantityTypeIdentifier.bodyFatPercentage]); // request read permission for bodyFatPercentage
 
-  const { quantity, unit, startDate, endDate } = await HealthKit.getLastSample(HKQuantityTypeIdentifier.bodyFatPercentage); // read latest sample
+  const { quantity, unit, startDate, endDate } = await HealthKit.getMostRecentQuantitySample(HKQuantityTypeIdentifier.bodyFatPercentage); // read latest sample
   
   console.log(quantity) // 17.5
   console.log(unit) // %
@@ -46,18 +40,31 @@ Since this package is using Swift you might also need to add a bridging header i
   /* Listen to data */
   await HealthKit.requestAuthorization([HKQuantityTypeIdentifier.heartRate]); // request read permission for bodyFatPercentage
 
-  const unsubscribe = HealthKit.on(HKQuantityTypeIdentifier.heartRate, (samples) => {
-    console.log(samples) // |{ quantity: 80, unit: 'count/min', ... }]
+  const unsubscribe = HealthKit.subscribeToChanges(HKQuantityTypeIdentifier.heartRate, () => {
+    // refetch whichever queries you need
   });
 
   /* write data */
-  await HealthKit.requestAuthorization([], [HKQuantityTypeIdentifier.bodyFatPercentage]); // request write permission for bodyFatPercentage
+  await HealthKit.requestAuthorization([], [HKQuantityTypeIdentifier.bloodGlucose]); // request write permission for bodyFatPercentage
 
-  await HealthKit.save(HKQuantityTypeIdentifier.bodyFatPercentage, HKUnitNonSI.Percent, 15.7); // write data
+  ReactNativeHealthkit.saveQuantitySample(
+      HKQuantityTypeIdentifier.bloodGlucose,
+      HKUnit.GlucoseMmolPerL,
+      5.5,
+      {
+        metadata: {
+          HKMetadataKeyInsulinDeliveryReason: HKInsulinDeliveryReason.basal,
+        },
+      }
+    );
 
 
-  /* useLastSample hook, always listening to latest sample */
-  const lastBodyFatSample = HealthKit.useLastSample(HKQuantityTypeIdentifier.bodyFatPercentage);
+  /* Hooks */
+  const lastBodyFatSample = HealthKit.useMostRecentQuantitySample(HKQuantityTypeIdentifier.bodyFatPercentage);
+  const lastMindfulSession = Healthkit.useMostRecentCategorySample(
+    HKCategoryTypeIdentifier.mindfulSession
+  );
+  const lastWorkout = Healthkit.useMostRecentWorkout();
 ```
 
 ## Contributing

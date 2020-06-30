@@ -138,7 +138,7 @@ function DataView() {
   );
   const lastWorkout = Healthkit.useMostRecentWorkout();
   const lastMindfulSession = Healthkit.useMostRecentCategorySample(
-    HKCategoryTypeIdentifier.HKCategoryTypeIdentifierMindfulSession
+    HKCategoryTypeIdentifier.mindfulSession
   );
 
   const [
@@ -149,7 +149,7 @@ function DataView() {
   React.useEffect(() => {
     ReactNativeHealthkit.saveQuantitySample(
       HKQuantityTypeIdentifier.bloodGlucose,
-      HKUnit.Mmol_glucose,
+      HKUnit.GlucoseMmolPerL,
       4.2,
       {
         metadata: {
@@ -253,7 +253,7 @@ const App = () => {
         HKQuantityTypeIdentifier.heartRate,
         HKQuantityTypeIdentifier.bloodGlucose,
         HKQuantityTypeIdentifier.activeEnergyBurned,
-        HKCategoryTypeIdentifier.HKCategoryTypeIdentifierMindfulSession,
+        HKCategoryTypeIdentifier.mindfulSession,
         'HKWorkoutTypeIdentifier',
       ],
       [
@@ -261,7 +261,7 @@ const App = () => {
         HKQuantityTypeIdentifier.activeEnergyBurned,
         HKQuantityTypeIdentifier.bloodGlucose,
         HKQuantityTypeIdentifier.bodyFatPercentage,
-        HKCategoryTypeIdentifier.HKCategoryTypeIdentifierMindfulSession,
+        HKCategoryTypeIdentifier.mindfulSession,
       ]
     ).then(setHasPermissions);
   }, []);

@@ -16,19 +16,19 @@ export type TypeToUnitMapping = {
 };
 
 export enum HKCategoryTypeIdentifier {
-  HKCategoryTypeIdentifierSleepAnalysis = 'HKCategoryTypeIdentifierSleepAnalysis',
-  HKCategoryTypeIdentifierAppleStandHour = 'HKCategoryTypeIdentifierAppleStandHour',
-  HKCategoryTypeIdentifierCervicalMucusQuality = 'HKCategoryTypeIdentifierCervicalMucusQuality',
-  HKCategoryTypeIdentifierOvulationTestResult = 'HKCategoryTypeIdentifierOvulationTestResult',
-  HKCategoryTypeIdentifierMenstrualFlow = 'HKCategoryTypeIdentifierMenstrualFlow',
-  HKCategoryTypeIdentifierIntermenstrualBleeding = 'HKCategoryTypeIdentifierIntermenstrualBleeding',
-  HKCategoryTypeIdentifierSexualActivity = 'HKCategoryTypeIdentifierSexualActivity',
-  HKCategoryTypeIdentifierMindfulSession = 'HKCategoryTypeIdentifierMindfulSession',
-  HKCategoryTypeIdentifierHighHeartRateEvent = 'HKCategoryTypeIdentifierHighHeartRateEvent',
-  HKCategoryTypeIdentifierLowHeartRateEvent = 'HKCategoryTypeIdentifierLowHeartRateEvent',
-  HKCategoryTypeIdentifierIrregularHeartRhythmEvent = 'HKCategoryTypeIdentifierIrregularHeartRhythmEvent',
-  HKCategoryTypeIdentifierAudioExposureEvent = 'HKCategoryTypeIdentifierAudioExposureEvent',
-  HKCategoryTypeIdentifierToothbrushingEvent = 'HKCategoryTypeIdentifierToothbrushingEvent',
+  sleepAnalysis = 'HKCategoryTypeIdentifierSleepAnalysis',
+  appleStandHour = 'HKCategoryTypeIdentifierAppleStandHour',
+  cervicalMucusQuality = 'HKCategoryTypeIdentifierCervicalMucusQuality',
+  ovulationTestResult = 'HKCategoryTypeIdentifierOvulationTestResult',
+  menstrualFlow = 'HKCategoryTypeIdentifierMenstrualFlow',
+  intermenstrualBleeding = 'HKCategoryTypeIdentifierIntermenstrualBleeding',
+  sexualActivity = 'HKCategoryTypeIdentifierSexualActivity',
+  mindfulSession = 'HKCategoryTypeIdentifierMindfulSession',
+  highHeartRateEvent = 'HKCategoryTypeIdentifierHighHeartRateEvent',
+  lowHeartRateEvent = 'HKCategoryTypeIdentifierLowHeartRateEvent',
+  irregularHeartRhythmEvent = 'HKCategoryTypeIdentifierIrregularHeartRhythmEvent',
+  audioExposureEvent = 'HKCategoryTypeIdentifierAudioExposureEvent',
+  toothbrushingEvent = 'HKCategoryTypeIdentifierToothbrushingEvent',
 }
 
 export enum HKWorkoutActivityType {
@@ -408,31 +408,31 @@ export type HKMetadataForQuantityIdentifier<
 
 export type HKCategoryValueForIdentifier<
   T extends HKCategoryTypeIdentifier
-> = T extends HKCategoryTypeIdentifier.HKCategoryTypeIdentifierCervicalMucusQuality
+> = T extends HKCategoryTypeIdentifier.cervicalMucusQuality
   ? HKCategoryValueCervicalMucusQuality
-  : T extends HKCategoryTypeIdentifier.HKCategoryTypeIdentifierMenstrualFlow
+  : T extends HKCategoryTypeIdentifier.menstrualFlow
   ? HKCategoryValueMenstrualFlow
-  : T extends HKCategoryTypeIdentifier.HKCategoryTypeIdentifierOvulationTestResult
+  : T extends HKCategoryTypeIdentifier.ovulationTestResult
   ? HKCategoryValueOvulationTestResult
-  : T extends HKCategoryTypeIdentifier.HKCategoryTypeIdentifierSleepAnalysis
+  : T extends HKCategoryTypeIdentifier.sleepAnalysis
   ? HKCategoryValueSleepAnalysis
-  : T extends HKCategoryTypeIdentifier.HKCategoryTypeIdentifierMindfulSession
+  : T extends HKCategoryTypeIdentifier.mindfulSession
   ? HKCategoryValueNotApplicable
-  : T extends HKCategoryTypeIdentifier.HKCategoryTypeIdentifierIntermenstrualBleeding
+  : T extends HKCategoryTypeIdentifier.intermenstrualBleeding
   ? HKCategoryValueNotApplicable
-  : T extends HKCategoryTypeIdentifier.HKCategoryTypeIdentifierHighHeartRateEvent
+  : T extends HKCategoryTypeIdentifier.highHeartRateEvent
   ? HKCategoryValueNotApplicable
-  : T extends HKCategoryTypeIdentifier.HKCategoryTypeIdentifierSexualActivity
+  : T extends HKCategoryTypeIdentifier.sexualActivity
   ? HKCategoryValueNotApplicable
   : number;
 
 export type HKMetadataForCategoryIdentifier<
   T extends HKCategoryTypeIdentifier
-> = T extends HKCategoryTypeIdentifier.HKCategoryTypeIdentifierSexualActivity
+> = T extends HKCategoryTypeIdentifier.sexualActivity
   ? {
       HKMetadataKeySexualActivityProtectionUsed: boolean;
     }
-  : T extends HKCategoryTypeIdentifier.HKCategoryTypeIdentifierMenstrualFlow
+  : T extends HKCategoryTypeIdentifier.menstrualFlow
   ? {
       HKMetadataKeyMenstrualCycleStart: boolean;
     }
@@ -525,7 +525,7 @@ export enum HKUnit {
   USPint = 'pt_us',
   Yard = 'yd',
 
-  Mmol_glucose = 'mmol<180.15588000005408>/l',
+  GlucoseMmolPerL = 'mmol<180.15588000005408>/l',
 }
 
 export type HKQuantitySampleRaw<
