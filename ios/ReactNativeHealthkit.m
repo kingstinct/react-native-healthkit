@@ -1,7 +1,7 @@
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
 
-@interface RCT_EXTERN_MODULE(ReactNativeHealthkit, RCTEventEmitter)
+@interface RCT_EXTERN_MODULE(ReactNativeHealthkit, RCTEventEmitter<RCTBridgeModule>)
 
 RCT_EXTERN_METHOD(isHealthDataAvailable:(RCTPromiseResolveBlock)resolve
 withRejecter:(RCTPromiseRejectBlock)reject)
@@ -18,12 +18,6 @@ RCT_EXTERN_METHOD(getRequestStatusForAuthorization:(NSDictionary)toShare
                 read:(NSDictionary)read
                 resolve:(RCTPromiseResolveBlock)resolve
                 withRejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(getLastSamples:(NSString)typeIdentifier
-                    limit:(NSInteger)limit
-                    unitString:(NSString)unitString
-                    resolve:(RCTPromiseResolveBlock)resolve
-                    reject:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(getBiologicalSex:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
@@ -46,7 +40,7 @@ resolve:(RCTPromiseResolveBlock)resolve
 reject:(RCTPromiseRejectBlock)reject)
 
 
-RCT_EXTERN_METHOD(save:(NSString)typeIdentifier
+RCT_EXTERN_METHOD(saveQuantitySample:(NSString)typeIdentifier
                   unitString:(NSString)unitString
                   value:(double)value
                   start:(NSDate)start
@@ -56,26 +50,57 @@ RCT_EXTERN_METHOD(save:(NSString)typeIdentifier
                   reject:(RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(getSamplesBetween:(NSString)typeIdentifier
-                  unitString:(NSString)unitString
+RCT_EXTERN_METHOD(subscribeToObserverQuery:(NSString)typeIdentifier
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(saveCategorySample:(NSString)typeIdentifier
+                  value:(double)value
                   start:(NSDate)start
                   end:(NSDate)end
+                  metadata:(NSDictionary)metadata
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(observe:(NSString)typeIdentifier
+RCT_EXTERN_METHOD(queryWorkoutSamples:(NSString)energyUnitString
+                  distanceUnitString:(NSString)distanceUnitString
+                  from:(NSDate)from
+                  to:(NSDate)to
+                  limit:(NSInteger)limit
+                  ascending:(BOOL)ascending
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+    
+RCT_EXTERN_METHOD(queryCategorySamples:(NSString)typeIdentifier
+                  from:(NSDate)from
+                  to:(NSDate)to
+                  limit:(NSInteger)limit
+                  ascending:(BOOL)ascending
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
+
+
+RCT_EXTERN_METHOD(queryQuantitySamples:(NSString)typeIdentifier
                   unitString:(NSString)unitString
+                  from:(NSDate)from
+                  to:(NSDate)to
+                  limit:(NSInteger)limit
+                  ascending:(BOOL)ascending
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(stopObserving:(NSString)queryId
+RCT_EXTERN_METHOD(unsubscribeQuery:(NSString)queryId
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(getStatsBetween:(NSString)typeIdentifier
+RCT_EXTERN_METHOD(queryStatisticsForQuantity:(NSString)typeIdentifier
                   unitString:(NSString)unitString
                   from:(NSDate)from
                   to:(NSDate)to

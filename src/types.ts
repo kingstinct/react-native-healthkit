@@ -1,357 +1,241 @@
-// Straight mapping to https://developer.apple.com/documentation/healthkit/hkcharacteristictypeidentifier
-export enum HKCharacteristicTypeIdentifier {
-  fitzpatrickSkinType = 'HKCharacteristicTypeIdentifierFitzpatrickSkinType',
-  biologicalSex = 'HKCharacteristicTypeIdentifierBiologicalSex',
-  bloodType = 'HKCharacteristicTypeIdentifierBloodType',
-  dateOfBirth = 'HKCharacteristicTypeIdentifierDateOfBirth',
-  wheelchairUse = 'HKCharacteristicTypeIdentifierWheelchairUse',
+import type {
+  HKUnit,
+  HKQuantityTypeIdentifier,
+  HKBloodType,
+  HKBiologicalSex,
+  HKWheelchairUse,
+  HKFitzpatrickSkinType,
+  HKStatisticsOptions,
+  HKCharacteristicTypeIdentifier,
+  HKSampleTypeIdentifier,
+  HKCategoryValueForIdentifier,
+  HKCategoryTypeIdentifier,
+  HKAuthorizationRequestStatus,
+  HKMetadataForCategoryIdentifier,
+  HKQuantitySampleRaw,
+  QueryStatisticsResponseRaw,
+  HKWorkoutRaw,
+  HKCategorySampleRaw,
+  HKUnitSI,
+  HKUnitSIPrefix,
+  HKMetadataForQuantityIdentifier,
+} from './native-types';
+
+export interface QueryWorkoutsOptions<
+  TEnergy extends HKUnit,
+  TDistance extends HKUnit
+> extends GenericQueryOptions {
+  energyUnit?: TEnergy;
+  distanceUnit?: TDistance;
 }
 
-// Unit types are a straight mapping from here https://developer.apple.com/documentation/healthkit/hkunit/1615733-init
-export enum HKUnitSIPrefix {
-  Pico = 'p',
-  Nano = 'n',
-  Micro = 'mc',
-  Milli = 'm',
-  Centi = 'c',
-  Deci = 'd',
-  Deca = 'da',
-  Hecto = 'h',
-  Kilo = 'k',
-  Mega = 'M',
-  Giga = 'G',
-  Tera = 'T',
-}
-
-// Maps directly to https://developer.apple.com/documentation/healthkit/hkwheelchairuse
-export enum HKWheelchairUse {
-  notSet = 0,
-  no = 1,
-  yes = 2,
-}
-
-export enum HKUnitSI {
-  Grams = 'g',
-  Joules = 'J',
-  Kelvin = 'K',
-  Liters = 'l',
-  Meters = 'm',
-  Pascals = 'Pa',
-  Seconds = 's',
-  Siemens = 'S',
-}
-
-export enum HKUnitNonSI {
-  Atmospheres = 'atm',
-  CentimetersOfWater = 'cmAq',
-  Count = 'count',
-  Days = 'd',
-  DecibelHearingLevel = 'dBHL',
-  DecibelSoundPressureLevel = 'dBASPL',
-  DegreesCelsius = 'degC',
-  DegreesFahrenheit = 'degF',
-  Feet = 'ft',
-  Hertz = 'Hz',
-  Hours = 'hr',
-  ImperialCup = 'cup_imp',
-  ImperialFluidOunces = 'fl_oz_imp',
-  ImperialPint = 'pt_imp',
-  Inches = 'in',
-  InternationalUnit = 'IU',
-  Kilocalories = 'kcal',
-  LargeCalories = 'Cal',
-  Miles = 'mi',
-  MillimetersOfMercury = 'mmHg',
-  Minutes = 'min',
-  Ounces = 'oz',
-  Percent = '%',
-  Pounds = 'lb',
-  SmallCalories = 'cal',
-  Stones = 'st',
-  USCup = 'cup_us',
-  USFluidOunces = 'fl_oz_us',
-  USPint = 'pt_us',
-  Yard = 'yd',
-}
-
-export enum HKOtherUnit {
-  Mmol_glucose = 'mol<180.15588000005408>',
-}
-
-export type HKUnit = HKUnitSI | HKUnitNonSI | HKOtherUnit;
-
-export const SIUnitWithPrefix = (prefix: HKUnitSIPrefix, unit: HKUnitSI) => {
-  return `${prefix}${unit}` as HKUnit;
-};
-
-export type QuantitySampleRaw = {
-  startDate: string;
-  endDate: string;
-  quantity: number;
-  unit: HKUnit;
-};
-
-export type QuantitySample = {
+export interface HKCategorySample<
+  T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier
+> extends Omit<HKCategorySampleRaw<T>, 'startDate' | 'endDate'> {
   startDate: Date;
   endDate: Date;
-  quantity: number;
-  unit: HKUnit;
+}
+
+export type GenericQueryOptions = {
+  from?: Date;
+  to?: Date;
+  limit?: Number;
+  ascending?: boolean;
 };
 
-// Straight mapping to https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier
-export enum HKQuantityTypeIdentifier {
-  bodyMassIndex = 'HKQuantityTypeIdentifierBodyMassIndex',
-  bodyFatPercentage = 'HKQuantityTypeIdentifierBodyFatPercentage', // Scalar(Percent, 0.0 - 1.0),  Discrete
-  height = 'HKQuantityTypeIdentifierHeight', // Length,                      Discrete
-  bodyMass = 'HKQuantityTypeIdentifierBodyMass', // Mass,                        Discrete
-  leanBodyMass = 'HKQuantityTypeIdentifierLeanBodyMass', // Mass,                        Discrete
-
-  waistCircumference = 'HKQuantityTypeIdentifierWaistCircumference', // Length,                      Discrete
-  // Fitness
-  stepCount = 'HKQuantityTypeIdentifierStepCount', // Scalar(Count),               Cumulative
-  distanceWalkingRunning = 'HKQuantityTypeIdentifierDistanceWalkingRunning', // Length,                      Cumulative
-  distanceCycling = 'HKQuantityTypeIdentifierDistanceCycling', // Length,                      Cumulative
-  distanceWheelchair = 'HKQuantityTypeIdentifierDistanceWheelchair', // Length,                      Cumulative
-  basalEnergyBurned = 'HKQuantityTypeIdentifierBasalEnergyBurned', // Energy,                      Cumulative
-  activeEnergyBurned = 'HKQuantityTypeIdentifierActiveEnergyBurned', // Energy,                      Cumulative
-  flightsClimbed = 'HKQuantityTypeIdentifierFlightsClimbed', // Scalar(Count),               Cumulative
-  nikeFuel = 'HKQuantityTypeIdentifierNikeFuel', // Scalar(Count),               Cumulative
-  appleExerciseTime = 'HKQuantityTypeIdentifierAppleExerciseTime', // Time                         Cumulative
-  pushCount = 'HKQuantityTypeIdentifierPushCount', // Scalar(Count),               Cumulative
-  distanceSwimming = 'HKQuantityTypeIdentifierDistanceSwimming', // Length,                      Cumulative
-  swimmingStrokeCount = 'HKQuantityTypeIdentifierSwimmingStrokeCount', // Scalar(Count),               Cumulative
-  vo2Max = 'HKQuantityTypeIdentifierVo2Max', // ml/(kg*min)                  Discrete
-  distanceDownhillSnowSports = 'HKQuantityTypeIdentifierDistanceDownhillSnowSports', // Length,                      Cumulative
-
-  appleStandTime = 'HKQuantityTypeIdentifierAppleStandTime', // Time,                        Cumulative
-  // Vitals
-  heartRate = 'HKQuantityTypeIdentifierHeartRate', // Scalar(Count)/Time,          Discrete
-  bodyTemperature = 'HKQuantityTypeIdentifierBodyTemperature', // Temperature,                 Discrete
-  basalBodyTemperature = 'HKQuantityTypeIdentifierBasalBodyTemperature', // Basal Body Temperature,      Discrete
-  bloodPressureSystolic = 'HKQuantityTypeIdentifierBloodPressureSystolic', // Pressure,                    Discrete
-  bloodPressureDiastolic = 'HKQuantityTypeIdentifierBloodPressureDiastolic', // Pressure,                    Discrete
-  respiratoryRate = 'HKQuantityTypeIdentifierRespiratoryRate', // Scalar(Count)/Time,          Discrete
-  // Beats per minute estimate of a user's lowest heart rate while at rest
-  restingHeartRate = 'HKQuantityTypeIdentifierRestingHeartRate', // Scalar(Count)/Time,          Discrete
-  // Average heartbeats per minute captured by an Apple Watch while a user is walking
-  walkingHeartRateAverage = 'HKQuantityTypeIdentifierWalkingHeartRateAverage', // Scalar(Count)/Time,          Discrete
-  // The standard deviation of heart beat-to-beat intevals (Standard Deviation of Normal to Normal)
-
-  heartRateVariabilitySDNN = 'HKQuantityTypeIdentifierHeartRateVariabilitySDNN', // Time (ms),                   Discrete
-  // Results
-  oxygenSaturation = 'HKQuantityTypeIdentifierOxygenSaturation', // Scalar (Percent, 0.0 - 1.0,  Discrete
-  peripheralPerfusionIndex = 'HKQuantityTypeIdentifierPeripheralPerfusionIndex', // Scalar(Percent, 0.0 - 1.0),  Discrete
-  bloodGlucose = 'HKQuantityTypeIdentifierBloodGlucose', // Mass/Volume,                 Discrete
-  numberOfTimesFallen = 'HKQuantityTypeIdentifierNumberOfTimesFallen', // Scalar(Count),               Cumulative
-  electrodermalActivity = 'HKQuantityTypeIdentifierElectrodermalActivity', // Conductance,                 Discrete
-  inhalerUsage = 'HKQuantityTypeIdentifierInhalerUsage', // Scalar(Count),               Cumulative
-  insulinDelivery = 'HKQuantityTypeIdentifierInsulinDelivery', // Pharmacology (IU)            Cumulative
-  bloodAlcoholContent = 'HKQuantityTypeIdentifierBloodAlcoholContent', // Scalar(Percent, 0.0 - 1.0),  Discrete
-  forcedVitalCapacity = 'HKQuantityTypeIdentifierForcedVitalCapacity', // Volume,                      Discrete
-  forcedExpiratoryVolume1 = 'HKQuantityTypeIdentifierForcedExpiratoryVolume1', // Volume,                      Discrete
-  peakExpiratoryFlowRate = 'HKQuantityTypeIdentifierPeakExpiratoryFlowRate', // Volume/Time,                 Discrete
-  environmentalAudioExposure = 'HKQuantityTypeIdentifierEnvironmentalAudioExposure', // Pressure,                    Cumulative
-
-  headphoneAudioExposure = 'HKQuantityTypeIdentifierHeadphoneAudioExposure', // Pressure,                    Cumulative
-  // Nutrition
-  dietaryFatTotal = 'HKQuantityTypeIdentifierDietaryFatTotal', // Mass,   Cumulative
-  dietaryFatPolyunsaturated = 'HKQuantityTypeIdentifierDietaryFatPolyunsaturated', // Mass,   Cumulative
-  dietaryFatMonounsaturated = 'HKQuantityTypeIdentifierDietaryFatMonounsaturated', // Mass,   Cumulative
-  dietaryFatSaturated = 'HKQuantityTypeIdentifierDietaryFatSaturated', // Mass,   Cumulative
-  dietaryCholesterol = 'HKQuantityTypeIdentifierDietaryCholesterol', // Mass,   Cumulative
-  dietarySodium = 'HKQuantityTypeIdentifierDietarySodium', // Mass,   Cumulative
-  dietaryCarbohydrates = 'HKQuantityTypeIdentifierDietaryCarbohydrates', // Mass,   Cumulative
-  dietaryFiber = 'HKQuantityTypeIdentifierDietaryFiber', // Mass,   Cumulative
-  dietarySugar = 'HKQuantityTypeIdentifierDietarySugar', // Mass,   Cumulative
-  dietaryEnergyConsumed = 'HKQuantityTypeIdentifierDietaryEnergyConsumed', // Energy, Cumulative
-  dietaryProtein = 'HKQuantityTypeIdentifierDietaryProtein', // Mass,   Cumulative
-
-  dietaryVitaminA = 'HKQuantityTypeIdentifierDietaryVitaminA', // Mass, Cumulative
-  dietaryVitaminB6 = 'HKQuantityTypeIdentifierDietaryVitaminB6', // Mass, Cumulative
-  dietaryVitaminB12 = 'HKQuantityTypeIdentifierDietaryVitaminB12', // Mass, Cumulative
-  dietaryVitaminC = 'HKQuantityTypeIdentifierDietaryVitaminC', // Mass, Cumulative
-  dietaryVitaminD = 'HKQuantityTypeIdentifierDietaryVitaminD', // Mass, Cumulative
-  dietaryVitaminE = 'HKQuantityTypeIdentifierDietaryVitaminE', // Mass, Cumulative
-  dietaryVitaminK = 'HKQuantityTypeIdentifierDietaryVitaminK', // Mass, Cumulative
-  dietaryCalcium = 'HKQuantityTypeIdentifierDietaryCalcium', // Mass, Cumulative
-  dietaryIron = 'HKQuantityTypeIdentifierDietaryIron', // Mass, Cumulative
-  dietaryThiamin = 'HKQuantityTypeIdentifierDietaryThiamin', // Mass, Cumulative
-  dietaryRiboflavin = 'HKQuantityTypeIdentifierDietaryRiboflavin', // Mass, Cumulative
-  dietaryNiacin = 'HKQuantityTypeIdentifierDietaryNiacin', // Mass, Cumulative
-  dietaryFolate = 'HKQuantityTypeIdentifierDietaryFolate', // Mass, Cumulative
-  dietaryBiotin = 'HKQuantityTypeIdentifierDietaryBiotin', // Mass, Cumulative
-  dietaryPantothenicAcid = 'HKQuantityTypeIdentifierDietaryPantothenicAcid', // Mass, Cumulative
-  dietaryPhosphorus = 'HKQuantityTypeIdentifierDietaryPhosphorus', // Mass, Cumulative
-  dietaryIodine = 'HKQuantityTypeIdentifierDietaryIodine', // Mass, Cumulative
-  dietaryMagnesium = 'HKQuantityTypeIdentifierDietaryMagnesium', // Mass, Cumulative
-  dietaryZinc = 'HKQuantityTypeIdentifierDietaryZinc', // Mass, Cumulative
-  dietarySelenium = 'HKQuantityTypeIdentifierDietarySelenium', // Mass, Cumulative
-  dietaryCopper = 'HKQuantityTypeIdentifierDietaryCopper', // Mass, Cumulative
-  dietaryManganese = 'HKQuantityTypeIdentifierDietaryManganese', // Mass, Cumulative
-  dietaryChromium = 'HKQuantityTypeIdentifierDietaryChromium', // Mass, Cumulative
-  dietaryMolybdenum = 'HKQuantityTypeIdentifierDietaryMolybdenum', // Mass, Cumulative
-  dietaryChloride = 'HKQuantityTypeIdentifierDietaryChloride', // Mass, Cumulative
-  dietaryPotassium = 'HKQuantityTypeIdentifierDietaryPotassium', // Mass, Cumulative
-  dietaryCaffeine = 'HKQuantityTypeIdentifierDietaryCaffeine', // Mass, Cumulative
-  dietaryWater = 'HKQuantityTypeIdentifierDietaryWater', // Volume, Cumulative
-
-  uvExposure = 'HKQuantityTypeIdentifierUvExposure', // Scalar (Count), Discrete
+export interface HKWorkout<
+  TEnergy extends HKUnit = HKUnit,
+  TDistance extends HKUnit = HKUnit
+> extends Omit<HKWorkoutRaw<TEnergy, TDistance>, 'startDate' | 'endDate'> {
+  startDate: Date;
+  endDate: Date;
 }
 
-export type WritePermssions = {
-  [key in HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier]: boolean;
-};
-
-export type ReadPermssions = {
-  [key in HKQuantityTypeIdentifier]: boolean;
-};
-
-export enum HKAuthorizationRequestStatus {
-  unknown = 0,
-  shouldRequest = 1,
-  unnecessary = 2,
+export interface HKQuantitySample<
+  TIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
+  TUnit extends HKUnit = HKUnit
+>
+  extends Omit<
+    HKQuantitySampleRaw<TUnit, TIdentifier>,
+    'startDate' | 'endDate'
+  > {
+  startDate: Date;
+  endDate: Date;
 }
 
-export enum HKBloodType {
-  notSet = 0,
-  aPositive = 1,
-  aNegative = 2,
-  bPositive = 3,
-  bNegative = 4,
-  abPositive = 5,
-  abNegative = 6,
-  oPositive = 7,
-  oNegative = 8,
-}
-
-export enum HKBiologicalSex {
-  notSet = 0,
-  female = 1,
-  male = 2,
-  other = 3,
-}
-
-export enum HKFitzpatrickSkinType {
-  notSet = 0,
-
-  I = 1,
-
-  II = 2,
-
-  III = 3,
-
-  IV = 4,
-
-  V = 5,
-
-  VI = 6,
-}
-
-export enum HKStatisticsOptions {
-  cumulativeSum = 'cumulativeSum',
-  discreteAverage = 'discreteAverage',
-  discreteMax = 'discreteMax',
-  discreteMin = 'discreteMin',
-  discreteMostRecent = 'discreteMostRecent',
-  duration = 'duration',
-  mostRecent = 'mostRecent',
-  separateBySource = 'separateBySource',
-}
-
-export type Quantity = {
-  unit: HKUnit;
-  quantity: number;
-};
-
-export type StatsResponseRaw = {
-  averageQuantity?: Quantity;
-  maximumQuantity?: Quantity;
-  minimumQuantity?: Quantity;
-  sumQuantity?: Quantity;
-  mostRecentQuantity?: Quantity;
-  mostRecentQuantityDateInterval?: { from: string; to: string };
-  duration?: Quantity;
-};
-
-export type StatsResponse = {
-  averageQuantity?: Quantity;
-  maximumQuantity?: Quantity;
-  minimumQuantity?: Quantity;
-  sumQuantity?: Quantity;
-  mostRecentQuantity?: Quantity;
+export interface QueryStatisticsResponse<T extends HKUnit = HKUnit>
+  extends Omit<
+    QueryStatisticsResponseRaw<T>,
+    'mostRecentQuantityDateInterval'
+  > {
   mostRecentQuantityDateInterval?: { from: Date; to: Date };
-  duration?: Quantity;
-};
-
-export type TypeToUnitMapping = {
-  [key in HKQuantityTypeIdentifier]: HKUnit;
-};
+}
 
 type UnsubscribeFunction = () => Promise<boolean>;
 
+export type IsHealthDataAvailableFn = () => Promise<boolean>;
+
+export type GetBloodTypeFn = () => Promise<HKBloodType>;
+
+export type GetDateOfBirthFn = () => Promise<Date>;
+export type GetBiologicalSexFn = () => Promise<HKBiologicalSex>;
+export type GetWheelchairUseFn = () => Promise<HKWheelchairUse>;
+export type GetFitzpatrickSkinTypeFn = () => Promise<HKFitzpatrickSkinType>;
+
+export type QueryStatisticsForQuantityFn = <TUnit extends HKUnit>(
+  identifier: HKQuantityTypeIdentifier,
+  options: HKStatisticsOptions[],
+  from: Date,
+  to?: Date,
+  unit?: TUnit
+) => Promise<QueryStatisticsResponse<TUnit>>;
+
+export type QueryWorkoutsFn = <
+  TEnergy extends HKUnit,
+  TDistance extends HKUnit
+>(
+  options: QueryWorkoutsOptions<TEnergy, TDistance>
+) => Promise<HKWorkout<TEnergy, TDistance>[]>;
+
+export type AuthorizationStatusForFn = (
+  type: HKSampleTypeIdentifier | HKCharacteristicTypeIdentifier
+) => Promise<boolean>;
+
+export type QueryCategorySamplesFn = <T extends HKCategoryTypeIdentifier>(
+  identifier: T,
+  options: GenericQueryOptions
+) => Promise<HKCategorySample<T>[]>;
+
+export type GetRequestStatusForAuthorizationFn = (
+  read: (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
+  write?: HKSampleTypeIdentifier[]
+) => Promise<HKAuthorizationRequestStatus>;
+
+export type RequestAuthorizationFn = (
+  read: (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
+  write?: HKSampleTypeIdentifier[]
+) => Promise<boolean>;
+
+export type SaveQuantitySampleFn = <TUnit extends HKQuantityTypeIdentifier>(
+  identifier: TUnit,
+  unit: HKUnit,
+  value: number,
+  options?: {
+    start?: Date;
+    end?: Date;
+    metadata?: HKMetadataForQuantityIdentifier<TUnit>;
+  }
+) => Promise<boolean>;
+
+export type QueryQuantitySamplesFn = <
+  TIdentifier extends HKQuantityTypeIdentifier,
+  TUnit extends HKUnit = HKUnit
+>(
+  identifier: TIdentifier,
+  options: GenericQueryOptions & { unit?: TUnit }
+) => Promise<HKQuantitySample<TIdentifier, TUnit>[]>;
+
+export type SubscribeToChangesFn = (
+  identifier: HKSampleTypeIdentifier,
+  callback: () => void
+) => Promise<UnsubscribeFunction>;
+
+export type SaveCategorySampleFn = <T extends HKCategoryTypeIdentifier>(
+  identifier: T,
+  value: HKCategoryValueForIdentifier<T>,
+  options?: {
+    start?: Date;
+    end?: Date;
+    metadata?: HKMetadataForCategoryIdentifier<T>;
+  }
+) => Promise<boolean>;
+
+export type GetMostRecentCategorySampleFn = <
+  T extends HKCategoryTypeIdentifier
+>(
+  identifier: T
+) => Promise<HKCategorySample<T> | null>;
+
+export type MostRecentCategorySampleHook = <T extends HKCategoryTypeIdentifier>(
+  identifier: T
+) => HKCategorySample<T> | null;
+
+export type GetMostRecentQuantitySampleFn = <
+  TIdentifier extends HKQuantityTypeIdentifier,
+  TUnit extends HKUnit
+>(
+  identifier: TIdentifier,
+  unit?: TUnit
+) => Promise<HKQuantitySample<TIdentifier, TUnit>>;
+
+export type MostRecentQuantitySampleHook = <
+  TIdentifier extends HKQuantityTypeIdentifier,
+  TUnit extends HKUnit
+>(
+  identifier: TIdentifier,
+  unit?: TUnit
+) => HKQuantitySample<TIdentifier, TUnit> | null;
+
+export type GetMostRecentWorkoutFn = <
+  TEnergy extends HKUnit,
+  TDistance extends HKUnit
+>(
+  options?: Pick<
+    QueryWorkoutsOptions<TEnergy, TDistance>,
+    'distanceUnit' | 'energyUnit'
+  >
+) => Promise<HKWorkout<TEnergy, TDistance> | null>;
+
+export type MostRecentWorkoutHook = <
+  TEnergy extends HKUnit,
+  TDistance extends HKUnit
+>(
+  options?: Pick<
+    QueryWorkoutsOptions<TEnergy, TDistance>,
+    'distanceUnit' | 'energyUnit'
+  >
+) => HKWorkout<TEnergy, TDistance> | null;
+
+export type GetPreferredUnitsFn = (
+  identifiers: HKQuantityTypeIdentifier[]
+) => Promise<HKUnit[]>;
+
+export type GetPreferredUnitFn = (
+  identifier: HKQuantityTypeIdentifier
+) => Promise<HKUnit>;
+
 export type ReactNativeHealthkit = {
-  isHealthDataAvailable(): Promise<boolean>;
-  getBloodType(): Promise<HKBloodType>;
-  getDateOfBirth(): Promise<Date>;
-  getBiologicalSex(): Promise<HKBiologicalSex>;
-  getWheelchairUse: () => Promise<HKWheelchairUse>;
-  getFitzpatrickSkinType(): Promise<HKFitzpatrickSkinType>;
-  getStatsBetween: (
-    identifier: HKQuantityTypeIdentifier,
-    options: HKStatisticsOptions[],
-    from: Date,
-    to?: Date,
-    unit?: HKUnit
-  ) => Promise<StatsResponse>;
+  authorizationStatusFor: AuthorizationStatusForFn;
 
-  authorizationStatusFor(
-    type: HKQuantityTypeIdentifier | HKCharacteristicTypeIdentifier
-  ): Promise<boolean>;
+  getBiologicalSex: GetBiologicalSexFn;
+  getBloodType: GetBloodTypeFn;
+  getDateOfBirth: GetDateOfBirthFn;
+  getFitzpatrickSkinType: GetFitzpatrickSkinTypeFn;
+  getMostRecentQuantitySample: GetMostRecentQuantitySampleFn;
+  getMostRecentCategorySample: GetMostRecentCategorySampleFn;
+  getMostRecentWorkout: GetMostRecentWorkoutFn;
+  getPreferredUnit: GetPreferredUnitFn;
+  getPreferredUnits: GetPreferredUnitsFn;
+  getRequestStatusForAuthorization: GetRequestStatusForAuthorizationFn;
+  getWheelchairUse: GetWheelchairUseFn;
 
-  getRequestStatusForAuthorization(
-    read: (HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier)[],
-    write?: HKQuantityTypeIdentifier[]
-  ): Promise<HKAuthorizationRequestStatus>;
-  requestAuthorization: (
-    read: (HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier)[],
-    write?: HKQuantityTypeIdentifier[]
-  ) => Promise<boolean>;
-  save: (
-    identifier: HKQuantityTypeIdentifier,
-    unit: HKUnit,
-    value: number,
-    options?: {
-      start?: Date;
-      end?: Date;
-      metadata?: any;
-    }
-  ) => Promise<boolean>;
-  getLastSample: (
-    identifier: HKQuantityTypeIdentifier,
-    unit?: HKUnit
-  ) => Promise<QuantitySample>;
-  useLastSample: (
-    identifier: HKQuantityTypeIdentifier,
-    unit?: HKUnit
-  ) => QuantitySample | null;
-  getLastSamples: (
-    identifier: HKQuantityTypeIdentifier,
-    limit?: number,
-    unit?: HKUnit
-  ) => Promise<QuantitySample[]>;
-  getSamplesBetween: (
-    identifier: HKQuantityTypeIdentifier,
-    unit: HKUnit,
-    from: Date,
-    to?: Date
-  ) => Promise<QuantitySample[]>;
-  getPreferredUnits: (
-    identifiers: [HKQuantityTypeIdentifier]
-  ) => Promise<TypeToUnitMapping>;
-  getPreferredUnit: (identifier: HKQuantityTypeIdentifier) => Promise<HKUnit>;
-  on: (
-    identifier: HKQuantityTypeIdentifier,
-    callback: (samples: QuantitySample[]) => void,
-    unit?: HKUnit
-  ) => Promise<UnsubscribeFunction>;
+  buildUnitWithPrefix: (prefix: HKUnitSIPrefix, unit: HKUnitSI) => HKUnit;
+
+  isHealthDataAvailable: IsHealthDataAvailableFn;
+
+  queryCategorySamples: QueryCategorySamplesFn;
+  queryQuantitySamples: QueryQuantitySamplesFn;
+  queryStatisticsForQuantity: QueryStatisticsForQuantityFn;
+  queryWorkouts: QueryWorkoutsFn;
+
+  requestAuthorization: RequestAuthorizationFn;
+
+  saveCategorySample: SaveCategorySampleFn;
+  saveQuantitySample: SaveQuantitySampleFn;
+
+  subscribeToChanges: SubscribeToChangesFn;
+
+  useMostRecentWorkout: MostRecentWorkoutHook;
+  useMostRecentCategorySample: MostRecentCategorySampleHook;
+  useMostRecentQuantitySample: MostRecentQuantitySampleHook;
 };

@@ -7,6 +7,7 @@ let GENERIC_ERROR = "HEALTHKIT_ERROR";
 
 let HKCharacteristicTypeIdentifier_PREFIX = "HKCharacteristicTypeIdentifier"
 let HKQuantityTypeIdentifier_PREFIX = "HKQuantityTypeIdentifier"
+let HKCategoryTypeIdentifier_PREFIX = "HKCategoryTypeIdentifier"
 
 @objc(ReactNativeHealthkit)
 @available(iOS 10.0, *)
@@ -35,6 +36,15 @@ class ReactNativeHealthkit: RCTEventEmitter {
             return HKObjectType.quantityType(forIdentifier: identifier) as HKObjectType?
         }
         
+        if(typeIdentifier.starts(with: HKCategoryTypeIdentifier_PREFIX)){
+            let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier);
+            return HKObjectType.categoryType(forIdentifier: identifier) as HKObjectType?
+        }
+        
+        if(typeIdentifier == "HKWorkoutTypeIdentifier"){
+            return HKObjectType.workoutType()
+        }
+        
         return nil;
     }
     
@@ -42,6 +52,15 @@ class ReactNativeHealthkit: RCTEventEmitter {
         if(typeIdentifier.starts(with: HKQuantityTypeIdentifier_PREFIX)){
             let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
             return HKSampleType.quantityType(forIdentifier: identifier) as HKSampleType?
+        }
+        
+        if(typeIdentifier.starts(with: HKCategoryTypeIdentifier_PREFIX)){
+            let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier);
+            return HKSampleType.categoryType(forIdentifier: identifier) as HKSampleType?
+        }
+        
+        if(typeIdentifier == "HKWorkoutTypeIdentifier"){
+            return HKSampleType.workoutType();
         }
         
         return nil;
@@ -115,8 +134,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
             if(type != nil){
                 quantityTypes.insert(type!);
             }
-            
         }
+        
         store.preferredUnits(for: quantityTypes) { (typePerUnits: [HKQuantityType : HKUnit], error: Error?) in
             let dic: NSMutableDictionary = NSMutableDictionary();
             
@@ -128,28 +147,43 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
     }
     
-    func serializeSample(sample: HKSample, unitString: String, typeIdentifier: String) -> NSDictionary {
-        let endDate = _dateFormatter.string(from: sample.endDate)
-        let startDate = _dateFormatter.string(from: sample.startDate);
-        let defaultDictionary: NSDictionary = [
-            "endDate": endDate,
-            "startDate": startDate,
-        ]
-        
-        if(typeIdentifier.starts(with: "HKQuantityTypeIdentifier")){
-            let unit = HKUnit.init(from: unitString);
-            let s = sample as! HKQuantitySample;
-            let quantity = s.quantity.doubleValue(for: unit);
-            
-            return [
-                "endDate": endDate,
-                "startDate": startDate,
-                "quantity": quantity,
-                "unit": unit.unitString
-            ]
+    func serializeQuantity(unit: HKUnit, quantity: HKQuantity?) -> NSDictionary? {
+        guard let q = quantity else {
+            return nil;
         }
         
-        return defaultDictionary;
+        return [
+            "quantity": q.doubleValue(for: unit),
+            "unit": unit.unitString
+        ]
+    }
+    
+    func serializeQuantitySample(sample: HKQuantitySample, unitString: String) -> NSDictionary {
+        let endDate = _dateFormatter.string(from: sample.endDate)
+        let startDate = _dateFormatter.string(from: sample.startDate);
+        
+        let unit = HKUnit.init(from: unitString);
+        let quantity = sample.quantity.doubleValue(for: unit);
+        
+        return [
+            "endDate": endDate,
+            "startDate": startDate,
+            "quantity": quantity,
+            "unit": unit.unitString,
+            "metadata": self.serializeMetadata(metadata: sample.metadata)
+        ]
+    }
+    
+    func serializeCategorySample(sample: HKCategorySample) -> NSDictionary {
+        let endDate = _dateFormatter.string(from: sample.endDate)
+        let startDate = _dateFormatter.string(from: sample.startDate);
+        
+        return [
+            "endDate": endDate,
+            "startDate": startDate,
+            "value": sample.value,
+            "metadata": self.serializeMetadata(metadata: sample.metadata)
+        ]
     }
     
     @objc(getBiologicalSex:withRejecter:)
@@ -238,8 +272,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
         resolve(authStatus.rawValue);
     }
     
-    @objc(save:unitString:value:start:end:metadata:resolve:reject:)
-    func save(typeIdentifier: String, unitString: String, value: Double, start: Date, end: Date, metadata: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+    @objc(saveQuantitySample:unitString:value:start:end:metadata:resolve:reject:)
+    func saveQuantitySample(typeIdentifier: String, unitString: String, value: Double, start: Date, end: Date, metadata: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
@@ -268,12 +302,35 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
     }
     
-    override func supportedEvents() -> [String]! {
-      return ["onQueryUpdated"]
+    @objc(saveCategorySample:value:start:end:metadata:resolve:reject:)
+    func saveCategorySample(typeIdentifier: String, value: Int, start: Date, end: Date, metadata: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+        }
+        
+        let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier);
+        
+        guard let type = HKObjectType.categoryType(forIdentifier: identifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+        }
+
+        let sample = HKCategorySample.init(type: type, value: value, start: start, end: end, metadata: metadata as? Dictionary<String, Any>)
+        
+        store.save(sample) { (success: Bool, error: Error?) in
+            guard let err = error else {
+                return resolve(success);
+            }
+            reject(GENERIC_ERROR, err.localizedDescription, error);
+        }
     }
     
-    @objc(observe:unitString:resolve:reject:)
-    func observe(typeIdentifier: String, unitString: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock){
+    override func supportedEvents() -> [String]! {
+      return ["onChange"]
+    }
+    
+    
+    @objc(subscribeToObserverQuery:resolve:reject:)
+    func subscribeToObserverQuery(typeIdentifier: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock){
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
@@ -284,51 +341,32 @@ class ReactNativeHealthkit: RCTEventEmitter {
         
         let predicate = HKQuery.predicateForSamples(withStart: Date.init(), end: nil)
         
-        var anchor: HKQueryAnchor? = nil;
-        
-        func responder(query: HKAnchoredObjectQuery, allSamples: [HKSample]?, deletedObjects: [HKDeletedObject]?, newAnchor: HKQueryAnchor?, error: Error?) -> Void {
-            anchor = newAnchor;
-            guard let err = error else {
-                let serializedSamples: NSMutableArray = [];
-                
-                for s in allSamples! {
-                    let serialized = self.serializeSample(sample: s, unitString: unitString, typeIdentifier: typeIdentifier);
-                    serializedSamples.add(serialized)
+        func responder(query: HKObserverQuery, handler: @escaping HKObserverQueryCompletionHandler, error: Error?) -> Void {
+            if(error == nil){
+                DispatchQueue.main.async {
+                    self.sendEvent(withName: "onChange", body: [
+                        typeIdentifier,
+                    ]);
                 }
-                
-                if(serializedSamples.count > 0){
-                    DispatchQueue.main.async {
-                        self.sendEvent(withName: "onQueryUpdated", body: [
-                            "typeIdentifier": typeIdentifier,
-                            "samples": serializedSamples
-                        ]);
-                    }
-                }
-                
-                return;
             }
-            reject(GENERIC_ERROR, err.localizedDescription, err);
         }
         
         let queryId = UUID().uuidString
         
-        let query = HKAnchoredObjectQuery(type: sampleType, predicate: predicate, anchor: anchor, limit: HKObjectQueryNoLimit) { (query: HKAnchoredObjectQuery, samples: [HKSample]?, deletedObjects: [HKDeletedObject]?, newAnchor: HKQueryAnchor?, error: Error?) in
+        let query = HKObserverQuery(sampleType: sampleType, predicate: predicate) { (query: HKObserverQuery, handler: @escaping HKObserverQueryCompletionHandler, error: Error?) in
             guard let err = error else {
-                resolve(queryId);
-                return responder(query: query, allSamples: samples, deletedObjects: deletedObjects, newAnchor: newAnchor, error: error);
+                return responder(query: query, handler: handler, error: error);
             }
             reject(GENERIC_ERROR, err.localizedDescription, err);
         }
-        
-        query.updateHandler = responder;
         
         store.execute(query);
         
         self._runningQueries.updateValue(query, forKey: queryId);
     }
     
-    @objc(stopObserving:resolve:reject:)
-    func stopObserving(queryId: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) {
+    @objc(unsubscribeQuery:resolve:reject:)
+    func unsubscribeQuery(queryId: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
@@ -349,8 +387,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
         return false
     }
     
-    @objc(getStatsBetween:unitString:from:to:options:resolve:reject:)
-    func getStatsBetween(typeIdentifier: String, unitString: String, from: Date, to: Date, options: NSArray, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    @objc(queryStatisticsForQuantity:unitString:from:to:options:resolve:reject:)
+    func queryStatisticsForQuantity(typeIdentifier: String, unitString: String, from: Date, to: Date, options: NSArray, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
@@ -398,40 +436,25 @@ class ReactNativeHealthkit: RCTEventEmitter {
         
         let query = HKStatisticsQuery.init(quantityType: quantityType, quantitySamplePredicate: predicate, options: opts) { (query, stats: HKStatistics?, error: Error?) in
             if let gottenStats = stats {
-                var dic = Dictionary<String, Any>()
+                var dic = Dictionary<String, NSDictionary?>()
                 let unit = HKUnit.init(from: unitString);
                 if let averageQuantity = gottenStats.averageQuantity() {
-                    dic.updateValue([
-                        "unit": unit.unitString,
-                        "quantity": averageQuantity.doubleValue(for: unit),
-                    ], forKey: "averageQuantity")
+                    
+                    dic.updateValue(self.serializeQuantity(unit: unit, quantity: averageQuantity), forKey: "averageQuantity")
                 }
                 if let maximumQuantity = gottenStats.maximumQuantity() {
-                    dic.updateValue([
-                        "unit": unit.unitString,
-                        "quantity": maximumQuantity.doubleValue(for: unit),
-                    ], forKey: "maximumQuantity")
+                    dic.updateValue(self.serializeQuantity(unit: unit, quantity: maximumQuantity), forKey: "maximumQuantity")
                 }
                 if let minimumQuantity = gottenStats.minimumQuantity() {
-                    dic.updateValue([
-                        "unit": unit.unitString,
-                        "quantity": minimumQuantity.doubleValue(for: unit),
-                    ], forKey: "minimumQuantity")
+                    dic.updateValue(self.serializeQuantity(unit: unit, quantity: minimumQuantity), forKey: "minimumQuantity")
                 }
                 if let sumQuantity = gottenStats.sumQuantity() {
-                    dic.updateValue([
-                        "unit": unit.unitString,
-                        "quantity": sumQuantity.doubleValue(for: unit),
-                    ], forKey: "sumQuantity")
+                    dic.updateValue(self.serializeQuantity(unit: unit, quantity: sumQuantity), forKey: "sumQuantity")
                 }
                 if #available(iOS 12, *) {
                     if let mostRecent = gottenStats.mostRecentQuantity() {
-                        dic.updateValue([
-                            "unit": unit.unitString,
-                            "quantity": mostRecent.doubleValue(for: unit),
-                        ], forKey: "mostRecentQuantity")
+                        dic.updateValue(self.serializeQuantity(unit: unit, quantity: mostRecent), forKey: "mostRecentQuantity")
                     }
-                    
                     
                     if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
                         dic.updateValue([
@@ -443,10 +466,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 if #available(iOS 13, *) {
                     let durationUnit = HKUnit.second();
                     if let duration = gottenStats.duration() {
-                        dic.updateValue([
-                            "unit": durationUnit.unitString,
-                            "quantity": duration.doubleValue(for: durationUnit),
-                        ], forKey: "duration")
+                        dic.updateValue(self.serializeQuantity(unit: durationUnit, quantity: duration), forKey: "duration")
                     }
                 }
                 
@@ -457,19 +477,78 @@ class ReactNativeHealthkit: RCTEventEmitter {
         store.execute(query);
     }
     
-    @objc(getSamplesBetween:unitString:from:to:resolve:reject:)
-    func getSamplesBetween(typeIdentifier: String, unitString: String, from: Date, to: Date, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func serializeMetadata(metadata: [String: Any]?) -> NSDictionary {
+        let serialized: NSMutableDictionary = [:];
+        if let m = metadata {
+            for item in m {
+                if let bool = item.value as? Bool {
+                    serialized.setValue(bool, forKey: item.key)
+                }
+                if let str = item.value as? String {
+                    serialized.setValue(str, forKey: item.key)
+                }
+                if let double = item.value as? Double {
+                    serialized.setValue(double, forKey: item.key)
+                }
+                if let double = item.value as? Double {
+                    serialized.setValue(double, forKey: item.key)
+                }
+                if let quantity = item.value as? HKQuantity {
+                    
+                    if(quantity.is(compatibleWith: HKUnit.percent())){
+                        serialized.setValue(self.serializeQuantity(unit: HKUnit.percent(), quantity: quantity), forKey: item.key);
+                    }
+                    
+                    
+                    if(quantity.is(compatibleWith: HKUnit.second())){
+                        serialized.setValue(self.serializeQuantity(unit: HKUnit.second(), quantity: quantity), forKey: item.key);
+                    }
+                    
+                    if(quantity.is(compatibleWith: HKUnit.kilocalorie())){
+                        serialized.setValue(self.serializeQuantity(unit: HKUnit.kilocalorie(), quantity: quantity), forKey: item.key);
+                    }
+                    
+                    if(quantity.is(compatibleWith: HKUnit.count())){
+                        serialized.setValue(self.serializeQuantity(unit: HKUnit.count(), quantity: quantity), forKey: item.key);
+                    }
+                    
+                    if #available(iOS 11, *) {
+                        if(quantity.is(compatibleWith: HKUnit.internationalUnit())){
+                            serialized.setValue(self.serializeQuantity(unit: HKUnit.internationalUnit(), quantity: quantity), forKey: item.key);
+                        }
+                    }
+                    
+                    if #available(iOS 13, *) {
+                        if(quantity.is(compatibleWith: HKUnit.hertz())){
+                            serialized.setValue(self.serializeQuantity(unit: HKUnit.hertz(), quantity: quantity), forKey: item.key);
+                        }
+                        if(quantity.is(compatibleWith: HKUnit.decibelHearingLevel())){
+                            serialized.setValue(self.serializeQuantity(unit: HKUnit.decibelHearingLevel(), quantity: quantity), forKey: item.key);
+                        }
+                    }
+                }
+            }
+        }
+        return serialized;
+    }
+
+    @objc(queryWorkoutSamples:distanceUnitString:from:to:limit:ascending:resolve:reject:)
+    func queryWorkoutSamples(energyUnitString: String, distanceUnitString: String, from: Date, to: Date, limit: Int, ascending: NSNumber, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
-        guard let sampleType = sampleTypeFromString(typeIdentifier: typeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
-        }
+        let from = from.timeIntervalSince1970 > 0 ? from : nil;
+        let to = to.timeIntervalSince1970 > 0 ? to : nil;
         
-        let predicate = HKQuery.predicateForSamples(withStart: from, end: to, options: HKQueryOptions.strictEndDate)
+        let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
         
-        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+        let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
+        
+        let energyUnit = HKUnit.init(from: energyUnitString)
+        let distanceUnit = HKUnit.init(from: distanceUnitString)
+        
+        let q = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: Bool(truncating: ascending))]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
                 guard let samples = sample else {
                     return resolve([]);
@@ -477,8 +556,26 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 let arr: NSMutableArray = [];
                 
                 for s in samples {
-                    let serialized = self.serializeSample(sample: s, unitString: unitString, typeIdentifier: typeIdentifier);
-                    arr.add(serialized)
+                    if let workout = s as? HKWorkout {
+                        let endDate = self._dateFormatter.string(from: workout.endDate)
+                        let startDate = self._dateFormatter.string(from: workout.startDate);
+                        let dict: NSMutableDictionary = [
+                            "duration": workout.duration,
+                            "totalDistance": self.serializeQuantity(unit: distanceUnit, quantity: workout.totalDistance) as Any,
+                            "totalEnergyBurned": self.serializeQuantity(unit: energyUnit, quantity: workout.totalEnergyBurned) as Any,
+                            "totalSwimmingStrokeCount": self.serializeQuantity(unit: HKUnit.count(), quantity: workout.totalSwimmingStrokeCount) as Any,
+                            "workoutActivityType": workout.workoutActivityType.rawValue,
+                            "startDate": startDate,
+                            "endDate": endDate,
+                            "metadata": self.serializeMetadata(metadata: workout.metadata)
+                        ]
+                        
+                        if #available(iOS 11, *) {
+                            dict.setValue(self.serializeQuantity(unit: HKUnit.count(), quantity: workout.totalFlightsClimbed), forKey: "totalFlightsClimbed")
+                        }
+                        
+                        arr.add(dict)
+                    }
                 }
                 
                 return resolve(arr);
@@ -489,17 +586,25 @@ class ReactNativeHealthkit: RCTEventEmitter {
         store.execute(q);
     }
     
-    @objc(getLastSamples:limit:unitString:resolve:reject:)
-    func getLastSamples(typeIdentifier: String, limit: NSInteger, unitString: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    @objc(queryQuantitySamples:unitString:from:to:limit:ascending:resolve:reject:)
+    func queryQuantitySamples(typeIdentifier: String, unitString: String, from: Date, to: Date, limit: Int, ascending: NSNumber, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
         
-        guard let sampleType = sampleTypeFromString(typeIdentifier: typeIdentifier) else {
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
+        guard let sampleType = HKSampleType.quantityType(forIdentifier: identifier) else {
             return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
         }
         
-        let q = HKSampleQuery(sampleType: sampleType, predicate: nil, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+        let from = from.timeIntervalSince1970 > 0 ? from : nil;
+        let to = to.timeIntervalSince1970 > 0 ? to : nil;
+        
+        let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
+        
+        let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
+        
+        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: Bool(truncating: ascending))]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
                 guard let samples = sample else {
                     return resolve([]);
@@ -507,8 +612,52 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 let arr: NSMutableArray = [];
                 
                 for s in samples {
-                    let serialized = self.serializeSample(sample: s, unitString: unitString, typeIdentifier: typeIdentifier);
-                    arr.add(serialized)
+                    if let sample = s as? HKQuantitySample {
+                        let serialized = self.serializeQuantitySample(sample: sample, unitString: unitString)
+                        
+                        arr.add(serialized)
+                    }
+                }
+                
+                return resolve(arr);
+            }
+            reject(GENERIC_ERROR, err.localizedDescription, err);
+        }
+        
+        store.execute(q);
+    }
+    
+    @objc(queryCategorySamples:from:to:limit:ascending:resolve:reject:)
+    func queryCategorySamples(typeIdentifier: String, from: Date, to: Date, limit: Int, ascending: NSNumber, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+        }
+        
+        let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier);
+        guard let sampleType = HKSampleType.categoryType(forIdentifier: identifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+        }
+        
+        let from = from.timeIntervalSince1970 > 0 ? from : nil;
+        let to = to.timeIntervalSince1970 > 0 ? to : nil;
+        
+        let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
+        
+        let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
+        
+        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: Bool(truncating: ascending))]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+            guard let err = error else {
+                guard let samples = sample else {
+                    return resolve([]);
+                }
+                let arr: NSMutableArray = [];
+                
+                for s in samples {
+                    if let sample = s as? HKCategorySample {
+                        let serialized = self.serializeCategorySample(sample: sample);
+                        
+                        arr.add(serialized)
+                    }
                 }
                 
                 return resolve(arr);

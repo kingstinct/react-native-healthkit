@@ -11,24 +11,48 @@ const UnavailableFn = () => {
 };
 
 const Healthkit: ReactNativeHealthkit = {
-  isHealthDataAvailable: () => Promise.resolve(false),
-  useLastSample: UnavailableFn,
-  getRequestStatusForAuthorization: UnavailableFn,
-  getPreferredUnits: UnavailableFn,
-  getFitzpatrickSkinType: UnavailableFn,
-  getWheelchairUse: UnavailableFn,
-  getStatsBetween: UnavailableFn,
-  getBloodType: UnavailableFn,
   authorizationStatusFor: UnavailableFn,
   getBiologicalSex: UnavailableFn,
-  requestAuthorization: UnavailableFn,
-  getPreferredUnit: UnavailableFn,
+  getBloodType: UnavailableFn,
   getDateOfBirth: UnavailableFn,
-  getSamplesBetween: UnavailableFn,
-  getLastSamples: UnavailableFn,
-  getLastSample: UnavailableFn,
-  on: UnavailableFn,
-  save: UnavailableFn,
+  getFitzpatrickSkinType: UnavailableFn,
+  getMostRecentCategorySample: UnavailableFn,
+  getMostRecentQuantitySample: UnavailableFn,
+  getMostRecentWorkout: UnavailableFn,
+  getPreferredUnit: UnavailableFn,
+  getPreferredUnits: UnavailableFn,
+  getRequestStatusForAuthorization: UnavailableFn,
+  getWheelchairUse: UnavailableFn,
+  isHealthDataAvailable: () => Promise.resolve(false),
+  queryCategorySamples: UnavailableFn,
+  queryQuantitySamples: UnavailableFn,
+  queryStatisticsForQuantity: UnavailableFn,
+  queryWorkouts: UnavailableFn,
+  requestAuthorization: UnavailableFn,
+  saveCategorySample: UnavailableFn,
+  saveQuantitySample: UnavailableFn,
+  subscribeToChanges: UnavailableFn,
+  useMostRecentCategorySample: UnavailableFn,
+  useMostRecentQuantitySample: UnavailableFn,
+  useMostRecentWorkout: UnavailableFn,
+  buildUnitWithPrefix: UnavailableFn,
 };
+
+export {
+  HKWorkout,
+  HKQuantitySample,
+  HKCategorySample,
+  QueryStatisticsResponse,
+} from './types';
+
+export {
+  HKCategoryTypeIdentifier,
+  HKQuantityTypeIdentifier,
+  HKCharacteristicTypeIdentifier,
+  HKQuantity,
+  HKStatisticsOptions,
+  HKUnit,
+  HKInsulinDeliveryReason,
+} from './native-types';
 
 export default Healthkit;

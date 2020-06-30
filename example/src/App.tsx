@@ -1,21 +1,58 @@
 import * as React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import ReactNativeHealthkit from '../../src/index';
-import {
-  HKCharacteristicTypeIdentifier,
-  HKQuantityTypeIdentifier,
-  QuantitySample,
-  HKUnitNonSI,
-  HKStatisticsOptions,
-  StatsResponse,
-  Quantity,
-} from '../../src/types';
+import { Text, ScrollView } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import dayjs from 'dayjs';
+import ReactNativeHealthkit, {
+  HKCategoryTypeIdentifier,
+  HKCharacteristicTypeIdentifier,
+  HKQuantity,
+  HKQuantitySample,
+  HKQuantityTypeIdentifier,
+  HKStatisticsOptions,
+  HKUnit,
+  HKWorkout,
+  QueryStatisticsResponse,
+  HKCategorySample,
+  HKInsulinDeliveryReason,
+} from '../../src/index';
+import Healthkit from '../../src/index';
 
-const DisplayQuantity: React.FunctionComponent<{
+const DisplayWorkout: React.FunctionComponent<{
+  workout: HKWorkout;
+}> = ({ workout }) => {
+  return (
+    <DataTable.Row accessibilityStates={[]}>
+      <DataTable.Cell accessibilityStates={[]}>
+        {workout.workoutActivityType}
+      </DataTable.Cell>
+      <DataTable.Cell
+        style={{ paddingRight: 10 }}
+        accessibilityStates={[]}
+        numeric
+      >
+        {workout ? workout.duration.toFixed(0) + 's' : '-'}
+      </DataTable.Cell>
+      <DataTable.Cell accessibilityStates={[]}>
+        {workout
+          ? workout.totalDistance.quantity.toFixed(1) +
+            ' ' +
+            workout.totalDistance.unit
+          : '-'}
+      </DataTable.Cell>
+      <DataTable.Cell accessibilityStates={[]}>
+        {workout
+          ? workout.totalEnergyBurned.quantity.toFixed(1) +
+            ' ' +
+            workout.totalEnergyBurned.unit
+          : '-'}
+      </DataTable.Cell>
+    </DataTable.Row>
+  );
+};
+
+const DisplayQuantitySample: React.FunctionComponent<{
   title: string;
-  sample: QuantitySample | null;
+  sample: HKQuantitySample | null;
 }> = ({ title, sample }) => {
   return (
     <DataTable.Row accessibilityStates={[]}>
@@ -37,9 +74,33 @@ const DisplayQuantity: React.FunctionComponent<{
   );
 };
 
+const DisplayCategorySample: React.FunctionComponent<{
+  title: string;
+  sample: HKCategorySample | null;
+}> = ({ title, sample }) => {
+  return (
+    <DataTable.Row accessibilityStates={[]}>
+      <DataTable.Cell accessibilityStates={[]}>{title}</DataTable.Cell>
+      <DataTable.Cell
+        style={{ paddingRight: 10 }}
+        accessibilityStates={[]}
+        numeric
+      >
+        {sample ? sample.value : '-'}
+      </DataTable.Cell>
+      <DataTable.Cell accessibilityStates={[]}>
+        {sample ? sample.startDate.toLocaleTimeString() : '-'}
+      </DataTable.Cell>
+      <DataTable.Cell accessibilityStates={[]}>
+        {sample ? sample.endDate.toLocaleTimeString() : '-'}
+      </DataTable.Cell>
+    </DataTable.Row>
+  );
+};
+
 const DisplayStat: React.FunctionComponent<{
   title: string;
-  sample: Quantity | undefined;
+  sample: HKQuantity | undefined;
 }> = ({ title, sample }) => {
   return (
     <DataTable.Row accessibilityStates={[]}>
@@ -59,86 +120,59 @@ const DisplayStat: React.FunctionComponent<{
   );
 };
 
-export default function App() {
-  const [bodyFat, setBodyFat] = React.useState<QuantitySample | null>(null);
-  const [bodyWeight, setBodyWeight] = React.useState<QuantitySample | null>(
-    null
-  );
-  const [heartRate, setHeartRate] = React.useState<QuantitySample | null>(null);
+function DataView() {
   const [dateOfBirth, setDateOfBirth] = React.useState<Date | null>(null);
+  const bodyFat = Healthkit.useMostRecentQuantitySample(
+    HKQuantityTypeIdentifier.bodyFatPercentage
+  );
+
+  const bloodGlucose = Healthkit.useMostRecentQuantitySample(
+    HKQuantityTypeIdentifier.bloodGlucose
+  );
+
+  const bodyWeight = Healthkit.useMostRecentQuantitySample(
+    HKQuantityTypeIdentifier.bodyMass
+  );
+  const heartRate = Healthkit.useMostRecentQuantitySample(
+    HKQuantityTypeIdentifier.heartRate
+  );
+  const lastWorkout = Healthkit.useMostRecentWorkout();
+  const lastMindfulSession = Healthkit.useMostRecentCategorySample(
+    HKCategoryTypeIdentifier.HKCategoryTypeIdentifierMindfulSession
+  );
+
   const [
-    statsResponse,
-    setStatsResponse,
-  ] = React.useState<StatsResponse | null>(null);
-  const [authorizationStatus, setAuthorizationStatus] = React.useState<
-    boolean | null
-  >(null);
+    queryStatisticsResponse,
+    setQueryStatisticsResponse,
+  ] = React.useState<QueryStatisticsResponse | null>(null);
 
   React.useEffect(() => {
-    ReactNativeHealthkit.requestAuthorization(
+    ReactNativeHealthkit.saveQuantitySample(
+      HKQuantityTypeIdentifier.bloodGlucose,
+      HKUnit.Mmol_glucose,
+      4.2,
+      {
+        metadata: {
+          HKMetadataKeyInsulinDeliveryReason: HKInsulinDeliveryReason.basal,
+        },
+      }
+    );
+    ReactNativeHealthkit.getDateOfBirth().then(setDateOfBirth);
+
+    ReactNativeHealthkit.queryStatisticsForQuantity(
+      HKQuantityTypeIdentifier.heartRate,
       [
-        HKCharacteristicTypeIdentifier.biologicalSex,
-        HKCharacteristicTypeIdentifier.bloodType,
-        HKCharacteristicTypeIdentifier.dateOfBirth,
-        HKCharacteristicTypeIdentifier.fitzpatrickSkinType,
-        HKQuantityTypeIdentifier.waistCircumference,
-        HKQuantityTypeIdentifier.bodyMassIndex,
-        HKQuantityTypeIdentifier.bodyMass,
-        HKQuantityTypeIdentifier.heartRate,
-        HKQuantityTypeIdentifier.bloodGlucose,
-        HKQuantityTypeIdentifier.activeEnergyBurned,
+        HKStatisticsOptions.discreteAverage,
+        HKStatisticsOptions.discreteMax,
+        HKStatisticsOptions.discreteMin,
       ],
-      [
-        HKQuantityTypeIdentifier.waistCircumference,
-        HKQuantityTypeIdentifier.activeEnergyBurned,
-        HKQuantityTypeIdentifier.bloodGlucose,
-        HKQuantityTypeIdentifier.bodyFatPercentage,
-      ]
-    ).then((result) => {
-      // setResult(result);
-      setAuthorizationStatus(result);
-      ReactNativeHealthkit.save(
-        HKQuantityTypeIdentifier.bodyFatPercentage,
-        HKUnitNonSI.Percent,
-        6.7
-      ).then((/*success*/) => {
-        ReactNativeHealthkit.getDateOfBirth().then(setDateOfBirth);
-
-        ReactNativeHealthkit.getLastSample(
-          HKQuantityTypeIdentifier.bodyFatPercentage
-        ).then(setBodyFat);
-
-        ReactNativeHealthkit.getLastSample(
-          HKQuantityTypeIdentifier.bodyMass
-        ).then(setBodyWeight);
-
-        ReactNativeHealthkit.getLastSample(
-          HKQuantityTypeIdentifier.heartRate
-        ).then(setHeartRate);
-
-        ReactNativeHealthkit.getStatsBetween(
-          HKQuantityTypeIdentifier.heartRate,
-          [
-            HKStatisticsOptions.discreteAverage,
-            HKStatisticsOptions.discreteMax,
-            HKStatisticsOptions.discreteMin,
-          ],
-          dayjs().startOf('day').toDate()
-        ).then(setStatsResponse);
-
-        ReactNativeHealthkit.on(
-          HKQuantityTypeIdentifier.heartRate,
-          (samples) => {
-            setHeartRate(samples[0]);
-          }
-        );
-      });
-    });
+      dayjs().startOf('day').toDate()
+    ).then(setQueryStatisticsResponse);
+    // });
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text>authorizationStatus: {JSON.stringify(authorizationStatus)}</Text>
+    <ScrollView style={{ flex: 1, paddingTop: 40 }}>
       <Text>Date of birth: {dateOfBirth?.toLocaleDateString()}</Text>
       <DataTable>
         <DataTable.Header accessibilityStates={[]}>
@@ -153,21 +187,92 @@ export default function App() {
           <DataTable.Title accessibilityStates={[]}>Unit</DataTable.Title>
           <DataTable.Title accessibilityStates={[]}>Time</DataTable.Title>
         </DataTable.Header>
-        <DisplayQuantity sample={bodyFat} title="Body fat" />
-        <DisplayQuantity sample={bodyWeight} title="Weight" />
-        <DisplayQuantity sample={heartRate} title="Heart rate" />
-        <DisplayStat sample={statsResponse?.averageQuantity} title="Avg. HR" />
-        <DisplayStat sample={statsResponse?.maximumQuantity} title="High HR" />
-        <DisplayStat sample={statsResponse?.minimumQuantity} title="Low HR" />
+
+        <DisplayQuantitySample sample={bodyFat} title="Body fat" />
+        <DisplayQuantitySample sample={bodyWeight} title="Weight" />
+        <DisplayQuantitySample sample={heartRate} title="Heart rate" />
+        <DisplayQuantitySample sample={bloodGlucose} title="Glucose" />
+
+        <DisplayStat
+          sample={queryStatisticsResponse?.averageQuantity}
+          title="Avg. HR"
+        />
+        <DisplayStat
+          sample={queryStatisticsResponse?.maximumQuantity}
+          title="High HR"
+        />
+        <DisplayStat
+          sample={queryStatisticsResponse?.minimumQuantity}
+          title="Low HR"
+        />
+
+        <DisplayStat
+          sample={queryStatisticsResponse?.minimumQuantity}
+          title="Low HR"
+        />
+
+        <DisplayCategorySample sample={lastMindfulSession} title="Mindful" />
+
+        <DataTable.Header accessibilityStates={[]}>
+          <DataTable.Title accessibilityStates={[]}>Workout</DataTable.Title>
+          <DataTable.Title
+            accessibilityStates={[]}
+            style={{ paddingRight: 10 }}
+            numeric
+          >
+            Duration
+          </DataTable.Title>
+          <DataTable.Title accessibilityStates={[]}>Distance</DataTable.Title>
+          <DataTable.Title accessibilityStates={[]}>Energy</DataTable.Title>
+        </DataTable.Header>
+        {lastWorkout ? <DisplayWorkout workout={lastWorkout} /> : null}
       </DataTable>
-    </View>
+    </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+/*
+
+                
+        
+        
+      </DataTable>*/
+
+const App = () => {
+  const [hasPermissions, setHasPermissions] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    ReactNativeHealthkit.requestAuthorization(
+      [
+        HKCharacteristicTypeIdentifier.biologicalSex,
+        HKCharacteristicTypeIdentifier.bloodType,
+        HKCharacteristicTypeIdentifier.dateOfBirth,
+        HKCharacteristicTypeIdentifier.fitzpatrickSkinType,
+        HKQuantityTypeIdentifier.waistCircumference,
+        HKQuantityTypeIdentifier.bodyMassIndex,
+        HKQuantityTypeIdentifier.bodyMass,
+        HKQuantityTypeIdentifier.heartRate,
+        HKQuantityTypeIdentifier.bloodGlucose,
+        HKQuantityTypeIdentifier.activeEnergyBurned,
+        HKCategoryTypeIdentifier.HKCategoryTypeIdentifierMindfulSession,
+        'HKWorkoutTypeIdentifier',
+      ],
+      [
+        HKQuantityTypeIdentifier.waistCircumference,
+        HKQuantityTypeIdentifier.activeEnergyBurned,
+        HKQuantityTypeIdentifier.bloodGlucose,
+        HKQuantityTypeIdentifier.bodyFatPercentage,
+        HKCategoryTypeIdentifier.HKCategoryTypeIdentifierMindfulSession,
+      ]
+    ).then(setHasPermissions);
+  }, []);
+
+  return hasPermissions ? (
+    <DataView />
+  ) : (
+    <Text style={{ paddingTop: 40, textAlign: 'center' }}>
+      Waiting for user to authorize..
+    </Text>
+  );
+};
+
+export default App;
