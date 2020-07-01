@@ -1,6 +1,15 @@
 # @kingstinct/react-native-healthkit
 
-React Native bindings for HealthKit with full TypeScript and Promise support. Keeping TypeScript mappings as close as possible to HealthKit - both in regards to naming and serialization. This will make it easier to keep this library up-to-date with HealthKit as well as browsing the official documentation (and if something - metadata properties for example - is not typed it will still be accessible).
+React Native bindings for HealthKit with full TypeScript and Promise support covering almost everything. Keeping TypeScript mappings as close as possible to HealthKit - both in regards to naming and serialization. This will make it easier to keep this library up-to-date with HealthKit as well as browsing the official documentation (and if something - metadata properties for example - is not typed it will still be accessible).
+
+| Data Types                  | Query | Save  | Subscribe | Examples                               |
+| ----------------------------|:------|:------|:----------|:---------------------------------------|
+| 80+ Quantity Types          | ✅    | ✅    | ✅       | Steps, energy burnt, blood glucose etc.. |
+| 13 Category Types           | ✅    | ✅    | ✅       | Sleep analysis, mindful sessions etc.. |
+| 75+ Workout Activity Types  | ✅    | ✅    | ✅       | Swimming, running, table tennis etc..  |
+| Correlation Types           | ✅    | ✅    | ✅       | Food and blood pressure                |
+| Document Types              | ✅    | ❌    | ✅       | [CDA documents](https://developer.apple.com/documentation/healthkit/hkcdadocument) exposed as Base64 data  |
+| Clinical Records            | ✅    | ❌    | ✅       | Lab results etc in [FHIR JSON format](https://www.hl7.org/fhir/json.html)  |
 
 ## Installation
 

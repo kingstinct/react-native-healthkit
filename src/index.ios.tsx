@@ -1,36 +1,48 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Native, {
+  EventEmitter,
+  HKCategorySampleRaw,
+  HKCategoryTypeIdentifier,
+  HKCategoryValueForIdentifier,
+  HKCharacteristicTypeIdentifier,
+  HKCorrelationRaw,
+  HKCorrelationTypeIdentifier,
+  HKQuantitySampleRaw,
   HKQuantityTypeIdentifier,
   HKSampleTypeIdentifier,
   HKUnit,
-  HKCharacteristicTypeIdentifier,
-  HKWorkoutRaw,
-  HKQuantitySampleRaw,
-  HKCategoryTypeIdentifier,
-  HKCategorySampleRaw,
-  HKCategoryValueForIdentifier,
-  HKMetadataForCategoryIdentifier,
-  EventEmitter,
-  HKUnitSIPrefix,
   HKUnitSI,
+  HKUnitSIPrefix,
+  HKWorkoutRaw,
+  MetadataMapperForCategoryIdentifier,
 } from './native-types';
 import type {
-  ReactNativeHealthkit,
-  HKQuantitySample,
-  HKCategorySample,
-  HKWorkout,
-  QueryStatisticsForQuantityFn,
   GenericQueryOptions,
-  QueryWorkoutsFn,
-  QueryQuantitySamplesFn,
-  SubscribeToChangesFn,
+  GetMostRecentCategorySampleFn,
   GetMostRecentQuantitySampleFn,
-  GetPreferredUnitsFn,
-  SaveQuantitySampleFn,
   GetMostRecentWorkoutFn,
   GetPreferredUnitFn,
-  GetMostRecentCategorySampleFn,
+  GetPreferredUnitsFn,
+  HKCategorySample,
+  HKClinicalSample,
+  HKCorrelation,
+  HKDocumentSample,
+  HKQuantitySample,
+  HKWorkout,
+  MostRecentClinicalSampleHook,
+  MostRecentDocumentSampleHook,
   QueryCategorySamplesFn,
+  QueryClinicalSamplesFn,
+  QueryCorrelationSamplesFn,
+  QueryDocumentSamplesFn,
+  QueryQuantitySamplesFn,
+  QueryStatisticsForQuantityFn,
+  QueryWorkoutsFn,
+  ReactNativeHealthkit,
+  SaveCorrelationSampleFn,
+  SaveQuantitySampleFn,
+  SaveWorkoutSampleFn,
+  SubscribeToChangesFn,
 } from './types';
 
 const getPreferredUnit: GetPreferredUnitFn = async (type) => {
@@ -53,7 +65,7 @@ function deserializeSample<
   TIdentifier extends HKQuantityTypeIdentifier,
   TUnit extends HKUnit
 >(
-  sample: HKQuantitySampleRaw<TUnit, TIdentifier>
+  sample: HKQuantitySampleRaw<TIdentifier, TUnit>
 ): HKQuantitySample<TIdentifier, TUnit> {
   return {
     ...sample,
@@ -120,7 +132,7 @@ const subscribeToChanges: SubscribeToChangesFn = async (
 ) => {
   const subscription = EventEmitter.addListener(
     'onChange',
-    (typeIdentifier) => {
+    ({ typeIdentifier }) => {
       if (typeIdentifier === identifier) {
         callback();
       }
@@ -166,8 +178,6 @@ function useMostRecentWorkout<
         options
       );
 
-      getMostRecentWorkout({ energyUnit, distanceUnit }).then(setWorkout);
-
       cancelSubscription = await subscribeToChanges(
         'HKWorkoutTypeIdentifier',
         () => {
@@ -200,25 +210,31 @@ function useMostRecentCategorySample<
   const [category, setCategory] = useState<HKCategorySample<TCategory> | null>(
     null
   );
+  const updater = useCallback(() => {
+    getMostRecentCategorySample(identifier).then(setCategory);
+  }, [identifier]);
+
+  useSubscribeToChanges(identifier, updater);
+
+  return category;
+}
+
+function useSubscribeToChanges<TIdentifier extends HKSampleTypeIdentifier>(
+  identifier: TIdentifier,
+  onChange: () => void
+): void {
   useEffect(() => {
     let cancelSubscription: (() => Promise<boolean>) | undefined;
 
     const init = async () => {
-      getMostRecentCategorySample(identifier).then(setCategory);
-
-      cancelSubscription = await subscribeToChanges(
-        'HKWorkoutTypeIdentifier',
-        () => {
-          getMostRecentCategorySample(identifier).then(setCategory);
-        }
-      );
+      cancelSubscription = await subscribeToChanges(identifier, onChange);
     };
     init();
+
     return () => {
       cancelSubscription && cancelSubscription();
     };
-  }, [identifier]);
-  return category;
+  }, [identifier, onChange]);
 }
 
 function useMostRecentQuantitySample<
@@ -235,10 +251,6 @@ function useMostRecentQuantitySample<
 
     const init = async () => {
       const actualUnit = await ensureUnit(identifier, unit);
-
-      getMostRecentQuantitySample(identifier, actualUnit).then((value) => {
-        setLastSample(value);
-      });
 
       cancelSubscription = await subscribeToChanges(identifier, () => {
         getMostRecentQuantitySample(identifier, actualUnit).then((value) => {
@@ -429,7 +441,7 @@ function saveCategorySample<T extends HKCategoryTypeIdentifier>(
   options?: {
     start?: Date;
     end?: Date;
-    metadata?: HKMetadataForCategoryIdentifier<T>;
+    metadata?: MetadataMapperForCategoryIdentifier<T>;
   }
 ) {
   const start = options?.start || options?.end || new Date();
@@ -454,6 +466,149 @@ const buildUnitWithPrefix = (prefix: HKUnitSIPrefix, unit: HKUnitSI) => {
   return `${prefix}${unit}` as HKUnit;
 };
 
+function deserializeCorrelation<
+  TIdentifier extends HKCorrelationTypeIdentifier
+>(s: HKCorrelationRaw<TIdentifier>): HKCorrelation<TIdentifier> {
+  return {
+    ...s,
+    objects: s.objects.map((o) => {
+      // @ts-ignore
+      if (o.quantity !== undefined) {
+        return deserializeSample(o as HKQuantitySampleRaw);
+      }
+
+      return deserializCategorySample(o as HKCategorySampleRaw);
+    }),
+    endDate: new Date(s.endDate),
+    startDate: new Date(s.startDate),
+  };
+}
+
+function ensureMetadata<TMetadata>(metadata?: TMetadata) {
+  return metadata || ({} as TMetadata);
+}
+
+const queryClinicalSamples: QueryClinicalSamplesFn = async (
+  typeIdentifier,
+  options
+) => {
+  const opts = prepareOptions(options);
+  const clinicalSamples = await Native.queryClinicalSamples(
+    typeIdentifier,
+    opts.from,
+    opts.to,
+    opts.limit,
+    opts.ascending
+  );
+  return clinicalSamples.map((s) => {
+    return {
+      ...s,
+      endDate: new Date(s.endDate),
+      startDate: new Date(s.startDate),
+    };
+  });
+};
+
+const queryCorrelationSamples: QueryCorrelationSamplesFn = async (
+  typeIdentifier,
+  options
+) => {
+  const opts = prepareOptions(options);
+  const correlations = await Native.queryCorrelationSamples(
+    typeIdentifier,
+    opts.from,
+    opts.to
+  );
+
+  return correlations.map(deserializeCorrelation);
+};
+
+const saveCorrelationSample: SaveCorrelationSampleFn = async (
+  typeIdentifier,
+  samples,
+  options
+) => {
+  const start = (options?.start || new Date()).toISOString();
+  const end = (options?.end || new Date()).toISOString();
+
+  return Native.saveCorrelationSample(
+    typeIdentifier,
+    samples,
+    start,
+    end,
+    ensureMetadata(options?.metadata)
+  );
+};
+
+const queryDocumentSamples: QueryDocumentSamplesFn = async (
+  typeIdentifier,
+  options
+) => {
+  const opts = prepareOptions(options);
+  const documents = await Native.queryDocumentSamples(
+    typeIdentifier,
+    opts.from,
+    opts.to,
+    opts.limit,
+    opts.ascending
+  );
+  return documents.map((s) => {
+    return {
+      ...s,
+      endDate: new Date(s.endDate),
+      startDate: new Date(s.startDate),
+    };
+  });
+};
+
+const saveWorkoutSample: SaveWorkoutSampleFn = (
+  typeIdentifier,
+  quantities,
+  _start,
+  options
+) => {
+  const start = _start.toISOString();
+  const end = (options?.end || new Date()).toISOString();
+
+  return Native.saveWorkoutSample(
+    typeIdentifier,
+    quantities,
+    start,
+    end,
+    ensureMetadata(options?.metadata)
+  );
+};
+
+const useMostRecentDocumentSample: MostRecentDocumentSampleHook = (type) => {
+  const [document, setDocument] = useState<HKDocumentSample | null>(null);
+  const updater = useCallback(async () => {
+    const latestDoc = await queryDocumentSamples(type, {
+      limit: 1,
+      ascending: false,
+    });
+    setDocument(latestDoc[0]);
+  }, [type]);
+
+  useSubscribeToChanges(type, updater);
+
+  return document;
+};
+
+const useMostRecentClinicalSample: MostRecentClinicalSampleHook = (type) => {
+  const [document, setDocument] = useState<HKClinicalSample | null>(null);
+  const updater = useCallback(async () => {
+    const latestDoc = await queryClinicalSamples(type, {
+      limit: 1,
+      ascending: false,
+    });
+    setDocument(latestDoc[0]);
+  }, [type]);
+
+  useSubscribeToChanges(type, updater);
+
+  return document;
+};
+
 const Healthkit: ReactNativeHealthkit = {
   authorizationStatusFor: Native.authorizationStatusFor,
 
@@ -461,21 +616,30 @@ const Healthkit: ReactNativeHealthkit = {
 
   buildUnitWithPrefix,
 
+  disableAllBackgroundDelivery: Native.disableAllBackgroundDelivery,
+  disableBackgroundDelivery: Native.disableBackgroundDelivery,
+  enableBackgroundDelivery: Native.enableBackgroundDelivery,
+
   // simple convenience getters
   getBiologicalSex: Native.getBiologicalSex,
   getFitzpatrickSkinType: Native.getFitzpatrickSkinType,
   getWheelchairUse: Native.getWheelchairUse,
   getBloodType: Native.getBloodType,
   getDateOfBirth,
+
   getMostRecentQuantitySample,
   getMostRecentCategorySample,
   getMostRecentWorkout,
+
   getPreferredUnit,
   getPreferredUnits,
   getRequestStatusForAuthorization,
 
   // query methods
   queryCategorySamples,
+  queryClinicalSamples,
+  queryCorrelationSamples,
+  queryDocumentSamples,
   queryQuantitySamples,
   queryStatisticsForQuantity,
   queryWorkouts,
@@ -484,32 +648,24 @@ const Healthkit: ReactNativeHealthkit = {
 
   // save methods
   saveCategorySample,
+  saveCorrelationSample,
   saveQuantitySample,
+  saveWorkoutSample,
 
   // subscriptions
   subscribeToChanges,
 
   // hooks
+  useMostRecentCategorySample,
+  useMostRecentClinicalSample,
+  useMostRecentDocumentSample,
   useMostRecentQuantitySample,
   useMostRecentWorkout,
-  useMostRecentCategorySample,
+
+  useSubscribeToChanges,
 };
 
-export {
-  HKWorkout,
-  HKQuantitySample,
-  HKCategorySample,
-  QueryStatisticsResponse,
-} from './types';
-
-export {
-  HKCategoryTypeIdentifier,
-  HKQuantityTypeIdentifier,
-  HKCharacteristicTypeIdentifier,
-  HKQuantity,
-  HKInsulinDeliveryReason,
-  HKStatisticsOptions,
-  HKUnit,
-} from './native-types';
+export * from './types';
+export * from './native-types';
 
 export default Healthkit;

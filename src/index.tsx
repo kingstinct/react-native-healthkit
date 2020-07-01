@@ -12,6 +12,10 @@ const UnavailableFn = () => {
 
 const Healthkit: ReactNativeHealthkit = {
   authorizationStatusFor: UnavailableFn,
+  buildUnitWithPrefix: UnavailableFn,
+  disableAllBackgroundDelivery: UnavailableFn,
+  disableBackgroundDelivery: UnavailableFn,
+  enableBackgroundDelivery: UnavailableFn,
   getBiologicalSex: UnavailableFn,
   getBloodType: UnavailableFn,
   getDateOfBirth: UnavailableFn,
@@ -25,34 +29,27 @@ const Healthkit: ReactNativeHealthkit = {
   getWheelchairUse: UnavailableFn,
   isHealthDataAvailable: () => Promise.resolve(false),
   queryCategorySamples: UnavailableFn,
+  queryClinicalSamples: UnavailableFn,
+  queryCorrelationSamples: UnavailableFn,
+  queryDocumentSamples: UnavailableFn,
   queryQuantitySamples: UnavailableFn,
   queryStatisticsForQuantity: UnavailableFn,
   queryWorkouts: UnavailableFn,
   requestAuthorization: UnavailableFn,
   saveCategorySample: UnavailableFn,
+  saveCorrelationSample: UnavailableFn,
   saveQuantitySample: UnavailableFn,
+  saveWorkoutSample: UnavailableFn,
   subscribeToChanges: UnavailableFn,
   useMostRecentCategorySample: UnavailableFn,
+  useMostRecentClinicalSample: UnavailableFn,
+  useMostRecentDocumentSample: UnavailableFn,
   useMostRecentQuantitySample: UnavailableFn,
   useMostRecentWorkout: UnavailableFn,
-  buildUnitWithPrefix: UnavailableFn,
+  useSubscribeToChanges: UnavailableFn,
 };
 
-export {
-  HKWorkout,
-  HKQuantitySample,
-  HKCategorySample,
-  QueryStatisticsResponse,
-} from './types';
-
-export {
-  HKCategoryTypeIdentifier,
-  HKQuantityTypeIdentifier,
-  HKCharacteristicTypeIdentifier,
-  HKQuantity,
-  HKStatisticsOptions,
-  HKUnit,
-  HKInsulinDeliveryReason,
-} from './native-types';
+export * from './types';
+export * from './native-types';
 
 export default Healthkit;

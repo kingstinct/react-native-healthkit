@@ -1,7 +1,7 @@
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
 
-@interface RCT_EXTERN_MODULE(ReactNativeHealthkit, RCTEventEmitter<RCTBridgeModule>)
+@interface RCT_EXTERN_MODULE(ReactNativeHealthkit, RCTEventEmitter)
 
 RCT_EXTERN_METHOD(isHealthDataAvailable:(RCTPromiseResolveBlock)resolve
 withRejecter:(RCTPromiseRejectBlock)reject)
@@ -34,6 +34,18 @@ withRejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(authorizationStatusFor:(NSString)typeIdentifier
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(enableBackgroundDelivery:(NSString)typeIdentifier
+                  updateFrequency:(NSInteger)updateFrequency
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(disableBackgroundDelivery:(NSString)typeIdentifier
+withResolver:(RCTPromiseResolveBlock)resolve
+withRejecter:(RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(disableAllBackgroundDelivery:(RCTPromiseResolveBlock)resolve
+withRejecter:(RCTPromiseRejectBlock)reject);
 
 RCT_EXTERN_METHOD(getPreferredUnits:(NSArray)forIdentifiers
 resolve:(RCTPromiseResolveBlock)resolve
@@ -83,7 +95,48 @@ RCT_EXTERN_METHOD(queryCategorySamples:(NSString)typeIdentifier
                   reject:(RCTPromiseRejectBlock)reject
 )
 
+RCT_EXTERN_METHOD(saveCorrelationSample:(NSString)typeIdentifier
+                  samples:(NSArray)samples
+                  start:(NSDate)start
+                  end:(NSDate)end
+                  metadata:(NSDictionary)metadata
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
 
+RCT_EXTERN_METHOD(saveWorkoutSample:(NSInteger)typeIdentifier
+                  quantities:(NSArray)quantities
+                  start:(NSDate)start
+                  end:(NSDate)end
+                  metadata:(NSDictionary)metadata
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(queryClinicalSamples:(NSString)typeIdentifier
+                  from:(NSDate)from
+                  to:(NSDate)to
+                  limit:(NSNumber)limit
+                  ascending:(BOOL)ascending
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(queryDocumentSamples:(NSString)typeIdentifier
+                  from:(NSDate)from
+                  to:(NSDate)to
+                  limit:(NSNumber)limit
+                  ascending:(BOOL)ascending
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(queryCorrelationSamples:(NSString)typeIdentifier
+                  from:(NSDate)from
+                  to:(NSDate)to
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
 
 RCT_EXTERN_METHOD(queryQuantitySamples:(NSString)typeIdentifier
                   unitString:(NSString)unitString

@@ -1,24 +1,34 @@
 import type {
-  HKUnit,
-  HKQuantityTypeIdentifier,
-  HKBloodType,
-  HKBiologicalSex,
-  HKWheelchairUse,
-  HKFitzpatrickSkinType,
-  HKStatisticsOptions,
-  HKCharacteristicTypeIdentifier,
-  HKSampleTypeIdentifier,
-  HKCategoryValueForIdentifier,
-  HKCategoryTypeIdentifier,
   HKAuthorizationRequestStatus,
-  HKMetadataForCategoryIdentifier,
-  HKQuantitySampleRaw,
-  QueryStatisticsResponseRaw,
-  HKWorkoutRaw,
+  HKBiologicalSex,
+  HKBloodType,
   HKCategorySampleRaw,
+  HKCategoryTypeIdentifier,
+  HKCategoryValueForIdentifier,
+  HKCharacteristicTypeIdentifier,
+  HKClinicalSampleRaw,
+  HKClinicalTypeIdentifier,
+  HKCorrelationRaw,
+  HKCorrelationTypeIdentifier,
+  HKDocumentSampleRaw,
+  HKDocumentTypeIdentifier,
+  HKFitzpatrickSkinType,
+  MetadataMapperForCategoryIdentifier,
+  HKQuantitySampleRaw,
+  HKQuantityTypeIdentifier,
+  HKSampleTypeIdentifier,
+  HKStatisticsOptions,
+  HKUnit,
   HKUnitSI,
   HKUnitSIPrefix,
-  HKMetadataForQuantityIdentifier,
+  HKWheelchairUse,
+  HKWorkoutActivityType,
+  HKWorkoutMetadata,
+  HKWorkoutRaw,
+  MetadataMapperForCorrelationIdentifier,
+  MetadataMapperForQuantityIdentifier,
+  QueryStatisticsResponseRaw,
+  HKUpdateFrequency,
 } from './native-types';
 
 export interface QueryWorkoutsOptions<
@@ -56,7 +66,7 @@ export interface HKQuantitySample<
   TUnit extends HKUnit = HKUnit
 >
   extends Omit<
-    HKQuantitySampleRaw<TUnit, TIdentifier>,
+    HKQuantitySampleRaw<TIdentifier, TUnit>,
     'startDate' | 'endDate'
   > {
   startDate: Date;
@@ -108,12 +118,12 @@ export type QueryCategorySamplesFn = <T extends HKCategoryTypeIdentifier>(
 
 export type GetRequestStatusForAuthorizationFn = (
   read: (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
-  write?: HKSampleTypeIdentifier[]
+  write?: Exclude<HKSampleTypeIdentifier, HKClinicalTypeIdentifier>[]
 ) => Promise<HKAuthorizationRequestStatus>;
 
 export type RequestAuthorizationFn = (
   read: (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
-  write?: HKSampleTypeIdentifier[]
+  write?: Exclude<HKSampleTypeIdentifier, HKClinicalTypeIdentifier>[]
 ) => Promise<boolean>;
 
 export type SaveQuantitySampleFn = <TUnit extends HKQuantityTypeIdentifier>(
@@ -123,7 +133,7 @@ export type SaveQuantitySampleFn = <TUnit extends HKQuantityTypeIdentifier>(
   options?: {
     start?: Date;
     end?: Date;
-    metadata?: HKMetadataForQuantityIdentifier<TUnit>;
+    metadata?: MetadataMapperForQuantityIdentifier<TUnit>;
   }
 ) => Promise<boolean>;
 
@@ -146,7 +156,7 @@ export type SaveCategorySampleFn = <T extends HKCategoryTypeIdentifier>(
   options?: {
     start?: Date;
     end?: Date;
-    metadata?: HKMetadataForCategoryIdentifier<T>;
+    metadata?: MetadataMapperForCategoryIdentifier<T>;
   }
 ) => Promise<boolean>;
 
@@ -159,6 +169,20 @@ export type GetMostRecentCategorySampleFn = <
 export type MostRecentCategorySampleHook = <T extends HKCategoryTypeIdentifier>(
   identifier: T
 ) => HKCategorySample<T> | null;
+
+export type MostRecentCorrelationSampleHook = <
+  T extends HKCorrelationTypeIdentifier
+>(
+  identifer: T
+) => HKCorrelation<T> | null;
+
+export type MostRecentClinicalSampleHook = <T extends HKClinicalTypeIdentifier>(
+  identifier: T
+) => HKClinicalSample | null;
+
+export type MostRecentDocumentSampleHook = <T extends HKDocumentTypeIdentifier>(
+  identifier: T
+) => HKDocumentSample | null;
 
 export type GetMostRecentQuantitySampleFn = <
   TIdentifier extends HKQuantityTypeIdentifier,
@@ -204,6 +228,81 @@ export type GetPreferredUnitFn = (
   identifier: HKQuantityTypeIdentifier
 ) => Promise<HKUnit>;
 
+export type SaveCorrelationSampleFn = <
+  TIdentifier extends HKCorrelationTypeIdentifier
+>(
+  typeIdentifier: TIdentifier,
+  samples: (
+    | Omit<HKCategorySample, 'startDate' | 'endDate' | 'uuid' | 'device'>
+    | Omit<HKQuantitySample, 'startDate' | 'endDate' | 'uuid' | 'device'>
+  )[],
+  options?: {
+    start?: Date;
+    end?: Date;
+    metadata?: MetadataMapperForCorrelationIdentifier<TIdentifier>;
+  }
+) => Promise<boolean>;
+
+export type SaveWorkoutSampleFn = (
+  typeIdentifier: HKWorkoutActivityType,
+  quantities: Omit<
+    HKQuantitySample,
+    'startDate' | 'endDate' | 'uuid' | 'device'
+  >[],
+  start: Date,
+  options?: {
+    end?: Date;
+    metadata?: HKWorkoutMetadata;
+  }
+) => Promise<boolean>;
+
+export interface HKClinicalSample
+  extends Omit<HKClinicalSampleRaw, 'startDate' | 'endDate'> {
+  startDate: Date;
+  endDate: Date;
+}
+
+export interface HKDocumentSample
+  extends Omit<HKDocumentSampleRaw, 'startDate' | 'endDate'> {
+  startDate: Date;
+  endDate: Date;
+}
+
+export interface HKCorrelation<TIdentifier extends HKCorrelationTypeIdentifier>
+  extends Omit<
+    HKCorrelationRaw<TIdentifier>,
+    'startDate' | 'endDate' | 'objects'
+  > {
+  objects: (HKQuantitySample | HKCategorySample)[];
+  startDate: Date;
+  endDate: Date;
+}
+
+export type QueryClinicalSamplesFn = (
+  typeIdentifier: HKClinicalTypeIdentifier,
+  options: GenericQueryOptions
+) => Promise<HKClinicalSample[]>;
+
+export type QueryDocumentSamplesFn = (
+  typeIdentifier: HKDocumentTypeIdentifier,
+  options: GenericQueryOptions
+) => Promise<HKDocumentSample[]>;
+
+export type QueryCorrelationSamplesFn = <
+  TIdentifier extends HKCorrelationTypeIdentifier
+>(
+  typeIdentifier: TIdentifier,
+  options: Omit<GenericQueryOptions, 'limit' | 'ascending'>
+) => Promise<HKCorrelation<TIdentifier>[]>;
+
+export type SubscribeToChangesHook = <
+  TIdentifier extends HKSampleTypeIdentifier
+>(
+  identifier: TIdentifier,
+  onChange: () => void,
+  runInitialUpdate?: boolean
+) => void;
+
 export type ReactNativeHealthkit = {
   authorizationStatusFor: AuthorizationStatusForFn;
 
@@ -227,15 +326,31 @@ export type ReactNativeHealthkit = {
   queryQuantitySamples: QueryQuantitySamplesFn;
   queryStatisticsForQuantity: QueryStatisticsForQuantityFn;
   queryWorkouts: QueryWorkoutsFn;
+  queryClinicalSamples: QueryClinicalSamplesFn;
+  queryDocumentSamples: QueryDocumentSamplesFn;
+  queryCorrelationSamples: QueryCorrelationSamplesFn;
 
   requestAuthorization: RequestAuthorizationFn;
 
   saveCategorySample: SaveCategorySampleFn;
   saveQuantitySample: SaveQuantitySampleFn;
+  saveCorrelationSample: SaveCorrelationSampleFn;
+  saveWorkoutSample: SaveWorkoutSampleFn;
+  enableBackgroundDelivery: (
+    typeIdentifier: HKSampleTypeIdentifier,
+    updateFrequency: HKUpdateFrequency
+  ) => Promise<boolean>;
+  disableBackgroundDelivery: (
+    typeIdentifier: HKSampleTypeIdentifier
+  ) => Promise<boolean>;
+  disableAllBackgroundDelivery: () => Promise<boolean>;
 
   subscribeToChanges: SubscribeToChangesFn;
 
   useMostRecentWorkout: MostRecentWorkoutHook;
   useMostRecentCategorySample: MostRecentCategorySampleHook;
   useMostRecentQuantitySample: MostRecentQuantitySampleHook;
+  useMostRecentDocumentSample: MostRecentDocumentSampleHook;
+  useMostRecentClinicalSample: MostRecentClinicalSampleHook;
+  useSubscribeToChanges: SubscribeToChangesHook;
 };
