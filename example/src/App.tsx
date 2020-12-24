@@ -18,6 +18,7 @@ import Healthkit, {
   HKUnit,
   HKWeatherCondition,
   HKWorkoutActivityType,
+  HKInsulinDeliveryReason,
 } from '../../src/index';
 
 const DisplayWorkout: React.FunctionComponent<{
@@ -158,16 +159,16 @@ function DataView() {
   ] = React.useState<QueryStatisticsResponse | null>(null);
 
   React.useEffect(() => {
-    /*Healthkit.saveQuantitySample(
-      HKQuantityTypeIdentifier.bloodGlucose,
-      HKUnit.GlucoseMmolPerL,
+    Healthkit.saveQuantitySample(
+      HKQuantityTypeIdentifier.insulinDelivery,
+      HKUnit.InternationalUnit,
       4.2,
       {
         metadata: {
-          HKMetadataKeyInsulinDeliveryReason: HKInsulinDeliveryReason.basal,
+          HKInsulinDeliveryReason: HKInsulinDeliveryReason.basal,
         },
       }
-    );*/
+    );
     Healthkit.saveCorrelationSample(HKCorrelationTypeIdentifier.food, [
       {
         quantityType: HKQuantityTypeIdentifier.dietaryCaffeine,
@@ -202,7 +203,7 @@ function DataView() {
       new Date(),
       {
         metadata: {
-          HKMetadataKeyWeatherCondition: HKWeatherCondition.hurricane,
+          HKWeatherCondition: HKWeatherCondition.hurricane,
         },
       }
     );

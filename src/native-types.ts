@@ -128,20 +128,21 @@ export enum HKWorkoutActivityType {
 }
 
 export type HKGenericMetadata = {
-  HKMetadataKeyExternalUUID?: string;
-  HKMetadataKeyTimeZone?: string;
-  HKMetadataKeyWasUserEntered?: boolean;
-  HKMetadataKeyDeviceSerialNumber?: string;
-  HKMetadataKeyUDIDeviceIdentifier?: string;
-  HKMetadataKeyUDIProductionIdentifier?: string;
-  HKMetadataKeyDigitalSignature?: string;
-  HKMetadataKeyDeviceName?: string;
-  HKMetadataKeyDeviceManufacturerName?: string;
-  HKMetadataKeySyncIdentifier?: string;
-  HKMetadataKeySyncVersion?: number;
-  HKMetadataKeyWasTakenInLab?: boolean;
-  HKMetadataKeyReferenceRangeLowerLimit?: number;
-  HKMetadataKeyReferenceRangeUpperLimit?: number;
+  [key: string]: string | number | boolean | HKQuantity | undefined;
+  HKExternalUUID?: string;
+  HKTimeZone?: string;
+  HKWasUserEntered?: boolean;
+  HKDeviceSerialNumber?: string;
+  HKUDIDeviceIdentifier?: string;
+  HKUDIProductionIdentifier?: string;
+  HKDigitalSignature?: string;
+  HKDeviceName?: string;
+  HKDeviceManufacturerName?: string;
+  HKSyncIdentifier?: string;
+  HKSyncVersion?: number;
+  HKWasTakenInLab?: boolean;
+  HKReferenceRangeLowerLimit?: number;
+  HKReferenceRangeUpperLimit?: number;
 };
 
 // documented at https://developer.apple.com/documentation/healthkit/hkweathercondition
@@ -178,9 +179,9 @@ export enum HKWeatherCondition {
 
 export interface HKWorkoutMetadata
   extends HKGenericMetadata /*<TTemperatureUnit extends HKUnit>*/ {
-  HKMetadataKeyWeatherCondition?: HKWeatherCondition;
-  HKMetadataKeyWeatherHumidity?: HKQuantity<HKUnit.Percent>;
-  // HKMetadataKeyWeatherTemperature: HKQuantity<TTemperatureUnit>
+  HKWeatherCondition?: HKWeatherCondition;
+  HKWeatherHumidity?: HKQuantity<HKUnit.Percent>;
+  // HKWeatherTemperature: HKQuantity<TTemperatureUnit>
 }
 
 // Straight mapping to https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier
@@ -415,14 +416,17 @@ export enum HKInsulinDeliveryReason {
 
 export type MetadataMapperForQuantityIdentifier<
   TQuantityTypeIdentifier = HKQuantityTypeIdentifier
-> = TQuantityTypeIdentifier extends HKQuantityTypeIdentifier.bloodGlucose
+> = TQuantityTypeIdentifier extends HKQuantityTypeIdentifier.insulinDelivery
   ? HKGenericMetadata & {
-      HKMetadataKeyBloodGlucoseMealTime?: number;
-      HKMetadataKeyInsulinDeliveryReason?: HKInsulinDeliveryReason;
+      HKInsulinDeliveryReason: HKInsulinDeliveryReason;
+    }
+  : TQuantityTypeIdentifier extends HKQuantityTypeIdentifier.bloodGlucose
+  ? HKGenericMetadata & {
+      HKBloodGlucoseMealTime?: number;
     }
   : TQuantityTypeIdentifier extends HKQuantityTypeIdentifier.heartRate
   ? HKGenericMetadata & {
-      HKMetadataKeyHeartRateMotionContext?: HKHeartRateMotionContext;
+      HKHeartRateMotionContext?: HKHeartRateMotionContext;
     }
   : HKGenericMetadata;
 
@@ -430,7 +434,7 @@ export type MetadataMapperForCorrelationIdentifier<
   TCorrelationTypeIdentifier = HKCorrelationTypeIdentifier
 > = TCorrelationTypeIdentifier extends HKCorrelationTypeIdentifier.food
   ? HKGenericMetadata & {
-      HKMetadataKeyFoodType?: string;
+      HKFoodType?: string;
     }
   : HKGenericMetadata;
 
@@ -460,11 +464,11 @@ export type MetadataMapperForCategoryIdentifier<
   T extends HKCategoryTypeIdentifier
 > = T extends HKCategoryTypeIdentifier.sexualActivity
   ? HKGenericMetadata & {
-      HKMetadataKeySexualActivityProtectionUsed: boolean;
+      HKSexualActivityProtectionUsed: boolean;
     }
   : T extends HKCategoryTypeIdentifier.menstrualFlow
   ? HKGenericMetadata & {
-      HKMetadataKeyMenstrualCycleStart: boolean;
+      HKMenstrualCycleStart: boolean;
     }
   : HKGenericMetadata;
 
@@ -544,6 +548,7 @@ export enum HKUnit {
   Yard = 'yd',
 
   GlucoseMmolPerL = 'mmol<180.15588000005408>/l',
+  GlucoseMgPerDl = 'mg/dL',
 }
 
 export type HKDevice = {
