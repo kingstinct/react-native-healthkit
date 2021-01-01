@@ -47,22 +47,25 @@ Since this package is using Swift you might also need to add a bridging header i
   console.log(unit) // %
 
   /* Listen to data */
-  await HealthKit.requestAuthorization([HKQuantityTypeIdentifier.heartRate]); // request read permission for bodyFatPercentage
+  await HealthKit.requestAuthorization([HKQuantityTypeIdentifier.heartRate]); // request read permission for heart rate
 
   const unsubscribe = HealthKit.subscribeToChanges(HKQuantityTypeIdentifier.heartRate, () => {
     // refetch whichever queries you need
   });
 
   /* write data */
-  await HealthKit.requestAuthorization([], [HKQuantityTypeIdentifier.bloodGlucose]); // request write permission for bodyFatPercentage
+  await HealthKit.requestAuthorization([], [HKQuantityTypeIdentifier.insulinDelivery]); // request write permission for insulin delivery
 
   ReactNativeHealthkit.saveQuantitySample(
-      HKQuantityTypeIdentifier.bloodGlucose,
-      HKUnit.GlucoseMmolPerL,
+      HKQuantityTypeIdentifier.insulinDelivery,
+      HKUnit.InternationalUnit,
       5.5,
       {
         metadata: {
-          HKMetadataKeyInsulinDeliveryReason: HKInsulinDeliveryReason.basal,
+          // Metadata keys could be arbirtary string to store app-specific data.
+          // To use built-in types from https://developer.apple.com/documentation/healthkit/samples/metadata_keys
+          // you need to specify string values instead of variable names (by dropping MetadataKey from the name).
+          HKInsulinDeliveryReason: HKInsulinDeliveryReason.basal,
         },
       }
     );
