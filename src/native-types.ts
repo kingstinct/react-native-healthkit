@@ -11,8 +11,6 @@ export type HKSampleTypeIdentifier =
   | HKWorkoutTypeIdentifier
   | HKQuantityTypeIdentifier
   | HKCategoryTypeIdentifier
-  | HKClinicalTypeIdentifier
-  | HKDocumentTypeIdentifier
   | HKAudiogramTypeIdentifier
   | HKCorrelationTypeIdentifier;
 
@@ -622,43 +620,6 @@ export type HKCategorySampleRaw<
   metadata: MetadataMapperForCategoryIdentifier<T>;
 };
 
-export enum HKClinicalTypeIdentifier {
-  allergyRecord = 'HKClinicalTypeIdentifierAllergyRecord',
-  conditionRecord = 'HKClinicalTypeIdentifierConditionRecord',
-  immunizationRecord = 'HKClinicalTypeIdentifierImmunizationRecord',
-  labResultRecord = 'HKClinicalTypeIdentifierLabResultRecord',
-  medicationRecord = 'HKClinicalTypeIdentifierMedicationRecord',
-  procedureRecord = 'HKClinicalTypeIdentifierProcedureRecord',
-  vitalSignRecord = 'HKClinicalTypeIdentifierVitalSignRecord',
-}
-
-export type HKClinicalSampleRaw = {
-  clinicalType: HKClinicalTypeIdentifier;
-  uuid: string;
-  device?: HKDevice;
-  endDate: string;
-  startDate: string;
-  displayName: string;
-  fhirResource?: Object;
-};
-
-export enum HKDocumentTypeIdentifier {
-  CDA = 'HKDocumentTypeIdentifierCDA',
-}
-
-export type HKDocumentSampleRaw = {
-  uuid: string;
-  device?: HKDevice;
-  documentType: HKDocumentTypeIdentifier;
-  documentData?: string; // base64
-  title: string;
-  patientName: string;
-  custodianName: string;
-  authorName: string;
-  startDate: string;
-  endDate: string;
-};
-
 export type HKCorrelationRaw<
   TIdentifier extends HKCorrelationTypeIdentifier
 > = {
@@ -721,22 +682,6 @@ type ReactNativeHealthkitTypeNative = {
     end: string,
     metadata: HKWorkoutMetadata
   ) => Promise<boolean>;
-
-  queryClinicalSamples: (
-    typeIdentifier: HKClinicalTypeIdentifier,
-    from: string,
-    to: string,
-    limit: Number,
-    ascending: boolean
-  ) => Promise<HKClinicalSampleRaw[]>;
-
-  queryDocumentSamples: (
-    typeIdentifier: HKDocumentTypeIdentifier,
-    from: string,
-    to: string,
-    limit: Number,
-    ascending: boolean
-  ) => Promise<HKDocumentSampleRaw[]>;
 
   queryCorrelationSamples: <TIdentifier extends HKCorrelationTypeIdentifier>(
     typeIdentifier: TIdentifier,

@@ -10,8 +10,6 @@ let HKCharacteristicTypeIdentifier_PREFIX = "HKCharacteristicTypeIdentifier"
 let HKQuantityTypeIdentifier_PREFIX = "HKQuantityTypeIdentifier"
 let HKCategoryTypeIdentifier_PREFIX = "HKCategoryTypeIdentifier"
 let HKCorrelationTypeIdentifier_PREFIX = "HKCorrelationTypeIdentifier"
-let HKClinicalTypeIdentifier_PREFIX = "HKClinicalTypeIdentifier"
-let HKDocumentTypeIdentifier_PREFIX = "HKDocumentTypeIdentifier"
 let HKActivitySummaryTypeIdentifier = "HKActivitySummaryTypeIdentifier"
 let HKAudiogramTypeIdentifier = "HKAudiogramTypeIdentifier";
 let HKWorkoutTypeIdentifier = "HKWorkoutTypeIdentifier"
@@ -75,18 +73,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
             return HKObjectType.correlationType(forIdentifier: identifier) as HKObjectType?
         }
         
-        if(typeIdentifier.starts(with: HKDocumentTypeIdentifier_PREFIX)){
-            let identifier = HKDocumentTypeIdentifier.init(rawValue: typeIdentifier);
-            return HKObjectType.documentType(forIdentifier: identifier) as HKObjectType?
-        }
-        
-        if #available(iOS 12, *) {
-            if(typeIdentifier.starts(with: HKClinicalTypeIdentifier_PREFIX)){
-                let identifier = HKClinicalTypeIdentifier.init(rawValue: typeIdentifier);
-                return HKObjectType.clinicalType(forIdentifier: identifier) as HKObjectType?
-            }
-        }
-        
         if(typeIdentifier == HKActivitySummaryTypeIdentifier){
             return HKObjectType.activitySummaryType();
         }
@@ -118,18 +104,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
         if(typeIdentifier.starts(with: HKCorrelationTypeIdentifier_PREFIX)){
             let identifier = HKCorrelationTypeIdentifier.init(rawValue: typeIdentifier);
             return HKSampleType.correlationType(forIdentifier: identifier) as HKSampleType?
-        }
-        
-        if(typeIdentifier.starts(with: HKDocumentTypeIdentifier_PREFIX)){
-            let identifier = HKDocumentTypeIdentifier.init(rawValue: typeIdentifier);
-            return HKSampleType.documentType(forIdentifier: identifier) as HKSampleType?
-        }
-        
-        if #available(iOS 12, *) {
-            if(typeIdentifier.starts(with: HKClinicalTypeIdentifier_PREFIX)){
-                let identifier = HKClinicalTypeIdentifier.init(rawValue: typeIdentifier);
-                return HKSampleType.clinicalType(forIdentifier: identifier) as HKSampleType?
-            }
         }
         
         if #available(iOS 13, *) {
@@ -916,120 +890,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
         
         store.execute(q);
     }
-    
-    @available(iOS 12, *)
-    @objc(queryClinicalSamples:from:to:limit:ascending:resolve:reject:)
-    func queryClinicalSamples(typeIdentifier: String, from: Date, to: Date, limit: Int, ascending: NSNumber, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
-        guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
-        }
-        
-        let identifier = HKClinicalTypeIdentifier.init(rawValue: typeIdentifier);
-        guard let sampleType = HKSampleType.clinicalType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
-        }
-        
-        let from = from.timeIntervalSince1970 > 0 ? from : nil;
-        let to = to.timeIntervalSince1970 > 0 ? to : nil;
-        
-        let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
-        
-        let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
-        
-        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: Bool(truncating: ascending))]) { (query: HKSampleQuery, _samples: [HKSample]?, error: Error?) in
-            guard let err = error else {
-                guard let samples = _samples else {
-                    return resolve([]);
-                }
-                let arr: NSMutableArray = [];
-                
-                for s in samples {
-                    if let sample = s as? HKClinicalRecord {
-                        var dict: Dictionary<String, Any> = [
-                            "uuid": sample.uuid.uuidString,
-                            "device": self.serializeDevice(_device: sample.device) as Any,
-                            "clinicalType": sample.clinicalType.identifier,
-                            "endDate": self._dateFormatter.string(from: sample.endDate),
-                            "startDate": self._dateFormatter.string(from: sample.startDate),
-                            "displayName": sample.displayName
-                        ];
-                        if let fhirResource = sample.fhirResource {
-                            do {
-                                let data = try JSONSerialization.jsonObject(with: fhirResource.data, options: [])
-                                dict.updateValue(data, forKey: "fhirRecord")
-                            }
-                            catch _ {
-                                print("Parsing fhirResource failed");
-                            }
-                        }
-                        
-                        arr.add(dict);
-                    }
-                }
-                
-                return resolve(arr);
-            }
-            reject(GENERIC_ERROR, err.localizedDescription, err);
-        }
-        
-        store.execute(q);
-    }
-        
-        @objc(queryDocumentSamples:from:to:limit:ascending:resolve:reject:)
-        func queryDocumentSamples(typeIdentifier: String, from: Date, to: Date, limit: Int, ascending: NSNumber, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
-            guard let store = _store else {
-                return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
-            }
-            
-            let identifier = HKDocumentTypeIdentifier.init(rawValue: typeIdentifier);
-            guard let sampleType = HKSampleType.documentType(forIdentifier: identifier) else {
-                return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
-            }
-            
-            let from = from.timeIntervalSince1970 > 0 ? from : nil;
-            let to = to.timeIntervalSince1970 > 0 ? to : nil;
-            
-            let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
-            
-            let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
-            
-            
-            let q = HKDocumentQuery(documentType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: Bool(truncating: ascending))], includeDocumentData: true) { (query: HKDocumentQuery, _documents: [HKDocumentSample]?, success: Bool, error: Error?) in
-                guard let err = error else {
-                    guard let documents = _documents else {
-                        return resolve([]);
-                    }
-                    let arr: NSMutableArray = [];
-                    
-                    for d in documents {
-                        if #available(iOS 11, *) {
-                            if let cdaDocument = (d as? HKCDADocumentSample)?.document {
-                                let serialized = [
-                                    "uuid": d.uuid.uuidString,
-                                    "device": self.serializeDevice(_device:d.device) as Any,
-                                    "documentType": d.documentType.identifier,
-                                    "documentData": cdaDocument.documentData?.base64EncodedString() as Any,
-                                    "title": cdaDocument.title,
-                                    "patientName": cdaDocument.patientName,
-                                    "custodianName": cdaDocument.custodianName,
-                                    "authorName": cdaDocument.authorName,
-                                    "startDate": self._dateFormatter.string(from: d.startDate),
-                                    "endDate": self._dateFormatter.string(from: d.endDate)
-                                ]
-                                
-                                arr.add(serialized)
-                            }
-                        }
-                        
-                    }
-                    
-                    return resolve(arr);
-                }
-                reject(GENERIC_ERROR, err.localizedDescription, err);
-            }
-            
-            store.execute(q);
-        }
     
     @objc(queryCorrelationSamples:from:to:resolve:reject:)
     func queryCorrelationSamples(typeIdentifier: String, from: Date, to: Date, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {

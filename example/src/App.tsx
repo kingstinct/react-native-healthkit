@@ -12,8 +12,6 @@ import Healthkit, {
   HKWorkout,
   QueryStatisticsResponse,
   HKCategorySample,
-  HKClinicalTypeIdentifier,
-  HKDocumentTypeIdentifier,
   HKCorrelationTypeIdentifier,
   HKUnit,
   HKWeatherCondition,
@@ -134,14 +132,6 @@ function DataView() {
     HKQuantityTypeIdentifier.bloodGlucose
   );
 
-  const clinicalSample = Healthkit.useMostRecentClinicalSample(
-    HKClinicalTypeIdentifier.labResultRecord
-  );
-
-  const document = Healthkit.useMostRecentDocumentSample(
-    HKDocumentTypeIdentifier.CDA
-  );
-
   const bodyWeight = Healthkit.useMostRecentQuantitySample(
     HKQuantityTypeIdentifier.bodyMass
   );
@@ -239,40 +229,6 @@ function DataView() {
           <DataTable.Title accessibilityStates={[]}>Time</DataTable.Title>
         </DataTable.Header>
 
-        {document ? (
-          <DataTable.Row accessibilityStates={[]}>
-            <DataTable.Cell accessibilityStates={[]}>
-              {document.title}
-            </DataTable.Cell>
-            <DataTable.Cell accessibilityStates={[]}>
-              {document.patientName}
-            </DataTable.Cell>
-            <DataTable.Cell accessibilityStates={[]}>
-              {document.authorName}
-            </DataTable.Cell>
-            <DataTable.Cell accessibilityStates={[]}>
-              {document.startDate.toLocaleString()}
-            </DataTable.Cell>
-          </DataTable.Row>
-        ) : null}
-
-        {clinicalSample ? (
-          <DataTable.Row accessibilityStates={[]}>
-            <DataTable.Cell accessibilityStates={[]}>
-              {clinicalSample.clinicalType}
-            </DataTable.Cell>
-            <DataTable.Cell accessibilityStates={[]}>
-              {clinicalSample.displayName}
-            </DataTable.Cell>
-            <DataTable.Cell accessibilityStates={[]}>
-              {clinicalSample.fhirResource ? 'data' : '-'}
-            </DataTable.Cell>
-            <DataTable.Cell accessibilityStates={[]}>
-              {clinicalSample.startDate.toLocaleString()}
-            </DataTable.Cell>
-          </DataTable.Row>
-        ) : null}
-
         <DisplayQuantitySample sample={bodyFat} title="Body fat" />
         <DisplayQuantitySample sample={bodyWeight} title="Weight" />
         <DisplayQuantitySample sample={heartRate} title="Heart rate" />
@@ -334,12 +290,8 @@ const App = () => {
         HKQuantityTypeIdentifier.bloodGlucose,
         HKQuantityTypeIdentifier.activeEnergyBurned,
         HKCategoryTypeIdentifier.mindfulSession,
-        HKClinicalTypeIdentifier.labResultRecord,
-        HKClinicalTypeIdentifier.allergyRecord,
-        HKClinicalTypeIdentifier.vitalSignRecord,
         HKQuantityTypeIdentifier.dietaryCaffeine,
         HKQuantityTypeIdentifier.dietaryEnergyConsumed,
-        HKDocumentTypeIdentifier.CDA,
         'HKWorkoutTypeIdentifier',
       ],
       [

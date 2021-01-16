@@ -24,17 +24,11 @@ import type {
   GetPreferredUnitFn,
   GetPreferredUnitsFn,
   HKCategorySample,
-  HKClinicalSample,
   HKCorrelation,
-  HKDocumentSample,
   HKQuantitySample,
   HKWorkout,
-  MostRecentClinicalSampleHook,
-  MostRecentDocumentSampleHook,
   QueryCategorySamplesFn,
-  QueryClinicalSamplesFn,
   QueryCorrelationSamplesFn,
-  QueryDocumentSamplesFn,
   QueryQuantitySamplesFn,
   QueryStatisticsForQuantityFn,
   QueryWorkoutsFn,
@@ -488,27 +482,6 @@ function ensureMetadata<TMetadata>(metadata?: TMetadata) {
   return metadata || ({} as TMetadata);
 }
 
-const queryClinicalSamples: QueryClinicalSamplesFn = async (
-  typeIdentifier,
-  options
-) => {
-  const opts = prepareOptions(options);
-  const clinicalSamples = await Native.queryClinicalSamples(
-    typeIdentifier,
-    opts.from,
-    opts.to,
-    opts.limit,
-    opts.ascending
-  );
-  return clinicalSamples.map((s) => {
-    return {
-      ...s,
-      endDate: new Date(s.endDate),
-      startDate: new Date(s.startDate),
-    };
-  });
-};
-
 const queryCorrelationSamples: QueryCorrelationSamplesFn = async (
   typeIdentifier,
   options
@@ -540,27 +513,6 @@ const saveCorrelationSample: SaveCorrelationSampleFn = async (
   );
 };
 
-const queryDocumentSamples: QueryDocumentSamplesFn = async (
-  typeIdentifier,
-  options
-) => {
-  const opts = prepareOptions(options);
-  const documents = await Native.queryDocumentSamples(
-    typeIdentifier,
-    opts.from,
-    opts.to,
-    opts.limit,
-    opts.ascending
-  );
-  return documents.map((s) => {
-    return {
-      ...s,
-      endDate: new Date(s.endDate),
-      startDate: new Date(s.startDate),
-    };
-  });
-};
-
 const saveWorkoutSample: SaveWorkoutSampleFn = (
   typeIdentifier,
   quantities,
@@ -577,36 +529,6 @@ const saveWorkoutSample: SaveWorkoutSampleFn = (
     end,
     ensureMetadata(options?.metadata)
   );
-};
-
-const useMostRecentDocumentSample: MostRecentDocumentSampleHook = (type) => {
-  const [document, setDocument] = useState<HKDocumentSample | null>(null);
-  const updater = useCallback(async () => {
-    const latestDoc = await queryDocumentSamples(type, {
-      limit: 1,
-      ascending: false,
-    });
-    setDocument(latestDoc[0]);
-  }, [type]);
-
-  useSubscribeToChanges(type, updater);
-
-  return document;
-};
-
-const useMostRecentClinicalSample: MostRecentClinicalSampleHook = (type) => {
-  const [document, setDocument] = useState<HKClinicalSample | null>(null);
-  const updater = useCallback(async () => {
-    const latestDoc = await queryClinicalSamples(type, {
-      limit: 1,
-      ascending: false,
-    });
-    setDocument(latestDoc[0]);
-  }, [type]);
-
-  useSubscribeToChanges(type, updater);
-
-  return document;
 };
 
 const Healthkit: ReactNativeHealthkit = {
@@ -637,9 +559,7 @@ const Healthkit: ReactNativeHealthkit = {
 
   // query methods
   queryCategorySamples,
-  queryClinicalSamples,
   queryCorrelationSamples,
-  queryDocumentSamples,
   queryQuantitySamples,
   queryStatisticsForQuantity,
   queryWorkouts,
@@ -657,8 +577,7 @@ const Healthkit: ReactNativeHealthkit = {
 
   // hooks
   useMostRecentCategorySample,
-  useMostRecentClinicalSample,
-  useMostRecentDocumentSample,
+
   useMostRecentQuantitySample,
   useMostRecentWorkout,
 

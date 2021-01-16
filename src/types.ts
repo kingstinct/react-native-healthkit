@@ -6,12 +6,8 @@ import type {
   HKCategoryTypeIdentifier,
   HKCategoryValueForIdentifier,
   HKCharacteristicTypeIdentifier,
-  HKClinicalSampleRaw,
-  HKClinicalTypeIdentifier,
   HKCorrelationRaw,
   HKCorrelationTypeIdentifier,
-  HKDocumentSampleRaw,
-  HKDocumentTypeIdentifier,
   HKFitzpatrickSkinType,
   MetadataMapperForCategoryIdentifier,
   HKQuantitySampleRaw,
@@ -118,12 +114,12 @@ export type QueryCategorySamplesFn = <T extends HKCategoryTypeIdentifier>(
 
 export type GetRequestStatusForAuthorizationFn = (
   read: (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
-  write?: Exclude<HKSampleTypeIdentifier, HKClinicalTypeIdentifier>[]
+  write?: HKSampleTypeIdentifier[]
 ) => Promise<HKAuthorizationRequestStatus>;
 
 export type RequestAuthorizationFn = (
   read: (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
-  write?: Exclude<HKSampleTypeIdentifier, HKClinicalTypeIdentifier>[]
+  write?: HKSampleTypeIdentifier[]
 ) => Promise<boolean>;
 
 export type SaveQuantitySampleFn = <TUnit extends HKQuantityTypeIdentifier>(
@@ -175,14 +171,6 @@ export type MostRecentCorrelationSampleHook = <
 >(
   identifer: T
 ) => HKCorrelation<T> | null;
-
-export type MostRecentClinicalSampleHook = <T extends HKClinicalTypeIdentifier>(
-  identifier: T
-) => HKClinicalSample | null;
-
-export type MostRecentDocumentSampleHook = <T extends HKDocumentTypeIdentifier>(
-  identifier: T
-) => HKDocumentSample | null;
 
 export type GetMostRecentQuantitySampleFn = <
   TIdentifier extends HKQuantityTypeIdentifier,
@@ -256,18 +244,6 @@ export type SaveWorkoutSampleFn = (
   }
 ) => Promise<boolean>;
 
-export interface HKClinicalSample
-  extends Omit<HKClinicalSampleRaw, 'startDate' | 'endDate'> {
-  startDate: Date;
-  endDate: Date;
-}
-
-export interface HKDocumentSample
-  extends Omit<HKDocumentSampleRaw, 'startDate' | 'endDate'> {
-  startDate: Date;
-  endDate: Date;
-}
-
 export interface HKCorrelation<TIdentifier extends HKCorrelationTypeIdentifier>
   extends Omit<
     HKCorrelationRaw<TIdentifier>,
@@ -277,16 +253,6 @@ export interface HKCorrelation<TIdentifier extends HKCorrelationTypeIdentifier>
   startDate: Date;
   endDate: Date;
 }
-
-export type QueryClinicalSamplesFn = (
-  typeIdentifier: HKClinicalTypeIdentifier,
-  options: GenericQueryOptions
-) => Promise<HKClinicalSample[]>;
-
-export type QueryDocumentSamplesFn = (
-  typeIdentifier: HKDocumentTypeIdentifier,
-  options: GenericQueryOptions
-) => Promise<HKDocumentSample[]>;
 
 export type QueryCorrelationSamplesFn = <
   TIdentifier extends HKCorrelationTypeIdentifier
@@ -326,8 +292,6 @@ export type ReactNativeHealthkit = {
   queryQuantitySamples: QueryQuantitySamplesFn;
   queryStatisticsForQuantity: QueryStatisticsForQuantityFn;
   queryWorkouts: QueryWorkoutsFn;
-  queryClinicalSamples: QueryClinicalSamplesFn;
-  queryDocumentSamples: QueryDocumentSamplesFn;
   queryCorrelationSamples: QueryCorrelationSamplesFn;
 
   requestAuthorization: RequestAuthorizationFn;
@@ -350,7 +314,6 @@ export type ReactNativeHealthkit = {
   useMostRecentWorkout: MostRecentWorkoutHook;
   useMostRecentCategorySample: MostRecentCategorySampleHook;
   useMostRecentQuantitySample: MostRecentQuantitySampleHook;
-  useMostRecentDocumentSample: MostRecentDocumentSampleHook;
-  useMostRecentClinicalSample: MostRecentClinicalSampleHook;
+
   useSubscribeToChanges: SubscribeToChangesHook;
 };
