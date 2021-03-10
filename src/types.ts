@@ -60,8 +60,7 @@ export interface HKWorkout<
 export interface HKQuantitySample<
   TIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
   TUnit extends HKUnit = HKUnit
->
-  extends Omit<
+> extends Omit<
     HKQuantitySampleRaw<TIdentifier, TUnit>,
     'startDate' | 'endDate'
   > {

@@ -125,9 +125,10 @@ const DisplayStat: React.FunctionComponent<{
 function DataView() {
   const [dateOfBirth, setDateOfBirth] = React.useState<Date | null>(null);
 
-  const [bloodGlucoseSamples, setBloodGlucoseSamples] = React.useState<Array<
-    HKQuantitySample
-  > | null>(null);
+  const [
+    bloodGlucoseSamples,
+    setBloodGlucoseSamples,
+  ] = React.useState<Array<HKQuantitySample> | null>(null);
 
   const bodyFat = Healthkit.useMostRecentQuantitySample(
     HKQuantityTypeIdentifier.bodyFatPercentage
