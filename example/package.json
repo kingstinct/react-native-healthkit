@@ -9,6 +9,7 @@
     "start": "react-native start"
   },
   "dependencies": {
+    "@react-native-community/toolbar-android": "^0.1.0-rc.2",
     "dayjs": "^1.8.28",
     "react": "16.11.0",
     "react-native": "0.62",

@@ -1,5 +1,8 @@
 # @kingstinct/react-native-healthkit
 
+[![Test](https://github.com/Kingstinct/react-native-healthkit/actions/workflows/main.yml/badge.svg)](https://github.com/Kingstinct/react-native-healthkit/actions/workflows/main.yml)
+[![hello](https://img.shields.io/npm/v/@kingstinct/react-native-healthkit?color=red)](https://www.npmjs.com/package/@kingstinct/react-native-healthkit)
+
 React Native bindings for HealthKit with full TypeScript and Promise support covering almost everything. Keeping TypeScript mappings as close as possible to HealthKit - both in regards to naming and serialization. This will make it easier to keep this library up-to-date with HealthKit as well as browsing the official documentation (and if something - metadata properties for example - is not typed it will still be accessible).
 
 | Data Types                  | Query | Save  | Subscribe | Examples                               |
@@ -82,6 +85,10 @@ Since this package is using Swift you might also need to add a bridging header i
 ## A note on Apple Documentation
 
 We're striving to do as straight a mapping as possible to the Native Libraries. This means that in most cases the Apple Documentation makes sense. However, when it comes to the Healthkit [Metadata Keys](https://developer.apple.com/documentation/healthkit/samples/metadata_keys) the documentation doesn't actually reflect the serialized values. For example HKMetadataKeyExternalUUID in the documentation serializes to HKExternalUUID - which is what we use.
+
+## Clinical Records
+
+For accessing Clinical Records use old version (3.x) or use specific branch ""
 
 ## Contributing
 
