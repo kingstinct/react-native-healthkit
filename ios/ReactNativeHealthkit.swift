@@ -794,7 +794,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
 
     @objc(queryWorkoutSamples:distanceUnitString:from:to:limit:ascending:resolve:reject:)
-    func queryWorkoutSamples(energyUnitString: String, distanceUnitString: String, from: Date, to: Date, limit: Int, ascending: NSNumber, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func queryWorkoutSamples(energyUnitString: String, distanceUnitString: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
@@ -809,7 +809,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         let energyUnit = HKUnit.init(from: energyUnitString)
         let distanceUnit = HKUnit.init(from: distanceUnitString)
         
-        let q = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: Bool(truncating: ascending))]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+        let q = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
                 guard let samples = sample else {
                     return resolve([]);
@@ -851,7 +851,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     
     
     @objc(queryQuantitySamples:unitString:from:to:limit:ascending:resolve:reject:)
-    func queryQuantitySamples(typeIdentifier: String, unitString: String, from: Date, to: Date, limit: Int, ascending: NSNumber, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func queryQuantitySamples(typeIdentifier: String, unitString: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
@@ -868,7 +868,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         
         let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
         
-        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: Bool(truncating: ascending))]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
                 guard let samples = sample else {
                     return resolve([]);
@@ -958,7 +958,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
     
     @objc(queryCategorySamples:from:to:limit:ascending:resolve:reject:)
-    func queryCategorySamples(typeIdentifier: String, from: Date, to: Date, limit: Int, ascending: NSNumber, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func queryCategorySamples(typeIdentifier: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
@@ -975,7 +975,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         
         let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
         
-        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: Bool(truncating: ascending))]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
                 guard let samples = sample else {
                     return resolve([]);

@@ -1,22 +1,22 @@
 import * as React from 'react';
-import { Text, ScrollView } from 'react-native';
+import { ScrollView, Text } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import dayjs from 'dayjs';
 import Healthkit, {
+  HKCategorySample,
   HKCategoryTypeIdentifier,
   HKCharacteristicTypeIdentifier,
+  HKCorrelationTypeIdentifier,
+  HKInsulinDeliveryReason,
   HKQuantity,
   HKQuantitySample,
   HKQuantityTypeIdentifier,
   HKStatisticsOptions,
-  HKWorkout,
-  QueryStatisticsResponse,
-  HKCategorySample,
-  HKCorrelationTypeIdentifier,
   HKUnit,
   HKWeatherCondition,
+  HKWorkout,
   HKWorkoutActivityType,
-  HKInsulinDeliveryReason,
+  QueryStatisticsResponse,
 } from '../../src/index';
 
 const DisplayWorkout: React.FunctionComponent<{
@@ -25,7 +25,7 @@ const DisplayWorkout: React.FunctionComponent<{
   return (
     <DataTable.Row accessibilityStates={[]}>
       <DataTable.Cell accessibilityStates={[]}>
-        {workout.workoutActivityType}
+        {HKWorkoutActivityType[workout.workoutActivityType]}
       </DataTable.Cell>
       <DataTable.Cell
         style={{ paddingRight: 10 }}
@@ -124,6 +124,11 @@ const DisplayStat: React.FunctionComponent<{
 
 function DataView() {
   const [dateOfBirth, setDateOfBirth] = React.useState<Date | null>(null);
+
+  const [bloodGlucoseSamples, setBloodGlucoseSamples] = React.useState<Array<
+    HKQuantitySample
+  > | null>(null);
+
   const bodyFat = Healthkit.useMostRecentQuantitySample(
     HKQuantityTypeIdentifier.bodyFatPercentage
   );
@@ -209,7 +214,12 @@ function DataView() {
       ],
       dayjs().startOf('day').toDate()
     ).then(setQueryStatisticsResponse);
-    // });
+
+    Healthkit.queryQuantitySamples(HKQuantityTypeIdentifier.bloodGlucose, {
+      ascending: true,
+      from: dayjs().startOf('day').toDate(),
+      to: new Date(),
+    }).then(setBloodGlucoseSamples);
   }, []);
 
   return (
@@ -262,6 +272,26 @@ function DataView() {
           <DataTable.Title accessibilityStates={[]}>Energy</DataTable.Title>
         </DataTable.Header>
         {lastWorkout ? <DisplayWorkout workout={lastWorkout} /> : null}
+
+        <DataTable.Header accessibilityStates={[]}>
+          <DataTable.Title accessibilityStates={[]}>
+            Blood Glucose
+          </DataTable.Title>
+          <DataTable.Title
+            accessibilityStates={[]}
+            style={{ paddingRight: 10 }}
+            numeric
+          >
+            Value
+          </DataTable.Title>
+          <DataTable.Title accessibilityStates={[]}>Units</DataTable.Title>
+          <DataTable.Title accessibilityStates={[]}>Time</DataTable.Title>
+        </DataTable.Header>
+        {bloodGlucoseSamples
+          ? bloodGlucoseSamples.map((sample: HKQuantitySample) => (
+              <DisplayQuantitySample sample={sample} title="Glucose" />
+            ))
+          : null}
       </DataTable>
     </ScrollView>
   );
@@ -269,9 +299,9 @@ function DataView() {
 
 /*
 
-                
-        
-        
+
+
+
       </DataTable>*/
 
 const App = () => {
@@ -288,6 +318,7 @@ const App = () => {
         HKQuantityTypeIdentifier.bodyMass,
         HKQuantityTypeIdentifier.heartRate,
         HKQuantityTypeIdentifier.bloodGlucose,
+        HKQuantityTypeIdentifier.insulinDelivery,
         HKQuantityTypeIdentifier.activeEnergyBurned,
         HKCategoryTypeIdentifier.mindfulSession,
         HKQuantityTypeIdentifier.dietaryCaffeine,
@@ -298,6 +329,7 @@ const App = () => {
         HKQuantityTypeIdentifier.waistCircumference,
         HKQuantityTypeIdentifier.activeEnergyBurned,
         HKQuantityTypeIdentifier.bloodGlucose,
+        HKQuantityTypeIdentifier.insulinDelivery,
         HKQuantityTypeIdentifier.bodyFatPercentage,
         HKCategoryTypeIdentifier.mindfulSession,
         HKQuantityTypeIdentifier.dietaryCaffeine,
