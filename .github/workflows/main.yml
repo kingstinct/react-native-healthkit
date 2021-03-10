@@ -26,6 +26,8 @@ jobs:
         uses: actions/setup-node@v2.1.5
       - name: "Install deps"
         run: yarn
+      - name: "Install example deps"
+        run: cd example && yarn && cd ..
       - name: "Lint and typecheck"
         run: yarn typescript && yarn lint
 
