@@ -1,7 +1,7 @@
 # @kingstinct/react-native-healthkit
 
 [![Test](https://github.com/Kingstinct/react-native-healthkit/actions/workflows/main.yml/badge.svg)](https://github.com/Kingstinct/react-native-healthkit/actions/workflows/main.yml)
-[![hello](https://img.shields.io/npm/v/@kingstinct/react-native-healthkit?color=red)](https://www.npmjs.com/package/@kingstinct/react-native-healthkit)
+[![@kingstinct/react-native-healthkit on NPM](https://img.shields.io/npm/v/@kingstinct/react-native-healthkit)](https://www.npmjs.com/package/@kingstinct/react-native-healthkit)
 
 React Native bindings for HealthKit with full TypeScript and Promise support covering almost everything. Keeping TypeScript mappings as close as possible to HealthKit - both in regards to naming and serialization. This will make it easier to keep this library up-to-date with HealthKit as well as browsing the official documentation (and if something - metadata properties for example - is not typed it will still be accessible).
 
