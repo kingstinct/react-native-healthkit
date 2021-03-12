@@ -225,7 +225,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
             "startDate": startDate,
             "quantity": quantity,
             "unit": unit.unitString,
-            "metadata": self.serializeMetadata(metadata: sample.metadata)
+            "metadata": self.serializeMetadata(metadata: sample.metadata),
+            "sourceRevision": self.serializeSourceRevision(_sourceRevision: sample.sourceRevision) as Any,
         ]
     }
     
@@ -240,7 +241,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
             "endDate": endDate,
             "startDate": startDate,
             "value": sample.value,
-            "metadata": self.serializeMetadata(metadata: sample.metadata)
+            "metadata": self.serializeMetadata(metadata: sample.metadata),
+            "sourceRevision": self.serializeSourceRevision(_sourceRevision: sample.sourceRevision) as Any,
         ]
     }
     
@@ -792,6 +794,37 @@ class ReactNativeHealthkit: RCTEventEmitter {
             "softwareVersion": device.softwareVersion,
         ]
     }
+    
+    func serializeOperatingSystemVersion(_version: OperatingSystemVersion?) -> String? {
+        guard let version = _version else {
+            return nil;
+        }
+        
+        let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)";
+        
+        return versionString;
+    }
+    
+    func serializeSourceRevision(_sourceRevision: HKSourceRevision?) -> Dictionary<String, Any?>? {
+        guard let sourceRevision = _sourceRevision else {
+            return nil;
+        }
+        
+        var dict = [
+            "source": [
+                "name": sourceRevision.source.name,
+                "bundleIdentifier": sourceRevision.source.bundleIdentifier
+            ],
+            "version": sourceRevision.version
+        ] as [String : Any];
+        
+        if #available(iOS 11, *) {
+            dict["operatingSystemVersion"] = self.serializeOperatingSystemVersion(_version: sourceRevision.operatingSystemVersion);
+            dict["productType"] = sourceRevision.productType;
+        }
+        
+        return dict;
+    }
 
     @objc(queryWorkoutSamples:distanceUnitString:from:to:limit:ascending:resolve:reject:)
     func queryWorkoutSamples(energyUnitString: String, distanceUnitString: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
@@ -830,7 +863,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
                             "workoutActivityType": workout.workoutActivityType.rawValue,
                             "startDate": startDate,
                             "endDate": endDate,
-                            "metadata": self.serializeMetadata(metadata: workout.metadata)
+                            "metadata": self.serializeMetadata(metadata: workout.metadata),
+                            "sourceRevision": self.serializeSourceRevision(_sourceRevision: workout.sourceRevision) as Any
                         ]
                         
                         if #available(iOS 11, *) {
