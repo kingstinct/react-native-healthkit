@@ -559,6 +559,18 @@ export type HKDevice = {
   softwareVersion: string;
 };
 
+export type HKSource = {
+  name: string;
+  bundleIdentifier: string;
+};
+
+export type HKSourceRevision = {
+  source: HKSource;
+  version: string;
+  operatingSystemVersion?: string;
+  productType?: string;
+};
+
 export type HKQuantitySampleRaw<
   TQuantityIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
   TUnit extends HKUnit = HKUnit
@@ -571,6 +583,7 @@ export type HKQuantitySampleRaw<
   quantity: number;
   unit: TUnit;
   metadata: MetadataMapperForQuantityIdentifier<TQuantityIdentifier>;
+  sourceRevision?: HKSourceRevision;
 };
 
 export type HKWorkoutRaw<TEnergy extends HKUnit, TDistance extends HKUnit> = {
@@ -583,6 +596,7 @@ export type HKWorkoutRaw<TEnergy extends HKUnit, TDistance extends HKUnit> = {
   startDate: string;
   endDate: string;
   metadata?: HKWorkoutMetadata;
+  sourceRevision?: HKSourceRevision;
 };
 
 // Straight mapping to https://developer.apple.com/documentation/healthkit/hkcharacteristictypeidentifier
@@ -618,6 +632,7 @@ export type HKCategorySampleRaw<
   endDate: string;
   value: HKCategoryValueForIdentifier<T>;
   metadata: MetadataMapperForCategoryIdentifier<T>;
+  sourceRevision?: HKSourceRevision;
 };
 
 export type HKCorrelationRaw<
