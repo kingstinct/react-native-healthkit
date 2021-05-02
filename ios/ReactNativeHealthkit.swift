@@ -29,6 +29,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         if(HKHealthStore.isHealthDataAvailable()){
             self._store = HKHealthStore.init();
         }
+        super.init();
     }
     
     deinit {
