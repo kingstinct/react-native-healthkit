@@ -10,16 +10,16 @@
   },
   "dependencies": {
     "@react-native-community/toolbar-android": "^0.1.0-rc.2",
-    "dayjs": "^1.8.28",
-    "react": "16.11.0",
-    "react-native": "0.62",
-    "react-native-paper": "^3.10.1",
-    "react-native-vector-icons": "^6.6.0"
+    "dayjs": "^1.10.6",
+    "react": "17.0.2",
+    "react-native": "0.64.2",
+    "react-native-paper": "^4.9.2",
+    "react-native-vector-icons": "^8.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/runtime": "^7.9.6",
+    "@babel/core": "^7.14.8",
+    "@babel/runtime": "^7.14.8",
     "babel-plugin-module-resolver": "^4.0.0",
-    "metro-react-native-babel-preset": "^0.59.0"
+    "metro-react-native-babel-preset": "^0.66.2"
   }
 }

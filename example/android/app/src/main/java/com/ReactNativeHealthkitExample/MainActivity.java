@@ -1,4 +1,4 @@
-package com.example.kingstinctreactnativehealthkit;
+package com.reactnativehealthkitexample;
 
 import com.facebook.react.ReactActivity;
 
