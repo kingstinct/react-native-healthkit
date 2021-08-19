@@ -1,5 +1,4 @@
 import HealthKit;
-import Combine;
 
 let INIT_ERROR = "HEALTHKIT_INIT_ERROR"
 let INIT_ERROR_MESSAGE = "HealthKit not initialized"
