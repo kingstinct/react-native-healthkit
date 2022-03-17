@@ -279,6 +279,15 @@ export enum HKQuantityTypeIdentifier {
   dietaryCaffeine = 'HKQuantityTypeIdentifierDietaryCaffeine', // Mass, Cumulative
   dietaryWater = 'HKQuantityTypeIdentifierDietaryWater', // Volume, Cumulative
 
+  // Mobility
+  sixMinuteWalkTestDistance = 'HKQuantityTypeIdentifierSixMinuteWalkTestDistance',
+  walkingSpeed = 'HKQuantityTypeIdentifierWalkingSpeed',
+  walkingStepLength = 'HKQuantityTypeIdentifierWalkingStepLength',
+  walkingAsymmetryPercentage = 'HKQuantityTypeIdentifierWalkingAsymmetryPercentage',
+  walkingDoubleSupportPercentage = 'HKQuantityTypeIdentifierWalkingDoubleSupportPercentage',
+  stairAscentSpeed = 'HKQuantityTypeIdentifierStairAscentSpeed',
+  stairDescentSpeed = 'HKQuantityTypeIdentifierStairDescentSpeed',
+
   uvExposure = 'HKQuantityTypeIdentifierUvExposure', // Scalar (Count), Discrete
 }
 

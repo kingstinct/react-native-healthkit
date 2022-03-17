@@ -1,5 +1,6 @@
+/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
-import { ScrollView, Text } from 'react-native';
+import { Button, ScrollView, Text } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import dayjs from 'dayjs';
 import Healthkit, {
@@ -23,25 +24,21 @@ const DisplayWorkout: React.FunctionComponent<{
   workout: HKWorkout;
 }> = ({ workout }) => {
   return (
-    <DataTable.Row accessibilityStates={[]}>
-      <DataTable.Cell accessibilityStates={[]}>
+    <DataTable.Row>
+      <DataTable.Cell>
         {HKWorkoutActivityType[workout.workoutActivityType]}
       </DataTable.Cell>
-      <DataTable.Cell
-        style={{ paddingRight: 10 }}
-        accessibilityStates={[]}
-        numeric
-      >
+      <DataTable.Cell style={{ paddingRight: 10 }} numeric>
         {workout ? workout.duration.toFixed(0) + 's' : '-'}
       </DataTable.Cell>
-      <DataTable.Cell accessibilityStates={[]}>
+      <DataTable.Cell>
         {workout
           ? workout.totalDistance?.quantity.toFixed(1) +
             ' ' +
             workout.totalDistance?.unit
           : '-'}
       </DataTable.Cell>
-      <DataTable.Cell accessibilityStates={[]}>
+      <DataTable.Cell>
         {workout
           ? workout.totalEnergyBurned?.quantity.toFixed(1) +
             ' ' +
@@ -57,19 +54,13 @@ const DisplayQuantitySample: React.FunctionComponent<{
   sample: HKQuantitySample | null;
 }> = ({ title, sample }) => {
   return (
-    <DataTable.Row accessibilityStates={[]}>
-      <DataTable.Cell accessibilityStates={[]}>{title}</DataTable.Cell>
-      <DataTable.Cell
-        style={{ paddingRight: 10 }}
-        accessibilityStates={[]}
-        numeric
-      >
+    <DataTable.Row>
+      <DataTable.Cell>{title}</DataTable.Cell>
+      <DataTable.Cell style={{ paddingRight: 10 }} numeric>
         {sample ? sample.quantity.toFixed(1) : '-'}
       </DataTable.Cell>
-      <DataTable.Cell accessibilityStates={[]}>
-        {sample ? sample.unit : '-'}
-      </DataTable.Cell>
-      <DataTable.Cell accessibilityStates={[]}>
+      <DataTable.Cell>{sample ? sample.unit : '-'}</DataTable.Cell>
+      <DataTable.Cell>
         {sample ? sample.startDate.toLocaleTimeString() : '-'}
       </DataTable.Cell>
     </DataTable.Row>
@@ -81,19 +72,15 @@ const DisplayCategorySample: React.FunctionComponent<{
   sample: HKCategorySample | null;
 }> = ({ title, sample }) => {
   return (
-    <DataTable.Row accessibilityStates={[]}>
-      <DataTable.Cell accessibilityStates={[]}>{title}</DataTable.Cell>
-      <DataTable.Cell
-        style={{ paddingRight: 10 }}
-        accessibilityStates={[]}
-        numeric
-      >
+    <DataTable.Row>
+      <DataTable.Cell>{title}</DataTable.Cell>
+      <DataTable.Cell style={{ paddingRight: 10 }} numeric>
         {sample ? sample.value : '-'}
       </DataTable.Cell>
-      <DataTable.Cell accessibilityStates={[]}>
+      <DataTable.Cell>
         {sample ? sample.startDate.toLocaleTimeString() : '-'}
       </DataTable.Cell>
-      <DataTable.Cell accessibilityStates={[]}>
+      <DataTable.Cell>
         {sample ? sample.endDate.toLocaleTimeString() : '-'}
       </DataTable.Cell>
     </DataTable.Row>
@@ -105,19 +92,13 @@ const DisplayStat: React.FunctionComponent<{
   sample: HKQuantity | undefined;
 }> = ({ title, sample }) => {
   return (
-    <DataTable.Row accessibilityStates={[]}>
-      <DataTable.Cell accessibilityStates={[]}>{title}</DataTable.Cell>
-      <DataTable.Cell
-        style={{ paddingRight: 10 }}
-        accessibilityStates={[]}
-        numeric
-      >
+    <DataTable.Row>
+      <DataTable.Cell>{title}</DataTable.Cell>
+      <DataTable.Cell style={{ paddingRight: 10 }} numeric>
         {sample ? sample.quantity.toFixed(1) : '-'}
       </DataTable.Cell>
-      <DataTable.Cell accessibilityStates={[]}>
-        {sample ? sample.unit : '-'}
-      </DataTable.Cell>
-      <DataTable.Cell accessibilityStates={[]}>N/A</DataTable.Cell>
+      <DataTable.Cell>{sample ? sample.unit : '-'}</DataTable.Cell>
+      <DataTable.Cell>N/A</DataTable.Cell>
     </DataTable.Row>
   );
 };
@@ -149,12 +130,36 @@ function DataView() {
     HKCategoryTypeIdentifier.mindfulSession
   );
 
+  const walkingSpeed = Healthkit.useMostRecentQuantitySample(
+    HKQuantityTypeIdentifier.walkingSpeed
+  );
+  const sixMinWalk = Healthkit.useMostRecentQuantitySample(
+    HKQuantityTypeIdentifier.sixMinuteWalkTestDistance
+  );
+  const walkingStepLength = Healthkit.useMostRecentQuantitySample(
+    HKQuantityTypeIdentifier.walkingStepLength
+  );
+  const walkingAsymmetryPercentage = Healthkit.useMostRecentQuantitySample(
+    HKQuantityTypeIdentifier.walkingAsymmetryPercentage
+  );
+  const walkingDoubleSupportPercentage = Healthkit.useMostRecentQuantitySample(
+    HKQuantityTypeIdentifier.walkingDoubleSupportPercentage
+  );
+
+  const stairAscentSpeed = Healthkit.useMostRecentQuantitySample(
+    HKQuantityTypeIdentifier.stairAscentSpeed
+  );
+
+  const stairDescentSpeed = Healthkit.useMostRecentQuantitySample(
+    HKQuantityTypeIdentifier.stairDescentSpeed
+  );
+
   const [
     queryStatisticsResponse,
     setQueryStatisticsResponse,
   ] = React.useState<QueryStatisticsResponse | null>(null);
 
-  React.useEffect(() => {
+  const writeSampleToHealthkit = () => {
     Healthkit.saveQuantitySample(
       HKQuantityTypeIdentifier.insulinDelivery,
       HKUnit.InternationalUnit,
@@ -221,23 +226,25 @@ function DataView() {
       from: dayjs().startOf('day').toDate(),
       to: new Date(),
     }).then(setBloodGlucoseSamples);
-  }, []);
+  };
+
+  console.log(walkingDoubleSupportPercentage);
 
   return (
     <ScrollView style={{ flex: 1, paddingTop: 40 }}>
+      <Button
+        title="Write Sample to HealthKit"
+        onPress={() => writeSampleToHealthkit()}
+      />
       <Text>Date of birth: {dateOfBirth?.toLocaleDateString()}</Text>
       <DataTable>
-        <DataTable.Header accessibilityStates={[]}>
-          <DataTable.Title accessibilityStates={[]}>Metric</DataTable.Title>
-          <DataTable.Title
-            accessibilityStates={[]}
-            style={{ paddingRight: 10 }}
-            numeric
-          >
+        <DataTable.Header>
+          <DataTable.Title>Metric</DataTable.Title>
+          <DataTable.Title style={{ paddingRight: 10 }} numeric>
             Value
           </DataTable.Title>
-          <DataTable.Title accessibilityStates={[]}>Unit</DataTable.Title>
-          <DataTable.Title accessibilityStates={[]}>Time</DataTable.Title>
+          <DataTable.Title>Unit</DataTable.Title>
+          <DataTable.Title>Time</DataTable.Title>
         </DataTable.Header>
 
         <DisplayQuantitySample sample={bodyFat} title="Body fat" />
@@ -260,50 +267,64 @@ function DataView() {
 
         <DisplayCategorySample sample={lastMindfulSession} title="Mindful" />
 
-        <DataTable.Header accessibilityStates={[]}>
-          <DataTable.Title accessibilityStates={[]}>Workout</DataTable.Title>
-          <DataTable.Title
-            accessibilityStates={[]}
-            style={{ paddingRight: 10 }}
-            numeric
-          >
+        <DataTable.Header>
+          <DataTable.Title>Workout</DataTable.Title>
+          <DataTable.Title style={{ paddingRight: 10 }} numeric>
             Duration
           </DataTable.Title>
-          <DataTable.Title accessibilityStates={[]}>Distance</DataTable.Title>
-          <DataTable.Title accessibilityStates={[]}>Energy</DataTable.Title>
+          <DataTable.Title>Distance</DataTable.Title>
+          <DataTable.Title>Energy</DataTable.Title>
         </DataTable.Header>
         {lastWorkout ? <DisplayWorkout workout={lastWorkout} /> : null}
 
-        <DataTable.Header accessibilityStates={[]}>
-          <DataTable.Title accessibilityStates={[]}>
-            Blood Glucose
-          </DataTable.Title>
-          <DataTable.Title
-            accessibilityStates={[]}
-            style={{ paddingRight: 10 }}
-            numeric
-          >
+        <DataTable.Header>
+          <DataTable.Title>Blood Glucose</DataTable.Title>
+          <DataTable.Title style={{ paddingRight: 10 }} numeric>
             Value
           </DataTable.Title>
-          <DataTable.Title accessibilityStates={[]}>Units</DataTable.Title>
-          <DataTable.Title accessibilityStates={[]}>Time</DataTable.Title>
+          <DataTable.Title>Units</DataTable.Title>
+          <DataTable.Title>Time</DataTable.Title>
         </DataTable.Header>
         {bloodGlucoseSamples
           ? bloodGlucoseSamples.map((sample: HKQuantitySample) => (
               <DisplayQuantitySample sample={sample} title="Glucose" />
             ))
           : null}
+
+        <DataTable.Header>
+          <DataTable.Title>Mobility</DataTable.Title>
+          <DataTable.Title style={{ paddingRight: 10 }} numeric>
+            Value
+          </DataTable.Title>
+          <DataTable.Title>Units</DataTable.Title>
+          <DataTable.Title>Time</DataTable.Title>
+        </DataTable.Header>
+        <DisplayQuantitySample sample={walkingSpeed} title="Walking speed" />
+        <DisplayQuantitySample
+          sample={sixMinWalk}
+          title="Six-minute walk test"
+        />
+        <DisplayQuantitySample
+          sample={walkingStepLength}
+          title="Walking Step Length"
+        />
+        <DisplayQuantitySample
+          sample={walkingAsymmetryPercentage}
+          title="Walking Asymmetry"
+        />
+        <DisplayQuantitySample
+          sample={walkingDoubleSupportPercentage}
+          title="Walking Double Support"
+        />
+        <DisplayQuantitySample sample={stairAscentSpeed} title="Stair Ascent" />
+        <DisplayQuantitySample
+          sample={stairDescentSpeed}
+          title="Stair Descent"
+        />
       </DataTable>
     </ScrollView>
   );
 }
-
-/*
-
-
-
-
-      </DataTable>*/
 
 const App = () => {
   const [hasPermissions, setHasPermissions] = React.useState<boolean>(false);
@@ -324,6 +345,12 @@ const App = () => {
         HKCategoryTypeIdentifier.mindfulSession,
         HKQuantityTypeIdentifier.dietaryCaffeine,
         HKQuantityTypeIdentifier.dietaryEnergyConsumed,
+        HKQuantityTypeIdentifier.walkingSpeed,
+        HKQuantityTypeIdentifier.walkingAsymmetryPercentage,
+        HKQuantityTypeIdentifier.walkingDoubleSupportPercentage,
+        HKQuantityTypeIdentifier.stairAscentSpeed,
+        HKQuantityTypeIdentifier.stairDescentSpeed,
+        HKQuantityTypeIdentifier.walkingStepLength,
         'HKWorkoutTypeIdentifier',
       ],
       [
