@@ -1,4 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
+import 'expo-dev-client';
 import * as React from 'react';
 import { Button, ScrollView, Text } from 'react-native';
 import { DataTable } from 'react-native-paper';
@@ -18,7 +19,7 @@ import Healthkit, {
   HKWorkout,
   HKWorkoutActivityType,
   QueryStatisticsResponse,
-} from '../src/index';
+} from '@kingstinct/react-native-healthkit';
 
 const DisplayWorkout: React.FunctionComponent<{
   workout: HKWorkout;
