@@ -30,7 +30,7 @@ cd ios
 pod install
 ```
 
-Remember to set `NSHealthUpdateUsageDescription` and `NSHealthShareUsageDescription` in your `Info.plist` as well as enable the HealthKit capability for the project in Xcode. During runtime you need to check if HealthKit is available on the device with `isHealthDataAvailable` and request permissions with `requestAuthorization`;
+Remember to set `NSHealthUpdateUsageDescription` and `NSHealthShareUsageDescription` in your `Info.plist` as well as enable the HealthKit capability for the project in Xcode. During runtime you need to check if HealthKit is available on the device with `isHealthDataAvailable` and request permissions with `requestAuthorization`. The example has been migrated to **Expo** for easy-of-use and maintainability. See the [example app.json](https://github.com/Kingstinct/react-native-healthkit/blob/8e82d921f57c9bc0912af5f52f53c181ee8e4b5a/example/app.json#L24-L31) for how to apply this to your project. Just keep in mind this will not work in Expo Go since there is native iOS code involved - you'll have to use EAS to [build your own client](https://docs.expo.dev/development/getting-started/).
 
 Since this package is using Swift you might also need to add a bridging header in your project if you haven't already, you can [find more about that in the official React Native docs](https://reactnative.dev/docs/native-modules-ios#exporting-swift)
 
