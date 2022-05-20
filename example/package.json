@@ -1,25 +1,32 @@
 {
-  "name": "@kingstinct/react-native-healthkit-example",
-  "description": "Example app for @kingstinct/react-native-healthkit",
-  "version": "0.0.1",
-  "private": true,
+  "name": "healthkit-example-expo",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "start": "react-native start"
+    "start": "expo start",
+    "ios": "expo start --ios",
+    "eject": "expo eject",
+    "build-local": "eas build --platform=ios --profile=development --local"
   },
   "dependencies": {
-    "@react-native-community/toolbar-android": "^0.1.0-rc.2",
-    "dayjs": "^1.8.28",
-    "react": "16.11.0",
-    "react-native": "0.62",
-    "react-native-paper": "4.0.0",
-    "react-native-vector-icons": "^6.6.0"
+    "@kingstinct/react-native-healthkit": "^4.1.1",
+    "expo": "~45.0.0",
+    "expo-dev-client": "~0.9.6",
+    "expo-status-bar": "~1.3.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-native": "0.68.2",
+    "react-native-paper": "^4.12.1",
+    "react-native-web": "0.17.7"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/runtime": "^7.9.6",
-    "babel-plugin-module-resolver": "^4.0.0",
-    "metro-react-native-babel-preset": "^0.59.0"
-  }
+    "@babel/core": "^7.12.9",
+    "@types/react": "~17.0.21",
+    "@types/react-native": "0.67",
+    "typescript": "4"
+  },
+  "resolutions": {
+    "@types/react": "17.0.2"
+  },
+  "private": true
 }

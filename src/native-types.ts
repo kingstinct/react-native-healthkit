@@ -445,27 +445,26 @@ export type MetadataMapperForCorrelationIdentifier<
     }
   : HKGenericMetadata;
 
-export type HKCategoryValueForIdentifier<
-  T extends HKCategoryTypeIdentifier
-> = T extends HKCategoryTypeIdentifier.cervicalMucusQuality
-  ? HKCategoryValueCervicalMucusQuality
-  : T extends HKCategoryTypeIdentifier.menstrualFlow
-  ? HKCategoryValueMenstrualFlow
-  : T extends HKCategoryTypeIdentifier.ovulationTestResult
-  ? HKCategoryValueOvulationTestResult
-  : T extends HKCategoryTypeIdentifier.sleepAnalysis
-  ? HKCategoryValueSleepAnalysis
-  : T extends HKCategoryTypeIdentifier.mindfulSession
-  ? HKCategoryValueNotApplicable
-  : T extends HKCategoryTypeIdentifier.intermenstrualBleeding
-  ? HKCategoryValueNotApplicable
-  : T extends HKCategoryTypeIdentifier.highHeartRateEvent
-  ? HKCategoryValueNotApplicable
-  : T extends HKCategoryTypeIdentifier.sexualActivity
-  ? HKCategoryValueNotApplicable
-  : T extends HKCategoryTypeIdentifier.appleStandHour
-  ? HKCategoryValueAppleStandHour
-  : number;
+export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier> =
+  T extends HKCategoryTypeIdentifier.cervicalMucusQuality
+    ? HKCategoryValueCervicalMucusQuality
+    : T extends HKCategoryTypeIdentifier.menstrualFlow
+    ? HKCategoryValueMenstrualFlow
+    : T extends HKCategoryTypeIdentifier.ovulationTestResult
+    ? HKCategoryValueOvulationTestResult
+    : T extends HKCategoryTypeIdentifier.sleepAnalysis
+    ? HKCategoryValueSleepAnalysis
+    : T extends HKCategoryTypeIdentifier.mindfulSession
+    ? HKCategoryValueNotApplicable
+    : T extends HKCategoryTypeIdentifier.intermenstrualBleeding
+    ? HKCategoryValueNotApplicable
+    : T extends HKCategoryTypeIdentifier.highHeartRateEvent
+    ? HKCategoryValueNotApplicable
+    : T extends HKCategoryTypeIdentifier.sexualActivity
+    ? HKCategoryValueNotApplicable
+    : T extends HKCategoryTypeIdentifier.appleStandHour
+    ? HKCategoryValueAppleStandHour
+    : number;
 
 export type MetadataMapperForCategoryIdentifier<
   T extends HKCategoryTypeIdentifier
@@ -644,15 +643,14 @@ export type HKCategorySampleRaw<
   sourceRevision?: HKSourceRevision;
 };
 
-export type HKCorrelationRaw<
-  TIdentifier extends HKCorrelationTypeIdentifier
-> = {
-  correlationType: HKCorrelationTypeIdentifier;
-  objects: (HKQuantitySampleRaw | HKCategorySampleRaw)[];
-  metadata: MetadataMapperForCorrelationIdentifier<TIdentifier>;
-  startDate: string;
-  endDate: string;
-};
+export type HKCorrelationRaw<TIdentifier extends HKCorrelationTypeIdentifier> =
+  {
+    correlationType: HKCorrelationTypeIdentifier;
+    objects: (HKQuantitySampleRaw | HKCategorySampleRaw)[];
+    metadata: MetadataMapperForCorrelationIdentifier<TIdentifier>;
+    startDate: string;
+    endDate: string;
+  };
 
 type QueryId = string;
 
@@ -781,7 +779,8 @@ type ReactNativeHealthkitTypeNative = {
   ) => Promise<TypeToUnitMapping>;
 };
 
-const Native = NativeModules.ReactNativeHealthkit as ReactNativeHealthkitTypeNative;
+const Native =
+  NativeModules.ReactNativeHealthkit as ReactNativeHealthkitTypeNative;
 
 type OnChangeCallback = ({
   typeIdentifier,

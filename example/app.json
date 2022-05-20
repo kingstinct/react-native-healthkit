@@ -1,4 +1,43 @@
 {
-  "name": "ReactNativeHealthkitExample",
-  "displayName": "ReactNativeHealthkit Example"
+  "expo": {
+    "name": "healthkit-example-expo",
+    "slug": "healthkit-example-expo",
+    "owner": "kingstinct",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kingstinct.healthkitexample.expo",
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "This app uses HealthKit to store and sync your data",
+        "NSHealthUpdateUsageDescription": "This app uses HealthKit to store and sync your data"
+      },
+      "entitlements": {
+        "com.apple.developer.healthkit": true,
+        "com.apple.developer.healthkit.background-delivery": true
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
 }

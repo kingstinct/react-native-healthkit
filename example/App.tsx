@@ -1,4 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
+import 'expo-dev-client';
 import * as React from 'react';
 import { Button, ScrollView, Text } from 'react-native';
 import { DataTable } from 'react-native-paper';
@@ -18,7 +19,7 @@ import Healthkit, {
   HKWorkout,
   HKWorkoutActivityType,
   QueryStatisticsResponse,
-} from '../../src/index';
+} from '../src/index'; // this way we can work with the working copy - but keep in mind native changes requires a new build 🚀
 
 const DisplayWorkout: React.FunctionComponent<{
   workout: HKWorkout;
@@ -106,10 +107,8 @@ const DisplayStat: React.FunctionComponent<{
 function DataView() {
   const [dateOfBirth, setDateOfBirth] = React.useState<Date | null>(null);
 
-  const [
-    bloodGlucoseSamples,
-    setBloodGlucoseSamples,
-  ] = React.useState<Array<HKQuantitySample> | null>(null);
+  const [bloodGlucoseSamples, setBloodGlucoseSamples] =
+    React.useState<Array<HKQuantitySample> | null>(null);
 
   const bodyFat = Healthkit.useMostRecentQuantitySample(
     HKQuantityTypeIdentifier.bodyFatPercentage
@@ -154,10 +153,8 @@ function DataView() {
     HKQuantityTypeIdentifier.stairDescentSpeed
   );
 
-  const [
-    queryStatisticsResponse,
-    setQueryStatisticsResponse,
-  ] = React.useState<QueryStatisticsResponse | null>(null);
+  const [queryStatisticsResponse, setQueryStatisticsResponse] =
+    React.useState<QueryStatisticsResponse | null>(null);
 
   const writeSampleToHealthkit = () => {
     Healthkit.saveQuantitySample(
