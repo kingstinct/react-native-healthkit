@@ -29,7 +29,7 @@ RCT_EXTERN_METHOD(getBloodType:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(getDateOfBirth:(RCTPromiseResolveBlock)resolve
-withRejecter:(RCTPromiseRejectBlock)reject)
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(authorizationStatusFor:(NSString)typeIdentifier
                   withResolver:(RCTPromiseResolveBlock)resolve
@@ -37,19 +37,19 @@ RCT_EXTERN_METHOD(authorizationStatusFor:(NSString)typeIdentifier
 
 RCT_EXTERN_METHOD(enableBackgroundDelivery:(NSString)typeIdentifier
                   updateFrequency:(NSInteger)updateFrequency
-                  withResolver:(RCTPromiseResolveBlock)resolve
-                  withRejecter:(RCTPromiseRejectBlock)reject);
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject);
 
 RCT_EXTERN_METHOD(disableBackgroundDelivery:(NSString)typeIdentifier
-withResolver:(RCTPromiseResolveBlock)resolve
-withRejecter:(RCTPromiseRejectBlock)reject);
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject);
 
 RCT_EXTERN_METHOD(disableAllBackgroundDelivery:(RCTPromiseResolveBlock)resolve
-withRejecter:(RCTPromiseRejectBlock)reject);
+                  reject:(RCTPromiseRejectBlock)reject);
 
 RCT_EXTERN_METHOD(getPreferredUnits:(NSArray)forIdentifiers
-resolve:(RCTPromiseResolveBlock)resolve
-reject:(RCTPromiseRejectBlock)reject)
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
 
 
 RCT_EXTERN_METHOD(saveQuantitySample:(NSString)typeIdentifier
@@ -145,6 +145,6 @@ RCT_EXTERN_METHOD(queryStatisticsForQuantity:(NSString)typeIdentifier
 )
 
 RCT_EXTERN_METHOD(getWheelchairUse:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject)
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
 @end
