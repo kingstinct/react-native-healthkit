@@ -4,12 +4,12 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "build-local": "eas build --platform=ios --profile=development --local"
   },
   "dependencies": {
+    "@kingstinct/react-native-healthkit": "^4.1.1",
     "expo": "~45.0.0",
     "expo-dev-client": "~0.9.6",
     "expo-status-bar": "~1.3.0",
