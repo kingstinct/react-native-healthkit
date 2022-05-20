@@ -19,7 +19,7 @@ import Healthkit, {
   HKWorkout,
   HKWorkoutActivityType,
   QueryStatisticsResponse,
-} from '../src/index';
+} from '../src/index'; // this way we can work with the working copy - but keep in mind native changes requires a new build 🚀
 
 const DisplayWorkout: React.FunctionComponent<{
   workout: HKWorkout;
