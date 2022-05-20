@@ -19,7 +19,7 @@ import Healthkit, {
   HKWorkout,
   HKWorkoutActivityType,
   QueryStatisticsResponse,
-} from '@kingstinct/react-native-healthkit';
+} from '../src/index';
 
 const DisplayWorkout: React.FunctionComponent<{
   workout: HKWorkout;
@@ -107,10 +107,8 @@ const DisplayStat: React.FunctionComponent<{
 function DataView() {
   const [dateOfBirth, setDateOfBirth] = React.useState<Date | null>(null);
 
-  const [
-    bloodGlucoseSamples,
-    setBloodGlucoseSamples,
-  ] = React.useState<Array<HKQuantitySample> | null>(null);
+  const [bloodGlucoseSamples, setBloodGlucoseSamples] =
+    React.useState<Array<HKQuantitySample> | null>(null);
 
   const bodyFat = Healthkit.useMostRecentQuantitySample(
     HKQuantityTypeIdentifier.bodyFatPercentage
@@ -155,10 +153,8 @@ function DataView() {
     HKQuantityTypeIdentifier.stairDescentSpeed
   );
 
-  const [
-    queryStatisticsResponse,
-    setQueryStatisticsResponse,
-  ] = React.useState<QueryStatisticsResponse | null>(null);
+  const [queryStatisticsResponse, setQueryStatisticsResponse] =
+    React.useState<QueryStatisticsResponse | null>(null);
 
   const writeSampleToHealthkit = () => {
     Healthkit.saveQuantitySample(

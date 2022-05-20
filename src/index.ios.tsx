@@ -291,16 +291,14 @@ const queryStatisticsForQuantity: QueryStatisticsForQuantityFn = async (
 ) => {
   const actualUnit = await ensureUnit(identifier, unit);
   const toDate = to || new Date();
-  const {
-    mostRecentQuantityDateInterval,
-    ...rawResponse
-  } = await Native.queryStatisticsForQuantity(
-    identifier,
-    actualUnit,
-    from.toISOString(),
-    toDate.toISOString(),
-    options
-  );
+  const { mostRecentQuantityDateInterval, ...rawResponse } =
+    await Native.queryStatisticsForQuantity(
+      identifier,
+      actualUnit,
+      from.toISOString(),
+      toDate.toISOString(),
+      options
+    );
 
   const response = {
     ...rawResponse,
