@@ -16,6 +16,11 @@ let HKWorkoutTypeIdentifier = "HKWorkoutTypeIdentifier"
 let HKWorkoutRouteTypeIdentifier = "HKWorkoutRouteTypeIdentifier"
 let HKDataTypeIdentifierHeartbeatSeries = "HKDataTypeIdentifierHeartbeatSeries"
 
+// HKUnit.meter().unitDivided(by: HKUnit.second())
+let HKSpeedUnit =  HKUnit(from: "m/s")
+// Support for MET data, eg: HKAverageMETs 8.24046 kcal/hr·kg
+let HKMETUnit = HKUnit(from: "kcal/hr·kg")
+
 
 @objc(ReactNativeHealthkit)
 @available(iOS 10.0, *)
@@ -768,6 +773,15 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 return self.serializeQuantity(unit: HKUnit.decibelHearingLevel(), quantity: quantity);
             }
         }
+
+        if(quantity.is(compatibleWith: HKSpeedUnit)){
+            return self.serializeQuantity(unit: HKSpeedUnit, quantity: quantity);
+        }
+
+        if(quantity.is(compatibleWith: HKMETUnit)){
+            return self.serializeQuantity(unit: HKMETUnit, quantity: quantity);
+        }
+
         return nil;
     }
 
