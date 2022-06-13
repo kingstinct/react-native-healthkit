@@ -27,7 +27,7 @@ const Healthkit: ReactNativeHealthkit = {
   getPreferredUnits: UnavailableFn,
   getRequestStatusForAuthorization: UnavailableFn,
   getWheelchairUse: UnavailableFn,
-  getWorkoutLocations: UnavailableFn,
+  getWorkoutRoutes: UnavailableFn,
   isHealthDataAvailable: () => Promise.resolve(false),
   queryCategorySamples: UnavailableFn,
   queryCorrelationSamples: UnavailableFn,

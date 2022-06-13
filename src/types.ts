@@ -25,7 +25,7 @@ import type {
   MetadataMapperForCorrelationIdentifier,
   MetadataMapperForQuantityIdentifier,
   QueryStatisticsResponseRaw,
-  WorkoutLocation,
+  WorkoutRoute,
 } from './native-types';
 
 export interface QueryWorkoutsOptions<
@@ -269,9 +269,9 @@ export type SubscribeToChangesHook = <
   runInitialUpdate?: boolean
 ) => void;
 
-export type GetWorkoutLocationsFn = (
+export type GetWorkoutRoutesFn = (
   workoutUUID: string
-) => Promise<WorkoutLocation[][]>;
+) => Promise<WorkoutRoute[]>;
 
 export type ReactNativeHealthkit = {
   authorizationStatusFor: AuthorizationStatusForFn;
@@ -287,7 +287,7 @@ export type ReactNativeHealthkit = {
   getPreferredUnits: GetPreferredUnitsFn;
   getRequestStatusForAuthorization: GetRequestStatusForAuthorizationFn;
   getWheelchairUse: GetWheelchairUseFn;
-  getWorkoutLocations: GetWorkoutLocationsFn;
+  getWorkoutRoutes: GetWorkoutRoutesFn;
 
   buildUnitWithPrefix: (prefix: HKUnitSIPrefix, unit: HKUnitSI) => HKUnit;
 

@@ -16,11 +16,9 @@ let HKWorkoutTypeIdentifier = "HKWorkoutTypeIdentifier"
 let HKWorkoutRouteTypeIdentifier = "HKWorkoutRouteTypeIdentifier"
 let HKDataTypeIdentifierHeartbeatSeries = "HKDataTypeIdentifierHeartbeatSeries"
 
-// HKUnit.meter().unitDivided(by: HKUnit.second())
-let HKSpeedUnit =  HKUnit(from: "m/s")
-// Support for MET data, eg: HKAverageMETs 8.24046 kcal/hr·kg
-let HKMETUnit = HKUnit(from: "kcal/hr·kg")
-
+let SpeedUnit =  HKUnit(from: "m/s") // HKUnit.meter().unitDivided(by: HKUnit.second())
+// Support for MET data: HKAverageMETs 8.24046 kcal/hr·kg
+let METUnit = HKUnit(from: "kcal/hr·kg")
 
 @objc(ReactNativeHealthkit)
 @available(iOS 10.0, *)
@@ -746,7 +744,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
             return self.serializeQuantity(unit: HKUnit.percent(), quantity: quantity);
         }
 
-
         if(quantity.is(compatibleWith: HKUnit.second())){
             return self.serializeQuantity(unit: HKUnit.second(), quantity: quantity);
         }
@@ -757,6 +754,10 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         if(quantity.is(compatibleWith: HKUnit.count())){
             return self.serializeQuantity(unit: HKUnit.count(), quantity: quantity)
+        }
+
+        if(quantity.is(compatibleWith: HKUnit.meter())){
+            return self.serializeQuantity(unit: HKUnit.meter(), quantity: quantity)
         }
 
         if #available(iOS 11, *) {
@@ -774,12 +775,12 @@ class ReactNativeHealthkit: RCTEventEmitter {
             }
         }
 
-        if(quantity.is(compatibleWith: HKSpeedUnit)){
-            return self.serializeQuantity(unit: HKSpeedUnit, quantity: quantity);
+        if(quantity.is(compatibleWith: SpeedUnit)){
+            return self.serializeQuantity(unit: SpeedUnit, quantity: quantity);
         }
 
-        if(quantity.is(compatibleWith: HKMETUnit)){
-            return self.serializeQuantity(unit: HKMETUnit, quantity: quantity);
+        if(quantity.is(compatibleWith: METUnit)){
+            return self.serializeQuantity(unit: METUnit, quantity: quantity);
         }
 
         return nil;
@@ -795,6 +796,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 if let str = item.value as? String {
                     serialized.setValue(str, forKey: item.key)
                 }
+
                 if let double = item.value as? Double {
                     serialized.setValue(double, forKey: item.key)
                 }
@@ -881,6 +883,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                     if let workout = s as? HKWorkout {
                         let endDate = self._dateFormatter.string(from: workout.endDate)
                         let startDate = self._dateFormatter.string(from: workout.startDate);
+
                         let dict: NSMutableDictionary = [
                             "uuid": workout.uuid.uuidString,
                             "device": self.serializeDevice(_device: workout.device) as Any,
@@ -1180,21 +1183,23 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
 
     @available(iOS 13.0.0, *)
-    func getSerializedWorkoutLocations(store: HKHealthStore, workoutUUID: UUID) async -> [[NSDictionary]]? {
+    func getSerializedWorkoutLocations(store: HKHealthStore, workoutUUID: UUID) async -> [Dictionary<String, Any>]? {
         let routes = await _getWorkoutRoutes(store: store, workoutUUID: workoutUUID)
 
-        var allLocations: [[NSDictionary]] = []
+        var allRoutes: [Dictionary<String, Any>] = []
         guard let _routes = routes else {
             return nil
         }
         for route in _routes {
-            let routeLocations = await getRouteLocations(store: store, route: route)
-            allLocations.append(routeLocations.map{serializeLocation(location: $0)})
+            let routeMetadata = self.serializeMetadata(metadata: route.metadata) as! Dictionary<String, Any>
+            let routeLocations = (await getRouteLocations(store: store, route: route)).map{serializeLocation(location: $0)}
+            let routeInfos: Dictionary<String, Any> = ["locations": routeLocations]
+            allRoutes.append(routeInfos.merging(routeMetadata) { (current, _) in current })
         }
-        return allLocations
+        return allRoutes
     }
 
-    func serializeLocation(location: CLLocation) -> NSDictionary {
+    func serializeLocation(location: CLLocation) -> Dictionary<String, Any> {
         return [
             "longitude": location.coordinate.longitude,
             "latitude": location.coordinate.latitude,
@@ -1228,7 +1233,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 resolve(locations)
             }
             catch {
-                reject("FAILED_RETRIEVE_WORKOUT_LOC", "Failed to retrieve workout location", nil)
+                reject("WORKOUT_LOCATION_ERROR", "Failed to retrieve workout locations", nil)
             }
         }
     }

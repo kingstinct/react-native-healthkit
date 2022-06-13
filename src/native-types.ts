@@ -683,6 +683,12 @@ export type WorkoutLocation = {
   verticalAccuracy: number;
 };
 
+export type WorkoutRoute = {
+  locations: WorkoutLocation[];
+  HKMetadataKeySyncIdentifier?: string;
+  HKMetadataKeySyncVersion?: number;
+};
+
 type ReactNativeHealthkitTypeNative = {
   isHealthDataAvailable(): Promise<boolean>;
   getBloodType(): Promise<HKBloodType>;
@@ -794,7 +800,7 @@ type ReactNativeHealthkitTypeNative = {
   getPreferredUnits: (
     identifiers: HKQuantityTypeIdentifier[]
   ) => Promise<TypeToUnitMapping>;
-  getWorkoutLocations: (workoutUUID: string) => Promise<WorkoutLocation[][]>;
+  getWorkoutRoutes: (workoutUUID: string) => Promise<WorkoutRoute[]>;
 };
 
 const Native =

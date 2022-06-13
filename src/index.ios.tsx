@@ -23,7 +23,7 @@ import type {
   GetMostRecentWorkoutFn,
   GetPreferredUnitFn,
   GetPreferredUnitsFn,
-  GetWorkoutLocationsFn,
+  GetWorkoutRoutesFn,
   HKCategorySample,
   HKCorrelation,
   HKQuantitySample,
@@ -530,8 +530,8 @@ const saveWorkoutSample: SaveWorkoutSampleFn = (
   );
 };
 
-const getWorkoutLocations: GetWorkoutLocationsFn = (workoutUUID: string) => {
-  return Native.getWorkoutLocations(workoutUUID);
+const getWorkoutRoutes: GetWorkoutRoutesFn = (workoutUUID: string) => {
+  return Native.getWorkoutRoutes(workoutUUID);
 };
 
 const Healthkit: ReactNativeHealthkit = {
@@ -560,7 +560,7 @@ const Healthkit: ReactNativeHealthkit = {
   getPreferredUnits,
   getRequestStatusForAuthorization,
 
-  getWorkoutLocations,
+  getWorkoutRoutes,
 
   // query methods
   queryCategorySamples,
