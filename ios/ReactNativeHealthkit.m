@@ -147,7 +147,7 @@ RCT_EXTERN_METHOD(queryStatisticsForQuantity:(NSString)typeIdentifier
 RCT_EXTERN_METHOD(getWheelchairUse:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(getWorkoutLocations:(NSString)workoutUUID
+RCT_EXTERN_METHOD(getWorkoutRoutes:(NSString)workoutUUID
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
 )
