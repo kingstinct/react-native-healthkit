@@ -1213,8 +1213,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
 
     @available(iOS 13.0.0, *)
-    @objc(getWorkoutLocations:resolve:reject:)
-    func getWorkoutLocations(
+    @objc(getWorkoutRoutes:resolve:reject:)
+    func getWorkoutRoutes(
         workoutUUID: String,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock){
