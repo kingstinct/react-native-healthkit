@@ -1,7 +1,7 @@
 import {
-  NativeModules,
-  NativeEventEmitter,
   EmitterSubscription,
+  NativeEventEmitter,
+  NativeModules,
 } from 'react-native';
 
 export type HKWorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier';
@@ -295,6 +295,12 @@ export enum HKAuthorizationRequestStatus {
   unknown = 0,
   shouldRequest = 1,
   unnecessary = 2,
+}
+
+export enum HKAuthorizationStatus {
+  notDetermined = 0,
+  sharingDenied = 1,
+  sharingAuthorized = 2,
 }
 
 export type HKQuantity<T extends HKUnit = HKUnit> = {
@@ -666,6 +672,23 @@ export enum HKUpdateFrequency {
   weekly = 4,
 }
 
+export type WorkoutLocation = {
+  longitude: number;
+  latitude: number;
+  altitude: number;
+  speed: number;
+  timestamp: number;
+  horizontalAccuracy: number;
+  speedAccuracy: number;
+  verticalAccuracy: number;
+};
+
+export type WorkoutRoute = {
+  locations: WorkoutLocation[];
+  HKMetadataKeySyncIdentifier?: string;
+  HKMetadataKeySyncVersion?: number;
+};
+
 type ReactNativeHealthkitTypeNative = {
   isHealthDataAvailable(): Promise<boolean>;
   getBloodType(): Promise<HKBloodType>;
@@ -777,6 +800,7 @@ type ReactNativeHealthkitTypeNative = {
   getPreferredUnits: (
     identifiers: HKQuantityTypeIdentifier[]
   ) => Promise<TypeToUnitMapping>;
+  getWorkoutRoutes: (workoutUUID: string) => Promise<WorkoutRoute[]>;
 };
 
 const Native =

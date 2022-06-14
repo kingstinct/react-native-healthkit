@@ -27,6 +27,7 @@ const Healthkit: ReactNativeHealthkit = {
   getPreferredUnits: UnavailableFn,
   getRequestStatusForAuthorization: UnavailableFn,
   getWheelchairUse: UnavailableFn,
+  getWorkoutRoutes: UnavailableFn,
   isHealthDataAvailable: () => Promise.resolve(false),
   queryCategorySamples: UnavailableFn,
   queryCorrelationSamples: UnavailableFn,
@@ -45,7 +46,7 @@ const Healthkit: ReactNativeHealthkit = {
   useSubscribeToChanges: UnavailableFn,
 };
 
-export * from './types';
 export * from './native-types';
+export * from './types';
 
 export default Healthkit;

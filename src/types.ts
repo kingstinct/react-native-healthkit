@@ -9,7 +9,6 @@ import type {
   HKCorrelationRaw,
   HKCorrelationTypeIdentifier,
   HKFitzpatrickSkinType,
-  MetadataMapperForCategoryIdentifier,
   HKQuantitySampleRaw,
   HKQuantityTypeIdentifier,
   HKSampleTypeIdentifier,
@@ -17,14 +16,16 @@ import type {
   HKUnit,
   HKUnitSI,
   HKUnitSIPrefix,
+  HKUpdateFrequency,
   HKWheelchairUse,
   HKWorkoutActivityType,
   HKWorkoutMetadata,
   HKWorkoutRaw,
+  MetadataMapperForCategoryIdentifier,
   MetadataMapperForCorrelationIdentifier,
   MetadataMapperForQuantityIdentifier,
   QueryStatisticsResponseRaw,
-  HKUpdateFrequency,
+  WorkoutRoute,
 } from './native-types';
 
 export interface QueryWorkoutsOptions<
@@ -268,6 +269,10 @@ export type SubscribeToChangesHook = <
   runInitialUpdate?: boolean
 ) => void;
 
+export type GetWorkoutRoutesFn = (
+  workoutUUID: string
+) => Promise<WorkoutRoute[]>;
+
 export type ReactNativeHealthkit = {
   authorizationStatusFor: AuthorizationStatusForFn;
 
@@ -282,6 +287,7 @@ export type ReactNativeHealthkit = {
   getPreferredUnits: GetPreferredUnitsFn;
   getRequestStatusForAuthorization: GetRequestStatusForAuthorizationFn;
   getWheelchairUse: GetWheelchairUseFn;
+  getWorkoutRoutes: GetWorkoutRoutesFn;
 
   buildUnitWithPrefix: (prefix: HKUnitSIPrefix, unit: HKUnitSI) => HKUnit;
 
