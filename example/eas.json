@@ -6,14 +6,14 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "releaseChannel": "ca5b306af01c36c86997415de24bde3d"
+      "releaseChannel": "1668ee0abf48bb5706deaa0f291a739c"
     },
     "preview": {
       "distribution": "internal",
-      "releaseChannel": "ca5b306af01c36c86997415de24bde3d"
+      "releaseChannel": "1668ee0abf48bb5706deaa0f291a739c"
     },
     "production": {
-      "releaseChannel": "ca5b306af01c36c86997415de24bde3d"
+      "releaseChannel": "1668ee0abf48bb5706deaa0f291a739c"
     }
   },
   "submit": {
