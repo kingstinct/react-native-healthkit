@@ -7,7 +7,7 @@
     "ios": "expo start --ios",
     "prebuild": "expo prebuild",
     "build-local": "eas build --platform=ios --profile=development --local",
-    "postinstall": "yarn copy-local && npx rn-native-hash generate -e",
+    "postinstall": "npx rn-native-hash generate -e",
     "update-package-json": "ts-node update-json.ts",
     "copy-local": "cd .. && yarn build-ts && cd example && rsync -av --progress .. ./node_modules/@kingstinct/react-native-healthkit --exclude /src/ --exclude /node_modules/ --exclude /example/ --exclude /.git/ --exclude /build/ && yarn update-package-json"
   },
