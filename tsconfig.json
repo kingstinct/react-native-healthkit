@@ -1,4 +1,5 @@
 {
+  "exclude": ["example"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
@@ -11,6 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
     "lib": ["esnext"],
+    "outDir": "lib",
     "module": "esnext",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,

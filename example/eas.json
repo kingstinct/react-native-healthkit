@@ -5,12 +5,16 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "releaseChannel": "1668ee0abf48bb5706deaa0f291a739c"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "releaseChannel": "1668ee0abf48bb5706deaa0f291a739c"
     },
-    "production": {}
+    "production": {
+      "releaseChannel": "1668ee0abf48bb5706deaa0f291a739c"
+    }
   },
   "submit": {
     "production": {}

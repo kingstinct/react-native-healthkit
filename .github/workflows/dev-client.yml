@@ -1,0 +1,66 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Expo Dev Clients
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ '**' ]
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  publish-expo-development:
+    # The type of runner that the job will run on
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+      EAS_BUILD_AUTOCOMMIT: 1
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        id: checkout
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.0
+        id: setup
+
+      - uses: actions/cache@v2
+        id: cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-v2-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install deps
+        id: install
+        run: yarn --prod && cd example && yarn
+
+      - name: Expo GitHub Action
+        uses: expo/expo-github-action@v7
+        id: expo-init
+        with:
+          # Your Expo username, for authentication.
+          token: ${{ secrets.EXPO_TOKEN }}
+          expo-version: latest
+          eas-version: latest
+          # If Expo should be stored in the GitHub Actions cache (can be true or false)
+          expo-cache: true # optional
+
+      - name: Get Hash
+        run: cd example && echo "HASH=`npx rn-native-hash hash`" >> $GITHUB_ENV
+
+      - name: Matching Native Builds iOS
+        run: cd example && echo "MATCHING_BUILDS_IOS=`npx eas-cli@latest build:list --buildProfile=development --platform=ios --status=finished | grep -c $HASH`" >> $GITHUB_ENV
+
+      # Runs a set of commands using the runners shell
+      - name: EAS Build iOS
+        id: eas-build-ios-dev
+        if: ${{ env.MATCHING_BUILDS_IOS == 0 }}
+        run: cd example && npx eas-cli@latest build --platform ios --profile=development --non-interactive
