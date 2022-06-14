@@ -24,6 +24,8 @@ jobs:
         uses: actions/checkout@v2
       - name: "Setup Node"
         uses: actions/setup-node@v2.1.5
+      - name: "Install example deps"
+        run: cd example && yarn && cd ..
       - name: "Install deps"
         run: yarn
       - name: "Lint and typecheck"

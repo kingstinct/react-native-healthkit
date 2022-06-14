@@ -1,11 +1,10 @@
 {
   "expo": {
-    "name": "Healthkit",
-    "slug": "react-native-healthkit-example",
+    "name": "healthkit-example-expo",
+    "slug": "healthkit-example-expo",
     "owner": "kingstinct",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "react-native-healthkit-example",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
@@ -21,7 +20,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.kingstinct.healthkitexample",
+      "bundleIdentifier": "com.kingstinct.healthkitexample.expo",
       "infoPlist": {
         "NSHealthShareUsageDescription": "This app uses HealthKit to store and sync your data",
         "NSHealthUpdateUsageDescription": "This app uses HealthKit to store and sync your data"
