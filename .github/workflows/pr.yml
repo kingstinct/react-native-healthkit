@@ -31,10 +31,7 @@ jobs:
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       
     - name: Install deps
-      run: yarn
-
-    - name: Test
-      run: yarn test
+      run: yarn --prod
 
     - name: Expo GitHub Action
       uses: expo/expo-github-action@v7

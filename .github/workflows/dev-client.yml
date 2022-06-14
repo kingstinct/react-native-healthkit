@@ -40,7 +40,7 @@ jobs:
 
       - name: Install deps
         id: install
-        run: yarn && cd example && yarn
+        run: yarn --prod && cd example && yarn
 
       - name: Expo GitHub Action
         uses: expo/expo-github-action@v7
