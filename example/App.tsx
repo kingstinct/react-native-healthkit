@@ -1,9 +1,9 @@
 /* eslint-disable react-native/no-inline-styles */
+import dayjs from 'dayjs';
 import 'expo-dev-client';
 import * as React from 'react';
 import { Button, ScrollView, Text } from 'react-native';
 import { DataTable } from 'react-native-paper';
-import dayjs from 'dayjs';
 import Healthkit, {
   HKCategorySample,
   HKCategoryTypeIdentifier,
@@ -19,11 +19,23 @@ import Healthkit, {
   HKWorkout,
   HKWorkoutActivityType,
   QueryStatisticsResponse,
+  WorkoutRoute,
 } from '../src/index'; // this way we can work with the working copy - but keep in mind native changes requires a new build 🚀
 
 const DisplayWorkout: React.FunctionComponent<{
   workout: HKWorkout;
 }> = ({ workout }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [routes, setRoutes] = React.useState<WorkoutRoute[]>([]);
+
+  React.useEffect(() => {
+    if (workout.uuid) {
+      Healthkit.getWorkoutRoutes(workout.uuid).then(setRoutes);
+    }
+  }, [workout.uuid]);
+
+  console.log(routes);
+
   return (
     <DataTable.Row>
       <DataTable.Cell>
@@ -349,6 +361,8 @@ const App = () => {
         HKQuantityTypeIdentifier.stairDescentSpeed,
         HKQuantityTypeIdentifier.walkingStepLength,
         'HKWorkoutTypeIdentifier',
+        'HKWorkoutRouteTypeIdentifier',
+        'HKDataTypeIdentifierHeartbeatSeries',
       ],
       [
         HKQuantityTypeIdentifier.waistCircumference,
