@@ -19,22 +19,18 @@ import Healthkit, {
   HKWorkout,
   HKWorkoutActivityType,
   QueryStatisticsResponse,
-  WorkoutRoute,
 } from '../src/index'; // this way we can work with the working copy - but keep in mind native changes requires a new build 🚀
 
 const DisplayWorkout: React.FunctionComponent<{
   workout: HKWorkout;
 }> = ({ workout }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [routes, setRoutes] = React.useState<WorkoutRoute[]>([]);
-
   React.useEffect(() => {
     if (workout.uuid) {
-      Healthkit.getWorkoutRoutes(workout.uuid).then(setRoutes);
+      Healthkit.getWorkoutRoutes(workout.uuid).then((_routes) => {
+        console.info(`${_routes.length} routes found`);
+      });
     }
   }, [workout.uuid]);
-
-  console.log(routes);
 
   return (
     <DataTable.Row>
