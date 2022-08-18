@@ -1,25 +1,25 @@
 import {
-  EmitterSubscription,
   NativeEventEmitter,
   NativeModules,
-} from 'react-native';
+} from 'react-native'
 
-export type HKWorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier';
-export type HKAudiogramTypeIdentifier = 'HKAudiogramTypeIdentifier';
-export type HKWorkoutRouteTypeIdentifier = 'HKWorkoutRouteTypeIdentifier';
-export type HKDataTypeIdentifierHeartbeatSeries =
-  'HKDataTypeIdentifierHeartbeatSeries';
+import type { EmitterSubscription } from 'react-native'
+
+export const HKWorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier'
+export const HKAudiogramTypeIdentifier = 'HKAudiogramTypeIdentifier'
+export const HKWorkoutRouteTypeIdentifier = 'HKWorkoutRouteTypeIdentifier'
+export const HKDataTypeIdentifierHeartbeatSeries = 'HKDataTypeIdentifierHeartbeatSeries'
 
 export type HKSampleTypeIdentifier =
-  | HKWorkoutTypeIdentifier
-  | HKQuantityTypeIdentifier
   | HKCategoryTypeIdentifier
-  | HKAudiogramTypeIdentifier
   | HKCorrelationTypeIdentifier
-  | HKWorkoutRouteTypeIdentifier
-  | HKDataTypeIdentifierHeartbeatSeries;
+  | HKQuantityTypeIdentifier
+  | typeof HKAudiogramTypeIdentifier
+  | typeof HKDataTypeIdentifierHeartbeatSeries
+  | typeof HKWorkoutRouteTypeIdentifier
+  | typeof HKWorkoutTypeIdentifier;
 
-export type TypeToUnitMapping = {
+export type TypeToUnitMapping = { readonly
   [key in HKQuantityTypeIdentifier]: HKUnit;
 };
 
@@ -131,21 +131,21 @@ export enum HKWorkoutActivityType {
 }
 
 export type HKGenericMetadata = {
-  [key: string]: string | number | boolean | HKQuantity | undefined;
-  HKExternalUUID?: string;
-  HKTimeZone?: string;
-  HKWasUserEntered?: boolean;
-  HKDeviceSerialNumber?: string;
-  HKUDIDeviceIdentifier?: string;
-  HKUDIProductionIdentifier?: string;
-  HKDigitalSignature?: string;
-  HKDeviceName?: string;
-  HKDeviceManufacturerName?: string;
-  HKSyncIdentifier?: string;
-  HKSyncVersion?: number;
-  HKWasTakenInLab?: boolean;
-  HKReferenceRangeLowerLimit?: number;
-  HKReferenceRangeUpperLimit?: number;
+  readonly [key: string]: HKQuantity | boolean | number | string | undefined;
+  readonly HKExternalUUID?: string;
+  readonly HKTimeZone?: string;
+  readonly HKWasUserEntered?: boolean;
+  readonly HKDeviceSerialNumber?: string;
+  readonly HKUDIDeviceIdentifier?: string;
+  readonly HKUDIProductionIdentifier?: string;
+  readonly HKDigitalSignature?: string;
+  readonly HKDeviceName?: string;
+  readonly HKDeviceManufacturerName?: string;
+  readonly HKSyncIdentifier?: string;
+  readonly HKSyncVersion?: number;
+  readonly HKWasTakenInLab?: boolean;
+  readonly HKReferenceRangeLowerLimit?: number;
+  readonly HKReferenceRangeUpperLimit?: number;
 };
 
 // documented at https://developer.apple.com/documentation/healthkit/hkweathercondition
@@ -181,9 +181,9 @@ export enum HKWeatherCondition {
 }
 
 export interface HKWorkoutMetadata
-  extends HKGenericMetadata /*<TTemperatureUnit extends HKUnit>*/ {
-  HKWeatherCondition?: HKWeatherCondition;
-  HKWeatherHumidity?: HKQuantity<HKUnit.Percent>;
+  extends HKGenericMetadata /* <TTemperatureUnit extends HKUnit> */ {
+  readonly HKWeatherCondition?: HKWeatherCondition;
+  readonly HKWeatherHumidity?: HKQuantity<HKUnit.Percent>;
   // HKWeatherTemperature: HKQuantity<TTemperatureUnit>
 }
 
@@ -309,8 +309,8 @@ export enum HKAuthorizationStatus {
 }
 
 export type HKQuantity<T extends HKUnit = HKUnit> = {
-  unit: T;
-  quantity: number;
+  readonly unit: T;
+  readonly quantity: number;
 };
 
 export enum HKBloodType {
@@ -354,13 +354,13 @@ export enum HKStatisticsOptions {
 }
 
 export type QueryStatisticsResponseRaw<TUnit extends HKUnit = HKUnit> = {
-  averageQuantity?: HKQuantity<TUnit>;
-  maximumQuantity?: HKQuantity<TUnit>;
-  minimumQuantity?: HKQuantity<TUnit>;
-  sumQuantity?: HKQuantity<TUnit>;
-  mostRecentQuantity?: HKQuantity<TUnit>;
-  mostRecentQuantityDateInterval?: { from: string; to: string };
-  duration?: HKQuantity<HKUnit.Seconds>;
+  readonly averageQuantity?: HKQuantity<TUnit>;
+  readonly maximumQuantity?: HKQuantity<TUnit>;
+  readonly minimumQuantity?: HKQuantity<TUnit>;
+  readonly sumQuantity?: HKQuantity<TUnit>;
+  readonly mostRecentQuantity?: HKQuantity<TUnit>;
+  readonly mostRecentQuantityDateInterval?: { readonly from: string; readonly to: string };
+  readonly duration?: HKQuantity<HKUnit.Seconds>;
 };
 
 export enum HKCategoryValueCervicalMucusQuality {
@@ -418,13 +418,13 @@ export enum HKCategoryValueNotApplicable {
 
 export type HKCategoryValue =
   | HKCategoryValueAppetiteChanges
+  | HKCategoryValueCervicalMucusQuality
+  | HKCategoryValueMenstrualFlow
+  | HKCategoryValueOvulationTestResult
+  | HKCategoryValuePresence
   | HKCategoryValuePresence
   | HKCategoryValueSeverity
-  | HKCategoryValuePresence
-  | HKCategoryValueMenstrualFlow
   | HKCategoryValueSleepAnalysis
-  | HKCategoryValueCervicalMucusQuality
-  | HKCategoryValueOvulationTestResult
   | number;
 
 export enum HKInsulinDeliveryReason {
@@ -436,58 +436,58 @@ export type MetadataMapperForQuantityIdentifier<
   TQuantityTypeIdentifier = HKQuantityTypeIdentifier
 > = TQuantityTypeIdentifier extends HKQuantityTypeIdentifier.insulinDelivery
   ? HKGenericMetadata & {
-      HKInsulinDeliveryReason: HKInsulinDeliveryReason;
-    }
+    readonly HKInsulinDeliveryReason: HKInsulinDeliveryReason;
+  }
   : TQuantityTypeIdentifier extends HKQuantityTypeIdentifier.bloodGlucose
-  ? HKGenericMetadata & {
-      HKBloodGlucoseMealTime?: number;
+    ? HKGenericMetadata & {
+      readonly HKBloodGlucoseMealTime?: number;
     }
-  : TQuantityTypeIdentifier extends HKQuantityTypeIdentifier.heartRate
-  ? HKGenericMetadata & {
-      HKHeartRateMotionContext?: HKHeartRateMotionContext;
-    }
-  : HKGenericMetadata;
+    : TQuantityTypeIdentifier extends HKQuantityTypeIdentifier.heartRate
+      ? HKGenericMetadata & {
+        readonly HKHeartRateMotionContext?: HKHeartRateMotionContext;
+      }
+      : HKGenericMetadata;
 
 export type MetadataMapperForCorrelationIdentifier<
   TCorrelationTypeIdentifier = HKCorrelationTypeIdentifier
 > = TCorrelationTypeIdentifier extends HKCorrelationTypeIdentifier.food
   ? HKGenericMetadata & {
-      HKFoodType?: string;
-    }
+    readonly HKFoodType?: string;
+  }
   : HKGenericMetadata;
 
 export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier> =
   T extends HKCategoryTypeIdentifier.cervicalMucusQuality
     ? HKCategoryValueCervicalMucusQuality
     : T extends HKCategoryTypeIdentifier.menstrualFlow
-    ? HKCategoryValueMenstrualFlow
-    : T extends HKCategoryTypeIdentifier.ovulationTestResult
-    ? HKCategoryValueOvulationTestResult
-    : T extends HKCategoryTypeIdentifier.sleepAnalysis
-    ? HKCategoryValueSleepAnalysis
-    : T extends HKCategoryTypeIdentifier.mindfulSession
-    ? HKCategoryValueNotApplicable
-    : T extends HKCategoryTypeIdentifier.intermenstrualBleeding
-    ? HKCategoryValueNotApplicable
-    : T extends HKCategoryTypeIdentifier.highHeartRateEvent
-    ? HKCategoryValueNotApplicable
-    : T extends HKCategoryTypeIdentifier.sexualActivity
-    ? HKCategoryValueNotApplicable
-    : T extends HKCategoryTypeIdentifier.appleStandHour
-    ? HKCategoryValueAppleStandHour
-    : number;
+      ? HKCategoryValueMenstrualFlow
+      : T extends HKCategoryTypeIdentifier.ovulationTestResult
+        ? HKCategoryValueOvulationTestResult
+        : T extends HKCategoryTypeIdentifier.sleepAnalysis
+          ? HKCategoryValueSleepAnalysis
+          : T extends HKCategoryTypeIdentifier.mindfulSession
+            ? HKCategoryValueNotApplicable
+            : T extends HKCategoryTypeIdentifier.intermenstrualBleeding
+              ? HKCategoryValueNotApplicable
+              : T extends HKCategoryTypeIdentifier.highHeartRateEvent
+                ? HKCategoryValueNotApplicable
+                : T extends HKCategoryTypeIdentifier.sexualActivity
+                  ? HKCategoryValueNotApplicable
+                  : T extends HKCategoryTypeIdentifier.appleStandHour
+                    ? HKCategoryValueAppleStandHour
+                    : number;
 
 export type MetadataMapperForCategoryIdentifier<
   T extends HKCategoryTypeIdentifier
 > = T extends HKCategoryTypeIdentifier.sexualActivity
   ? HKGenericMetadata & {
-      HKSexualActivityProtectionUsed: boolean;
-    }
+    readonly HKSexualActivityProtectionUsed: boolean;
+  }
   : T extends HKCategoryTypeIdentifier.menstrualFlow
-  ? HKGenericMetadata & {
-      HKMenstrualCycleStart: boolean;
+    ? HKGenericMetadata & {
+      readonly HKMenstrualCycleStart: boolean;
     }
-  : HKGenericMetadata;
+    : HKGenericMetadata;
 
 // Maps directly to https://developer.apple.com/documentation/healthkit/hkwheelchairuse
 export enum HKWheelchairUse {
@@ -569,55 +569,55 @@ export enum HKUnit {
 }
 
 export type HKDevice = {
-  name: string;
-  firmwareVersion: string;
-  hardwareVersion: string;
-  localIdentifier: string;
-  manufacturer: string;
-  model: string;
-  softwareVersion: string;
+  readonly name: string;
+  readonly firmwareVersion: string;
+  readonly hardwareVersion: string;
+  readonly localIdentifier: string;
+  readonly manufacturer: string;
+  readonly model: string;
+  readonly softwareVersion: string;
 };
 
 export type HKSource = {
-  name: string;
-  bundleIdentifier: string;
+  readonly name: string;
+  readonly bundleIdentifier: string;
 };
 
 export type HKSourceRevision = {
-  source: HKSource;
-  version: string;
-  operatingSystemVersion?: string;
-  productType?: string;
+  readonly source: HKSource;
+  readonly version: string;
+  readonly operatingSystemVersion?: string;
+  readonly productType?: string;
 };
 
 export type HKQuantitySampleRaw<
   TQuantityIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
   TUnit extends HKUnit = HKUnit
 > = {
-  uuid: string;
-  device?: HKDevice;
-  quantityType: TQuantityIdentifier;
-  startDate: string;
-  endDate: string;
-  quantity: number;
-  unit: TUnit;
-  metadata: MetadataMapperForQuantityIdentifier<TQuantityIdentifier>;
-  sourceRevision?: HKSourceRevision;
+  readonly uuid: string;
+  readonly device?: HKDevice;
+  readonly quantityType: TQuantityIdentifier;
+  readonly startDate: string;
+  readonly endDate: string;
+  readonly quantity: number;
+  readonly unit: TUnit;
+  readonly metadata: MetadataMapperForQuantityIdentifier<TQuantityIdentifier>;
+  readonly sourceRevision?: HKSourceRevision;
 };
 
 export type HKWorkoutRaw<TEnergy extends HKUnit, TDistance extends HKUnit> = {
-  uuid: string;
-  device?: HKDevice;
-  workoutActivityType: HKWorkoutActivityType;
-  duration: number;
-  totalDistance?: HKQuantity<TDistance>;
-  totalEnergyBurned?: HKQuantity<TEnergy>;
-  totalSwimmingStrokeCount?: HKQuantity<HKUnit.Count>;
-  totalFlightsClimbed?: HKQuantity<HKUnit.Count>;
-  startDate: string;
-  endDate: string;
-  metadata?: HKWorkoutMetadata;
-  sourceRevision?: HKSourceRevision;
+  readonly uuid: string;
+  readonly device?: HKDevice;
+  readonly workoutActivityType: HKWorkoutActivityType;
+  readonly duration: number;
+  readonly totalDistance?: HKQuantity<TDistance>;
+  readonly totalEnergyBurned?: HKQuantity<TEnergy>;
+  readonly totalSwimmingStrokeCount?: HKQuantity<HKUnit.Count>;
+  readonly totalFlightsClimbed?: HKQuantity<HKUnit.Count>;
+  readonly startDate: string;
+  readonly endDate: string;
+  readonly metadata?: HKWorkoutMetadata;
+  readonly sourceRevision?: HKSourceRevision;
 };
 
 // Straight mapping to https://developer.apple.com/documentation/healthkit/hkcharacteristictypeidentifier
@@ -629,40 +629,34 @@ export enum HKCharacteristicTypeIdentifier {
   wheelchairUse = 'HKCharacteristicTypeIdentifierWheelchairUse',
 }
 
-export type WritePermssions = {
-  [key in
-    | HKCharacteristicTypeIdentifier
-    | HKQuantityTypeIdentifier
-    | HKCategoryTypeIdentifier]: boolean;
+export type WritePermissions = {
+  readonly [key in HKCategoryTypeIdentifier | HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier]: boolean;
 };
 
-export type ReadPermssions = {
-  [key in
-    | HKQuantityTypeIdentifier
-    | HKCharacteristicTypeIdentifier
-    | HKCategoryTypeIdentifier]: boolean;
+export type ReadPermissions = {
+  readonly [key in HKCategoryTypeIdentifier | HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier]: boolean;
 };
 
 export type HKCategorySampleRaw<
   T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier
 > = {
-  uuid: string;
-  device?: HKDevice;
-  categoryType: T;
-  startDate: string;
-  endDate: string;
-  value: HKCategoryValueForIdentifier<T>;
-  metadata: MetadataMapperForCategoryIdentifier<T>;
-  sourceRevision?: HKSourceRevision;
+  readonly uuid: string;
+  readonly device?: HKDevice;
+  readonly categoryType: T;
+  readonly startDate: string;
+  readonly endDate: string;
+  readonly value: HKCategoryValueForIdentifier<T>;
+  readonly metadata: MetadataMapperForCategoryIdentifier<T>;
+  readonly sourceRevision?: HKSourceRevision;
 };
 
 export type HKCorrelationRaw<TIdentifier extends HKCorrelationTypeIdentifier> =
   {
-    correlationType: HKCorrelationTypeIdentifier;
-    objects: (HKQuantitySampleRaw | HKCategorySampleRaw)[];
-    metadata: MetadataMapperForCorrelationIdentifier<TIdentifier>;
-    startDate: string;
-    endDate: string;
+    readonly correlationType: HKCorrelationTypeIdentifier;
+    readonly objects: readonly (HKCategorySampleRaw | HKQuantitySampleRaw)[];
+    readonly metadata: MetadataMapperForCorrelationIdentifier<TIdentifier>;
+    readonly startDate: string;
+    readonly endDate: string;
   };
 
 type QueryId = string;
@@ -680,21 +674,23 @@ export enum HKUpdateFrequency {
 }
 
 export type WorkoutLocation = {
-  longitude: number;
-  latitude: number;
-  altitude: number;
-  speed: number;
-  timestamp: number;
-  horizontalAccuracy: number;
-  speedAccuracy: number;
-  verticalAccuracy: number;
+  readonly longitude: number;
+  readonly latitude: number;
+  readonly altitude: number;
+  readonly speed: number;
+  readonly timestamp: number;
+  readonly horizontalAccuracy: number;
+  readonly speedAccuracy: number;
+  readonly verticalAccuracy: number;
 };
 
 export type WorkoutRoute = {
-  locations: WorkoutLocation[];
-  HKMetadataKeySyncIdentifier?: string;
-  HKMetadataKeySyncVersion?: number;
+  readonly locations: readonly WorkoutLocation[];
+  readonly HKMetadataKeySyncIdentifier?: string;
+  readonly HKMetadataKeySyncVersion?: number;
 };
+
+type AuthorizationStatusFor = HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier
 
 type ReactNativeHealthkitTypeNative = {
   isHealthDataAvailable(): Promise<boolean>;
@@ -702,84 +698,84 @@ type ReactNativeHealthkitTypeNative = {
   getDateOfBirth(): Promise<string>;
   getBiologicalSex(): Promise<HKBiologicalSex>;
   getFitzpatrickSkinType(): Promise<HKFitzpatrickSkinType>;
-  getWheelchairUse: () => Promise<HKWheelchairUse>;
+  readonly getWheelchairUse: () => Promise<HKWheelchairUse>;
 
-  enableBackgroundDelivery: (
+  readonly enableBackgroundDelivery: (
     typeIdentifier: HKSampleTypeIdentifier,
     updateFrequency: HKUpdateFrequency
   ) => Promise<boolean>;
-  disableBackgroundDelivery: (
+  readonly disableBackgroundDelivery: (
     typeIdentifier: HKSampleTypeIdentifier
   ) => Promise<boolean>;
-  disableAllBackgroundDelivery: () => Promise<boolean>;
+  readonly disableAllBackgroundDelivery: () => Promise<boolean>;
 
-  saveCorrelationSample: <TIdentifier extends HKCorrelationTypeIdentifier>(
+  readonly saveCorrelationSample: <TIdentifier extends HKCorrelationTypeIdentifier>(
     typeIdentifier: TIdentifier,
-    samples: Omit<
-      HKQuantitySampleRaw | HKCategorySampleRaw,
-      'startDate' | 'endDate' | 'uuid' | 'device'
+    samples: readonly Omit<
+    HKCategorySampleRaw | HKQuantitySampleRaw,
+    'device' | 'endDate' | 'startDate' | 'uuid'
     >[],
     start: string,
     end: string,
     metadata: MetadataMapperForCorrelationIdentifier<TIdentifier>
   ) => Promise<boolean>;
 
-  saveWorkoutSample: (
+  readonly saveWorkoutSample: (
     typeIdentifier: HKWorkoutActivityType,
-    quantities: Omit<
-      HKQuantitySampleRaw,
-      'startDate' | 'endDate' | 'uuid' | 'device'
+    quantities: readonly Omit<
+    HKQuantitySampleRaw,
+    'device' | 'endDate' | 'startDate' | 'uuid'
     >[],
     start: string,
     end: string,
     metadata: HKWorkoutMetadata
   ) => Promise<boolean>;
 
-  queryCorrelationSamples: <TIdentifier extends HKCorrelationTypeIdentifier>(
+  readonly queryCorrelationSamples: <TIdentifier extends HKCorrelationTypeIdentifier>(
     typeIdentifier: TIdentifier,
     from: string,
     to: string
-  ) => Promise<HKCorrelationRaw<TIdentifier>[]>;
+  ) => Promise<readonly HKCorrelationRaw<TIdentifier>[]>;
 
   subscribeToObserverQuery(
     identifier: HKSampleTypeIdentifier
   ): Promise<QueryId>;
   unsubscribeQuery(queryId: QueryId): Promise<boolean>;
   authorizationStatusFor(
-    type: HKSampleTypeIdentifier | HKCharacteristicTypeIdentifier
+    type: AuthorizationStatusFor
   ): Promise<boolean>;
   getRequestStatusForAuthorization(
-    write: WritePermssions | {},
-    read: ReadPermssions | {}
+    write: WritePermissions,
+    read: ReadPermissions
   ): Promise<HKAuthorizationRequestStatus>;
   requestAuthorization(
-    write: WritePermssions | {},
-    read: ReadPermssions | {}
+    write: WritePermissions,
+    read: ReadPermissions
   ): Promise<boolean>;
-  saveQuantitySample: (
+  readonly saveQuantitySample: (
     identifier: HKQuantityTypeIdentifier,
     unit: HKUnit,
     value: number,
     start: string,
     end: string,
-    metadata: Object
+    metadata: unknown
   ) => Promise<boolean>;
-  queryWorkoutSamples: <TEnergy extends HKUnit, TDistance extends HKUnit>(
+  readonly queryWorkoutSamples: <TEnergy extends HKUnit, TDistance extends HKUnit>(
     energyUnit: TEnergy,
     distanceUnit: TDistance,
     from: string,
     to: string,
-    limit: Number,
+    limit: number,
     ascending: boolean
-  ) => Promise<HKWorkoutRaw<TEnergy, TDistance>[]>;
-  queryCategorySamples: <T extends HKCategoryTypeIdentifier>(
+  ) => Promise<readonly HKWorkoutRaw<TEnergy, TDistance>[]>;
+  readonly queryCategorySamples: <T extends HKCategoryTypeIdentifier>(
     identifier: T,
     from: string,
     to: string,
-    limit: Number,
+    limit: number,
     ascending: boolean
-  ) => Promise<HKCategorySampleRaw<T>[]>;
-  queryQuantitySamples: <
+  ) => Promise<readonly HKCategorySampleRaw<T>[]>;
+  readonly queryQuantitySamples: <
     TUnit extends HKUnit,
     TIdentifier extends HKQuantityTypeIdentifier
   >(
@@ -787,47 +783,46 @@ type ReactNativeHealthkitTypeNative = {
     unit: TUnit,
     from: string,
     to: string,
-    limit: Number,
+    limit: number,
     ascending: boolean
-  ) => Promise<HKQuantitySampleRaw<TIdentifier, TUnit>[]>;
-  saveCategorySample: <T extends HKCategoryTypeIdentifier>(
+  ) => Promise<readonly HKQuantitySampleRaw<TIdentifier, TUnit>[]>;
+  readonly saveCategorySample: <T extends HKCategoryTypeIdentifier>(
     identifier: T,
     value: HKCategoryValueForIdentifier<T>,
     start: string,
     end: string,
-    metadata: Object
+    metadata: unknown
   ) => Promise<boolean>;
-  queryStatisticsForQuantity: <TUnit extends HKUnit>(
+  readonly queryStatisticsForQuantity: <TUnit extends HKUnit>(
     identifier: HKQuantityTypeIdentifier,
     unit: TUnit,
     from: string,
     to: string,
-    options: HKStatisticsOptions[]
+    options: readonly HKStatisticsOptions[]
   ) => Promise<QueryStatisticsResponseRaw<TUnit>>;
-  getPreferredUnits: (
-    identifiers: HKQuantityTypeIdentifier[]
+  readonly getPreferredUnits: (
+    identifiers: readonly HKQuantityTypeIdentifier[]
   ) => Promise<TypeToUnitMapping>;
-  getWorkoutRoutes: (workoutUUID: string) => Promise<WorkoutRoute[]>;
+  readonly getWorkoutRoutes: (workoutUUID: string) => Promise<readonly WorkoutRoute[]>;
 };
 
-const Native =
-  NativeModules.ReactNativeHealthkit as ReactNativeHealthkitTypeNative;
+const Native = NativeModules.ReactNativeHealthkit as ReactNativeHealthkitTypeNative
 
 type OnChangeCallback = ({
   typeIdentifier,
 }: {
-  typeIdentifier: HKSampleTypeIdentifier;
+  readonly typeIdentifier: HKSampleTypeIdentifier;
 }) => void;
 
 interface HealthkitEventEmitter extends NativeEventEmitter {
-  addListener: (
+  readonly addListener: (
     eventType: 'onChange',
     callback: OnChangeCallback
   ) => EmitterSubscription;
 }
 
 export const EventEmitter = new NativeEventEmitter(
-  NativeModules.ReactNativeHealthkit
-) as HealthkitEventEmitter;
+  NativeModules.ReactNativeHealthkit,
+) as HealthkitEventEmitter
 
-export default Native;
+export default Native

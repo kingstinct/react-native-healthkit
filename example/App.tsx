@@ -1,36 +1,38 @@
-/* eslint-disable react-native/no-inline-styles */
-import dayjs from 'dayjs';
-import 'expo-dev-client';
-import * as React from 'react';
-import { Button, ScrollView, Text } from 'react-native';
-import { DataTable } from 'react-native-paper';
 import Healthkit, {
-  HKCategorySample,
   HKCategoryTypeIdentifier,
   HKCharacteristicTypeIdentifier,
   HKCorrelationTypeIdentifier,
   HKInsulinDeliveryReason,
-  HKQuantity,
-  HKQuantitySample,
   HKQuantityTypeIdentifier,
   HKStatisticsOptions,
   HKUnit,
   HKWeatherCondition,
-  HKWorkout,
   HKWorkoutActivityType,
+} from '@kingstinct/react-native-healthkit/src/index' // this way we can work with the working copy - but keep in mind native changes requires a new build 🚀
+import dayjs from 'dayjs'
+import 'expo-dev-client'
+import * as React from 'react'
+import { Button, ScrollView, Text } from 'react-native'
+import { DataTable } from 'react-native-paper'
+
+import type {
+  HKCategorySample,
+  HKQuantity,
+  HKQuantitySample,
+  HKWorkout,
   QueryStatisticsResponse,
-} from '../src/index'; // this way we can work with the working copy - but keep in mind native changes requires a new build 🚀
+} from '@kingstinct/react-native-healthkit/src/index'
 
 const DisplayWorkout: React.FunctionComponent<{
-  workout: HKWorkout;
+  readonly workout: HKWorkout;
 }> = ({ workout }) => {
   React.useEffect(() => {
     if (workout.uuid) {
-      Healthkit.getWorkoutRoutes(workout.uuid).then((_routes) => {
-        console.info(`${_routes.length} routes found`);
-      });
+      void Healthkit.getWorkoutRoutes(workout.uuid).then((_routes) => {
+        console.info(`${_routes.length} routes found`)
+      })
     }
-  }, [workout.uuid]);
+  }, [workout.uuid])
 
   return (
     <DataTable.Row>
@@ -38,134 +40,126 @@ const DisplayWorkout: React.FunctionComponent<{
         {HKWorkoutActivityType[workout.workoutActivityType]}
       </DataTable.Cell>
       <DataTable.Cell style={{ paddingRight: 10 }} numeric>
-        {workout ? workout.duration.toFixed(0) + 's' : '-'}
+        {workout ? `${workout.duration.toFixed(0)}s` : '-'}
       </DataTable.Cell>
       <DataTable.Cell>
         {workout
-          ? workout.totalDistance?.quantity.toFixed(1) +
-            ' ' +
-            workout.totalDistance?.unit
+          ? `${workout.totalDistance?.quantity.toFixed(1)
+          } ${
+            workout.totalDistance?.unit}`
           : '-'}
       </DataTable.Cell>
       <DataTable.Cell>
         {workout
-          ? workout.totalEnergyBurned?.quantity.toFixed(1) +
-            ' ' +
-            workout.totalEnergyBurned?.unit
+          ? `${workout.totalEnergyBurned?.quantity.toFixed(1)
+          } ${
+            workout.totalEnergyBurned?.unit}`
           : '-'}
       </DataTable.Cell>
     </DataTable.Row>
-  );
-};
+  )
+}
 
 const DisplayQuantitySample: React.FunctionComponent<{
-  title: string;
-  sample: HKQuantitySample | null;
-}> = ({ title, sample }) => {
-  return (
-    <DataTable.Row>
-      <DataTable.Cell>{title}</DataTable.Cell>
-      <DataTable.Cell style={{ paddingRight: 10 }} numeric>
-        {sample ? sample.quantity.toFixed(1) : '-'}
-      </DataTable.Cell>
-      <DataTable.Cell>{sample ? sample.unit : '-'}</DataTable.Cell>
-      <DataTable.Cell>
-        {sample ? sample.startDate.toLocaleTimeString() : '-'}
-      </DataTable.Cell>
-    </DataTable.Row>
-  );
-};
+  readonly title: string;
+  readonly sample: HKQuantitySample | null;
+}> = ({ title, sample }) => (
+  <DataTable.Row>
+    <DataTable.Cell>{title}</DataTable.Cell>
+    <DataTable.Cell style={{ paddingRight: 10 }} numeric>
+      {sample ? sample.quantity.toFixed(1) : '-'}
+    </DataTable.Cell>
+    <DataTable.Cell>{sample ? sample.unit : '-'}</DataTable.Cell>
+    <DataTable.Cell>
+      {sample ? sample.startDate.toLocaleTimeString() : '-'}
+    </DataTable.Cell>
+  </DataTable.Row>
+)
 
 const DisplayCategorySample: React.FunctionComponent<{
-  title: string;
-  sample: HKCategorySample | null;
-}> = ({ title, sample }) => {
-  return (
-    <DataTable.Row>
-      <DataTable.Cell>{title}</DataTable.Cell>
-      <DataTable.Cell style={{ paddingRight: 10 }} numeric>
-        {sample ? sample.value : '-'}
-      </DataTable.Cell>
-      <DataTable.Cell>
-        {sample ? sample.startDate.toLocaleTimeString() : '-'}
-      </DataTable.Cell>
-      <DataTable.Cell>
-        {sample ? sample.endDate.toLocaleTimeString() : '-'}
-      </DataTable.Cell>
-    </DataTable.Row>
-  );
-};
+  readonly title: string;
+  readonly sample: HKCategorySample | null;
+}> = ({ title, sample }) => (
+  <DataTable.Row>
+    <DataTable.Cell>{title}</DataTable.Cell>
+    <DataTable.Cell style={{ paddingRight: 10 }} numeric>
+      {sample ? sample.value : '-'}
+    </DataTable.Cell>
+    <DataTable.Cell>
+      {sample ? sample.startDate.toLocaleTimeString() : '-'}
+    </DataTable.Cell>
+    <DataTable.Cell>
+      {sample ? sample.endDate.toLocaleTimeString() : '-'}
+    </DataTable.Cell>
+  </DataTable.Row>
+)
 
 const DisplayStat: React.FunctionComponent<{
-  title: string;
-  sample: HKQuantity | undefined;
-}> = ({ title, sample }) => {
-  return (
-    <DataTable.Row>
-      <DataTable.Cell>{title}</DataTable.Cell>
-      <DataTable.Cell style={{ paddingRight: 10 }} numeric>
-        {sample ? sample.quantity.toFixed(1) : '-'}
-      </DataTable.Cell>
-      <DataTable.Cell>{sample ? sample.unit : '-'}</DataTable.Cell>
-      <DataTable.Cell>N/A</DataTable.Cell>
-    </DataTable.Row>
-  );
-};
+  readonly title: string;
+  readonly sample: HKQuantity | undefined;
+}> = ({ title, sample }) => (
+  <DataTable.Row>
+    <DataTable.Cell>{title}</DataTable.Cell>
+    <DataTable.Cell style={{ paddingRight: 10 }} numeric>
+      {sample ? sample.quantity.toFixed(1) : '-'}
+    </DataTable.Cell>
+    <DataTable.Cell>{sample ? sample.unit : '-'}</DataTable.Cell>
+    <DataTable.Cell>N/A</DataTable.Cell>
+  </DataTable.Row>
+)
 
 function DataView() {
-  const [dateOfBirth, setDateOfBirth] = React.useState<Date | null>(null);
+  const [dateOfBirth, setDateOfBirth] = React.useState<Date | null>(null)
 
-  const [bloodGlucoseSamples, setBloodGlucoseSamples] =
-    React.useState<Array<HKQuantitySample> | null>(null);
+  const [bloodGlucoseSamples, setBloodGlucoseSamples] = React.useState<ReadonlyArray<HKQuantitySample> | null>(null)
 
   const bodyFat = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.bodyFatPercentage
-  );
+    HKQuantityTypeIdentifier.bodyFatPercentage,
+  )
 
   const bloodGlucose = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.bloodGlucose
-  );
+    HKQuantityTypeIdentifier.bloodGlucose,
+  )
 
   const bodyWeight = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.bodyMass
-  );
+    HKQuantityTypeIdentifier.bodyMass,
+  )
   const heartRate = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.heartRate
-  );
-  const lastWorkout = Healthkit.useMostRecentWorkout();
+    HKQuantityTypeIdentifier.heartRate,
+  )
+  const lastWorkout = Healthkit.useMostRecentWorkout()
   const lastMindfulSession = Healthkit.useMostRecentCategorySample(
-    HKCategoryTypeIdentifier.mindfulSession
-  );
+    HKCategoryTypeIdentifier.mindfulSession,
+  )
 
   const walkingSpeed = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.walkingSpeed
-  );
+    HKQuantityTypeIdentifier.walkingSpeed,
+  )
   const sixMinWalk = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.sixMinuteWalkTestDistance
-  );
+    HKQuantityTypeIdentifier.sixMinuteWalkTestDistance,
+  )
   const walkingStepLength = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.walkingStepLength
-  );
+    HKQuantityTypeIdentifier.walkingStepLength,
+  )
   const walkingAsymmetryPercentage = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.walkingAsymmetryPercentage
-  );
+    HKQuantityTypeIdentifier.walkingAsymmetryPercentage,
+  )
   const walkingDoubleSupportPercentage = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.walkingDoubleSupportPercentage
-  );
+    HKQuantityTypeIdentifier.walkingDoubleSupportPercentage,
+  )
 
   const stairAscentSpeed = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.stairAscentSpeed
-  );
+    HKQuantityTypeIdentifier.stairAscentSpeed,
+  )
 
   const stairDescentSpeed = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.stairDescentSpeed
-  );
+    HKQuantityTypeIdentifier.stairDescentSpeed,
+  )
 
-  const [queryStatisticsResponse, setQueryStatisticsResponse] =
-    React.useState<QueryStatisticsResponse | null>(null);
+  const [queryStatisticsResponse, setQueryStatisticsResponse] = React.useState<QueryStatisticsResponse | null>(null)
 
   const writeSampleToHealthkit = () => {
-    Healthkit.saveQuantitySample(
+    void Healthkit.saveQuantitySample(
       HKQuantityTypeIdentifier.insulinDelivery,
       HKUnit.InternationalUnit,
       4.2,
@@ -173,9 +167,9 @@ function DataView() {
         metadata: {
           HKInsulinDeliveryReason: HKInsulinDeliveryReason.basal,
         },
-      }
-    );
-    Healthkit.saveCorrelationSample(HKCorrelationTypeIdentifier.food, [
+      },
+    )
+    void Healthkit.saveCorrelationSample(HKCorrelationTypeIdentifier.food, [
       {
         quantityType: HKQuantityTypeIdentifier.dietaryCaffeine,
         unit: HKUnit.Grams,
@@ -188,9 +182,9 @@ function DataView() {
         quantity: 1,
         metadata: {},
       },
-    ]);
+    ])
 
-    Healthkit.saveWorkoutSample(
+    void Healthkit.saveWorkoutSample(
       HKWorkoutActivityType.archery,
       [
         {
@@ -211,35 +205,35 @@ function DataView() {
         metadata: {
           HKWeatherCondition: HKWeatherCondition.hurricane,
         },
-      }
-    );
+      },
+    )
 
-    Healthkit.getDateOfBirth().then(setDateOfBirth);
+    void Healthkit.getDateOfBirth().then(setDateOfBirth)
 
-    Healthkit.queryStatisticsForQuantity(
+    void Healthkit.queryStatisticsForQuantity(
       HKQuantityTypeIdentifier.heartRate,
       [
         HKStatisticsOptions.discreteAverage,
         HKStatisticsOptions.discreteMax,
         HKStatisticsOptions.discreteMin,
       ],
-      dayjs().startOf('day').toDate()
-    ).then(setQueryStatisticsResponse);
+      dayjs().startOf('day').toDate(),
+    ).then(setQueryStatisticsResponse)
 
-    Healthkit.queryQuantitySamples(HKQuantityTypeIdentifier.bloodGlucose, {
+    void Healthkit.queryQuantitySamples(HKQuantityTypeIdentifier.bloodGlucose, {
       ascending: true,
       from: dayjs().startOf('day').toDate(),
       to: new Date(),
-    }).then(setBloodGlucoseSamples);
-  };
+    }).then(setBloodGlucoseSamples)
+  }
 
-  console.log(walkingDoubleSupportPercentage);
+  console.log(walkingDoubleSupportPercentage)
 
   return (
     <ScrollView style={{ flex: 1, paddingTop: 40 }}>
       <Button
-        title="Write Sample to HealthKit"
-        onPress={() => writeSampleToHealthkit()}
+        title='Write Sample to HealthKit'
+        onPress={writeSampleToHealthkit}
       />
       <Text>Date of birth: {dateOfBirth?.toLocaleDateString()}</Text>
       <DataTable>
@@ -252,25 +246,25 @@ function DataView() {
           <DataTable.Title>Time</DataTable.Title>
         </DataTable.Header>
 
-        <DisplayQuantitySample sample={bodyFat} title="Body fat" />
-        <DisplayQuantitySample sample={bodyWeight} title="Weight" />
-        <DisplayQuantitySample sample={heartRate} title="Heart rate" />
-        <DisplayQuantitySample sample={bloodGlucose} title="Glucose" />
+        <DisplayQuantitySample sample={bodyFat} title='Body fat' />
+        <DisplayQuantitySample sample={bodyWeight} title='Weight' />
+        <DisplayQuantitySample sample={heartRate} title='Heart rate' />
+        <DisplayQuantitySample sample={bloodGlucose} title='Glucose' />
 
         <DisplayStat
           sample={queryStatisticsResponse?.averageQuantity}
-          title="Avg. HR"
+          title='Avg. HR'
         />
         <DisplayStat
           sample={queryStatisticsResponse?.maximumQuantity}
-          title="High HR"
+          title='High HR'
         />
         <DisplayStat
           sample={queryStatisticsResponse?.minimumQuantity}
-          title="Low HR"
+          title='Low HR'
         />
 
-        <DisplayCategorySample sample={lastMindfulSession} title="Mindful" />
+        <DisplayCategorySample sample={lastMindfulSession} title='Mindful' />
 
         <DataTable.Header>
           <DataTable.Title>Workout</DataTable.Title>
@@ -292,8 +286,8 @@ function DataView() {
         </DataTable.Header>
         {bloodGlucoseSamples
           ? bloodGlucoseSamples.map((sample: HKQuantitySample) => (
-              <DisplayQuantitySample sample={sample} title="Glucose" />
-            ))
+            <DisplayQuantitySample sample={sample} title='Glucose' />
+          ))
           : null}
 
         <DataTable.Header>
@@ -304,37 +298,37 @@ function DataView() {
           <DataTable.Title>Units</DataTable.Title>
           <DataTable.Title>Time</DataTable.Title>
         </DataTable.Header>
-        <DisplayQuantitySample sample={walkingSpeed} title="Walking speed" />
+        <DisplayQuantitySample sample={walkingSpeed} title='Walking speed' />
         <DisplayQuantitySample
           sample={sixMinWalk}
-          title="Six-minute walk test"
+          title='Six-minute walk test'
         />
         <DisplayQuantitySample
           sample={walkingStepLength}
-          title="Walking Step Length"
+          title='Walking Step Length'
         />
         <DisplayQuantitySample
           sample={walkingAsymmetryPercentage}
-          title="Walking Asymmetry"
+          title='Walking Asymmetry'
         />
         <DisplayQuantitySample
           sample={walkingDoubleSupportPercentage}
-          title="Walking Double Support"
+          title='Walking Double Support'
         />
-        <DisplayQuantitySample sample={stairAscentSpeed} title="Stair Ascent" />
+        <DisplayQuantitySample sample={stairAscentSpeed} title='Stair Ascent' />
         <DisplayQuantitySample
           sample={stairDescentSpeed}
-          title="Stair Descent"
+          title='Stair Descent'
         />
       </DataTable>
     </ScrollView>
-  );
+  )
 }
 
 const App = () => {
-  const [hasPermissions, setHasPermissions] = React.useState<boolean>(false);
+  const [hasPermissions, setHasPermissions] = React.useState<boolean>(false)
   React.useEffect(() => {
-    Healthkit.requestAuthorization(
+    void Healthkit.requestAuthorization(
       [
         HKCharacteristicTypeIdentifier.biologicalSex,
         HKCharacteristicTypeIdentifier.bloodType,
@@ -370,9 +364,9 @@ const App = () => {
         HKQuantityTypeIdentifier.dietaryCaffeine,
         HKQuantityTypeIdentifier.dietaryEnergyConsumed,
         'HKWorkoutTypeIdentifier',
-      ]
-    ).then(setHasPermissions);
-  }, []);
+      ],
+    ).then(setHasPermissions)
+  }, [])
 
   return hasPermissions ? (
     <DataView />
@@ -380,7 +374,7 @@ const App = () => {
     <Text style={{ paddingTop: 40, textAlign: 'center' }}>
       Waiting for user to authorize..
     </Text>
-  );
-};
+  )
+}
 
-export default App;
+export default App

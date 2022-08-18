@@ -1,14 +1,14 @@
-import { Platform } from 'react-native';
-import type { ReactNativeHealthkit } from './types';
+import { Platform } from 'react-native'
 
-const notAvailableError =
-  'Platform "' +
-  Platform.OS +
-  '" not supported, use isHealthDataAvailable to check for availability before using it';
+import type { ReactNativeHealthkit } from './types'
+
+const notAvailableError = `Platform "${
+  Platform.OS
+}" not supported, use isHealthDataAvailable to check for availability before using it`
 
 const UnavailableFn = () => {
-  throw new Error(notAvailableError);
-};
+  throw new Error(notAvailableError)
+}
 
 const Healthkit: ReactNativeHealthkit = {
   authorizationStatusFor: UnavailableFn,
@@ -28,7 +28,7 @@ const Healthkit: ReactNativeHealthkit = {
   getRequestStatusForAuthorization: UnavailableFn,
   getWheelchairUse: UnavailableFn,
   getWorkoutRoutes: UnavailableFn,
-  isHealthDataAvailable: () => Promise.resolve(false),
+  isHealthDataAvailable: async () => Promise.resolve(false),
   queryCategorySamples: UnavailableFn,
   queryCorrelationSamples: UnavailableFn,
   queryQuantitySamples: UnavailableFn,
@@ -44,9 +44,9 @@ const Healthkit: ReactNativeHealthkit = {
   useMostRecentQuantitySample: UnavailableFn,
   useMostRecentWorkout: UnavailableFn,
   useSubscribeToChanges: UnavailableFn,
-};
+}
 
-export * from './native-types';
-export * from './types';
+export * from './native-types'
+export * from './types'
 
-export default Healthkit;
+export default Healthkit

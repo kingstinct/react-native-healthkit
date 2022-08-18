@@ -26,55 +26,55 @@ import type {
   MetadataMapperForQuantityIdentifier,
   QueryStatisticsResponseRaw,
   WorkoutRoute,
-} from './native-types';
+} from './native-types'
 
 export interface QueryWorkoutsOptions<
   TEnergy extends HKUnit,
   TDistance extends HKUnit
 > extends GenericQueryOptions {
-  energyUnit?: TEnergy;
-  distanceUnit?: TDistance;
+  readonly energyUnit?: TEnergy;
+  readonly distanceUnit?: TDistance;
 }
 
 export interface HKCategorySample<
   T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier
-> extends Omit<HKCategorySampleRaw<T>, 'startDate' | 'endDate'> {
-  startDate: Date;
-  endDate: Date;
+> extends Omit<HKCategorySampleRaw<T>, 'endDate' | 'startDate'> {
+  readonly startDate: Date;
+  readonly endDate: Date;
 }
 
 export type GenericQueryOptions = {
-  from?: Date;
-  to?: Date;
-  limit?: Number;
-  ascending?: boolean;
+  readonly from?: Date;
+  readonly to?: Date;
+  readonly limit?: number;
+  readonly ascending?: boolean;
 };
 
 export interface HKWorkout<
   TEnergy extends HKUnit = HKUnit,
   TDistance extends HKUnit = HKUnit
-> extends Omit<HKWorkoutRaw<TEnergy, TDistance>, 'startDate' | 'endDate'> {
-  startDate: Date;
-  endDate: Date;
+> extends Omit<HKWorkoutRaw<TEnergy, TDistance>, 'endDate' | 'startDate'> {
+  readonly startDate: Date;
+  readonly endDate: Date;
 }
 
 export interface HKQuantitySample<
   TIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
   TUnit extends HKUnit = HKUnit
 > extends Omit<
-    HKQuantitySampleRaw<TIdentifier, TUnit>,
-    'startDate' | 'endDate'
+  HKQuantitySampleRaw<TIdentifier, TUnit>,
+  'endDate' | 'startDate'
   > {
-  startDate: Date;
-  endDate: Date;
+  readonly startDate: Date;
+  readonly endDate: Date;
 }
 
 export interface QueryStatisticsResponse<T extends HKUnit = HKUnit>
   extends Omit<
-    QueryStatisticsResponseRaw<T>,
-    'mostRecentQuantityDateInterval'
+  QueryStatisticsResponseRaw<T>,
+  'mostRecentQuantityDateInterval'
   > {
-  mostRecentQuantityDateInterval?: { from: Date; to: Date };
+  readonly mostRecentQuantityDateInterval?: { readonly from: Date; readonly to: Date };
 }
 
 type UnsubscribeFunction = () => Promise<boolean>;
@@ -90,7 +90,7 @@ export type GetFitzpatrickSkinTypeFn = () => Promise<HKFitzpatrickSkinType>;
 
 export type QueryStatisticsForQuantityFn = <TUnit extends HKUnit>(
   identifier: HKQuantityTypeIdentifier,
-  options: HKStatisticsOptions[],
+  options: readonly HKStatisticsOptions[],
   from: Date,
   to?: Date,
   unit?: TUnit
@@ -101,25 +101,25 @@ export type QueryWorkoutsFn = <
   TDistance extends HKUnit
 >(
   options: QueryWorkoutsOptions<TEnergy, TDistance>
-) => Promise<HKWorkout<TEnergy, TDistance>[]>;
+) => Promise<readonly HKWorkout<TEnergy, TDistance>[]>;
 
 export type AuthorizationStatusForFn = (
-  type: HKSampleTypeIdentifier | HKCharacteristicTypeIdentifier
+  type: HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier
 ) => Promise<boolean>;
 
 export type QueryCategorySamplesFn = <T extends HKCategoryTypeIdentifier>(
   identifier: T,
   options: GenericQueryOptions
-) => Promise<HKCategorySample<T>[]>;
+) => Promise<readonly HKCategorySample<T>[]>;
 
 export type GetRequestStatusForAuthorizationFn = (
-  read: (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
-  write?: HKSampleTypeIdentifier[]
+  read: readonly (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
+  write?: readonly HKSampleTypeIdentifier[]
 ) => Promise<HKAuthorizationRequestStatus>;
 
 export type RequestAuthorizationFn = (
-  read: (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
-  write?: HKSampleTypeIdentifier[]
+  read: readonly (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
+  write?: readonly HKSampleTypeIdentifier[]
 ) => Promise<boolean>;
 
 export type SaveQuantitySampleFn = <TUnit extends HKQuantityTypeIdentifier>(
@@ -127,9 +127,9 @@ export type SaveQuantitySampleFn = <TUnit extends HKQuantityTypeIdentifier>(
   unit: HKUnit,
   value: number,
   options?: {
-    start?: Date;
-    end?: Date;
-    metadata?: MetadataMapperForQuantityIdentifier<TUnit>;
+    readonly start?: Date;
+    readonly end?: Date;
+    readonly metadata?: MetadataMapperForQuantityIdentifier<TUnit>;
   }
 ) => Promise<boolean>;
 
@@ -138,8 +138,8 @@ export type QueryQuantitySamplesFn = <
   TUnit extends HKUnit = HKUnit
 >(
   identifier: TIdentifier,
-  options: GenericQueryOptions & { unit?: TUnit }
-) => Promise<HKQuantitySample<TIdentifier, TUnit>[]>;
+  options: GenericQueryOptions & { readonly unit?: TUnit }
+) => Promise<readonly HKQuantitySample<TIdentifier, TUnit>[]>;
 
 export type SubscribeToChangesFn = (
   identifier: HKSampleTypeIdentifier,
@@ -150,9 +150,9 @@ export type SaveCategorySampleFn = <T extends HKCategoryTypeIdentifier>(
   identifier: T,
   value: HKCategoryValueForIdentifier<T>,
   options?: {
-    start?: Date;
-    end?: Date;
-    metadata?: MetadataMapperForCategoryIdentifier<T>;
+    readonly start?: Date;
+    readonly end?: Date;
+    readonly metadata?: MetadataMapperForCategoryIdentifier<T>;
   }
 ) => Promise<boolean>;
 
@@ -193,8 +193,8 @@ export type GetMostRecentWorkoutFn = <
   TDistance extends HKUnit
 >(
   options?: Pick<
-    QueryWorkoutsOptions<TEnergy, TDistance>,
-    'distanceUnit' | 'energyUnit'
+  QueryWorkoutsOptions<TEnergy, TDistance>,
+  'distanceUnit' | 'energyUnit'
   >
 ) => Promise<HKWorkout<TEnergy, TDistance> | null>;
 
@@ -203,14 +203,14 @@ export type MostRecentWorkoutHook = <
   TDistance extends HKUnit
 >(
   options?: Pick<
-    QueryWorkoutsOptions<TEnergy, TDistance>,
-    'distanceUnit' | 'energyUnit'
+  QueryWorkoutsOptions<TEnergy, TDistance>,
+  'distanceUnit' | 'energyUnit'
   >
 ) => HKWorkout<TEnergy, TDistance> | null;
 
 export type GetPreferredUnitsFn = (
-  identifiers: HKQuantityTypeIdentifier[]
-) => Promise<HKUnit[]>;
+  identifiers: readonly HKQuantityTypeIdentifier[]
+) => Promise<readonly HKUnit[]>;
 
 export type GetPreferredUnitFn = (
   identifier: HKQuantityTypeIdentifier
@@ -220,46 +220,46 @@ export type SaveCorrelationSampleFn = <
   TIdentifier extends HKCorrelationTypeIdentifier
 >(
   typeIdentifier: TIdentifier,
-  samples: (
-    | Omit<HKCategorySample, 'startDate' | 'endDate' | 'uuid' | 'device'>
-    | Omit<HKQuantitySample, 'startDate' | 'endDate' | 'uuid' | 'device'>
+  samples: readonly (
+    | Omit<HKCategorySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
+    | Omit<HKQuantitySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
   )[],
   options?: {
-    start?: Date;
-    end?: Date;
-    metadata?: MetadataMapperForCorrelationIdentifier<TIdentifier>;
+    readonly start?: Date;
+    readonly end?: Date;
+    readonly metadata?: MetadataMapperForCorrelationIdentifier<TIdentifier>;
   }
 ) => Promise<boolean>;
 
 export type SaveWorkoutSampleFn = (
   typeIdentifier: HKWorkoutActivityType,
-  quantities: Omit<
-    HKQuantitySample,
-    'startDate' | 'endDate' | 'uuid' | 'device'
+  quantities: readonly Omit<
+  HKQuantitySample,
+  'device' | 'endDate' | 'startDate' | 'uuid'
   >[],
   start: Date,
   options?: {
-    end?: Date;
-    metadata?: HKWorkoutMetadata;
+    readonly end?: Date;
+    readonly metadata?: HKWorkoutMetadata;
   }
 ) => Promise<boolean>;
 
 export interface HKCorrelation<TIdentifier extends HKCorrelationTypeIdentifier>
   extends Omit<
-    HKCorrelationRaw<TIdentifier>,
-    'startDate' | 'endDate' | 'objects'
+  HKCorrelationRaw<TIdentifier>,
+  'endDate' | 'objects' | 'startDate'
   > {
-  objects: (HKQuantitySample | HKCategorySample)[];
-  startDate: Date;
-  endDate: Date;
+  readonly objects: readonly (HKCategorySample | HKQuantitySample)[];
+  readonly startDate: Date;
+  readonly endDate: Date;
 }
 
 export type QueryCorrelationSamplesFn = <
   TIdentifier extends HKCorrelationTypeIdentifier
 >(
   typeIdentifier: TIdentifier,
-  options: Omit<GenericQueryOptions, 'limit' | 'ascending'>
-) => Promise<HKCorrelation<TIdentifier>[]>;
+  options: Omit<GenericQueryOptions, 'ascending' | 'limit'>
+) => Promise<readonly HKCorrelation<TIdentifier>[]>;
 
 export type SubscribeToChangesHook = <
   TIdentifier extends HKSampleTypeIdentifier
@@ -271,54 +271,54 @@ export type SubscribeToChangesHook = <
 
 export type GetWorkoutRoutesFn = (
   workoutUUID: string
-) => Promise<WorkoutRoute[]>;
+) => Promise<readonly WorkoutRoute[]>;
 
 export type ReactNativeHealthkit = {
-  authorizationStatusFor: AuthorizationStatusForFn;
+  readonly authorizationStatusFor: AuthorizationStatusForFn;
 
-  getBiologicalSex: GetBiologicalSexFn;
-  getBloodType: GetBloodTypeFn;
-  getDateOfBirth: GetDateOfBirthFn;
-  getFitzpatrickSkinType: GetFitzpatrickSkinTypeFn;
-  getMostRecentQuantitySample: GetMostRecentQuantitySampleFn;
-  getMostRecentCategorySample: GetMostRecentCategorySampleFn;
-  getMostRecentWorkout: GetMostRecentWorkoutFn;
-  getPreferredUnit: GetPreferredUnitFn;
-  getPreferredUnits: GetPreferredUnitsFn;
-  getRequestStatusForAuthorization: GetRequestStatusForAuthorizationFn;
-  getWheelchairUse: GetWheelchairUseFn;
-  getWorkoutRoutes: GetWorkoutRoutesFn;
+  readonly getBiologicalSex: GetBiologicalSexFn;
+  readonly getBloodType: GetBloodTypeFn;
+  readonly getDateOfBirth: GetDateOfBirthFn;
+  readonly getFitzpatrickSkinType: GetFitzpatrickSkinTypeFn;
+  readonly getMostRecentQuantitySample: GetMostRecentQuantitySampleFn;
+  readonly getMostRecentCategorySample: GetMostRecentCategorySampleFn;
+  readonly getMostRecentWorkout: GetMostRecentWorkoutFn;
+  readonly getPreferredUnit: GetPreferredUnitFn;
+  readonly getPreferredUnits: GetPreferredUnitsFn;
+  readonly getRequestStatusForAuthorization: GetRequestStatusForAuthorizationFn;
+  readonly getWheelchairUse: GetWheelchairUseFn;
+  readonly getWorkoutRoutes: GetWorkoutRoutesFn;
 
-  buildUnitWithPrefix: (prefix: HKUnitSIPrefix, unit: HKUnitSI) => HKUnit;
+  readonly buildUnitWithPrefix: (prefix: HKUnitSIPrefix, unit: HKUnitSI) => HKUnit;
 
-  isHealthDataAvailable: IsHealthDataAvailableFn;
+  readonly isHealthDataAvailable: IsHealthDataAvailableFn;
 
-  queryCategorySamples: QueryCategorySamplesFn;
-  queryQuantitySamples: QueryQuantitySamplesFn;
-  queryStatisticsForQuantity: QueryStatisticsForQuantityFn;
-  queryWorkouts: QueryWorkoutsFn;
-  queryCorrelationSamples: QueryCorrelationSamplesFn;
+  readonly queryCategorySamples: QueryCategorySamplesFn;
+  readonly queryQuantitySamples: QueryQuantitySamplesFn;
+  readonly queryStatisticsForQuantity: QueryStatisticsForQuantityFn;
+  readonly queryWorkouts: QueryWorkoutsFn;
+  readonly queryCorrelationSamples: QueryCorrelationSamplesFn;
 
-  requestAuthorization: RequestAuthorizationFn;
+  readonly requestAuthorization: RequestAuthorizationFn;
 
-  saveCategorySample: SaveCategorySampleFn;
-  saveQuantitySample: SaveQuantitySampleFn;
-  saveCorrelationSample: SaveCorrelationSampleFn;
-  saveWorkoutSample: SaveWorkoutSampleFn;
-  enableBackgroundDelivery: (
+  readonly saveCategorySample: SaveCategorySampleFn;
+  readonly saveQuantitySample: SaveQuantitySampleFn;
+  readonly saveCorrelationSample: SaveCorrelationSampleFn;
+  readonly saveWorkoutSample: SaveWorkoutSampleFn;
+  readonly enableBackgroundDelivery: (
     typeIdentifier: HKSampleTypeIdentifier,
     updateFrequency: HKUpdateFrequency
   ) => Promise<boolean>;
-  disableBackgroundDelivery: (
+  readonly disableBackgroundDelivery: (
     typeIdentifier: HKSampleTypeIdentifier
   ) => Promise<boolean>;
-  disableAllBackgroundDelivery: () => Promise<boolean>;
+  readonly disableAllBackgroundDelivery: () => Promise<boolean>;
 
-  subscribeToChanges: SubscribeToChangesFn;
+  readonly subscribeToChanges: SubscribeToChangesFn;
 
-  useMostRecentWorkout: MostRecentWorkoutHook;
-  useMostRecentCategorySample: MostRecentCategorySampleHook;
-  useMostRecentQuantitySample: MostRecentQuantitySampleHook;
+  readonly useMostRecentWorkout: MostRecentWorkoutHook;
+  readonly useMostRecentCategorySample: MostRecentCategorySampleHook;
+  readonly useMostRecentQuantitySample: MostRecentQuantitySampleHook;
 
-  useSubscribeToChanges: SubscribeToChangesHook;
+  readonly useSubscribeToChanges: SubscribeToChangesHook;
 };

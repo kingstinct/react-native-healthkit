@@ -2,12 +2,12 @@
 
 name: Test
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   push:
-    branches: [ '**' ]
+    branches: [ "**" ]
   pull_request:
-    branches: [ '**' ]
+    branches: [ "**" ]
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -20,13 +20,20 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: "Checkout"
+      - name: Checkout
         uses: actions/checkout@v2
-      - name: "Setup Node"
-        uses: actions/setup-node@v2.1.5
-      - name: "Install example deps"
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+
+      - name: Install example deps
         run: cd example && yarn && cd ..
-      - name: "Install deps"
+
+      - name: Install deps
         run: yarn
-      - name: "Lint and typecheck"
-        run: yarn typescript && yarn lint
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Types
+        run: yarn typecheck
