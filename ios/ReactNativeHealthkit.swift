@@ -507,7 +507,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
 
     @objc(saveCategorySample:value:start:end:metadata:resolve:reject:)
-    func saveCategorySample(typeIdentifier: String, value: Int, start: Date, end: Date, metadata: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+    func saveCategorySample(typeIdentifier: String, value: Double, start: Date, end: Date, metadata: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
@@ -518,7 +518,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
             return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
         }
 
-        let sample = HKCategorySample.init(type: type, value: value, start: start, end: end, metadata: metadata as? Dictionary<String, Any>)
+        let sample = HKCategorySample.init(type: type, value: Int(value), start: start, end: end, metadata: metadata as? Dictionary<String, Any>)
 
         store.save(sample) { (success: Bool, error: Error?) in
             guard let err = error else {
