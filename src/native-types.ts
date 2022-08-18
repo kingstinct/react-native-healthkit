@@ -6,13 +6,18 @@ import {
 
 export type HKWorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier';
 export type HKAudiogramTypeIdentifier = 'HKAudiogramTypeIdentifier';
+export type HKWorkoutRouteTypeIdentifier = 'HKWorkoutRouteTypeIdentifier';
+export type HKDataTypeIdentifierHeartbeatSeries =
+  'HKDataTypeIdentifierHeartbeatSeries';
 
 export type HKSampleTypeIdentifier =
   | HKWorkoutTypeIdentifier
   | HKQuantityTypeIdentifier
   | HKCategoryTypeIdentifier
   | HKAudiogramTypeIdentifier
-  | HKCorrelationTypeIdentifier;
+  | HKCorrelationTypeIdentifier
+  | HKWorkoutRouteTypeIdentifier
+  | HKDataTypeIdentifierHeartbeatSeries;
 
 export type TypeToUnitMapping = {
   [key in HKQuantityTypeIdentifier]: HKUnit;
@@ -601,6 +606,8 @@ export type HKQuantitySampleRaw<
 };
 
 export type HKWorkoutRaw<TEnergy extends HKUnit, TDistance extends HKUnit> = {
+  uuid: string;
+  device?: HKDevice;
   workoutActivityType: HKWorkoutActivityType;
   duration: number;
   totalDistance?: HKQuantity<TDistance>;
