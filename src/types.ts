@@ -26,6 +26,7 @@ import type {
   MetadataMapperForQuantityIdentifier,
   QueryStatisticsResponseRaw,
   WorkoutRoute,
+  HealthkitAuthorization,
 } from './native-types'
 import type { ValueOf } from 'type-fest'
 
@@ -181,7 +182,7 @@ export type GetMostRecentQuantitySampleFn = <
 >(
   identifier: TIdentifier,
   unit?: TUnit
-) => Promise<HKQuantitySample<TIdentifier, TUnit>>;
+) => Promise<HKQuantitySample<TIdentifier, TUnit> | null>;
 
 export type MostRecentQuantitySampleHook = <
   TIdentifier extends HKQuantityTypeIdentifier,
@@ -324,4 +325,9 @@ export type ReactNativeHealthkit = {
   readonly useMostRecentQuantitySample: MostRecentQuantitySampleHook;
 
   readonly useSubscribeToChanges: SubscribeToChangesHook;
+  readonly useIsHealthDataAvailable: () => boolean | null;
+  readonly useHealthkitAuthorization: (
+    read: readonly ValueOf<typeof HealthkitAuthorization>[],
+    write?: readonly ValueOf<typeof HKSampleTypeIdentifier>[],
+  ) => readonly [authorizationStatus: HKAuthorizationRequestStatus | null, request: () => Promise<HKAuthorizationRequestStatus | null>];
 };

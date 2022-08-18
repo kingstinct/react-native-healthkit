@@ -22,6 +22,7 @@ import type {
   ReadPermissions,
   WritePermissions,
   HealthkitAuthorization,
+  HKAuthorizationRequestStatus,
 } from './native-types'
 import type {
   GenericQueryOptions,
@@ -582,6 +583,37 @@ const Healthkit: ReactNativeHealthkit = {
   useMostRecentWorkout,
 
   useSubscribeToChanges,
+
+  useIsHealthDataAvailable: () => {
+    const [isAvailable, setIsAvailable] = useState<boolean | null>(null)
+    useEffect(() => {
+      const init = async () => {
+        const res = await Native.isHealthDataAvailable()
+        setIsAvailable(res)
+      }
+      void init()
+    }, [])
+    return isAvailable
+  },
+  useHealthkitAuthorization: (read, write) => {
+    const [status, setStatus] = useState<HKAuthorizationRequestStatus | null>(null)
+    const refreshAuthStatus = useCallback(async () => {
+      const auth = await getRequestStatusForAuthorization(read, write)
+      setStatus(auth)
+      return auth
+    }, [])
+
+    const request = useCallback(async () => {
+      await requestAuthorization(read, write)
+      return refreshAuthStatus()
+    }, [])
+
+    useEffect(() => {
+      void refreshAuthStatus()
+    }, [])
+
+    return [status, request]
+  },
 }
 
 export * from './native-types'
