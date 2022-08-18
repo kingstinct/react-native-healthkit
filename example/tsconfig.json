@@ -3,7 +3,9 @@
   "compilerOptions": {
     "strict": true
   },
+  "baseUrl": ".",
   "paths": {
-    "@kingstinct/react-native-healthkit": [ "./src/index" ]
+    "@kingstinct/react-native-healthkit": [ "../src/index" ],
+    "@kingstinct/react-native-healthkit/*": [ "../src/*" ]
   }
 }

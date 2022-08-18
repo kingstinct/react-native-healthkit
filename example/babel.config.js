@@ -1,7 +1,21 @@
-// eslint-disable-next-line func-names
-module.exports = function (api) {
-  api.cache(true)
-  return {
-    presets: ['babel-preset-expo'],
-  }
+module.exports = {
+  presets: ['babel-preset-expo'],
+  plugins: [
+    '@babel/plugin-transform-modules-commonjs',
+    [
+      'module-resolver',
+      {
+        extensions: ['.js', '.ts', '.tsx'],
+        alias: {
+          '@kingstinct/react-native-healthkit': '../src/index',
+          'react': './node_modules/react',
+          'react-native': './node_modules/react-native',
+          '@babel': './node_modules/@babel',
+          'fbjs': './node_modules/fbjs',
+          'hoist-non-react-statics': './node_modules/hoist-non-react-statics',
+          'invariant': './node_modules/invariant',
+        },
+      },
+    ],
+  ],
 }

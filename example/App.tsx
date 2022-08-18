@@ -8,7 +8,8 @@ import Healthkit, {
   HKUnit,
   HKWeatherCondition,
   HKWorkoutActivityType,
-} from '@kingstinct/react-native-healthkit/src/index' // this way we can work with the working copy - but keep in mind native changes requires a new build 🚀
+// eslint-disable-next-line import/no-unresolved
+} from '@kingstinct/react-native-healthkit' // this way we can work with the working copy - but keep in mind native changes requires a new build 🚀
 import dayjs from 'dayjs'
 import 'expo-dev-client'
 import * as React from 'react'
@@ -21,7 +22,7 @@ import type {
   HKQuantitySample,
   HKWorkout,
   QueryStatisticsResponse,
-} from '@kingstinct/react-native-healthkit/src/index'
+} from '@kingstinct/react-native-healthkit'
 
 const DisplayWorkout: React.FunctionComponent<{
   readonly workout: HKWorkout;
