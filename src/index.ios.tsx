@@ -4,23 +4,24 @@ import Native, {
   EventEmitter,
   HKQuantityTypeIdentifier,
   HKUnit,
+  HKCategoryTypeIdentifier,
 } from './native-types'
 
 import type {
+  HKSampleTypeIdentifier,
   HKCategorySampleRaw,
-  HKCategoryTypeIdentifier,
   HKCategoryValueForIdentifier,
   HKCharacteristicTypeIdentifier,
   HKCorrelationRaw,
   HKCorrelationTypeIdentifier,
   HKQuantitySampleRaw,
-  HKSampleTypeIdentifier,
   HKUnitSI,
   HKUnitSIPrefix,
   HKWorkoutRaw,
   MetadataMapperForCategoryIdentifier,
   ReadPermissions,
   WritePermissions,
+  HealthkitAuthorization,
 } from './native-types'
 import type {
   GenericQueryOptions,
@@ -45,6 +46,7 @@ import type {
   SaveWorkoutSampleFn,
   SubscribeToChangesFn,
 } from './types'
+import type { ValueOf } from 'type-fest'
 
 const getPreferredUnit: GetPreferredUnitFn = async (type) => {
   const [unit] = await getPreferredUnits([type])
@@ -234,7 +236,7 @@ const getMostRecentCategorySample: GetMostRecentCategorySampleFn = async (
   return samples[0]
 }
 
-function useSubscribeToChanges<TIdentifier extends HKSampleTypeIdentifier>(
+function useSubscribeToChanges<TIdentifier extends ValueOf<typeof HKSampleTypeIdentifier>>(
   identifier: TIdentifier,
   onChange: () => void,
 ): void {
@@ -251,6 +253,8 @@ function useSubscribeToChanges<TIdentifier extends HKSampleTypeIdentifier>(
     }
   }, [identifier, onChange])
 }
+
+useSubscribeToChanges(HKCategoryTypeIdentifier.appleStandHour, () => {})
 
 function useMostRecentCategorySample<
   TCategory extends HKCategoryTypeIdentifier
@@ -350,8 +354,8 @@ const queryStatisticsForQuantity: QueryStatisticsForQuantityFn = async (
 }
 
 const requestAuthorization = async (
-  read: readonly (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
-  write: readonly HKSampleTypeIdentifier[] = [],
+  read: readonly ValueOf<typeof HealthkitAuthorization>[],
+  write: readonly ValueOf<typeof HKSampleTypeIdentifier>[] = [],
 ): Promise<boolean> => {
   const readPermissions = read.reduce((obj, cur) => ({ ...obj, [cur]: true }), {} as ReadPermissions)
 
@@ -366,8 +370,8 @@ const getDateOfBirth = async () => {
 }
 
 const getRequestStatusForAuthorization = async (
-  read: readonly (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
-  write: readonly HKSampleTypeIdentifier[] = [],
+  read: readonly (HKCharacteristicTypeIdentifier | ValueOf<typeof HKSampleTypeIdentifier>)[],
+  write: readonly (ValueOf<typeof HKSampleTypeIdentifier>)[] = [],
 ) => {
   const readPermissions = read.reduce((obj, cur) => ({ ...obj, [cur]: true }), {} as ReadPermissions)
 

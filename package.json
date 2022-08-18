@@ -73,6 +73,7 @@
     "react-native": "0.68",
     "react-native-builder-bob": "^0.18.1",
     "release-it": "14",
+    "type-fest": "^2.18.0",
     "typescript": ">=4"
   },
   "peerDependencies": {
@@ -93,9 +94,7 @@
     }
   },
   "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
+    "extends": [ "@commitlint/config-conventional" ]
   },
   "publishConfig": {
     "access": "public",

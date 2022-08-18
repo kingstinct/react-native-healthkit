@@ -27,6 +27,7 @@ import type {
   QueryStatisticsResponseRaw,
   WorkoutRoute,
 } from './native-types'
+import type { ValueOf } from 'type-fest'
 
 export interface QueryWorkoutsOptions<
   TEnergy extends HKUnit,
@@ -104,7 +105,7 @@ export type QueryWorkoutsFn = <
 ) => Promise<readonly HKWorkout<TEnergy, TDistance>[]>;
 
 export type AuthorizationStatusForFn = (
-  type: HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier
+  type: HKCharacteristicTypeIdentifier | ValueOf<typeof HKSampleTypeIdentifier>
 ) => Promise<boolean>;
 
 export type QueryCategorySamplesFn = <T extends HKCategoryTypeIdentifier>(
@@ -112,14 +113,16 @@ export type QueryCategorySamplesFn = <T extends HKCategoryTypeIdentifier>(
   options: GenericQueryOptions
 ) => Promise<readonly HKCategorySample<T>[]>;
 
+type ReadPermission = HKCharacteristicTypeIdentifier | ValueOf<typeof HKSampleTypeIdentifier>
+
 export type GetRequestStatusForAuthorizationFn = (
-  read: readonly (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
-  write?: readonly HKSampleTypeIdentifier[]
+  read: readonly ReadPermission[],
+  write?: readonly ValueOf<typeof HKSampleTypeIdentifier>[]
 ) => Promise<HKAuthorizationRequestStatus>;
 
 export type RequestAuthorizationFn = (
-  read: readonly (HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier)[],
-  write?: readonly HKSampleTypeIdentifier[]
+  read: readonly (HKCharacteristicTypeIdentifier | ValueOf<typeof HKSampleTypeIdentifier>)[],
+  write?: readonly ValueOf<typeof HKSampleTypeIdentifier>[]
 ) => Promise<boolean>;
 
 export type SaveQuantitySampleFn = <TUnit extends HKQuantityTypeIdentifier>(
@@ -142,7 +145,7 @@ export type QueryQuantitySamplesFn = <
 ) => Promise<readonly HKQuantitySample<TIdentifier, TUnit>[]>;
 
 export type SubscribeToChangesFn = (
-  identifier: HKSampleTypeIdentifier,
+  identifier: ValueOf<typeof HKSampleTypeIdentifier>,
   callback: () => void
 ) => Promise<UnsubscribeFunction>;
 
@@ -262,7 +265,7 @@ export type QueryCorrelationSamplesFn = <
 ) => Promise<readonly HKCorrelation<TIdentifier>[]>;
 
 export type SubscribeToChangesHook = <
-  TIdentifier extends HKSampleTypeIdentifier
+  TIdentifier extends ValueOf<typeof HKSampleTypeIdentifier>
 >(
   identifier: TIdentifier,
   onChange: () => void,
@@ -306,11 +309,11 @@ export type ReactNativeHealthkit = {
   readonly saveCorrelationSample: SaveCorrelationSampleFn;
   readonly saveWorkoutSample: SaveWorkoutSampleFn;
   readonly enableBackgroundDelivery: (
-    typeIdentifier: HKSampleTypeIdentifier,
+    typeIdentifier: ValueOf<typeof HKSampleTypeIdentifier>,
     updateFrequency: HKUpdateFrequency
   ) => Promise<boolean>;
   readonly disableBackgroundDelivery: (
-    typeIdentifier: HKSampleTypeIdentifier
+    typeIdentifier: ValueOf<typeof HKSampleTypeIdentifier>
   ) => Promise<boolean>;
   readonly disableAllBackgroundDelivery: () => Promise<boolean>;
 

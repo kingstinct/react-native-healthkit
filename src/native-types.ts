@@ -4,20 +4,121 @@ import {
 } from 'react-native'
 
 import type { EmitterSubscription } from 'react-native'
+import type { ValueOf } from 'type-fest'
 
-export const HKWorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier'
-export const HKAudiogramTypeIdentifier = 'HKAudiogramTypeIdentifier'
-export const HKWorkoutRouteTypeIdentifier = 'HKWorkoutRouteTypeIdentifier'
-export const HKDataTypeIdentifierHeartbeatSeries = 'HKDataTypeIdentifierHeartbeatSeries'
+export const HKWorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier' as const
+export const HKAudiogramTypeIdentifier = 'HKAudiogramTypeIdentifier' as const
+export const HKWorkoutRouteTypeIdentifier = 'HKWorkoutRouteTypeIdentifier' as const
+export const HKDataTypeIdentifierHeartbeatSeries = 'HKDataTypeIdentifierHeartbeatSeries' as const
 
-export type HKSampleTypeIdentifier =
-  | HKCategoryTypeIdentifier
-  | HKCorrelationTypeIdentifier
-  | HKQuantityTypeIdentifier
-  | typeof HKAudiogramTypeIdentifier
-  | typeof HKDataTypeIdentifierHeartbeatSeries
-  | typeof HKWorkoutRouteTypeIdentifier
-  | typeof HKWorkoutTypeIdentifier;
+// Straight mapping to https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier
+export enum HKQuantityTypeIdentifier {
+  bodyMassIndex = 'HKQuantityTypeIdentifierBodyMassIndex',
+  bodyFatPercentage = 'HKQuantityTypeIdentifierBodyFatPercentage', // Scalar(Percent, 0.0 - 1.0),  Discrete
+  height = 'HKQuantityTypeIdentifierHeight', // Length,                      Discrete
+  bodyMass = 'HKQuantityTypeIdentifierBodyMass', // Mass,                        Discrete
+  leanBodyMass = 'HKQuantityTypeIdentifierLeanBodyMass', // Mass,                        Discrete
+
+  waistCircumference = 'HKQuantityTypeIdentifierWaistCircumference', // Length,                      Discrete
+  // Fitness
+  stepCount = 'HKQuantityTypeIdentifierStepCount', // Scalar(Count),               Cumulative
+  distanceWalkingRunning = 'HKQuantityTypeIdentifierDistanceWalkingRunning', // Length,                      Cumulative
+  distanceCycling = 'HKQuantityTypeIdentifierDistanceCycling', // Length,                      Cumulative
+  distanceWheelchair = 'HKQuantityTypeIdentifierDistanceWheelchair', // Length,                      Cumulative
+  basalEnergyBurned = 'HKQuantityTypeIdentifierBasalEnergyBurned', // Energy,                      Cumulative
+  activeEnergyBurned = 'HKQuantityTypeIdentifierActiveEnergyBurned', // Energy,                      Cumulative
+  flightsClimbed = 'HKQuantityTypeIdentifierFlightsClimbed', // Scalar(Count),               Cumulative
+  nikeFuel = 'HKQuantityTypeIdentifierNikeFuel', // Scalar(Count),               Cumulative
+  appleExerciseTime = 'HKQuantityTypeIdentifierAppleExerciseTime', // Time                         Cumulative
+  pushCount = 'HKQuantityTypeIdentifierPushCount', // Scalar(Count),               Cumulative
+  distanceSwimming = 'HKQuantityTypeIdentifierDistanceSwimming', // Length,                      Cumulative
+  swimmingStrokeCount = 'HKQuantityTypeIdentifierSwimmingStrokeCount', // Scalar(Count),               Cumulative
+  vo2Max = 'HKQuantityTypeIdentifierVo2Max', // ml/(kg*min)                  Discrete
+  distanceDownhillSnowSports = 'HKQuantityTypeIdentifierDistanceDownhillSnowSports', // Length,                      Cumulative
+
+  appleStandTime = 'HKQuantityTypeIdentifierAppleStandTime', // Time,                        Cumulative
+  // Vitals
+  heartRate = 'HKQuantityTypeIdentifierHeartRate', // Scalar(Count)/Time,          Discrete
+  bodyTemperature = 'HKQuantityTypeIdentifierBodyTemperature', // Temperature,                 Discrete
+  basalBodyTemperature = 'HKQuantityTypeIdentifierBasalBodyTemperature', // Basal Body Temperature,      Discrete
+  bloodPressureSystolic = 'HKQuantityTypeIdentifierBloodPressureSystolic', // Pressure,                    Discrete
+  bloodPressureDiastolic = 'HKQuantityTypeIdentifierBloodPressureDiastolic', // Pressure,                    Discrete
+  respiratoryRate = 'HKQuantityTypeIdentifierRespiratoryRate', // Scalar(Count)/Time,          Discrete
+  // Beats per minute estimate of a user's lowest heart rate while at rest
+  restingHeartRate = 'HKQuantityTypeIdentifierRestingHeartRate', // Scalar(Count)/Time,          Discrete
+  // Average heartbeats per minute captured by an Apple Watch while a user is walking
+  walkingHeartRateAverage = 'HKQuantityTypeIdentifierWalkingHeartRateAverage', // Scalar(Count)/Time,          Discrete
+  // The standard deviation of heart beat-to-beat intevals (Standard Deviation of Normal to Normal)
+
+  heartRateVariabilitySDNN = 'HKQuantityTypeIdentifierHeartRateVariabilitySDNN', // Time (ms),                   Discrete
+  // Results
+  oxygenSaturation = 'HKQuantityTypeIdentifierOxygenSaturation', // Scalar (Percent, 0.0 - 1.0,  Discrete
+  peripheralPerfusionIndex = 'HKQuantityTypeIdentifierPeripheralPerfusionIndex', // Scalar(Percent, 0.0 - 1.0),  Discrete
+  bloodGlucose = 'HKQuantityTypeIdentifierBloodGlucose', // Mass/Volume,                 Discrete
+  numberOfTimesFallen = 'HKQuantityTypeIdentifierNumberOfTimesFallen', // Scalar(Count),               Cumulative
+  electrodermalActivity = 'HKQuantityTypeIdentifierElectrodermalActivity', // Conductance,                 Discrete
+  inhalerUsage = 'HKQuantityTypeIdentifierInhalerUsage', // Scalar(Count),               Cumulative
+  insulinDelivery = 'HKQuantityTypeIdentifierInsulinDelivery', // Pharmacology (IU)            Cumulative
+  bloodAlcoholContent = 'HKQuantityTypeIdentifierBloodAlcoholContent', // Scalar(Percent, 0.0 - 1.0),  Discrete
+  forcedVitalCapacity = 'HKQuantityTypeIdentifierForcedVitalCapacity', // Volume,                      Discrete
+  forcedExpiratoryVolume1 = 'HKQuantityTypeIdentifierForcedExpiratoryVolume1', // Volume,                      Discrete
+  peakExpiratoryFlowRate = 'HKQuantityTypeIdentifierPeakExpiratoryFlowRate', // Volume/Time,                 Discrete
+  environmentalAudioExposure = 'HKQuantityTypeIdentifierEnvironmentalAudioExposure', // Pressure,                    Cumulative
+
+  headphoneAudioExposure = 'HKQuantityTypeIdentifierHeadphoneAudioExposure', // Pressure,                    Cumulative
+  // Nutrition
+  dietaryFatTotal = 'HKQuantityTypeIdentifierDietaryFatTotal', // Mass,   Cumulative
+  dietaryFatPolyunsaturated = 'HKQuantityTypeIdentifierDietaryFatPolyunsaturated', // Mass,   Cumulative
+  dietaryFatMonounsaturated = 'HKQuantityTypeIdentifierDietaryFatMonounsaturated', // Mass,   Cumulative
+  dietaryFatSaturated = 'HKQuantityTypeIdentifierDietaryFatSaturated', // Mass,   Cumulative
+  dietaryCholesterol = 'HKQuantityTypeIdentifierDietaryCholesterol', // Mass,   Cumulative
+  dietarySodium = 'HKQuantityTypeIdentifierDietarySodium', // Mass,   Cumulative
+  dietaryCarbohydrates = 'HKQuantityTypeIdentifierDietaryCarbohydrates', // Mass,   Cumulative
+  dietaryFiber = 'HKQuantityTypeIdentifierDietaryFiber', // Mass,   Cumulative
+  dietarySugar = 'HKQuantityTypeIdentifierDietarySugar', // Mass,   Cumulative
+  dietaryEnergyConsumed = 'HKQuantityTypeIdentifierDietaryEnergyConsumed', // Energy, Cumulative
+  dietaryProtein = 'HKQuantityTypeIdentifierDietaryProtein', // Mass,   Cumulative
+
+  dietaryVitaminA = 'HKQuantityTypeIdentifierDietaryVitaminA', // Mass, Cumulative
+  dietaryVitaminB6 = 'HKQuantityTypeIdentifierDietaryVitaminB6', // Mass, Cumulative
+  dietaryVitaminB12 = 'HKQuantityTypeIdentifierDietaryVitaminB12', // Mass, Cumulative
+  dietaryVitaminC = 'HKQuantityTypeIdentifierDietaryVitaminC', // Mass, Cumulative
+  dietaryVitaminD = 'HKQuantityTypeIdentifierDietaryVitaminD', // Mass, Cumulative
+  dietaryVitaminE = 'HKQuantityTypeIdentifierDietaryVitaminE', // Mass, Cumulative
+  dietaryVitaminK = 'HKQuantityTypeIdentifierDietaryVitaminK', // Mass, Cumulative
+  dietaryCalcium = 'HKQuantityTypeIdentifierDietaryCalcium', // Mass, Cumulative
+  dietaryIron = 'HKQuantityTypeIdentifierDietaryIron', // Mass, Cumulative
+  dietaryThiamin = 'HKQuantityTypeIdentifierDietaryThiamin', // Mass, Cumulative
+  dietaryRiboflavin = 'HKQuantityTypeIdentifierDietaryRiboflavin', // Mass, Cumulative
+  dietaryNiacin = 'HKQuantityTypeIdentifierDietaryNiacin', // Mass, Cumulative
+  dietaryFolate = 'HKQuantityTypeIdentifierDietaryFolate', // Mass, Cumulative
+  dietaryBiotin = 'HKQuantityTypeIdentifierDietaryBiotin', // Mass, Cumulative
+  dietaryPantothenicAcid = 'HKQuantityTypeIdentifierDietaryPantothenicAcid', // Mass, Cumulative
+  dietaryPhosphorus = 'HKQuantityTypeIdentifierDietaryPhosphorus', // Mass, Cumulative
+  dietaryIodine = 'HKQuantityTypeIdentifierDietaryIodine', // Mass, Cumulative
+  dietaryMagnesium = 'HKQuantityTypeIdentifierDietaryMagnesium', // Mass, Cumulative
+  dietaryZinc = 'HKQuantityTypeIdentifierDietaryZinc', // Mass, Cumulative
+  dietarySelenium = 'HKQuantityTypeIdentifierDietarySelenium', // Mass, Cumulative
+  dietaryCopper = 'HKQuantityTypeIdentifierDietaryCopper', // Mass, Cumulative
+  dietaryManganese = 'HKQuantityTypeIdentifierDietaryManganese', // Mass, Cumulative
+  dietaryChromium = 'HKQuantityTypeIdentifierDietaryChromium', // Mass, Cumulative
+  dietaryMolybdenum = 'HKQuantityTypeIdentifierDietaryMolybdenum', // Mass, Cumulative
+  dietaryChloride = 'HKQuantityTypeIdentifierDietaryChloride', // Mass, Cumulative
+  dietaryPotassium = 'HKQuantityTypeIdentifierDietaryPotassium', // Mass, Cumulative
+  dietaryCaffeine = 'HKQuantityTypeIdentifierDietaryCaffeine', // Mass, Cumulative
+  dietaryWater = 'HKQuantityTypeIdentifierDietaryWater', // Volume, Cumulative
+
+  // Mobility
+  sixMinuteWalkTestDistance = 'HKQuantityTypeIdentifierSixMinuteWalkTestDistance',
+  walkingSpeed = 'HKQuantityTypeIdentifierWalkingSpeed',
+  walkingStepLength = 'HKQuantityTypeIdentifierWalkingStepLength',
+  walkingAsymmetryPercentage = 'HKQuantityTypeIdentifierWalkingAsymmetryPercentage',
+  walkingDoubleSupportPercentage = 'HKQuantityTypeIdentifierWalkingDoubleSupportPercentage',
+  stairAscentSpeed = 'HKQuantityTypeIdentifierStairAscentSpeed',
+  stairDescentSpeed = 'HKQuantityTypeIdentifierStairDescentSpeed',
+
+  uvExposure = 'HKQuantityTypeIdentifierUvExposure', // Scalar (Count), Discrete
+}
 
 export type TypeToUnitMapping = { readonly
   [key in HKQuantityTypeIdentifier]: HKUnit;
@@ -27,6 +128,11 @@ export enum HKHeartRateMotionContext {
   active = 2,
   notSet = 0,
   sedentary = 1,
+}
+
+export enum HKCorrelationTypeIdentifier {
+  bloodPressure = 'HKCorrelationTypeIdentifierBloodPressure',
+  food = 'HKCorrelationTypeIdentifierFood',
 }
 
 export enum HKCategoryTypeIdentifier {
@@ -43,6 +149,16 @@ export enum HKCategoryTypeIdentifier {
   irregularHeartRhythmEvent = 'HKCategoryTypeIdentifierIrregularHeartRhythmEvent',
   audioExposureEvent = 'HKCategoryTypeIdentifierAudioExposureEvent',
   toothbrushingEvent = 'HKCategoryTypeIdentifierToothbrushingEvent',
+}
+
+export const HKSampleTypeIdentifier = {
+  ...HKCategoryTypeIdentifier,
+  ...HKCorrelationTypeIdentifier,
+  ...HKQuantityTypeIdentifier,
+  audiogram: HKAudiogramTypeIdentifier,
+  heartbeatSeries: HKDataTypeIdentifierHeartbeatSeries,
+  workoutRoute: HKWorkoutRouteTypeIdentifier,
+  workoute: HKWorkoutTypeIdentifier,
 }
 
 export enum HKCategoryValueAppleStandHour {
@@ -185,115 +301,6 @@ export interface HKWorkoutMetadata
   readonly HKWeatherCondition?: HKWeatherCondition;
   readonly HKWeatherHumidity?: HKQuantity<HKUnit.Percent>;
   // HKWeatherTemperature: HKQuantity<TTemperatureUnit>
-}
-
-// Straight mapping to https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier
-export enum HKQuantityTypeIdentifier {
-  bodyMassIndex = 'HKQuantityTypeIdentifierBodyMassIndex',
-  bodyFatPercentage = 'HKQuantityTypeIdentifierBodyFatPercentage', // Scalar(Percent, 0.0 - 1.0),  Discrete
-  height = 'HKQuantityTypeIdentifierHeight', // Length,                      Discrete
-  bodyMass = 'HKQuantityTypeIdentifierBodyMass', // Mass,                        Discrete
-  leanBodyMass = 'HKQuantityTypeIdentifierLeanBodyMass', // Mass,                        Discrete
-
-  waistCircumference = 'HKQuantityTypeIdentifierWaistCircumference', // Length,                      Discrete
-  // Fitness
-  stepCount = 'HKQuantityTypeIdentifierStepCount', // Scalar(Count),               Cumulative
-  distanceWalkingRunning = 'HKQuantityTypeIdentifierDistanceWalkingRunning', // Length,                      Cumulative
-  distanceCycling = 'HKQuantityTypeIdentifierDistanceCycling', // Length,                      Cumulative
-  distanceWheelchair = 'HKQuantityTypeIdentifierDistanceWheelchair', // Length,                      Cumulative
-  basalEnergyBurned = 'HKQuantityTypeIdentifierBasalEnergyBurned', // Energy,                      Cumulative
-  activeEnergyBurned = 'HKQuantityTypeIdentifierActiveEnergyBurned', // Energy,                      Cumulative
-  flightsClimbed = 'HKQuantityTypeIdentifierFlightsClimbed', // Scalar(Count),               Cumulative
-  nikeFuel = 'HKQuantityTypeIdentifierNikeFuel', // Scalar(Count),               Cumulative
-  appleExerciseTime = 'HKQuantityTypeIdentifierAppleExerciseTime', // Time                         Cumulative
-  pushCount = 'HKQuantityTypeIdentifierPushCount', // Scalar(Count),               Cumulative
-  distanceSwimming = 'HKQuantityTypeIdentifierDistanceSwimming', // Length,                      Cumulative
-  swimmingStrokeCount = 'HKQuantityTypeIdentifierSwimmingStrokeCount', // Scalar(Count),               Cumulative
-  vo2Max = 'HKQuantityTypeIdentifierVo2Max', // ml/(kg*min)                  Discrete
-  distanceDownhillSnowSports = 'HKQuantityTypeIdentifierDistanceDownhillSnowSports', // Length,                      Cumulative
-
-  appleStandTime = 'HKQuantityTypeIdentifierAppleStandTime', // Time,                        Cumulative
-  // Vitals
-  heartRate = 'HKQuantityTypeIdentifierHeartRate', // Scalar(Count)/Time,          Discrete
-  bodyTemperature = 'HKQuantityTypeIdentifierBodyTemperature', // Temperature,                 Discrete
-  basalBodyTemperature = 'HKQuantityTypeIdentifierBasalBodyTemperature', // Basal Body Temperature,      Discrete
-  bloodPressureSystolic = 'HKQuantityTypeIdentifierBloodPressureSystolic', // Pressure,                    Discrete
-  bloodPressureDiastolic = 'HKQuantityTypeIdentifierBloodPressureDiastolic', // Pressure,                    Discrete
-  respiratoryRate = 'HKQuantityTypeIdentifierRespiratoryRate', // Scalar(Count)/Time,          Discrete
-  // Beats per minute estimate of a user's lowest heart rate while at rest
-  restingHeartRate = 'HKQuantityTypeIdentifierRestingHeartRate', // Scalar(Count)/Time,          Discrete
-  // Average heartbeats per minute captured by an Apple Watch while a user is walking
-  walkingHeartRateAverage = 'HKQuantityTypeIdentifierWalkingHeartRateAverage', // Scalar(Count)/Time,          Discrete
-  // The standard deviation of heart beat-to-beat intevals (Standard Deviation of Normal to Normal)
-
-  heartRateVariabilitySDNN = 'HKQuantityTypeIdentifierHeartRateVariabilitySDNN', // Time (ms),                   Discrete
-  // Results
-  oxygenSaturation = 'HKQuantityTypeIdentifierOxygenSaturation', // Scalar (Percent, 0.0 - 1.0,  Discrete
-  peripheralPerfusionIndex = 'HKQuantityTypeIdentifierPeripheralPerfusionIndex', // Scalar(Percent, 0.0 - 1.0),  Discrete
-  bloodGlucose = 'HKQuantityTypeIdentifierBloodGlucose', // Mass/Volume,                 Discrete
-  numberOfTimesFallen = 'HKQuantityTypeIdentifierNumberOfTimesFallen', // Scalar(Count),               Cumulative
-  electrodermalActivity = 'HKQuantityTypeIdentifierElectrodermalActivity', // Conductance,                 Discrete
-  inhalerUsage = 'HKQuantityTypeIdentifierInhalerUsage', // Scalar(Count),               Cumulative
-  insulinDelivery = 'HKQuantityTypeIdentifierInsulinDelivery', // Pharmacology (IU)            Cumulative
-  bloodAlcoholContent = 'HKQuantityTypeIdentifierBloodAlcoholContent', // Scalar(Percent, 0.0 - 1.0),  Discrete
-  forcedVitalCapacity = 'HKQuantityTypeIdentifierForcedVitalCapacity', // Volume,                      Discrete
-  forcedExpiratoryVolume1 = 'HKQuantityTypeIdentifierForcedExpiratoryVolume1', // Volume,                      Discrete
-  peakExpiratoryFlowRate = 'HKQuantityTypeIdentifierPeakExpiratoryFlowRate', // Volume/Time,                 Discrete
-  environmentalAudioExposure = 'HKQuantityTypeIdentifierEnvironmentalAudioExposure', // Pressure,                    Cumulative
-
-  headphoneAudioExposure = 'HKQuantityTypeIdentifierHeadphoneAudioExposure', // Pressure,                    Cumulative
-  // Nutrition
-  dietaryFatTotal = 'HKQuantityTypeIdentifierDietaryFatTotal', // Mass,   Cumulative
-  dietaryFatPolyunsaturated = 'HKQuantityTypeIdentifierDietaryFatPolyunsaturated', // Mass,   Cumulative
-  dietaryFatMonounsaturated = 'HKQuantityTypeIdentifierDietaryFatMonounsaturated', // Mass,   Cumulative
-  dietaryFatSaturated = 'HKQuantityTypeIdentifierDietaryFatSaturated', // Mass,   Cumulative
-  dietaryCholesterol = 'HKQuantityTypeIdentifierDietaryCholesterol', // Mass,   Cumulative
-  dietarySodium = 'HKQuantityTypeIdentifierDietarySodium', // Mass,   Cumulative
-  dietaryCarbohydrates = 'HKQuantityTypeIdentifierDietaryCarbohydrates', // Mass,   Cumulative
-  dietaryFiber = 'HKQuantityTypeIdentifierDietaryFiber', // Mass,   Cumulative
-  dietarySugar = 'HKQuantityTypeIdentifierDietarySugar', // Mass,   Cumulative
-  dietaryEnergyConsumed = 'HKQuantityTypeIdentifierDietaryEnergyConsumed', // Energy, Cumulative
-  dietaryProtein = 'HKQuantityTypeIdentifierDietaryProtein', // Mass,   Cumulative
-
-  dietaryVitaminA = 'HKQuantityTypeIdentifierDietaryVitaminA', // Mass, Cumulative
-  dietaryVitaminB6 = 'HKQuantityTypeIdentifierDietaryVitaminB6', // Mass, Cumulative
-  dietaryVitaminB12 = 'HKQuantityTypeIdentifierDietaryVitaminB12', // Mass, Cumulative
-  dietaryVitaminC = 'HKQuantityTypeIdentifierDietaryVitaminC', // Mass, Cumulative
-  dietaryVitaminD = 'HKQuantityTypeIdentifierDietaryVitaminD', // Mass, Cumulative
-  dietaryVitaminE = 'HKQuantityTypeIdentifierDietaryVitaminE', // Mass, Cumulative
-  dietaryVitaminK = 'HKQuantityTypeIdentifierDietaryVitaminK', // Mass, Cumulative
-  dietaryCalcium = 'HKQuantityTypeIdentifierDietaryCalcium', // Mass, Cumulative
-  dietaryIron = 'HKQuantityTypeIdentifierDietaryIron', // Mass, Cumulative
-  dietaryThiamin = 'HKQuantityTypeIdentifierDietaryThiamin', // Mass, Cumulative
-  dietaryRiboflavin = 'HKQuantityTypeIdentifierDietaryRiboflavin', // Mass, Cumulative
-  dietaryNiacin = 'HKQuantityTypeIdentifierDietaryNiacin', // Mass, Cumulative
-  dietaryFolate = 'HKQuantityTypeIdentifierDietaryFolate', // Mass, Cumulative
-  dietaryBiotin = 'HKQuantityTypeIdentifierDietaryBiotin', // Mass, Cumulative
-  dietaryPantothenicAcid = 'HKQuantityTypeIdentifierDietaryPantothenicAcid', // Mass, Cumulative
-  dietaryPhosphorus = 'HKQuantityTypeIdentifierDietaryPhosphorus', // Mass, Cumulative
-  dietaryIodine = 'HKQuantityTypeIdentifierDietaryIodine', // Mass, Cumulative
-  dietaryMagnesium = 'HKQuantityTypeIdentifierDietaryMagnesium', // Mass, Cumulative
-  dietaryZinc = 'HKQuantityTypeIdentifierDietaryZinc', // Mass, Cumulative
-  dietarySelenium = 'HKQuantityTypeIdentifierDietarySelenium', // Mass, Cumulative
-  dietaryCopper = 'HKQuantityTypeIdentifierDietaryCopper', // Mass, Cumulative
-  dietaryManganese = 'HKQuantityTypeIdentifierDietaryManganese', // Mass, Cumulative
-  dietaryChromium = 'HKQuantityTypeIdentifierDietaryChromium', // Mass, Cumulative
-  dietaryMolybdenum = 'HKQuantityTypeIdentifierDietaryMolybdenum', // Mass, Cumulative
-  dietaryChloride = 'HKQuantityTypeIdentifierDietaryChloride', // Mass, Cumulative
-  dietaryPotassium = 'HKQuantityTypeIdentifierDietaryPotassium', // Mass, Cumulative
-  dietaryCaffeine = 'HKQuantityTypeIdentifierDietaryCaffeine', // Mass, Cumulative
-  dietaryWater = 'HKQuantityTypeIdentifierDietaryWater', // Volume, Cumulative
-
-  // Mobility
-  sixMinuteWalkTestDistance = 'HKQuantityTypeIdentifierSixMinuteWalkTestDistance',
-  walkingSpeed = 'HKQuantityTypeIdentifierWalkingSpeed',
-  walkingStepLength = 'HKQuantityTypeIdentifierWalkingStepLength',
-  walkingAsymmetryPercentage = 'HKQuantityTypeIdentifierWalkingAsymmetryPercentage',
-  walkingDoubleSupportPercentage = 'HKQuantityTypeIdentifierWalkingDoubleSupportPercentage',
-  stairAscentSpeed = 'HKQuantityTypeIdentifierStairAscentSpeed',
-  stairDescentSpeed = 'HKQuantityTypeIdentifierStairDescentSpeed',
-
-  uvExposure = 'HKQuantityTypeIdentifierUvExposure', // Scalar (Count), Discrete
 }
 
 export enum HKAuthorizationRequestStatus {
@@ -661,11 +668,6 @@ export type HKCorrelationRaw<TIdentifier extends HKCorrelationTypeIdentifier> =
 
 type QueryId = string;
 
-export enum HKCorrelationTypeIdentifier {
-  bloodPressure = 'HKCorrelationTypeIdentifierBloodPressure',
-  food = 'HKCorrelationTypeIdentifierFood',
-}
-
 export enum HKUpdateFrequency {
   immediate = 1,
   hourly = 2,
@@ -690,7 +692,7 @@ export type WorkoutRoute = {
   readonly HKMetadataKeySyncVersion?: number;
 };
 
-type AuthorizationStatusFor = HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier
+export const HealthkitAuthorization = { ...HKCharacteristicTypeIdentifier, ...HKSampleTypeIdentifier }
 
 type ReactNativeHealthkitTypeNative = {
   isHealthDataAvailable(): Promise<boolean>;
@@ -701,11 +703,11 @@ type ReactNativeHealthkitTypeNative = {
   readonly getWheelchairUse: () => Promise<HKWheelchairUse>;
 
   readonly enableBackgroundDelivery: (
-    typeIdentifier: HKSampleTypeIdentifier,
+    typeIdentifier: ValueOf<typeof HKSampleTypeIdentifier>,
     updateFrequency: HKUpdateFrequency
   ) => Promise<boolean>;
   readonly disableBackgroundDelivery: (
-    typeIdentifier: HKSampleTypeIdentifier
+    typeIdentifier: ValueOf<typeof HKSampleTypeIdentifier>,
   ) => Promise<boolean>;
   readonly disableAllBackgroundDelivery: () => Promise<boolean>;
 
@@ -738,11 +740,11 @@ type ReactNativeHealthkitTypeNative = {
   ) => Promise<readonly HKCorrelationRaw<TIdentifier>[]>;
 
   subscribeToObserverQuery(
-    identifier: HKSampleTypeIdentifier
+    identifier: ValueOf<typeof HKSampleTypeIdentifier>
   ): Promise<QueryId>;
   unsubscribeQuery(queryId: QueryId): Promise<boolean>;
   authorizationStatusFor(
-    type: AuthorizationStatusFor
+    type: ValueOf<keyof typeof HealthkitAuthorization>
   ): Promise<boolean>;
   getRequestStatusForAuthorization(
     write: WritePermissions,
@@ -811,7 +813,7 @@ const Native = NativeModules.ReactNativeHealthkit as ReactNativeHealthkitTypeNat
 type OnChangeCallback = ({
   typeIdentifier,
 }: {
-  readonly typeIdentifier: HKSampleTypeIdentifier;
+  readonly typeIdentifier: ValueOf<typeof HKSampleTypeIdentifier>;
 }) => void;
 
 interface HealthkitEventEmitter extends NativeEventEmitter {
