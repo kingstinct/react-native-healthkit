@@ -117,11 +117,20 @@ export enum HKQuantityTypeIdentifier {
   stairDescentSpeed = 'HKQuantityTypeIdentifierStairDescentSpeed',
 
   uvExposure = 'HKQuantityTypeIdentifierUvExposure', // Scalar (Count), Discrete
+
+  appleMoveTime = 'HKQuantityTypeIdentifierAppleMoveTime', // Time,                        Cumulative
+  appleWalkingSteadiness = 'HKQuantityTypeIdentifierAppleWalkingSteadiness', // Scalar(Percent, 0.0 - 1.0),  Discrete
+
+  numberOfAlcoholicBeverages = 'HKQuantityTypeIdentifierNumberOfAlcoholicBeverages', // Scalar(Count),               Cumulative
 }
 
 export type TypeToUnitMapping = { readonly
   [key in HKQuantityTypeIdentifier]: HKUnit;
 };
+
+export enum HKCategoryValueLowCardioFitnessEvent {
+  lowFitness = 1,
+}
 
 export enum HKHeartRateMotionContext {
   active = 2,
@@ -148,6 +157,58 @@ export enum HKCategoryTypeIdentifier {
   irregularHeartRhythmEvent = 'HKCategoryTypeIdentifierIrregularHeartRhythmEvent',
   audioExposureEvent = 'HKCategoryTypeIdentifierAudioExposureEvent',
   toothbrushingEvent = 'HKCategoryTypeIdentifierToothbrushingEvent',
+  lowCardioFitnessEvent = 'HKCategoryTypeIdentifierLowCardioFitnessEvent',
+  contraceptive = 'HKCategoryTypeIdentifierContraceptive',
+  lactation = 'HKCategoryTypeIdentifierLactation',
+  pregnancy = 'HKCategoryTypeIdentifierPregnancy',
+  pregnancyTestResult = 'HKCategoryTypeIdentifierPregnancyTestResult',
+  progesteroneTestResult = 'HKCategoryTypeIdentifierProgesteroneTestResult',
+  environmentalAudioExposureEvent = 'HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent',
+  headphoneAudioExposureEvent = 'HKCategoryTypeIdentifierHeadphoneAudioExposureEvent',
+  appleWalkingSteadinessEvent = 'HKCategoryTypeIdentifierAppleWalkingSteadinessEvent',
+  handwashingEvent = 'HKCategoryTypeIdentifierHandwashingEvent', // HKCategoryValue
+
+  // Symptoms
+  abdominalCramps = 'HKCategoryTypeIdentifierAbdominalCramps', // HKCategoryValueSeverity
+  acne = 'HKCategoryTypeIdentifierAcne', // HKCategoryValueSeverity
+  appetiteChanges = 'HKCategoryTypeIdentifierAppetiteChanges', // HKCategoryValueAppetiteChanges
+  bladderIncontinence = 'HKCategoryTypeIdentifierBladderIncontinence', // HKCategoryValueSeverity
+  bloating = 'HKCategoryTypeIdentifierBloating', // HKCategoryValueSeverity
+  breastPain = 'HKCategoryTypeIdentifierBreastPain', // HKCategoryValueSeverity
+  chestTightnessOrPain = 'HKCategoryTypeIdentifierChestTightnessOrPain', // HKCategoryValueSeverity
+  chills = 'HKCategoryTypeIdentifierChills', // HKCategoryValueSeverity
+  constipation = 'HKCategoryTypeIdentifierConstipation', // HKCategoryValueSeverity
+  coughing = 'HKCategoryTypeIdentifierCoughing', // HKCategoryValueSeverity
+  diarrhea = 'HKCategoryTypeIdentifierDiarrhea', // HKCategoryValueSeverity
+  dizziness = 'HKCategoryTypeIdentifierDizziness', // HKCategoryValueSeverity
+  drySkin = 'HKCategoryTypeIdentifierDrySkin', // HKCategoryValueSeverity
+  fainting = 'HKCategoryTypeIdentifierFainting', // HKCategoryValueSeverity
+  fatigue = 'HKCategoryTypeIdentifierFatigue', // HKCategoryValueSeverity
+  fever = 'HKCategoryTypeIdentifierFever', // HKCategoryValueSeverity
+  generalizedBodyAche = 'HKCategoryTypeIdentifierGeneralizedBodyAche', // HKCategoryValueSeverity
+  hairLoss = 'HKCategoryTypeIdentifierHairLoss', // HKCategoryValueSeverity
+  headache = 'HKCategoryTypeIdentifierHeadache', // HKCategoryValueSeverity
+  heartburn = 'HKCategoryTypeIdentifierHeartburn', // HKCategoryValueSeverity
+  hotFlashes = 'HKCategoryTypeIdentifierHotFlashes', // HKCategoryValueSeverity
+  lossOfSmell = 'HKCategoryTypeIdentifierLossOfSmell', // HKCategoryValueSeverity
+  lossOfTaste = 'HKCategoryTypeIdentifierLossOfTaste', // HKCategoryValueSeverity
+  lowerBackPain = 'HKCategoryTypeIdentifierLowerBackPain', // HKCategoryValueSeverity
+  memoryLapse = 'HKCategoryTypeIdentifierMemoryLapse', // HKCategoryValueSeverity
+  moodChanges = 'HKCategoryTypeIdentifierMoodChanges', // HKCategoryValuePresence
+  nausea = 'HKCategoryTypeIdentifierNausea', // HKCategoryValueSeverity
+  nightSweats = 'HKCategoryTypeIdentifierNightSweats', // HKCategoryValueSeverity
+  pelvicPain = 'HKCategoryTypeIdentifierPelvicPain', // HKCategoryValueSeverity
+  rapidPoundingOrFlutteringHeartbeat = 'HKCategoryTypeIdentifierRapidPoundingOrFlutteringHeartbeat', // HKCategoryValueSeverity
+  runnyNose = 'HKCategoryTypeIdentifierRunnyNose', // HKCategoryValueSeverity
+  shortnessOfBreath = 'HKCategoryTypeIdentifierShortnessOfBreath', // HKCategoryValueSeverity
+  sinusCongestion = 'HKCategoryTypeIdentifierSinusCongestion', // HKCategoryValueSeverity
+  skippedHeartbeat = 'HKCategoryTypeIdentifierSkippedHeartbeat', // HKCategoryValueSeverity
+  sleepChanges = 'HKCategoryTypeIdentifierSleepChanges', // HKCategoryValuePresence
+  soreThroat = 'HKCategoryTypeIdentifierSoreThroat', // HKCategoryValueSeverity
+  vaginalDryness = 'HKCategoryTypeIdentifierVaginalDryness', // HKCategoryValueSeverity
+  vomiting = 'HKCategoryTypeIdentifierVomiting', // HKCategoryValueSeverity
+  wheezing = 'HKCategoryTypeIdentifierWheezing', // HKCategoryValueSeverity
+
 }
 
 export type HKSampleTypeIdentifier =
@@ -436,15 +497,10 @@ export enum HKCategoryValueNotApplicable {
 }
 
 export type HKCategoryValue =
-  | HKCategoryValueAppetiteChanges
-  | HKCategoryValueCervicalMucusQuality
-  | HKCategoryValueMenstrualFlow
-  | HKCategoryValueOvulationTestResult
-  | HKCategoryValuePresence
-  | HKCategoryValuePresence
-  | HKCategoryValueSeverity
-  | HKCategoryValueSleepAnalysis
-  | number;
+  HKCategoryValueAppetiteChanges | HKCategoryValueCervicalMucusQuality |
+  HKCategoryValueLowCardioFitnessEvent | HKCategoryValueMenstrualFlow |
+  HKCategoryValueOvulationTestResult | HKCategoryValuePresence |
+  HKCategoryValueSeverity | HKCategoryValueSleepAnalysis | number;
 
 export enum HKInsulinDeliveryReason {
   basal = 1,
@@ -484,17 +540,51 @@ export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier> =
         ? HKCategoryValueOvulationTestResult
         : T extends HKCategoryTypeIdentifier.sleepAnalysis
           ? HKCategoryValueSleepAnalysis
-          : T extends HKCategoryTypeIdentifier.mindfulSession
+          : T extends (HKCategoryTypeIdentifier.highHeartRateEvent | HKCategoryTypeIdentifier.intermenstrualBleeding
+          | HKCategoryTypeIdentifier.mindfulSession | HKCategoryTypeIdentifier.sexualActivity)
             ? HKCategoryValueNotApplicable
-            : T extends HKCategoryTypeIdentifier.intermenstrualBleeding
-              ? HKCategoryValueNotApplicable
-              : T extends HKCategoryTypeIdentifier.highHeartRateEvent
-                ? HKCategoryValueNotApplicable
-                : T extends HKCategoryTypeIdentifier.sexualActivity
-                  ? HKCategoryValueNotApplicable
-                  : T extends HKCategoryTypeIdentifier.appleStandHour
-                    ? HKCategoryValueAppleStandHour
-                    : number;
+            : T extends (HKCategoryTypeIdentifier.abdominalCramps
+            | HKCategoryTypeIdentifier.abdominalCramps
+            | HKCategoryTypeIdentifier.acne
+            | HKCategoryTypeIdentifier.bladderIncontinence
+            | HKCategoryTypeIdentifier.bloating| HKCategoryTypeIdentifier.breastPain
+            | HKCategoryTypeIdentifier.chestTightnessOrPain| HKCategoryTypeIdentifier.chills| HKCategoryTypeIdentifier.constipation
+            | HKCategoryTypeIdentifier.coughing| HKCategoryTypeIdentifier.diarrhea| HKCategoryTypeIdentifier.dizziness| HKCategoryTypeIdentifier.drySkin| HKCategoryTypeIdentifier.fainting
+            | HKCategoryTypeIdentifier.fatigue| HKCategoryTypeIdentifier.fever| HKCategoryTypeIdentifier.generalizedBodyAche| HKCategoryTypeIdentifier.hairLoss
+            | HKCategoryTypeIdentifier.headache| HKCategoryTypeIdentifier.heartburn
+            | HKCategoryTypeIdentifier.hotFlashes| HKCategoryTypeIdentifier.lossOfSmell| HKCategoryTypeIdentifier.lossOfTaste
+            | HKCategoryTypeIdentifier.lowerBackPain| HKCategoryTypeIdentifier.memoryLapse| HKCategoryTypeIdentifier.moodChanges
+            | HKCategoryTypeIdentifier.nausea| HKCategoryTypeIdentifier.nightSweats| HKCategoryTypeIdentifier.pelvicPain
+            | HKCategoryTypeIdentifier.rapidPoundingOrFlutteringHeartbeat| HKCategoryTypeIdentifier.runnyNose
+            | HKCategoryTypeIdentifier.shortnessOfBreath| HKCategoryTypeIdentifier.sinusCongestion| HKCategoryTypeIdentifier.skippedHeartbeat
+            | HKCategoryTypeIdentifier.soreThroat| HKCategoryTypeIdentifier.vaginalDryness
+            | HKCategoryTypeIdentifier.vomiting| HKCategoryTypeIdentifier.wheezing)
+              ? HKCategoryValueSeverity
+              : T extends (HKCategoryTypeIdentifier.appetiteChanges | HKCategoryTypeIdentifier.sleepChanges)
+                ? HKCategoryValuePresence
+                : T extends HKCategoryTypeIdentifier.lowCardioFitnessEvent ? HKCategoryValueLowCardioFitnessEvent :
+                  T extends HKCategoryTypeIdentifier.pregnancyTestResult ? HKCategoryValuePregnancyTestResult :
+                    T extends HKCategoryTypeIdentifier.pregnancyTestResult ? HKCategoryValuePregnancyTestResult :
+                      T extends HKCategoryTypeIdentifier.appleStandHour
+                        ? HKCategoryValueAppleStandHour
+                        : number;
+
+enum HKCategoryValuePregnancyTestResult {
+  positive = 2,
+  negative = 1,
+  indeterminate = 3
+}
+/* needs further mapping
+
+contraceptive = 'HKCategoryTypeIdentifierContraceptive',
+  lactation = 'HKCategoryTypeIdentifierLactation',
+  pregnancy = 'HKCategoryTypeIdentifierPregnancy',
+
+  progesteroneTestResult = 'HKCategoryTypeIdentifierProgesteroneTestResult',
+  environmentalAudioExposureEvent = 'HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent',
+  headphoneAudioExposureEvent = 'HKCategoryTypeIdentifierHeadphoneAudioExposureEvent',
+  appleWalkingSteadinessEvent = 'HKCategoryTypeIdentifierAppleWalkingSteadinessEvent',
+  handwashingEvent = 'HKCategoryTypeIdentifierHandwashingEvent', // HKCategoryValue */
 
 export type MetadataMapperForCategoryIdentifier<
   T extends HKCategoryTypeIdentifier
@@ -646,6 +736,7 @@ export enum HKCharacteristicTypeIdentifier {
   bloodType = 'HKCharacteristicTypeIdentifierBloodType',
   dateOfBirth = 'HKCharacteristicTypeIdentifierDateOfBirth',
   wheelchairUse = 'HKCharacteristicTypeIdentifierWheelchairUse',
+  activityMoveMode = 'HKCharacteristicTypeIdentifierActivityMoveMode', // HKActivityMoveModeObject
 }
 
 export type WritePermissions = {
