@@ -161,6 +161,11 @@ export const HKSampleTypeIdentifier = {
   workoute: HKWorkoutTypeIdentifier,
 }
 
+export type SampleTypeIdentifier = ValueOf<typeof HKSampleTypeIdentifier>;
+
+export type HealthkitReadAuthorization = ValueOf<typeof HealthkitAuthorization>
+export type HealthkitWriteAuthorization = ValueOf<typeof HealthkitAuthorization>
+
 export enum HKCategoryValueAppleStandHour {
   stood = 0,
   idle = 1,

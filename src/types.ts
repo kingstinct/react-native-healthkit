@@ -1,17 +1,17 @@
 import type {
+  HealthkitReadAuthorization,
+  HealthkitWriteAuthorization,
   HKAuthorizationRequestStatus,
   HKBiologicalSex,
   HKBloodType,
   HKCategorySampleRaw,
   HKCategoryTypeIdentifier,
   HKCategoryValueForIdentifier,
-  HKCharacteristicTypeIdentifier,
   HKCorrelationRaw,
   HKCorrelationTypeIdentifier,
   HKFitzpatrickSkinType,
   HKQuantitySampleRaw,
   HKQuantityTypeIdentifier,
-  HKSampleTypeIdentifier,
   HKStatisticsOptions,
   HKUnit,
   HKUnitSI,
@@ -25,10 +25,9 @@ import type {
   MetadataMapperForCorrelationIdentifier,
   MetadataMapperForQuantityIdentifier,
   QueryStatisticsResponseRaw,
+  SampleTypeIdentifier,
   WorkoutRoute,
-  HealthkitAuthorization,
 } from './native-types'
-import type { ValueOf } from 'type-fest'
 
 export interface QueryWorkoutsOptions<
   TEnergy extends HKUnit,
@@ -106,7 +105,7 @@ export type QueryWorkoutsFn = <
 ) => Promise<readonly HKWorkout<TEnergy, TDistance>[]>;
 
 export type AuthorizationStatusForFn = (
-  type: HKCharacteristicTypeIdentifier | ValueOf<typeof HKSampleTypeIdentifier>
+  type: HealthkitReadAuthorization
 ) => Promise<boolean>;
 
 export type QueryCategorySamplesFn = <T extends HKCategoryTypeIdentifier>(
@@ -114,16 +113,14 @@ export type QueryCategorySamplesFn = <T extends HKCategoryTypeIdentifier>(
   options: GenericQueryOptions
 ) => Promise<readonly HKCategorySample<T>[]>;
 
-type ReadPermission = HKCharacteristicTypeIdentifier | ValueOf<typeof HKSampleTypeIdentifier>
-
 export type GetRequestStatusForAuthorizationFn = (
-  read: readonly ReadPermission[],
-  write?: readonly ValueOf<typeof HKSampleTypeIdentifier>[]
+  read: readonly HealthkitReadAuthorization[],
+  write?: readonly HealthkitWriteAuthorization[]
 ) => Promise<HKAuthorizationRequestStatus>;
 
 export type RequestAuthorizationFn = (
-  read: readonly (HKCharacteristicTypeIdentifier | ValueOf<typeof HKSampleTypeIdentifier>)[],
-  write?: readonly ValueOf<typeof HKSampleTypeIdentifier>[]
+  read: readonly HealthkitReadAuthorization[],
+  write?: readonly HealthkitWriteAuthorization[]
 ) => Promise<boolean>;
 
 export type SaveQuantitySampleFn = <TUnit extends HKQuantityTypeIdentifier>(
@@ -146,7 +143,7 @@ export type QueryQuantitySamplesFn = <
 ) => Promise<readonly HKQuantitySample<TIdentifier, TUnit>[]>;
 
 export type SubscribeToChangesFn = (
-  identifier: ValueOf<typeof HKSampleTypeIdentifier>,
+  identifier: SampleTypeIdentifier,
   callback: () => void
 ) => Promise<UnsubscribeFunction>;
 
@@ -266,7 +263,7 @@ export type QueryCorrelationSamplesFn = <
 ) => Promise<readonly HKCorrelation<TIdentifier>[]>;
 
 export type SubscribeToChangesHook = <
-  TIdentifier extends ValueOf<typeof HKSampleTypeIdentifier>
+  TIdentifier extends SampleTypeIdentifier
 >(
   identifier: TIdentifier,
   onChange: () => void,
@@ -310,11 +307,11 @@ export type ReactNativeHealthkit = {
   readonly saveCorrelationSample: SaveCorrelationSampleFn;
   readonly saveWorkoutSample: SaveWorkoutSampleFn;
   readonly enableBackgroundDelivery: (
-    typeIdentifier: ValueOf<typeof HKSampleTypeIdentifier>,
+    typeIdentifier: SampleTypeIdentifier,
     updateFrequency: HKUpdateFrequency
   ) => Promise<boolean>;
   readonly disableBackgroundDelivery: (
-    typeIdentifier: ValueOf<typeof HKSampleTypeIdentifier>
+    typeIdentifier: SampleTypeIdentifier
   ) => Promise<boolean>;
   readonly disableAllBackgroundDelivery: () => Promise<boolean>;
 
@@ -327,7 +324,7 @@ export type ReactNativeHealthkit = {
   readonly useSubscribeToChanges: SubscribeToChangesHook;
   readonly useIsHealthDataAvailable: () => boolean | null;
   readonly useHealthkitAuthorization: (
-    read: readonly ValueOf<typeof HealthkitAuthorization>[],
-    write?: readonly ValueOf<typeof HKSampleTypeIdentifier>[],
+    read: readonly HealthkitReadAuthorization[],
+    write?: readonly HealthkitWriteAuthorization[],
   ) => readonly [authorizationStatus: HKAuthorizationRequestStatus | null, request: () => Promise<HKAuthorizationRequestStatus | null>];
 };

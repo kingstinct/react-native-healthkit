@@ -8,10 +8,11 @@ import Native, {
 } from './native-types'
 
 import type {
-  HKSampleTypeIdentifier,
+  HealthkitReadAuthorization,
+  HealthkitWriteAuthorization,
+  HKAuthorizationRequestStatus,
   HKCategorySampleRaw,
   HKCategoryValueForIdentifier,
-  HKCharacteristicTypeIdentifier,
   HKCorrelationRaw,
   HKCorrelationTypeIdentifier,
   HKQuantitySampleRaw,
@@ -20,9 +21,8 @@ import type {
   HKWorkoutRaw,
   MetadataMapperForCategoryIdentifier,
   ReadPermissions,
+  SampleTypeIdentifier,
   WritePermissions,
-  HealthkitAuthorization,
-  HKAuthorizationRequestStatus,
 } from './native-types'
 import type {
   GenericQueryOptions,
@@ -47,7 +47,6 @@ import type {
   SaveWorkoutSampleFn,
   SubscribeToChangesFn,
 } from './types'
-import type { ValueOf } from 'type-fest'
 
 const getPreferredUnit: GetPreferredUnitFn = async (type) => {
   const [unit] = await getPreferredUnits([type])
@@ -237,7 +236,7 @@ const getMostRecentCategorySample: GetMostRecentCategorySampleFn = async (
   return samples[0]
 }
 
-function useSubscribeToChanges<TIdentifier extends ValueOf<typeof HKSampleTypeIdentifier>>(
+function useSubscribeToChanges<TIdentifier extends SampleTypeIdentifier>(
   identifier: TIdentifier,
   onChange: () => void,
 ): void {
@@ -355,8 +354,8 @@ const queryStatisticsForQuantity: QueryStatisticsForQuantityFn = async (
 }
 
 const requestAuthorization = async (
-  read: readonly ValueOf<typeof HealthkitAuthorization>[],
-  write: readonly ValueOf<typeof HKSampleTypeIdentifier>[] = [],
+  read: readonly HealthkitReadAuthorization[],
+  write: readonly HealthkitWriteAuthorization[] = [],
 ): Promise<boolean> => {
   const readPermissions = read.reduce((obj, cur) => ({ ...obj, [cur]: true }), {} as ReadPermissions)
 
@@ -371,8 +370,8 @@ const getDateOfBirth = async () => {
 }
 
 const getRequestStatusForAuthorization = async (
-  read: readonly (HKCharacteristicTypeIdentifier | ValueOf<typeof HKSampleTypeIdentifier>)[],
-  write: readonly (ValueOf<typeof HKSampleTypeIdentifier>)[] = [],
+  read: readonly HealthkitReadAuthorization[],
+  write: readonly HealthkitWriteAuthorization[] = [],
 ) => {
   const readPermissions = read.reduce((obj, cur) => ({ ...obj, [cur]: true }), {} as ReadPermissions)
 
