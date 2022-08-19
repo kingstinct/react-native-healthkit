@@ -21,8 +21,8 @@ import type {
   HKWorkoutRaw,
   MetadataMapperForCategoryIdentifier,
   ReadPermissions,
-  SampleTypeIdentifier,
   WritePermissions,
+  HKSampleTypeIdentifier,
 } from './native-types'
 import type {
   GenericQueryOptions,
@@ -236,7 +236,7 @@ const getMostRecentCategorySample: GetMostRecentCategorySampleFn = async (
   return samples[0]
 }
 
-function useSubscribeToChanges<TIdentifier extends SampleTypeIdentifier>(
+function useSubscribeToChanges<TIdentifier extends HKSampleTypeIdentifier>(
   identifier: TIdentifier,
   onChange: () => void,
 ): void {

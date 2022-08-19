@@ -12,6 +12,7 @@ import type {
   HKFitzpatrickSkinType,
   HKQuantitySampleRaw,
   HKQuantityTypeIdentifier,
+  HKSampleTypeIdentifier,
   HKStatisticsOptions,
   HKUnit,
   HKUnitSI,
@@ -25,7 +26,6 @@ import type {
   MetadataMapperForCorrelationIdentifier,
   MetadataMapperForQuantityIdentifier,
   QueryStatisticsResponseRaw,
-  SampleTypeIdentifier,
   WorkoutRoute,
 } from './native-types'
 
@@ -143,7 +143,7 @@ export type QueryQuantitySamplesFn = <
 ) => Promise<readonly HKQuantitySample<TIdentifier, TUnit>[]>;
 
 export type SubscribeToChangesFn = (
-  identifier: SampleTypeIdentifier,
+  identifier: HKSampleTypeIdentifier,
   callback: () => void
 ) => Promise<UnsubscribeFunction>;
 
@@ -263,7 +263,7 @@ export type QueryCorrelationSamplesFn = <
 ) => Promise<readonly HKCorrelation<TIdentifier>[]>;
 
 export type SubscribeToChangesHook = <
-  TIdentifier extends SampleTypeIdentifier
+  TIdentifier extends HKSampleTypeIdentifier
 >(
   identifier: TIdentifier,
   onChange: () => void,
@@ -307,11 +307,11 @@ export type ReactNativeHealthkit = {
   readonly saveCorrelationSample: SaveCorrelationSampleFn;
   readonly saveWorkoutSample: SaveWorkoutSampleFn;
   readonly enableBackgroundDelivery: (
-    typeIdentifier: SampleTypeIdentifier,
+    typeIdentifier: HKSampleTypeIdentifier,
     updateFrequency: HKUpdateFrequency
   ) => Promise<boolean>;
   readonly disableBackgroundDelivery: (
-    typeIdentifier: SampleTypeIdentifier
+    typeIdentifier: HKSampleTypeIdentifier
   ) => Promise<boolean>;
   readonly disableAllBackgroundDelivery: () => Promise<boolean>;
 

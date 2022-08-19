@@ -4,7 +4,6 @@ import {
 } from 'react-native'
 
 import type { EmitterSubscription } from 'react-native'
-import type { ValueOf } from 'type-fest'
 
 export const HKWorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier' as const
 export const HKAudiogramTypeIdentifier = 'HKAudiogramTypeIdentifier' as const
@@ -151,20 +150,20 @@ export enum HKCategoryTypeIdentifier {
   toothbrushingEvent = 'HKCategoryTypeIdentifierToothbrushingEvent',
 }
 
-export const HKSampleTypeIdentifier = {
-  ...HKCategoryTypeIdentifier,
-  ...HKCorrelationTypeIdentifier,
-  ...HKQuantityTypeIdentifier,
-  audiogram: HKAudiogramTypeIdentifier,
-  heartbeatSeries: HKDataTypeIdentifierHeartbeatSeries,
-  workoutRoute: HKWorkoutRouteTypeIdentifier,
-  workoute: HKWorkoutTypeIdentifier,
-}
+export type HKSampleTypeIdentifier =
+HKCategoryTypeIdentifier
+| HKCorrelationTypeIdentifier
+| HKQuantityTypeIdentifier
+| typeof HKAudiogramTypeIdentifier
+| typeof HKDataTypeIdentifierHeartbeatSeries
+| typeof HKWorkoutRouteTypeIdentifier
+| typeof HKWorkoutTypeIdentifier
+| `${HKCategoryTypeIdentifier}`
+| `${HKCorrelationTypeIdentifier}`
+| `${HKQuantityTypeIdentifier}`
 
-export type SampleTypeIdentifier = ValueOf<typeof HKSampleTypeIdentifier>;
-
-export type HealthkitReadAuthorization = ValueOf<typeof HealthkitAuthorization>
-export type HealthkitWriteAuthorization = ValueOf<typeof HealthkitAuthorization>
+export type HealthkitReadAuthorization = HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier | `${HKCharacteristicTypeIdentifier}` | `${HKSampleTypeIdentifier}`
+export type HealthkitWriteAuthorization = HKSampleTypeIdentifier
 
 export enum HKCategoryValueAppleStandHour {
   stood = 0,
@@ -301,11 +300,19 @@ export enum HKWeatherCondition {
   tornado = 27,
 }
 
+enum HKIndoorWorkout {
+  false = 0,
+  true = 1,
+}
+
 export interface HKWorkoutMetadata
   extends HKGenericMetadata /* <TTemperatureUnit extends HKUnit> */ {
   readonly HKWeatherCondition?: HKWeatherCondition;
   readonly HKWeatherHumidity?: HKQuantity<HKUnit.Percent>;
   // HKWeatherTemperature: HKQuantity<TTemperatureUnit>
+  readonly HKAverageMETs?: HKQuantity<HKUnit>,
+  readonly HKElevationAscended?: HKQuantity<HKUnit.Meters>,
+  readonly HKIndoorWorkout?: HKIndoorWorkout,
 }
 
 export enum HKAuthorizationRequestStatus {
@@ -581,13 +588,13 @@ export enum HKUnit {
 }
 
 export type HKDevice = {
-  readonly name: string;
-  readonly firmwareVersion: string;
-  readonly hardwareVersion: string;
-  readonly localIdentifier: string;
-  readonly manufacturer: string;
-  readonly model: string;
-  readonly softwareVersion: string;
+  readonly name: string; // ex: "Apple Watch"
+  readonly firmwareVersion: string | null;
+  readonly hardwareVersion: string; // ex: "Watch6,2",
+  readonly localIdentifier: string | null;
+  readonly manufacturer: string; // ex: "Apple Inc."
+  readonly model: string; // ex: "Watch"
+  readonly softwareVersion: string; // ex: "9.0"
 };
 
 export type HKSource = {
@@ -697,8 +704,6 @@ export type WorkoutRoute = {
   readonly HKMetadataKeySyncVersion?: number;
 };
 
-export const HealthkitAuthorization = { ...HKCharacteristicTypeIdentifier, ...HKSampleTypeIdentifier }
-
 type ReactNativeHealthkitTypeNative = {
   isHealthDataAvailable(): Promise<boolean>;
   getBloodType(): Promise<HKBloodType>;
@@ -708,11 +713,11 @@ type ReactNativeHealthkitTypeNative = {
   readonly getWheelchairUse: () => Promise<HKWheelchairUse>;
 
   readonly enableBackgroundDelivery: (
-    typeIdentifier: ValueOf<typeof HKSampleTypeIdentifier>,
+    typeIdentifier: HKSampleTypeIdentifier,
     updateFrequency: HKUpdateFrequency
   ) => Promise<boolean>;
   readonly disableBackgroundDelivery: (
-    typeIdentifier: ValueOf<typeof HKSampleTypeIdentifier>,
+    typeIdentifier: HKSampleTypeIdentifier,
   ) => Promise<boolean>;
   readonly disableAllBackgroundDelivery: () => Promise<boolean>;
 
@@ -745,11 +750,11 @@ type ReactNativeHealthkitTypeNative = {
   ) => Promise<readonly HKCorrelationRaw<TIdentifier>[]>;
 
   subscribeToObserverQuery(
-    identifier: ValueOf<typeof HKSampleTypeIdentifier>
+    identifier: HKSampleTypeIdentifier
   ): Promise<QueryId>;
   unsubscribeQuery(queryId: QueryId): Promise<boolean>;
   authorizationStatusFor(
-    type: ValueOf<keyof typeof HealthkitAuthorization>
+    type: HealthkitReadAuthorization
   ): Promise<boolean>;
   getRequestStatusForAuthorization(
     write: WritePermissions,
@@ -818,7 +823,7 @@ const Native = NativeModules.ReactNativeHealthkit as ReactNativeHealthkitTypeNat
 type OnChangeCallback = ({
   typeIdentifier,
 }: {
-  readonly typeIdentifier: ValueOf<typeof HKSampleTypeIdentifier>;
+  readonly typeIdentifier: HKSampleTypeIdentifier;
 }) => void;
 
 interface HealthkitEventEmitter extends NativeEventEmitter {
