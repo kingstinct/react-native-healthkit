@@ -1,6 +1,6 @@
 {
   "name": "@kingstinct/react-native-healthkit",
-  "version": "4.4.0",
+  "version": "4.4.1",
   "description": "React Native bindings for HealthKit",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -94,7 +94,9 @@
     }
   },
   "commitlint": {
-    "extends": [ "@commitlint/config-conventional" ]
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "publishConfig": {
     "access": "public",
