@@ -10,9 +10,14 @@ const notAvailableError = `[@kingstinct/react-native-healthkit] Platform "${
   Platform.OS
 }" not supported`
 
+let hasWarned = false
+
 function UnavailableFn<T = unknown>(retVal: T) {
   return () => {
-    console.warn(notAvailableError)
+    if (!hasWarned) {
+      console.warn(notAvailableError)
+      hasWarned = true
+    }
     return retVal
   }
 }
@@ -60,7 +65,7 @@ const Healthkit: ReactNativeHealthkit = {
   useMostRecentWorkout: UnavailableFn(null),
   useSubscribeToChanges: UnavailableFn([null, () => null]),
   useHealthkitAuthorization: UnavailableFn([null, async () => Promise.resolve(null)] as const),
-  useIsHealthDataAvailable: UnavailableFn(false),
+  useIsHealthDataAvailable: () => false,
 }
 
 export * from './native-types'
