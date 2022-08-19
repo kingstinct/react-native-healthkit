@@ -4,7 +4,6 @@ import Native, {
   EventEmitter,
   HKQuantityTypeIdentifier,
   HKUnit,
-  HKCategoryTypeIdentifier,
 } from './native-types'
 
 import type {
@@ -23,6 +22,7 @@ import type {
   ReadPermissions,
   WritePermissions,
   HKSampleTypeIdentifier,
+  HKCategoryTypeIdentifier,
 } from './native-types'
 import type {
   GenericQueryOptions,
@@ -253,8 +253,6 @@ function useSubscribeToChanges<TIdentifier extends HKSampleTypeIdentifier>(
     }
   }, [identifier, onChange])
 }
-
-useSubscribeToChanges(HKCategoryTypeIdentifier.appleStandHour, () => {})
 
 function useMostRecentCategorySample<
   TCategory extends HKCategoryTypeIdentifier
