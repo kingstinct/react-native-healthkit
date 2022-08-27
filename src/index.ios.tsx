@@ -25,6 +25,7 @@ import type {
   HKCategoryTypeIdentifier,
 } from './native-types'
 import type {
+  DeleteQuantitySampleFn,
   GenericQueryOptions,
   GetMostRecentCategorySampleFn,
   GetMostRecentQuantitySampleFn,
@@ -125,6 +126,11 @@ const queryQuantitySamples: QueryQuantitySamplesFn = async (
 
   return quantitySamples.map(deserializeSample)
 }
+
+const deleteQuantitySample: DeleteQuantitySampleFn = async (
+  identifier,
+  uuid,
+) => Native.deleteQuantitySample(identifier, uuid)
 
 async function getPreferredUnitsTyped<
   TEnergy extends HKUnit,
@@ -563,6 +569,9 @@ const Healthkit: ReactNativeHealthkit = {
   queryWorkouts,
 
   requestAuthorization,
+
+  // delete methods
+  deleteQuantitySample,
 
   // save methods
   saveCategorySample,

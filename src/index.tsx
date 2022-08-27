@@ -55,6 +55,7 @@ const Healthkit: ReactNativeHealthkit = {
   })),
   queryWorkouts: UnavailableFn(Promise.resolve([])),
   requestAuthorization: UnavailableFn(Promise.resolve(false)),
+  deleteQuantitySample: UnavailableFn(Promise.resolve(false)),
   saveCategorySample: UnavailableFn(Promise.resolve(false)),
   saveCorrelationSample: UnavailableFn(Promise.resolve(false)),
   saveQuantitySample: UnavailableFn(Promise.resolve(false)),

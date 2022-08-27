@@ -142,6 +142,13 @@ export type QueryQuantitySamplesFn = <
   options: GenericQueryOptions & { readonly unit?: TUnit }
 ) => Promise<readonly HKQuantitySample<TIdentifier, TUnit>[]>;
 
+export type DeleteQuantitySampleFn = <
+  TIdentifier extends HKQuantityTypeIdentifier
+>(
+  identifier: TIdentifier,
+  uuid: string
+) => Promise<boolean>;
+
 export type SubscribeToChangesFn = (
   identifier: HKSampleTypeIdentifier,
   callback: () => void
@@ -301,6 +308,8 @@ export type ReactNativeHealthkit = {
   readonly queryCorrelationSamples: QueryCorrelationSamplesFn;
 
   readonly requestAuthorization: RequestAuthorizationFn;
+
+  readonly deleteQuantitySample: DeleteQuantitySampleFn;
 
   readonly saveCategorySample: SaveCategorySampleFn;
   readonly saveQuantitySample: SaveQuantitySampleFn;
