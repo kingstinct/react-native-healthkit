@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
-    "ios": "expo start --ios",
+    "start": "expo start --dev-client",
+    "ios": "expo run:ios",
     "eject": "expo eject",
     "build-local": "npx eas-cli@latest build --platform=ios --profile=development --local",
     "build-local-sim": "npx eas-cli@latest build --platform=ios --profile=development --local",
-    "build": "npx eas-cli@latest build --platform=ios --profile=development"
+    "build": "npx eas-cli@latest build --platform=ios --profile=development",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@kingstinct/react-native-healthkit": "^4.4.6",
