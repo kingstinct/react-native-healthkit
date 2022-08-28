@@ -13,16 +13,70 @@ concurrency:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  expo-preview:
-    uses: Kingstinct/utils/.github/workflows/expo-preview.yml@main
-    with:
-      expo_release_channel: pr-${{ github.event.number }}
-      expo_app_slug: healthkit-example-expo
-      env_inline: CUSTOM_NAME=pr-${{ github.event.number }}
-      expo_organisation_or_user_slug: react-native-healthkit
-      working_directory: ./example-expo
-    secrets:
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+  expo-publish-preview:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install
+        working-directory: example-expo
+
+      - name: Expo GitHub Action
+        uses: expo/expo-github-action@v7
+        with:
+          # Your Expo username, for authentication.
+          token: ${{ secrets.EXPO_TOKEN }}
+          expo-version: latest
+          eas-version: latest
+          # If Expo should be stored in the GitHub Actions cache (can be true or false)
+          expo-cache: true # optional
+
+      - name: Find Metro cache
+        id: metro-cache-dir-path
+        uses: actions/github-script@v4
+        with:
+          result-encoding: string
+          script: |
+            const os = require('os');
+            const path = require('path');
+            return path.join(os.tmpdir(), 'metro-cache');
+
+      - name: Restore Metro cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.metro-cache-dir-path.outputs.result }}
+          key: ${{ runner.os }}-metro-cache-${{ matrix.app }}-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-metro-cache-${{ matrix.app }}-${{ github.base_ref }}
+            ${{ runner.os }}-metro-cache-${{ matrix.app }}-
+
+      # Runs a set of commands using the runners shell
+      - name: Publish
+        run: echo "BUILD_ID=`CUSTOM_NAME=pr-${{ github.event.number }} npx eas-cli update --branch=pr-${{ github.event.number }} --message=pr-${{ github.event.number }} --json | jq -c '.[] | select(.platform | contains("ios")) | .id'`" >> $GITHUB_ENV
+        working-directory: example-expo
+
+      - uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          message: |
+            Expo preview is ready for review, [it's available here](exp%2Bhealthkit-example-expo%3A%2F%2Fu.expo.dev%2Fupdate%2F${{ env.BUILD_ID }})
+
+            Or just scan this QR code:
+            ![QR Preview](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=exp%2Bhealthkit-example-expo%3A%2F%2Fu.expo.dev%2Fupdate%2F${{ env.BUILD_ID }})
+
   eas-ios:
     # The type of runner that the job will run on
     uses: Kingstinct/utils/.github/workflows/eas-build.yml@main
