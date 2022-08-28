@@ -11,7 +11,6 @@ import Healthkit, {
 // eslint-disable-next-line import/no-unresolved
 } from '@kingstinct/react-native-healthkit' // this way we can work with the working copy - but keep in mind native changes requires a new build 🚀
 import dayjs from 'dayjs'
-import 'expo-dev-client'
 import * as React from 'react'
 import { Button, ScrollView, Text } from 'react-native'
 import { DataTable } from 'react-native-paper'
