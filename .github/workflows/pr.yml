@@ -23,7 +23,7 @@ jobs:
       working_directory: ./example-expo
     secrets:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-   eas-ios:
+  eas-ios:
     # The type of runner that the job will run on
     uses: Kingstinct/utils/.github/workflows/eas-build.yml@main
     secrets:

@@ -26,6 +26,12 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
 
+      - name: Install example deps
+        run: cd example && yarn && cd ..
+
+      - name: Install example-expo deps
+        run: cd example-expo && yarn && cd ..
+
       - name: Install deps
         run: yarn
 
@@ -34,3 +40,6 @@ jobs:
 
       - name: Types
         run: yarn typecheck
+
+      - name: Test
+        run: yarn test-only

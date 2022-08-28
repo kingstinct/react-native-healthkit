@@ -20,7 +20,8 @@
     "!**/__mocks__"
   ],
   "scripts": {
-    "test": "jest",
+    "test-only": "jest",
+    "test": "concurrently \"yarn test-only\" \"yarn typecheck\" \"yarn lint\"",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepare": "bob build",
@@ -52,7 +53,8 @@
     "@types/react-native": "0.67",
     "@typescript-eslint/eslint-plugin": ">=5",
     "@typescript-eslint/parser": ">=5",
-    "commitlint": "12",
+    "commitlint": "^17.1.1",
+    "concurrently": "^7.3.0",
     "eslint": ">=8",
     "eslint-config-airbnb-base": ">=15",
     "eslint-config-kingstinct": "5.1.1",
@@ -65,7 +67,7 @@
     "eslint-plugin-unicorn": ">=43",
     "eslint-plugin-yml": ">=1",
     "graphql": ">=16",
-    "husky": "^4.2.5",
+    "husky": "8",
     "jest": ">=26",
     "metro-react-native-babel-preset": "^0.70.3",
     "pod-install": "^0.1.0",
@@ -112,7 +114,8 @@
     },
     "plugins": {
       "@release-it/conventional-changelog": {
-        "preset": "angular"
+        "preset": "angular",
+        "infile": "CHANGELOG.md"
       }
     }
   },
