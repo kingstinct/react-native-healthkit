@@ -29,8 +29,8 @@ jobs:
       - name: Install example deps
         run: cd example && yarn && cd ..
 
-      # - name: Install example-expo deps
-      #   run: cd example-expo && yarn && cd ..
+      - name: Install example-expo deps
+        run: cd example-expo && yarn && cd ..
 
       - name: Install deps
         run: yarn

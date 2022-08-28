@@ -7,6 +7,10 @@
       "developmentClient": true,
       "distribution": "internal"
     },
+    "development-sim": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
     "preview": {
       "distribution": "internal"
     },

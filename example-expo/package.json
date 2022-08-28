@@ -1,0 +1,35 @@
+{
+  "name": "healthkit-example-expo",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "ios": "expo run:ios",
+    "eject": "expo eject",
+    "build-local": "npx eas-cli@latest build --platform=ios --profile=development --local",
+    "build-local-sim": "npx eas-cli@latest build --platform=ios --profile=development --local",
+    "build": "npx eas-cli@latest build --platform=ios --profile=development",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kingstinct/react-native-healthkit": "^4.4.6",
+    "dayjs": "^1.11.5",
+    "expo": "^46.0.0",
+    "expo-dev-client": "~1.2.1",
+    "expo-status-bar": "~1.4.0",
+    "expo-updates": "~0.14.5",
+    "react": "18.0.0",
+    "react-dom": "18.0.0",
+    "react-native": "0.69.5",
+    "react-native-paper": "^4.12.1",
+    "react-native-web": "~0.18.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.6",
+    "@expo/metro-config": "^0.3.22",
+    "@types/react": "~18.0.0",
+    "@types/react-native": "~0.69.1",
+    "typescript": "^4.6.3"
+  },
+  "private": true
+}

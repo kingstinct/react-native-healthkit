@@ -1,19 +1,18 @@
+const path = require('path')
+
+const pak = require('../package.json')
+
 module.exports = {
-  presets: ['babel-preset-expo'],
+  presets: ['module:metro-react-native-babel-preset'],
   plugins: [
-    '@babel/plugin-transform-modules-commonjs',
     [
       'module-resolver',
       {
-        extensions: ['.js', '.ts', '.tsx'],
+        extensions: [
+          '.tsx', '.ts', '.js', '.json',
+        ],
         alias: {
-          '@kingstinct/react-native-healthkit': '../src/index',
-          'react': './node_modules/react',
-          'react-native': './node_modules/react-native',
-          '@babel': './node_modules/@babel',
-          'fbjs': './node_modules/fbjs',
-          'hoist-non-react-statics': './node_modules/hoist-non-react-statics',
-          'invariant': './node_modules/invariant',
+          [pak.name]: path.join(__dirname, '..', pak.source),
         },
       },
     ],
