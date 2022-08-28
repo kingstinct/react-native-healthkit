@@ -2,7 +2,7 @@
   "expo": {
     "name": "healthkit-example-expo",
     "slug": "healthkit-example-expo",
-    "owner": "kingstinct",
+    "owner": "react-native-healthkit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -39,11 +39,6 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "a89f67d6-1018-4708-80cb-7f737b6ddd94"
-      }
     }
   }
 }
