@@ -4,6 +4,7 @@
     "slug": "healthkit-example-expo",
     "owner": "react-native-healthkit",
     "version": "1.0.0",
+    "scheme": "healthkit-example",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

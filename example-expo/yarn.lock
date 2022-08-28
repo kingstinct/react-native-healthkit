@@ -1311,7 +1311,7 @@
     resolve-from "^5.0.0"
     sucrase "^3.20.0"
 
-"@expo/metro-config@~0.3.19":
+"@expo/metro-config@^0.3.22", "@expo/metro-config@~0.3.19":
   version "0.3.22"
   resolved "https://registry.yarnpkg.com/@expo/metro-config/-/metro-config-0.3.22.tgz#fa4a0729ec8ecbc9c9fb79c63ecc66a299505c82"
   integrity sha512-R81sLbaeUBjN8IXcxiVx7GcpSj8z7szILl1b5yJDb38WdIFwxhrseA5wXaTT1yMhI+59w6n99T2qtFV2yD5qYA==
