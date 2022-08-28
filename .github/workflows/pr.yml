@@ -32,4 +32,5 @@ jobs:
       platform: ios
       build_profile: development
       expo_organisation_or_user_slug: react-native-healthkit
+      working_directory: ./example-expo
       always_run: true
