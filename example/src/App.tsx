@@ -352,7 +352,6 @@ const App = () => {
         HKQuantityTypeIdentifier.walkingStepLength,
         'HKWorkoutTypeIdentifier',
         'HKWorkoutRouteTypeIdentifier',
-        'HKDataTypeIdentifierHeartbeatSeries',
       ],
       [
         HKQuantityTypeIdentifier.waistCircumference,

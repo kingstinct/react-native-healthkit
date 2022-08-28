@@ -93,9 +93,7 @@
     }
   },
   "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
+    "extends": [ "@commitlint/config-conventional" ]
   },
   "publishConfig": {
     "access": "public",
