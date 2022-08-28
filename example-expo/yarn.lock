@@ -1453,10 +1453,8 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@kingstinct/react-native-healthkit@^4.4.6":
+"@kingstinct/react-native-healthkit@./..":
   version "4.4.6"
-  resolved "https://registry.yarnpkg.com/@kingstinct/react-native-healthkit/-/react-native-healthkit-4.4.6.tgz#aa9e8c33e06d84727faff18024eacc69fde00e98"
-  integrity sha512-/ZaeRM6IJnYJJFab3ttN1hlCV6IAFBmZayqs9uXmT0XePGEuN+1Q0ezlMpGgrjk9OnsLELj9cEDtZIxBhyngYA==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"

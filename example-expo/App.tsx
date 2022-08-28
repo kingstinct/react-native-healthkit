@@ -1,9 +1,3 @@
-import dayjs from 'dayjs'
-import 'expo-dev-client'
-import * as React from 'react'
-import { Button, ScrollView, Text } from 'react-native'
-import { DataTable } from 'react-native-paper'
-
 import Healthkit, {
   HKCategoryTypeIdentifier,
   HKCharacteristicTypeIdentifier,
@@ -14,8 +8,12 @@ import Healthkit, {
   HKUnit,
   HKWeatherCondition,
   HKWorkoutActivityType,
-// eslint-disable-next-line import/no-relative-packages
-} from '../src' // this way we can work with the working copy - but keep in mind native changes requires a new build 🚀
+} from '@kingstinct/react-native-healthkit' // this way we can work with the working copy - but keep in mind native changes requires a new build 🚀
+import dayjs from 'dayjs'
+import 'expo-dev-client'
+import * as React from 'react'
+import { Button, ScrollView, Text } from 'react-native'
+import { DataTable } from 'react-native-paper'
 
 import type {
   HKCategorySample,
@@ -23,8 +21,7 @@ import type {
   HKQuantitySample,
   HKWorkout,
   QueryStatisticsResponse,
-// eslint-disable-next-line import/no-relative-packages
-} from '../src'
+} from '@kingstinct/react-native-healthkit'
 
 const DisplayWorkout: React.FunctionComponent<{
   readonly workout: HKWorkout;

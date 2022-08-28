@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@kingstinct/react-native-healthkit": "^4.4.6",
+    "@kingstinct/react-native-healthkit": "./..",
     "dayjs": "^1.11.5",
     "expo": "^46.0.0",
     "expo-dev-client": "~1.2.1",
