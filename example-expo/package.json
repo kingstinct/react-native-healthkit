@@ -6,10 +6,10 @@
     "start": "expo start",
     "ios": "expo start --ios",
     "eject": "expo eject",
-    "build-local": "eas build --platform=ios --profile=development --local"
+    "build-local": "npx eas-cli@latest build --platform=ios --profile=development --local",
+    "build-local-sim": "npx eas-cli@latest build --platform=ios --profile=development --local"
   },
   "dependencies": {
-    "@kingstinct/react-native-healthkit": "^4.1.1",
     "dayjs": "^1.11.5",
     "expo": "~45.0.0",
     "expo-dev-client": "~0.9.6",
