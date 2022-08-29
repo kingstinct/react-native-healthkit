@@ -508,13 +508,13 @@ const queryCorrelationSamples: QueryCorrelationSamplesFn = async (
 
 async function saveCorrelationSample<
   TIdentifier extends HKCorrelationTypeIdentifier,
-  TQuantityIdentifier extends HKQuantityTypeIdentifier
+  TSamples extends readonly(
+    | Omit<HKCategorySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
+    | Omit<HKQuantitySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
+  )[]
 >(
   typeIdentifier: TIdentifier,
-  samples: readonly (
-    | Omit<HKCategorySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
-    | Omit<HKQuantitySample<TQuantityIdentifier>, 'device' | 'endDate' | 'startDate' | 'uuid'>
-  )[],
+  samples: TSamples,
   options?: {
     readonly start?: Date;
     readonly end?: Date;

@@ -719,7 +719,15 @@ export enum LengthUnitVariants {
   Miles = 'mi',
 }
 export type LengthUnit = LengthUnitVariants | MeterUnit<HKMetricPrefix>
-export type VolumeUnit = LiterUnit<HKMetricPrefix> | `${HKUnits.ImperialCup}` | `${HKUnits.ImperialFluidOunces}` | `${HKUnits.ImperialPint}` | `${HKUnits.USCup}` | `${HKUnits.USFluidOunces}` | `${HKUnits.USPint}`;
+export type VolumeUnit = LiterUnit<HKMetricPrefix>
+/**
+ * ITS THE CUP
+ */
+| `${HKUnits.ImperialCup}`
+/**
+ * ITS THE CUP 2
+ */
+| `${HKUnits.ImperialFluidOunces}` | `${HKUnits.ImperialPint}` | `${HKUnits.USCup}` | `${HKUnits.USFluidOunces}` | `${HKUnits.USPint}`;
 export type MassUnit = GramUnit<HKMetricPrefix> | `${HKUnits.Ounces}` | `${HKUnits.Pounds}` | `${HKUnits.Stones}`;
 export type PressureUnit = HKUnits.Atmospheres | HKUnits.CentimetersOfWater | HKUnits.DecibelAWeightedSoundPressureLevel | HKUnits.InchesOfMercury | HKUnits.MillimetersOfMercury | PascalUnit<HKMetricPrefix>; // missing inchesOfMercury and decibelAWeightedSoundPressureLevel
 export type TimeUnit = HKUnits.Days | HKUnits.Hours | HKUnits.Minutes | SecondUnit<HKMetricPrefix>
