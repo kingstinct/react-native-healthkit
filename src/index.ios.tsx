@@ -3,10 +3,12 @@ import { useCallback, useEffect, useState } from 'react'
 import Native, {
   EventEmitter,
   HKQuantityTypeIdentifier,
-  HKUnit,
+  HKUnits,
+  HKUnitMetric,
 } from './native-types'
 
 import type {
+
   HealthkitReadAuthorization,
   HealthkitWriteAuthorization,
   HKAuthorizationRequestStatus,
@@ -15,14 +17,26 @@ import type {
   HKCorrelationRaw,
   HKCorrelationTypeIdentifier,
   HKQuantitySampleRaw,
-  HKUnitSI,
-  HKUnitSIPrefix,
   HKWorkoutRaw,
   MetadataMapperForCategoryIdentifier,
   ReadPermissions,
   WritePermissions,
   HKSampleTypeIdentifier,
   HKCategoryTypeIdentifier,
+
+  EnergyUnit,
+  LengthUnit,
+
+  UnitForIdentifier,
+
+  MetadataMapperForQuantityIdentifier,
+
+  HKUnit,
+
+  MetadataMapperForCorrelationIdentifier,
+
+  HKWorkoutActivityType,
+  HKWorkoutMetadata,
 } from './native-types'
 import type {
   GenericQueryOptions,
@@ -41,9 +55,6 @@ import type {
   QueryQuantitySamplesFn,
   QueryStatisticsForQuantityFn,
   QueryWorkoutsFn,
-  ReactNativeHealthkit,
-  SaveCorrelationSampleFn,
-  SaveQuantitySampleFn,
   SaveWorkoutSampleFn,
   SubscribeToChangesFn,
 } from './types'
@@ -53,8 +64,11 @@ const getPreferredUnit: GetPreferredUnitFn = async (type) => {
   return unit
 }
 
-const ensureUnit = async <TUnit extends HKUnit>(
-  type: HKQuantityTypeIdentifier,
+const ensureUnit = async <
+  TIdentifier extends HKQuantityTypeIdentifier,
+  TUnit extends UnitForIdentifier<TIdentifier>
+>(
+  type: TIdentifier,
   providedUnit?: TUnit,
 ) => {
   if (providedUnit) {
@@ -66,7 +80,7 @@ const ensureUnit = async <TUnit extends HKUnit>(
 
 function deserializeSample<
   TIdentifier extends HKQuantityTypeIdentifier,
-  TUnit extends HKUnit
+  TUnit extends UnitForIdentifier<TIdentifier>
 >(
   sample: HKQuantitySampleRaw<TIdentifier, TUnit>,
 ): HKQuantitySample<TIdentifier, TUnit> {
@@ -77,7 +91,7 @@ function deserializeSample<
   }
 }
 
-function deserializeWorkout<TEnergy extends HKUnit, TDistance extends HKUnit>(
+function deserializeWorkout<TEnergy extends EnergyUnit, TDistance extends LengthUnit>(
   sample: HKWorkoutRaw<TEnergy, TDistance>,
 ): HKWorkout<TEnergy, TDistance> {
   return {
@@ -149,10 +163,10 @@ async function getPreferredUnitsTyped<
     }
   }
   if (!energyUnit) {
-    energyUnit = HKUnit.Kilocalories as TEnergy
+    energyUnit = HKUnits.Kilocalories as TEnergy
   }
   if (!distanceUnit) {
-    distanceUnit = HKUnit.Meters as TDistance
+    distanceUnit = HKUnitMetric.Meters as TDistance
   }
   return { energyUnit, distanceUnit }
 }
@@ -195,8 +209,8 @@ const getMostRecentQuantitySample: GetMostRecentQuantitySampleFn = async (
 }
 
 function useMostRecentWorkout<
-  TEnergy extends HKUnit,
-  TDistance extends HKUnit
+  TEnergy extends EnergyUnit,
+  TDistance extends LengthUnit
 >(options?: { readonly energyUnit?: TEnergy; readonly distanceUnit?: TDistance }) {
   const [workout, setWorkout] = useState<HKWorkout<TEnergy, TDistance> | null>(
     null,
@@ -271,11 +285,10 @@ function useMostRecentCategorySample<
 
 function useMostRecentQuantitySample<
   TIdentifier extends HKQuantityTypeIdentifier,
-  TUnit extends HKUnit = HKUnit
+  TUnit extends UnitForIdentifier<TIdentifier>
 >(identifier: TIdentifier, unit?: TUnit) {
   const [lastSample, setLastSample] = useState<HKQuantitySample<
-  TIdentifier,
-  TUnit
+  TIdentifier
   > | null>(null)
 
   useEffect(() => {
@@ -298,13 +311,16 @@ function useMostRecentQuantitySample<
 
   return lastSample
 }
-
-const saveQuantitySample: SaveQuantitySampleFn = async (
-  identifier,
-  unit,
-  value,
-  options,
-) => {
+async function saveQuantitySample <TType extends HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TType>>(
+  identifier: TType,
+  unit: TUnit,
+  value: number,
+  options?: {
+    readonly start?: Date;
+    readonly end?: Date;
+    readonly metadata?: MetadataMapperForQuantityIdentifier<TType>;
+  },
+) {
   const start = options?.start || options?.end || new Date()
   const end = options?.end || options?.start || new Date()
   const metadata = options?.metadata || {}
@@ -451,7 +467,7 @@ const getPreferredUnits: GetPreferredUnitsFn = async (identifiers) => {
   return identifiers.map((i) => units[i])
 }
 
-const buildUnitWithPrefix = (prefix: HKUnitSIPrefix, unit: HKUnitSI) => `${prefix}${unit}` as HKUnit
+const buildUnitWithPrefix = (prefix: HKUnitMetric, unit: HKUnitMetric) => `${prefix}${unit}` as HKUnit
 
 function deserializeCorrelation<
   TIdentifier extends HKCorrelationTypeIdentifier
@@ -462,7 +478,7 @@ function deserializeCorrelation<
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       if (o.quantity !== undefined) {
-        return deserializeSample(o as HKQuantitySampleRaw)
+        return deserializeSample(o as HKQuantitySampleRaw<HKQuantityTypeIdentifier>)
       }
 
       return deserializCategorySample(o as HKCategorySampleRaw)
@@ -490,11 +506,21 @@ const queryCorrelationSamples: QueryCorrelationSamplesFn = async (
   return correlations.map(deserializeCorrelation)
 }
 
-const saveCorrelationSample: SaveCorrelationSampleFn = async (
-  typeIdentifier,
-  samples,
-  options,
-) => {
+async function saveCorrelationSample<
+  TIdentifier extends HKCorrelationTypeIdentifier,
+  TQuantityIdentifier extends HKQuantityTypeIdentifier
+>(
+  typeIdentifier: TIdentifier,
+  samples: readonly (
+    | Omit<HKCategorySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
+    | Omit<HKQuantitySample<TQuantityIdentifier>, 'device' | 'endDate' | 'startDate' | 'uuid'>
+  )[],
+  options?: {
+    readonly start?: Date;
+    readonly end?: Date;
+    readonly metadata?: MetadataMapperForCorrelationIdentifier<TIdentifier>;
+  },
+) {
   const start = (options?.start || new Date()).toISOString()
   const end = (options?.end || new Date()).toISOString()
 
@@ -507,12 +533,18 @@ const saveCorrelationSample: SaveCorrelationSampleFn = async (
   )
 }
 
-const saveWorkoutSample: SaveWorkoutSampleFn = async (
-  typeIdentifier,
-  quantities,
-  _start,
-  options,
-) => {
+async function saveWorkoutSample<TIdentifier extends HKWorkoutActivityType, TQIdentifier extends HKQuantityTypeIdentifier>(
+  typeIdentifier: TIdentifier,
+  quantities: readonly Omit<
+  HKQuantitySample<TQIdentifier>,
+  'device' | 'endDate' | 'startDate' | 'uuid'
+  >[],
+  _start: Date,
+  options?: {
+    readonly end?: Date;
+    readonly metadata?: HKWorkoutMetadata;
+  },
+) {
   const start = _start.toISOString()
   const end = (options?.end || new Date()).toISOString()
 
@@ -527,7 +559,27 @@ const saveWorkoutSample: SaveWorkoutSampleFn = async (
 
 const getWorkoutRoutes: GetWorkoutRoutesFn = async (workoutUUID: string) => Native.getWorkoutRoutes(workoutUUID)
 
-const Healthkit: ReactNativeHealthkit = {
+const useHealthkitAuthorization = (read: readonly HealthkitReadAuthorization[], write?: readonly HealthkitWriteAuthorization[]) => {
+  const [status, setStatus] = useState<HKAuthorizationRequestStatus | null>(null)
+  const refreshAuthStatus = useCallback(async () => {
+    const auth = await getRequestStatusForAuthorization(read, write)
+    setStatus(auth)
+    return auth
+  }, [])
+
+  const request = useCallback(async () => {
+    await requestAuthorization(read, write)
+    return refreshAuthStatus()
+  }, [])
+
+  useEffect(() => {
+    void refreshAuthStatus()
+  }, [])
+
+  return [status, request] as const
+}
+
+const Healthkit = {
   authorizationStatusFor: Native.authorizationStatusFor.bind(Native),
 
   isHealthDataAvailable: Native.isHealthDataAvailable.bind(Native),
@@ -592,25 +644,7 @@ const Healthkit: ReactNativeHealthkit = {
     }, [])
     return isAvailable
   },
-  useHealthkitAuthorization: (read, write) => {
-    const [status, setStatus] = useState<HKAuthorizationRequestStatus | null>(null)
-    const refreshAuthStatus = useCallback(async () => {
-      const auth = await getRequestStatusForAuthorization(read, write)
-      setStatus(auth)
-      return auth
-    }, [])
-
-    const request = useCallback(async () => {
-      await requestAuthorization(read, write)
-      return refreshAuthStatus()
-    }, [])
-
-    useEffect(() => {
-      void refreshAuthStatus()
-    }, [])
-
-    return [status, request]
-  },
+  useHealthkitAuthorization,
 }
 
 export * from './native-types'

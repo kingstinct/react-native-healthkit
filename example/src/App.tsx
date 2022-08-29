@@ -5,7 +5,7 @@ import Healthkit, {
   HKInsulinDeliveryReason,
   HKQuantityTypeIdentifier,
   HKStatisticsOptions,
-  HKUnit,
+  HKUnits,
   HKWeatherCondition,
   HKWorkoutActivityType,
 // eslint-disable-next-line import/no-unresolved
@@ -62,7 +62,7 @@ const DisplayWorkout: React.FunctionComponent<{
 
 const DisplayQuantitySample: React.FunctionComponent<{
   readonly title: string;
-  readonly sample: HKQuantitySample | null;
+  readonly sample: HKQuantitySample<HKQuantityTypeIdentifier> | null;
 }> = ({ title, sample }) => (
   <DataTable.Row>
     <DataTable.Cell>{title}</DataTable.Cell>
@@ -111,7 +111,7 @@ const DisplayStat: React.FunctionComponent<{
 function DataView() {
   const [dateOfBirth, setDateOfBirth] = React.useState<Date | null>(null)
 
-  const [bloodGlucoseSamples, setBloodGlucoseSamples] = React.useState<ReadonlyArray<HKQuantitySample> | null>(null)
+  const [bloodGlucoseSamples, setBloodGlucoseSamples] = React.useState<ReadonlyArray<HKQuantitySample<HKQuantityTypeIdentifier.bloodGlucose>> | null>(null)
 
   const bodyFat = Healthkit.useMostRecentQuantitySample(
     HKQuantityTypeIdentifier.bodyFatPercentage,
@@ -156,12 +156,12 @@ function DataView() {
     HKQuantityTypeIdentifier.stairDescentSpeed,
   )
 
-  const [queryStatisticsResponse, setQueryStatisticsResponse] = React.useState<QueryStatisticsResponse | null>(null)
+  const [queryStatisticsResponse, setQueryStatisticsResponse] = React.useState<QueryStatisticsResponse<HKQuantityTypeIdentifier.heartRate> | null>(null)
 
   const writeSampleToHealthkit = () => {
     void Healthkit.saveQuantitySample(
       HKQuantityTypeIdentifier.insulinDelivery,
-      HKUnit.InternationalUnit,
+      'IU',
       4.2,
       {
         metadata: {
@@ -169,33 +169,39 @@ function DataView() {
         },
       },
     )
-    void Healthkit.saveCorrelationSample(HKCorrelationTypeIdentifier.food, [
+
+    const samples: readonly HKQuantitySample[] = [
       {
-        quantityType: HKQuantityTypeIdentifier.dietaryCaffeine,
-        unit: HKUnit.Grams,
+        quantityType: HKQuantityTypeIdentifier.dietaryCaffeine as const,
+        unit: 'g',
+        quantity: 1,
+        metadata: {},
+        endDate: new Date(),
+        startDate: new Date(),
+        uuid: '',
+      } as HKQuantitySample<HKQuantityTypeIdentifier.dietaryCaffeine>,
+      {
+        quantityType: HKQuantityTypeIdentifier.dietaryEnergyConsumed as const,
+        unit: 'kcal' as const,
         quantity: 1,
         metadata: {},
       },
-      {
-        quantityType: HKQuantityTypeIdentifier.dietaryEnergyConsumed,
-        unit: HKUnit.Kilocalories,
-        quantity: 1,
-        metadata: {},
-      },
-    ])
+    ]
+
+    void Healthkit.saveCorrelationSample(HKCorrelationTypeIdentifier.food, samples)
 
     void Healthkit.saveWorkoutSample(
       HKWorkoutActivityType.archery,
       [
         {
           quantityType: HKQuantityTypeIdentifier.activeEnergyBurned,
-          unit: HKUnit.Kilocalories,
+          unit: 'kcal',
           quantity: 63,
           metadata: {},
         },
         {
           quantityType: HKQuantityTypeIdentifier.appleExerciseTime,
-          unit: HKUnit.Minutes,
+          unit: 'min',
           quantity: 11,
           metadata: {},
         },
@@ -285,7 +291,7 @@ function DataView() {
           <DataTable.Title>Time</DataTable.Title>
         </DataTable.Header>
         {bloodGlucoseSamples
-          ? bloodGlucoseSamples.map((sample: HKQuantitySample) => (
+          ? bloodGlucoseSamples.map((sample: HKQuantitySample<HKQuantityTypeIdentifier.bloodGlucose>) => (
             <DisplayQuantitySample sample={sample} title='Glucose' />
           ))
           : null}
