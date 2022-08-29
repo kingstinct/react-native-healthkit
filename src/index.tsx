@@ -24,7 +24,6 @@ function UnavailableFn<T = unknown>(retVal: T) {
 
 const Healthkit: typeof ReactNativeHealthkit = {
   authorizationStatusFor: UnavailableFn(Promise.resolve(false)),
-  buildUnitWithPrefix: UnavailableFn(HKUnits.Atmospheres),
   disableAllBackgroundDelivery: UnavailableFn(Promise.resolve(false)),
   disableBackgroundDelivery: UnavailableFn(Promise.resolve(false)),
   enableBackgroundDelivery: UnavailableFn(Promise.resolve(false)),
@@ -35,7 +34,7 @@ const Healthkit: typeof ReactNativeHealthkit = {
   getMostRecentCategorySample: UnavailableFn(Promise.resolve(null)),
   getMostRecentQuantitySample: UnavailableFn(Promise.resolve(null)),
   getMostRecentWorkout: UnavailableFn(Promise.resolve(null)),
-  getPreferredUnit: UnavailableFn(Promise.resolve(HKUnits.Atmospheres)),
+  getPreferredUnit: UnavailableFn(Promise.resolve(HKUnits.Count)),
   getPreferredUnits: UnavailableFn(Promise.resolve([])),
   getRequestStatusForAuthorization: UnavailableFn(Promise.resolve(HKAuthorizationRequestStatus.unknown)),
   getWheelchairUse: UnavailableFn(Promise.resolve(HKWheelchairUse.notSet)),
@@ -68,7 +67,6 @@ const Healthkit: typeof ReactNativeHealthkit = {
   useIsHealthDataAvailable: () => false,
 }
 
-export * from './native-types'
 export * from './types'
 
 export default Healthkit

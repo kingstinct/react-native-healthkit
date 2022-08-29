@@ -8,6 +8,8 @@ import Healthkit, {
   HKUnits,
   HKWeatherCondition,
   HKWorkoutActivityType,
+  UnitOfMass,
+  UnitOfTime,
 // eslint-disable-next-line import/no-unresolved
 } from '@kingstinct/react-native-healthkit' // this way we can work with the working copy - but keep in mind native changes requires a new build 🚀
 import dayjs from 'dayjs'
@@ -28,8 +30,8 @@ const DisplayWorkout: React.FunctionComponent<{
 }> = ({ workout }) => {
   React.useEffect(() => {
     if (workout.uuid) {
-      void Healthkit.getWorkoutRoutes(workout.uuid).then((_routes) => {
-        console.info(`${_routes.length} routes found`)
+      void Healthkit.getWorkoutRoutes(workout.uuid).then((routes) => {
+        console.info(`${routes.length} routes found`)
       })
     }
   }, [workout.uuid])
@@ -161,7 +163,7 @@ function DataView() {
   const writeSampleToHealthkit = () => {
     void Healthkit.saveQuantitySample(
       HKQuantityTypeIdentifier.insulinDelivery,
-      'IU',
+      HKUnits.InternationalUnit,
       4.2,
       {
         metadata: {
@@ -170,25 +172,31 @@ function DataView() {
       },
     )
 
-    const samples: readonly HKQuantitySample[] = [
+    void Healthkit.saveQuantitySample(
+      HKQuantityTypeIdentifier.appleExerciseTime,
+      UnitOfTime.Days,
+      4.2,
       {
-        quantityType: HKQuantityTypeIdentifier.dietaryCaffeine as const,
-        unit: 'g',
+        metadata: {
+          HKInsulinDeliveryReason: HKInsulinDeliveryReason.basal,
+        },
+      },
+    )
+
+    void Healthkit.saveCorrelationSample(HKCorrelationTypeIdentifier.food, [
+      {
+        quantityType: HKQuantityTypeIdentifier.dietaryCaffeine,
+        unit: UnitOfMass.Gram,
         quantity: 1,
         metadata: {},
-        endDate: new Date(),
-        startDate: new Date(),
-        uuid: '',
-      } as HKQuantitySample<HKQuantityTypeIdentifier.dietaryCaffeine>,
+      },
       {
-        quantityType: HKQuantityTypeIdentifier.dietaryEnergyConsumed as const,
+        quantityType: HKQuantityTypeIdentifier.dietaryEnergyConsumed,
         unit: 'kcal' as const,
         quantity: 1,
         metadata: {},
       },
-    ]
-
-    void Healthkit.saveCorrelationSample(HKCorrelationTypeIdentifier.food, samples)
+    ])
 
     void Healthkit.saveWorkoutSample(
       HKWorkoutActivityType.archery,

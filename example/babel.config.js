@@ -13,6 +13,7 @@ module.exports = {
         ],
         alias: {
           [pak.name]: path.join(__dirname, '..', pak.source),
+          [`${pak.name}/*`]: path.join(__dirname, '..', pak.source, '*'),
         },
       },
     ],
