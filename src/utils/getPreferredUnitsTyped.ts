@@ -15,12 +15,12 @@ async function getPreferredUnitsTyped<
       HKQuantityTypeIdentifier.activeEnergyBurned,
     ])
     if (!energyUnit) {
-      energyUnit = units[HKQuantityTypeIdentifier.distanceWalkingRunning] as
+      energyUnit = units[HKQuantityTypeIdentifier.activeEnergyBurned] as
       | TEnergy
       | undefined
     }
     if (!distanceUnit) {
-      distanceUnit = units[HKQuantityTypeIdentifier.activeEnergyBurned] as
+      distanceUnit = units[HKQuantityTypeIdentifier.distanceWalkingRunning] as
       | TDistance
       | undefined
     }

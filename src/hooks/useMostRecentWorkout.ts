@@ -4,6 +4,7 @@ import {
 
 import getMostRecentWorkout from '../utils/getMostRecentWorkout'
 import getPreferredUnitsTyped from '../utils/getPreferredUnitsTyped'
+import subscribeToChanges from '../utils/subscribeToChanges'
 
 import type { EnergyUnit, LengthUnit } from '../native-types'
 import type { HKWorkout } from '../types'
@@ -37,7 +38,7 @@ function useMostRecentWorkout<
     void update()
   }, [update])
 
-  /* useEffect(() => {
+  useEffect(() => {
     let cancelSubscription: (() => Promise<boolean>) | undefined
 
     const init = async () => {
@@ -51,7 +52,7 @@ function useMostRecentWorkout<
     return () => {
       void cancelSubscription?.()
     }
-  }, [update]) */
+  }, [update])
 
   return workout
 }
