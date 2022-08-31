@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react'
+import {
+  useEffect, useState, useRef, useCallback,
+} from 'react'
 
 import getMostRecentWorkout from '../utils/getMostRecentWorkout'
 import getPreferredUnitsTyped from '../utils/getPreferredUnitsTyped'
@@ -14,27 +16,42 @@ function useMostRecentWorkout<
   const [workout, setWorkout] = useState<HKWorkout<TEnergy, TDistance> | null>(
     null,
   )
+
+  const optionsRef = useRef(options)
+
+  useEffect(() => {
+    optionsRef.current = options
+  }, [options])
+
+  const update = useCallback(async () => {
+    const { energyUnit, distanceUnit } = await getPreferredUnitsTyped(
+      optionsRef.current,
+    )
+
+    console.log({ energyUnit, distanceUnit })
+
+    const workout = await getMostRecentWorkout({ energyUnit, distanceUnit })
+    setWorkout(workout)
+  }, [])
+
+  useEffect(() => {
+    void update()
+  }, [update])
+
   useEffect(() => {
     let cancelSubscription: (() => Promise<boolean>) | undefined
 
     const init = async () => {
-      const { energyUnit, distanceUnit } = await getPreferredUnitsTyped(
-        options,
-      )
-
       cancelSubscription = await subscribeToChanges(
         'HKWorkoutTypeIdentifier',
-        async () => {
-          const w = await getMostRecentWorkout({ energyUnit, distanceUnit })
-          setWorkout(w)
-        },
+        update,
       )
     }
     void init()
     return () => {
       void cancelSubscription?.()
     }
-  }, [options])
+  }, [update])
   return workout
 }
 

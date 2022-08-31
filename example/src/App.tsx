@@ -1,392 +1,116 @@
-import Healthkit, {
-  HKCategoryTypeIdentifier,
-  HKCharacteristicTypeIdentifier,
-  HKCorrelationTypeIdentifier,
-  HKInsulinDeliveryReason,
-  HKQuantityTypeIdentifier,
-  HKStatisticsOptions,
-  HKUnits,
-  HKWeatherCondition,
-  HKWorkoutActivityType,
-  UnitOfMass,
-  UnitOfTime,
-// eslint-disable-next-line import/no-unresolved
-} from '@kingstinct/react-native-healthkit' // this way we can work with the working copy - but keep in mind native changes requires a new build 🚀
+import { HKStatisticsOptions, HKQuantityTypeIdentifier } from '@kingstinct/react-native-healthkit'
+import useHealthkitAuthorization from '@kingstinct/react-native-healthkit/hooks/useHealthkitAuthorization'
+import useMostRecentQuantitySample from '@kingstinct/react-native-healthkit/hooks/useMostRecentQuantitySample'
+import useMostRecentWorkout from '@kingstinct/react-native-healthkit/hooks/useMostRecentWorkout'
+import useStatisticsForQuantity from '@kingstinct/react-native-healthkit/hooks/useStatisticsForQuantity'
+import queryStatisticsForQuantity from '@kingstinct/react-native-healthkit/utils/queryStatisticsForQuantity'
 import dayjs from 'dayjs'
-import * as React from 'react'
-import { Button, ScrollView, Text } from 'react-native'
-import { DataTable } from 'react-native-paper'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import React from 'react'
+import { View } from 'react-native'
+import { Button, List } from 'react-native-paper'
 
-import type {
-  HKCategorySample,
-  HKQuantity,
-  HKQuantitySample,
-  HKWorkout,
-  QueryStatisticsResponse,
-} from '@kingstinct/react-native-healthkit'
+import type { HKUnit } from '@kingstinct/react-native-healthkit'
+import type { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 
-const DisplayWorkout: React.FunctionComponent<{
-  readonly workout: HKWorkout;
-}> = ({ workout }) => {
-  React.useEffect(() => {
-    if (workout.uuid) {
-      void Healthkit.getWorkoutRoutes(workout.uuid).then((routes) => {
-        console.info(`${routes.length} routes found`)
-      })
-    }
-  }, [workout.uuid])
+dayjs.extend(relativeTime)
 
+const LatestListItem: React.FC<{
+  readonly identifier: HKQuantityTypeIdentifier,
+  readonly unit: HKUnit
+  readonly icon: IconSource
+  readonly title: string
+}> = ({
+  identifier, unit, title, icon,
+}) => {
+  const latestValue = useMostRecentQuantitySample(identifier, unit)
   return (
-    <DataTable.Row>
-      <DataTable.Cell>
-        {HKWorkoutActivityType[workout.workoutActivityType]}
-      </DataTable.Cell>
-      <DataTable.Cell style={{ paddingRight: 10 }} numeric>
-        {workout ? `${workout.duration.toFixed(0)}s` : '-'}
-      </DataTable.Cell>
-      <DataTable.Cell>
-        {workout
-          ? `${workout.totalDistance?.quantity.toFixed(1)
-          } ${
-            workout.totalDistance?.unit}`
-          : '-'}
-      </DataTable.Cell>
-      <DataTable.Cell>
-        {workout
-          ? `${workout.totalEnergyBurned?.quantity.toFixed(1)
-          } ${
-            workout.totalEnergyBurned?.unit}`
-          : '-'}
-      </DataTable.Cell>
-    </DataTable.Row>
+    <List.Item
+      title={title || identifier}
+      left={(props) => <List.Icon {...props} icon={icon || 'heart'} />}
+      description={latestValue
+        ? `${latestValue.quantity} ${latestValue.unit} (${dayjs(latestValue.endDate).fromNow()})`
+        : undefined}
+    />
   )
 }
 
-const DisplayQuantitySample: React.FunctionComponent<{
-  readonly title: string;
-  readonly sample: HKQuantitySample<HKQuantityTypeIdentifier> | null;
-}> = ({ title, sample }) => (
-  <DataTable.Row>
-    <DataTable.Cell>{title}</DataTable.Cell>
-    <DataTable.Cell style={{ paddingRight: 10 }} numeric>
-      {sample ? sample.quantity.toFixed(1) : '-'}
-    </DataTable.Cell>
-    <DataTable.Cell>{sample ? sample.unit : '-'}</DataTable.Cell>
-    <DataTable.Cell>
-      {sample ? sample.startDate.toLocaleTimeString() : '-'}
-    </DataTable.Cell>
-  </DataTable.Row>
-)
-
-const DisplayCategorySample: React.FunctionComponent<{
-  readonly title: string;
-  readonly sample: HKCategorySample | null;
-}> = ({ title, sample }) => (
-  <DataTable.Row>
-    <DataTable.Cell>{title}</DataTable.Cell>
-    <DataTable.Cell style={{ paddingRight: 10 }} numeric>
-      {sample ? sample.value : '-'}
-    </DataTable.Cell>
-    <DataTable.Cell>
-      {sample ? sample.startDate.toLocaleTimeString() : '-'}
-    </DataTable.Cell>
-    <DataTable.Cell>
-      {sample ? sample.endDate.toLocaleTimeString() : '-'}
-    </DataTable.Cell>
-  </DataTable.Row>
-)
-
-const DisplayStat: React.FunctionComponent<{
-  readonly title: string;
-  readonly sample: HKQuantity | undefined;
-}> = ({ title, sample }) => (
-  <DataTable.Row>
-    <DataTable.Cell>{title}</DataTable.Cell>
-    <DataTable.Cell style={{ paddingRight: 10 }} numeric>
-      {sample ? sample.quantity.toFixed(1) : '-'}
-    </DataTable.Cell>
-    <DataTable.Cell>{sample ? sample.unit : '-'}</DataTable.Cell>
-    <DataTable.Cell>N/A</DataTable.Cell>
-  </DataTable.Row>
-)
-
-function DataView() {
-  const [dateOfBirth, setDateOfBirth] = React.useState<Date | null>(null)
-
-  const [bloodGlucoseSamples, setBloodGlucoseSamples] = React.useState<ReadonlyArray<HKQuantitySample<HKQuantityTypeIdentifier.bloodGlucose>> | null>(null)
-
-  const bodyFat = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.bodyFatPercentage,
-  )
-
-  const bloodGlucose = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.bloodGlucose,
-  )
-
-  const bodyWeight = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.bodyMass,
-  )
-  const heartRate = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.heartRate,
-  )
-  const lastWorkout = Healthkit.useMostRecentWorkout()
-  const lastMindfulSession = Healthkit.useMostRecentCategorySample(
-    HKCategoryTypeIdentifier.mindfulSession,
-  )
-
-  const walkingSpeed = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.walkingSpeed,
-  )
-  const sixMinWalk = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.sixMinuteWalkTestDistance,
-  )
-  const walkingStepLength = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.walkingStepLength,
-  )
-  const walkingAsymmetryPercentage = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.walkingAsymmetryPercentage,
-  )
-  const walkingDoubleSupportPercentage = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.walkingDoubleSupportPercentage,
-  )
-
-  const stairAscentSpeed = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.stairAscentSpeed,
-  )
-
-  const stairDescentSpeed = Healthkit.useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.stairDescentSpeed,
-  )
-
-  const [queryStatisticsResponse, setQueryStatisticsResponse] = React.useState<QueryStatisticsResponse<HKQuantityTypeIdentifier.heartRate> | null>(null)
-
-  const writeSampleToHealthkit = () => {
-    void Healthkit.saveQuantitySample(
-      HKQuantityTypeIdentifier.insulinDelivery,
-      HKUnits.InternationalUnit,
-      4.2,
-      {
-        metadata: {
-          HKInsulinDeliveryReason: HKInsulinDeliveryReason.basal,
-        },
-      },
-    )
-
-    void Healthkit.saveQuantitySample(
-      HKQuantityTypeIdentifier.appleExerciseTime,
-      UnitOfTime.Days,
-      4.2,
-      {
-        metadata: {
-          HKInsulinDeliveryReason: HKInsulinDeliveryReason.basal,
-        },
-      },
-    )
-
-    void Healthkit.saveCorrelationSample(HKCorrelationTypeIdentifier.food, [
-      {
-        quantityType: HKQuantityTypeIdentifier.dietaryCaffeine,
-        unit: UnitOfMass.Gram,
-        quantity: 1,
-        metadata: {},
-      },
-      {
-        quantityType: HKQuantityTypeIdentifier.dietaryEnergyConsumed,
-        unit: 'kcal' as const,
-        quantity: 1,
-        metadata: {},
-      },
-    ])
-
-    void Healthkit.saveWorkoutSample(
-      HKWorkoutActivityType.archery,
-      [
-        {
-          quantityType: HKQuantityTypeIdentifier.activeEnergyBurned,
-          unit: 'kcal',
-          quantity: 63,
-          metadata: {},
-        },
-        {
-          quantityType: HKQuantityTypeIdentifier.appleExerciseTime,
-          unit: 'min',
-          quantity: 11,
-          metadata: {},
-        },
-      ],
-      new Date(),
-      {
-        metadata: {
-          HKWeatherCondition: HKWeatherCondition.hurricane,
-        },
-      },
-    )
-
-    void Healthkit.getDateOfBirth().then(setDateOfBirth)
-
-    void Healthkit.queryStatisticsForQuantity(
-      HKQuantityTypeIdentifier.heartRate,
-      [
-        HKStatisticsOptions.discreteAverage,
-        HKStatisticsOptions.discreteMax,
-        HKStatisticsOptions.discreteMin,
-      ],
-      dayjs().startOf('day').toDate(),
-    ).then(setQueryStatisticsResponse)
-
-    void Healthkit.queryQuantitySamples(HKQuantityTypeIdentifier.bloodGlucose, {
-      ascending: true,
-      from: dayjs().startOf('day').toDate(),
-      to: new Date(),
-    }).then(setBloodGlucoseSamples)
-  }
-
-  console.log(walkingDoubleSupportPercentage)
-
+const LatestWorkout: React.FC<{
+  readonly icon: IconSource
+  readonly title: string
+}> = ({
+  title, icon,
+}) => {
+  const latestValue = useMostRecentWorkout()
   return (
-    <ScrollView style={{ flex: 1, paddingTop: 40 }}>
-      <Button
-        title='Write Sample to HealthKit'
-        onPress={writeSampleToHealthkit}
-      />
-      <Text>Date of birth: {dateOfBirth?.toLocaleDateString()}</Text>
-      <DataTable>
-        <DataTable.Header>
-          <DataTable.Title>Metric</DataTable.Title>
-          <DataTable.Title style={{ paddingRight: 10 }} numeric>
-            Value
-          </DataTable.Title>
-          <DataTable.Title>Unit</DataTable.Title>
-          <DataTable.Title>Time</DataTable.Title>
-        </DataTable.Header>
+    <List.Item
+      title={title}
+      left={(props) => <List.Icon {...props} icon={icon || 'heart'} />}
+      description={latestValue
+        ? `${latestValue.workoutActivityType} - ${latestValue.duration} (${dayjs(latestValue.endDate).fromNow()})`
+        : undefined}
+    />
+  )
+}
 
-        <DisplayQuantitySample sample={bodyFat} title='Body fat' />
-        <DisplayQuantitySample sample={bodyWeight} title='Weight' />
-        <DisplayQuantitySample sample={heartRate} title='Heart rate' />
-        <DisplayQuantitySample sample={bloodGlucose} title='Glucose' />
-
-        <DisplayStat
-          sample={queryStatisticsResponse?.averageQuantity}
-          title='Avg. HR'
-        />
-        <DisplayStat
-          sample={queryStatisticsResponse?.maximumQuantity}
-          title='High HR'
-        />
-        <DisplayStat
-          sample={queryStatisticsResponse?.minimumQuantity}
-          title='Low HR'
-        />
-
-        <DisplayCategorySample sample={lastMindfulSession} title='Mindful' />
-
-        <DataTable.Header>
-          <DataTable.Title>Workout</DataTable.Title>
-          <DataTable.Title style={{ paddingRight: 10 }} numeric>
-            Duration
-          </DataTable.Title>
-          <DataTable.Title>Distance</DataTable.Title>
-          <DataTable.Title>Energy</DataTable.Title>
-        </DataTable.Header>
-        {lastWorkout ? <DisplayWorkout workout={lastWorkout} /> : null}
-
-        <DataTable.Header>
-          <DataTable.Title>Blood Glucose</DataTable.Title>
-          <DataTable.Title style={{ paddingRight: 10 }} numeric>
-            Value
-          </DataTable.Title>
-          <DataTable.Title>Units</DataTable.Title>
-          <DataTable.Title>Time</DataTable.Title>
-        </DataTable.Header>
-        {bloodGlucoseSamples
-          ? bloodGlucoseSamples.map((sample: HKQuantitySample<HKQuantityTypeIdentifier.bloodGlucose>) => (
-            <DisplayQuantitySample sample={sample} title='Glucose' />
-          ))
-          : null}
-
-        <DataTable.Header>
-          <DataTable.Title>Mobility</DataTable.Title>
-          <DataTable.Title style={{ paddingRight: 10 }} numeric>
-            Value
-          </DataTable.Title>
-          <DataTable.Title>Units</DataTable.Title>
-          <DataTable.Title>Time</DataTable.Title>
-        </DataTable.Header>
-        <DisplayQuantitySample sample={walkingSpeed} title='Walking speed' />
-        <DisplayQuantitySample
-          sample={sixMinWalk}
-          title='Six-minute walk test'
-        />
-        <DisplayQuantitySample
-          sample={walkingStepLength}
-          title='Walking Step Length'
-        />
-        <DisplayQuantitySample
-          sample={walkingAsymmetryPercentage}
-          title='Walking Asymmetry'
-        />
-        <DisplayQuantitySample
-          sample={walkingDoubleSupportPercentage}
-          title='Walking Double Support'
-        />
-        <DisplayQuantitySample sample={stairAscentSpeed} title='Stair Ascent' />
-        <DisplayQuantitySample
-          sample={stairDescentSpeed}
-          title='Stair Descent'
-        />
-      </DataTable>
-    </ScrollView>
+const TodayListItem: React.FC<{
+  readonly identifier: HKQuantityTypeIdentifier,
+  readonly unit: HKUnit,
+  readonly option: HKStatisticsOptions
+}> = ({ identifier, option, unit }) => {
+  const latestValue = useStatisticsForQuantity(identifier, [option], dayjs().startOf('day').toDate(), undefined, unit)
+  return (
+    <List.Item
+      title={identifier}
+      left={(props) => <List.Icon {...props} icon='walk' />}
+      description={latestValue
+        ? `${latestValue.sumQuantity?.quantity} (${latestValue.sumQuantity?.unit})`
+        : undefined}
+    />
   )
 }
 
 const App = () => {
-  const [hasPermissions, setHasPermissions] = React.useState<boolean>(false)
-  React.useEffect(() => {
-    void Healthkit.requestAuthorization(
-      [
-        HKCharacteristicTypeIdentifier.biologicalSex,
-        HKCharacteristicTypeIdentifier.bloodType,
-        HKCharacteristicTypeIdentifier.dateOfBirth,
-        HKCharacteristicTypeIdentifier.fitzpatrickSkinType,
-        HKQuantityTypeIdentifier.waistCircumference,
-        HKQuantityTypeIdentifier.bodyMassIndex,
-        HKQuantityTypeIdentifier.bodyMass,
-        HKQuantityTypeIdentifier.heartRate,
-        HKQuantityTypeIdentifier.bloodGlucose,
-        HKQuantityTypeIdentifier.insulinDelivery,
-        HKQuantityTypeIdentifier.activeEnergyBurned,
-        HKCategoryTypeIdentifier.mindfulSession,
-        HKQuantityTypeIdentifier.dietaryCaffeine,
-        HKQuantityTypeIdentifier.dietaryEnergyConsumed,
-        HKQuantityTypeIdentifier.walkingSpeed,
-        HKQuantityTypeIdentifier.walkingAsymmetryPercentage,
-        HKQuantityTypeIdentifier.walkingDoubleSupportPercentage,
-        HKQuantityTypeIdentifier.stairAscentSpeed,
-        HKQuantityTypeIdentifier.stairDescentSpeed,
-        HKQuantityTypeIdentifier.walkingStepLength,
-        'HKWorkoutTypeIdentifier',
-        'HKWorkoutRouteTypeIdentifier',
-      ],
-      [
-        HKQuantityTypeIdentifier.waistCircumference,
-        HKQuantityTypeIdentifier.activeEnergyBurned,
-        HKQuantityTypeIdentifier.bloodGlucose,
-        HKQuantityTypeIdentifier.insulinDelivery,
-        HKQuantityTypeIdentifier.bodyFatPercentage,
-        HKCategoryTypeIdentifier.mindfulSession,
-        HKQuantityTypeIdentifier.dietaryCaffeine,
-        HKQuantityTypeIdentifier.dietaryEnergyConsumed,
-        'HKWorkoutTypeIdentifier',
-      ],
-    ).then(setHasPermissions)
-  }, [])
+  const [status, request] = useHealthkitAuthorization([
+    HKQuantityTypeIdentifier.activeEnergyBurned,
+    HKQuantityTypeIdentifier.basalEnergyBurned,
+    HKQuantityTypeIdentifier.restingHeartRate,
+    'HKWorkoutTypeIdentifier',
+    'HKWorkoutRouteTypeIdentifier',
+    'HKQuantityTypeIdentifierStepCount',
+    HKQuantityTypeIdentifier.distanceCycling,
+    HKQuantityTypeIdentifier.distanceSwimming,
+    HKQuantityTypeIdentifier.distanceWalkingRunning,
+    HKQuantityTypeIdentifier.heartRate,
+  ], [HKQuantityTypeIdentifier.heartRate])
 
-  return hasPermissions ? (
-    <DataView />
-  ) : (
-    <Text style={{ paddingTop: 40, textAlign: 'center' }}>
-      Waiting for user to authorize..
-    </Text>
+  return (
+    <View style={{ marginTop: 100, flex: 1, width: '100%' }}>
+      <Button onPress={request}>Authorize</Button>
+      <LatestWorkout icon='run' title='Latest workout' />
+      <LatestListItem icon='fire' title='Active Energy Burnt' identifier={HKQuantityTypeIdentifier.activeEnergyBurned} unit='kcal' />
+      <LatestListItem
+        icon='heart'
+        title='Heart rate'
+        identifier={HKQuantityTypeIdentifier.heartRate}
+        unit='count/min'
+      />
+      <TodayListItem
+        identifier={HKQuantityTypeIdentifier.stepCount}
+        option={HKStatisticsOptions.cumulativeSum}
+        unit='count'
+      />
+      <TodayListItem
+        identifier={HKQuantityTypeIdentifier.activeEnergyBurned}
+        option={HKStatisticsOptions.cumulativeSum}
+        unit='kcal'
+      />
+      <TodayListItem
+        identifier={HKQuantityTypeIdentifier.restingHeartRate}
+        option={HKStatisticsOptions.discreteAverage}
+        unit='count/min'
+      />
+    </View>
   )
 }
 

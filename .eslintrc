@@ -1,3 +1,3 @@
 {
-  "extends": "eslint-config-kingstinct"
+  "extends": "eslint-config-kingstinct/react-native"
 }
