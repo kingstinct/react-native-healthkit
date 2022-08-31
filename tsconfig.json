@@ -19,8 +19,6 @@
     "noImplicitUseStrict": false,
     "noUncheckedIndexedAccess": true,
     "noStrictGenericChecks": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,

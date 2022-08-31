@@ -7,9 +7,7 @@ module.exports = {
       {
         extensions: ['.js', '.ts', '.tsx'],
         alias: {
-          '@kingstinct/react-native-healthkit': '../src/index',
-          'example': '../example',
-          'example/src/App': '../example/src/App',
+          '@kingstinct/react-native-healthkit': '../src',
           'react': './node_modules/react',
           'react-native': './node_modules/react-native',
           'react-native-paper': './node_modules/react-native-paper',

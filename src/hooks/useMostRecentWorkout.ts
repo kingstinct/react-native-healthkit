@@ -4,7 +4,6 @@ import {
 
 import getMostRecentWorkout from '../utils/getMostRecentWorkout'
 import getPreferredUnitsTyped from '../utils/getPreferredUnitsTyped'
-import subscribeToChanges from '../utils/subscribeToChanges'
 
 import type { EnergyUnit, LengthUnit } from '../native-types'
 import type { HKWorkout } from '../types'
@@ -13,9 +12,7 @@ function useMostRecentWorkout<
   TEnergy extends EnergyUnit,
   TDistance extends LengthUnit
 >(options?: { readonly energyUnit?: TEnergy; readonly distanceUnit?: TDistance }) {
-  const [workout, setWorkout] = useState<HKWorkout<TEnergy, TDistance> | null>(
-    null,
-  )
+  const [workout, setWorkout] = useState<HKWorkout<TEnergy, TDistance> | null>(null)
 
   const optionsRef = useRef(options)
 
@@ -30,15 +27,17 @@ function useMostRecentWorkout<
 
     console.log({ energyUnit, distanceUnit })
 
-    const workout = await getMostRecentWorkout({ energyUnit, distanceUnit })
-    setWorkout(workout)
+    setWorkout(await getMostRecentWorkout({
+      energyUnit,
+      distanceUnit,
+    }))
   }, [])
 
   useEffect(() => {
     void update()
   }, [update])
 
-  useEffect(() => {
+  /* useEffect(() => {
     let cancelSubscription: (() => Promise<boolean>) | undefined
 
     const init = async () => {
@@ -48,10 +47,12 @@ function useMostRecentWorkout<
       )
     }
     void init()
+
     return () => {
       void cancelSubscription?.()
     }
-  }, [update])
+  }, [update]) */
+
   return workout
 }
 
