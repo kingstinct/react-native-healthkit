@@ -369,10 +369,10 @@ enum HKIndoorWorkout {
 export interface HKWorkoutMetadata
   extends HKGenericMetadata /* <TTemperatureUnit extends HKUnit> */ {
   readonly HKWeatherCondition?: HKWeatherCondition;
-  readonly HKWeatherHumidity?: HKQuantity<HKUnit.Percent>;
+  readonly HKWeatherHumidity?: HKQuantity<HKQuantityTypeIdentifier, HKUnits.Percent>;
   // HKWeatherTemperature: HKQuantity<TTemperatureUnit>
-  readonly HKAverageMETs?: HKQuantity<HKUnit>,
-  readonly HKElevationAscended?: HKQuantity<HKUnit.Meters>,
+  readonly HKAverageMETs?: HKQuantity<HKQuantityTypeIdentifier, HKUnit>,
+  readonly HKElevationAscended?: HKQuantity<HKQuantityTypeIdentifier, LengthUnit>,
   readonly HKIndoorWorkout?: HKIndoorWorkout,
 }
 
@@ -388,8 +388,8 @@ export enum HKAuthorizationStatus {
   sharingAuthorized = 2,
 }
 
-export type HKQuantity<T extends HKUnit = HKUnit> = {
-  readonly unit: T;
+export type HKQuantity<TIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TIdentifier> = UnitForIdentifier<TIdentifier>> = {
+  readonly unit: TUnit;
   readonly quantity: number;
 };
 
@@ -433,14 +433,14 @@ export enum HKStatisticsOptions {
   separateBySource = 'separateBySource',
 }
 
-export type QueryStatisticsResponseRaw<TUnit extends HKUnit = HKUnit> = {
-  readonly averageQuantity?: HKQuantity<TUnit>;
-  readonly maximumQuantity?: HKQuantity<TUnit>;
-  readonly minimumQuantity?: HKQuantity<TUnit>;
-  readonly sumQuantity?: HKQuantity<TUnit>;
-  readonly mostRecentQuantity?: HKQuantity<TUnit>;
+export type QueryStatisticsResponseRaw<TIdentifier extends HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TIdentifier>> = {
+  readonly averageQuantity?: HKQuantity<TIdentifier, TUnit>;
+  readonly maximumQuantity?: HKQuantity<TIdentifier, TUnit>;
+  readonly minimumQuantity?: HKQuantity<TIdentifier, TUnit>;
+  readonly sumQuantity?: HKQuantity<TIdentifier, TUnit>;
+  readonly mostRecentQuantity?: HKQuantity<TIdentifier, TUnit>;
   readonly mostRecentQuantityDateInterval?: { readonly from: string; readonly to: string };
-  readonly duration?: HKQuantity<HKUnit.Seconds>;
+  readonly duration?: HKQuantity<HKQuantityTypeIdentifier, TimeUnit>;
 };
 
 export enum HKCategoryValueCervicalMucusQuality {
@@ -531,6 +531,20 @@ export type MetadataMapperForCorrelationIdentifier<
   }
   : HKGenericMetadata;
 
+export type UnitForIdentifier<T extends HKQuantityTypeIdentifier> = T extends HKQuantityTypeIdentifier.bloodGlucose ? BloodGlucoseUnit
+  : T extends HKQuantityTypeIdentifier.appleExerciseTime | HKQuantityTypeIdentifier.appleMoveTime | HKQuantityTypeIdentifier.appleStandTime ? TimeUnit
+    : T extends HKQuantityTypeIdentifier.activeEnergyBurned | HKQuantityTypeIdentifier.basalEnergyBurned | HKQuantityTypeIdentifier.dietaryEnergyConsumed ? EnergyUnit
+      : T extends HKQuantityTypeIdentifier.distanceCycling | HKQuantityTypeIdentifier.distanceDownhillSnowSports | HKQuantityTypeIdentifier.distanceSwimming | HKQuantityTypeIdentifier.distanceWalkingRunning | HKQuantityTypeIdentifier.distanceWheelchair | HKQuantityTypeIdentifier.sixMinuteWalkTestDistance | HKQuantityTypeIdentifier.waistCircumference ? LengthUnit
+        : T extends HKQuantityTypeIdentifier.bodyFatPercentage | HKQuantityTypeIdentifier.oxygenSaturation | HKQuantityTypeIdentifier.walkingAsymmetryPercentage | HKQuantityTypeIdentifier.walkingDoubleSupportPercentage ? HKUnits.Percent
+          : T extends HKQuantityTypeIdentifier.basalBodyTemperature | HKQuantityTypeIdentifier.basalBodyTemperature ? TemperatureUnit
+            : T extends HKQuantityTypeIdentifier.stairAscentSpeed | HKQuantityTypeIdentifier.stairDescentSpeed | HKQuantityTypeIdentifier.walkingSpeed | HKQuantityTypeIdentifier.walkingSpeed ? SpeedUnit<LengthUnit, TimeUnit>
+              : T extends HKQuantityTypeIdentifier.flightsClimbed | HKQuantityTypeIdentifier.numberOfAlcoholicBeverages | HKQuantityTypeIdentifier.numberOfTimesFallen | HKQuantityTypeIdentifier.pushCount | HKQuantityTypeIdentifier.stepCount | HKQuantityTypeIdentifier.swimmingStrokeCount ? HKUnits.Count
+                : T extends HKQuantityTypeIdentifier.dietaryBiotin | HKQuantityTypeIdentifier.dietaryCaffeine | HKQuantityTypeIdentifier.dietaryCalcium | HKQuantityTypeIdentifier.dietaryCarbohydrates | HKQuantityTypeIdentifier.dietaryChloride | HKQuantityTypeIdentifier.dietaryCholesterol | HKQuantityTypeIdentifier.dietaryChromium | HKQuantityTypeIdentifier.dietaryCopper | HKQuantityTypeIdentifier.dietaryFatMonounsaturated | HKQuantityTypeIdentifier.dietaryFatPolyunsaturated | HKQuantityTypeIdentifier.dietaryFatSaturated | HKQuantityTypeIdentifier.dietaryFatTotal | HKQuantityTypeIdentifier.dietaryFiber | HKQuantityTypeIdentifier.dietaryFolate | HKQuantityTypeIdentifier.dietaryIodine | HKQuantityTypeIdentifier.dietaryIodine | HKQuantityTypeIdentifier.dietaryIron | HKQuantityTypeIdentifier.dietaryMagnesium | HKQuantityTypeIdentifier.dietaryManganese | HKQuantityTypeIdentifier.dietaryMolybdenum | HKQuantityTypeIdentifier.dietaryNiacin | HKQuantityTypeIdentifier.dietaryPantothenicAcid | HKQuantityTypeIdentifier.dietaryPhosphorus | HKQuantityTypeIdentifier.dietaryPotassium | HKQuantityTypeIdentifier.dietaryProtein | HKQuantityTypeIdentifier.dietaryRiboflavin | HKQuantityTypeIdentifier.dietarySelenium | HKQuantityTypeIdentifier.dietarySodium | HKQuantityTypeIdentifier.dietarySugar | HKQuantityTypeIdentifier.dietaryThiamin | HKQuantityTypeIdentifier.dietaryVitaminA | HKQuantityTypeIdentifier.dietaryVitaminB6 | HKQuantityTypeIdentifier.dietaryVitaminB12 | HKQuantityTypeIdentifier.dietaryVitaminC | HKQuantityTypeIdentifier.dietaryVitaminD | HKQuantityTypeIdentifier.dietaryVitaminE | HKQuantityTypeIdentifier.dietaryVitaminK | HKQuantityTypeIdentifier.dietaryZinc ? MassUnit
+                  : T extends HKQuantityTypeIdentifier.dietaryWater ? VolumeUnit
+                    : T extends HKQuantityTypeIdentifier.insulinDelivery ? HKUnits.InternationalUnit | `${HKUnits.InternationalUnit}`
+                      : T extends HKQuantityTypeIdentifier.heartRate | HKQuantityTypeIdentifier.restingHeartRate | HKQuantityTypeIdentifier.walkingHeartRateAverage ? CountPerTime<TimeUnit>
+                        : HKUnit
+
 export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier> =
   T extends HKCategoryTypeIdentifier.cervicalMucusQuality
     ? HKCategoryValueCervicalMucusQuality
@@ -606,7 +620,8 @@ export enum HKWheelchairUse {
 }
 
 // Unit types are a straight mapping from here https://developer.apple.com/documentation/healthkit/hkunit/1615733-init
-export enum HKUnitSIPrefix {
+export enum HKMetricPrefix {
+  None = '',
   Pico = 'p',
   Nano = 'n',
   Micro = 'mc',
@@ -619,63 +634,178 @@ export enum HKUnitSIPrefix {
   Mega = 'M',
   Giga = 'G',
   Tera = 'T',
+  Femto = 'f',
 }
 
-export enum HKUnitSI {
-  Grams = 'g',
-  Joules = 'J',
+export enum HKUnitMetric {
+  Gram = 'g',
+  Joule = 'J',
   Kelvin = 'K',
-  Liters = 'l',
-  Meters = 'm',
-  Pascals = 'Pa',
-  Seconds = 's',
-  Siemens = 'S',
+  Liter = 'l',
+  Meter = 'm',
+  Pascal = 'Pa',
+  Second = 's',
+  Siemen = 'S',
+  Hertz = 'Hz',
+  Volt = 'V',
 }
 
-export enum HKUnit {
-  Grams = 'g',
-  Joules = 'J',
-  Kelvin = 'K',
-  Liters = 'l',
-  Meters = 'm',
-  Pascals = 'Pa',
-  Seconds = 's',
-  Siemens = 'S',
+export enum HKUnits {
 
-  Atmospheres = 'atm',
-  CentimetersOfWater = 'cmAq',
-  Count = 'count',
-  Days = 'd',
   DecibelHearingLevel = 'dBHL',
   DecibelSoundPressureLevel = 'dBASPL',
-  DegreesCelsius = 'degC',
-  DegreesFahrenheit = 'degF',
+
+  Percent = '%',
+  Count = 'count',
+  InternationalUnit = 'IU',
+
+}
+
+export type MeterUnit<Prefix extends HKMetricPrefix = HKMetricPrefix.None> =`${Prefix}${HKUnitMetric.Meter}`;
+export type LiterUnit<Prefix extends HKMetricPrefix = HKMetricPrefix.None> =`${Prefix}${HKUnitMetric.Liter}`;
+export type GramUnit<Prefix extends HKMetricPrefix = HKMetricPrefix.None> =`${Prefix}${HKUnitMetric.Gram}`;
+export type PascalUnit<Prefix extends HKMetricPrefix = HKMetricPrefix.None> =`${Prefix}${HKUnitMetric.Pascal}`;
+export type SecondUnit<Prefix extends HKMetricPrefix = HKMetricPrefix.None> =`${Prefix}${HKUnitMetric.Second}`;
+export type JouleUnit<Prefix extends HKMetricPrefix = HKMetricPrefix.None> =`${Prefix}${HKUnitMetric.Joule}`;
+export type HertzUnit<Prefix extends HKMetricPrefix = HKMetricPrefix.None> =`${Prefix}${HKUnitMetric.Hertz}`;
+export type VoltUnit<Prefix extends HKMetricPrefix = HKMetricPrefix.None> =`${Prefix}${HKUnitMetric.Volt}`;
+export type SiemenUnit<Prefix extends HKMetricPrefix = HKMetricPrefix.None> =`${Prefix}${HKUnitMetric.Siemen}`;
+
+// not 100% sure about these
+export type MoleUnit<MolarMass extends number> =`mol<${MolarMass}>`;
+export type MoleUnitWith<MolarMass extends number, Prefix extends HKMetricPrefix = HKMetricPrefix.None> =`${Prefix}mol<${MolarMass}>`;
+
+export type FrequencyUnit = HertzUnit<HKMetricPrefix>
+
+/**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'cm', 'km'
+  */
+export enum UnitOfLength {
   Feet = 'ft',
-  Hertz = 'Hz',
-  Hours = 'hr',
+  /**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'cm', 'km'
+  */
+  Meter = 'm',
+  Inches = 'in',
+  Yards = 'yd',
+  Miles = 'mi',
+}
+export type LengthUnit = MeterUnit<HKMetricPrefix> | UnitOfLength
+
+/**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'ml', 'cl'
+  */
+export enum UnitOfVolume {
   ImperialCup = 'cup_imp',
   ImperialFluidOunces = 'fl_oz_imp',
   ImperialPint = 'pt_imp',
-  Inches = 'in',
-  InternationalUnit = 'IU',
-  Kilocalories = 'kcal',
-  LargeCalories = 'Cal',
-  Miles = 'mi',
-  MillimetersOfMercury = 'mmHg',
-  Minutes = 'min',
-  Ounces = 'oz',
-  Percent = '%',
-  Pounds = 'lb',
-  SmallCalories = 'cal',
-  Stones = 'st',
   USCup = 'cup_us',
   USFluidOunces = 'fl_oz_us',
   USPint = 'pt_us',
-  Yard = 'yd',
+  /**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'ml', 'cl'
+  */
+  Liter = 'l',
+}
+export type VolumeUnit = LiterUnit<HKMetricPrefix> | UnitOfVolume;
 
+/**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'mg', 'kg'
+  */
+export enum UnitOfMass {
+  Ounces = 'oz',
+  Stones = 'st',
+  Pounds = 'lb',
+  /**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'mg', 'kg'
+  */
+  Gram = 'g'
+}
+/**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'mg', 'kg'
+  */
+export type MassUnit = GramUnit<HKMetricPrefix> | UnitOfMass
+
+/**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'kPa', 'hPa'
+  */
+export enum UnitOfPressure {
+  Atmospheres = 'atm',
+  CentimetersOfWater = 'cmAq',
+  MillimetersOfMercury = 'mmHg',
+  InchesOfMercury = 'inHg',
+  DecibelAWeightedSoundPressureLevel = 'dBASPL',
+  /**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'kPa', 'hPa'
+  */
+  Pascals = 'Pa',
+}
+
+/**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'kPa', 'hPa'
+  */
+export type PressureUnit = PascalUnit<HKMetricPrefix> | UnitOfPressure;
+
+/**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'ms'
+  */
+export enum UnitOfTime {
+  Days = 'd',
+  Minutes = 'min',
+  Hours = 'hr',
+  /**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'ms'
+  */
+  Seconds = 's',
+}
+/**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'ms'
+  */
+export type TimeUnit = SecondUnit<HKMetricPrefix> | UnitOfTime
+export enum TemperatureUnit {
+  DegreesCelsius = 'degC',
+  DegreesFahrenheit = 'degF',
+  Kelvin = 'K',
+}
+
+/**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'kJ'
+  */
+export enum UnitOfEnergy {
+  Kilocalories = 'kcal',
+  LargeCalories = 'Cal',
+  SmallCalories = 'cal',
+  /**
+  * More SI prefixes also available as literals, just type the string
+  * @example 'kJ'
+  */
+  Joules = 'J',
+}
+export type EnergyUnit = JouleUnit<HKMetricPrefix> | UnitOfEnergy
+export enum BloodGlucoseUnit {
   GlucoseMmolPerL = 'mmol<180.15588000005408>/l',
   GlucoseMgPerDl = 'mg/dL',
 }
+
+export type SpeedUnit<TLength extends LengthUnit, TTime extends TimeUnit> =`${TLength}/${TTime}`;
+export type CountPerTime<TTime extends TimeUnit> =`count/${TTime}`;
+
+export type HKUnit = BloodGlucoseUnit | CountPerTime<TimeUnit> | EnergyUnit | FrequencyUnit | HKUnits | LengthUnit | MassUnit | PressureUnit | SpeedUnit<LengthUnit, TimeUnit> | TemperatureUnit | TimeUnit | VolumeUnit
+| `${BloodGlucoseUnit}` | `${EnergyUnit}` | `${FrequencyUnit}` | `${HKUnits}` | `${LengthUnit}` | `${MassUnit}` | `${PressureUnit}` | `${TemperatureUnit}` | `${TimeUnit}` | `${VolumeUnit}`;
 
 export type HKDevice = {
   readonly name: string; // ex: "Apple Watch"
@@ -701,7 +831,7 @@ export type HKSourceRevision = {
 
 export type HKQuantitySampleRaw<
   TQuantityIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
-  TUnit extends HKUnit = HKUnit
+  TUnit extends UnitForIdentifier<TQuantityIdentifier> = UnitForIdentifier<TQuantityIdentifier>,
 > = {
   readonly uuid: string;
   readonly device?: HKDevice;
@@ -714,15 +844,30 @@ export type HKQuantitySampleRaw<
   readonly sourceRevision?: HKSourceRevision;
 };
 
-export type HKWorkoutRaw<TEnergy extends HKUnit, TDistance extends HKUnit> = {
+export type HKQuantitySampleRawForSaving<
+  TQuantityIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
+  TUnit extends UnitForIdentifier<TQuantityIdentifier> = UnitForIdentifier<TQuantityIdentifier>,
+> = Omit<
+HKQuantitySampleRaw<TQuantityIdentifier, TUnit>,
+'device' | 'endDate' | 'startDate' | 'uuid'
+>
+
+export type HKCategorySampleRawForSaving<
+  TCategory extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier,
+> = Omit<
+HKCategorySampleRaw<TCategory>,
+'device' | 'endDate' | 'startDate' | 'uuid'
+>
+
+export type HKWorkoutRaw<TEnergy extends EnergyUnit, TDistance extends LengthUnit> = {
   readonly uuid: string;
   readonly device?: HKDevice;
   readonly workoutActivityType: HKWorkoutActivityType;
   readonly duration: number;
-  readonly totalDistance?: HKQuantity<TDistance>;
-  readonly totalEnergyBurned?: HKQuantity<TEnergy>;
-  readonly totalSwimmingStrokeCount?: HKQuantity<HKUnit.Count>;
-  readonly totalFlightsClimbed?: HKQuantity<HKUnit.Count>;
+  readonly totalDistance?: HKQuantity<HKQuantityTypeIdentifier, TDistance>;
+  readonly totalEnergyBurned?: HKQuantity<HKQuantityTypeIdentifier, TEnergy>;
+  readonly totalSwimmingStrokeCount?: HKQuantity<HKQuantityTypeIdentifier, HKUnits.Count>;
+  readonly totalFlightsClimbed?: HKQuantity<HKQuantityTypeIdentifier, HKUnits.Count>;
   readonly startDate: string;
   readonly endDate: string;
   readonly metadata?: HKWorkoutMetadata;
@@ -812,12 +957,9 @@ type ReactNativeHealthkitTypeNative = {
   ) => Promise<boolean>;
   readonly disableAllBackgroundDelivery: () => Promise<boolean>;
 
-  readonly saveCorrelationSample: <TIdentifier extends HKCorrelationTypeIdentifier>(
+  readonly saveCorrelationSample: <TIdentifier extends HKCorrelationTypeIdentifier, TSamples extends readonly (HKCategorySampleRawForSaving | HKQuantitySampleRawForSaving)[]>(
     typeIdentifier: TIdentifier,
-    samples: readonly Omit<
-    HKCategorySampleRaw | HKQuantitySampleRaw,
-    'device' | 'endDate' | 'startDate' | 'uuid'
-    >[],
+    samples: TSamples,
     start: string,
     end: string,
     metadata: MetadataMapperForCorrelationIdentifier<TIdentifier>
@@ -825,10 +967,7 @@ type ReactNativeHealthkitTypeNative = {
 
   readonly saveWorkoutSample: (
     typeIdentifier: HKWorkoutActivityType,
-    quantities: readonly Omit<
-    HKQuantitySampleRaw,
-    'device' | 'endDate' | 'startDate' | 'uuid'
-    >[],
+    quantities: readonly HKQuantitySampleRawForSaving[],
     start: string,
     end: string,
     metadata: HKWorkoutMetadata
@@ -855,15 +994,15 @@ type ReactNativeHealthkitTypeNative = {
     write: WritePermissions,
     read: ReadPermissions
   ): Promise<boolean>;
-  readonly saveQuantitySample: (
-    identifier: HKQuantityTypeIdentifier,
-    unit: HKUnit,
+  readonly saveQuantitySample: <TType extends HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TType> = UnitForIdentifier<TType>> (
+    identifier: TType,
+    unit: TUnit,
     value: number,
     start: string,
     end: string,
     metadata: unknown
   ) => Promise<boolean>;
-  readonly queryWorkoutSamples: <TEnergy extends HKUnit, TDistance extends HKUnit>(
+  readonly queryWorkoutSamples: <TEnergy extends EnergyUnit, TDistance extends LengthUnit>(
     energyUnit: TEnergy,
     distanceUnit: TDistance,
     from: string,
@@ -879,8 +1018,8 @@ type ReactNativeHealthkitTypeNative = {
     ascending: boolean
   ) => Promise<readonly HKCategorySampleRaw<T>[]>;
   readonly queryQuantitySamples: <
-    TUnit extends HKUnit,
-    TIdentifier extends HKQuantityTypeIdentifier
+    TIdentifier extends HKQuantityTypeIdentifier,
+    TUnit extends UnitForIdentifier<TIdentifier>,
   >(
     identifier: TIdentifier,
     unit: TUnit,
@@ -896,13 +1035,13 @@ type ReactNativeHealthkitTypeNative = {
     end: string,
     metadata: unknown
   ) => Promise<boolean>;
-  readonly queryStatisticsForQuantity: <TUnit extends HKUnit>(
+  readonly queryStatisticsForQuantity: <TIdentifier extends HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TIdentifier>>(
     identifier: HKQuantityTypeIdentifier,
     unit: TUnit,
     from: string,
     to: string,
     options: readonly HKStatisticsOptions[]
-  ) => Promise<QueryStatisticsResponseRaw<TUnit>>;
+  ) => Promise<QueryStatisticsResponseRaw<TIdentifier, TUnit>>;
   readonly getPreferredUnits: (
     identifiers: readonly HKQuantityTypeIdentifier[]
   ) => Promise<TypeToUnitMapping>;

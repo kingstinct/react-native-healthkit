@@ -45,6 +45,7 @@
   },
   "homepage": "https://github.com/kingstinct/react-native-healthkit#readme",
   "devDependencies": {
+    "@babel/core": ">=7",
     "@commitlint/config-conventional": "12",
     "@graphql-eslint/eslint-plugin": ">=3",
     "@release-it/conventional-changelog": "2",
@@ -56,16 +57,23 @@
     "commitlint": "^17.1.1",
     "concurrently": "^7.3.0",
     "eslint": ">=8",
+    "eslint-config-airbnb": ">=19",
     "eslint-config-airbnb-base": ">=15",
-    "eslint-config-kingstinct": "5.1.1",
+    "eslint-config-kingstinct": "^5.1.1",
     "eslint-import-resolver-typescript": ">=3",
     "eslint-plugin-comment-length": ">=0",
     "eslint-plugin-functional": ">=4",
     "eslint-plugin-import": ">=2",
     "eslint-plugin-jest": ">=26",
     "eslint-plugin-jsonc": ">=2",
+    "eslint-plugin-jsx-a11y": ">=6",
+    "eslint-plugin-react": ">=7",
+    "eslint-plugin-react-hooks": ">=4",
+    "eslint-plugin-react-native": ">=4",
+    "eslint-plugin-react-native-a11y": ">=3",
     "eslint-plugin-unicorn": ">=43",
     "eslint-plugin-yml": ">=1",
+    "expo": ">=45",
     "graphql": ">=16",
     "husky": "8",
     "jest": ">=26",
@@ -95,7 +103,9 @@
     }
   },
   "commitlint": {
-    "extends": [ "@commitlint/config-conventional" ]
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "publishConfig": {
     "access": "public",

@@ -72,7 +72,7 @@ jobs:
         with:
           recreate: true
           message: |
-            Expo preview is ready for review, [it's available here](exp%2Bhealthkit-example-expo%3A%2F%2Fu.expo.dev%2Fupdate%2F${{ env.BUILD_ID }})
+            Expo preview is ready for review.
 
             Or just scan this QR code:
             ![QR Preview](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=exp%2Bhealthkit-example-expo%3A%2F%2Fu.expo.dev%2Fupdate%2F${{ env.BUILD_ID }})

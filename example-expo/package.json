@@ -12,16 +12,22 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@expo/match-media": "^0.3.0",
     "@kingstinct/react-native-healthkit": "./..",
+    "@react-navigation/native": "^6.0.12",
     "dayjs": "^1.11.5",
     "expo": "^46.0.0",
     "expo-dev-client": "~1.2.1",
+    "expo-linear-gradient": "^11.4.0",
+    "expo-screen-orientation": "^4.3.0",
     "expo-status-bar": "~1.4.0",
     "expo-updates": "~0.14.5",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-native": "0.69.5",
     "react-native-paper": "^4.12.1",
+    "react-native-safe-area-context": "4.3.1",
+    "react-native-screens": "~3.15.0",
     "react-native-web": "~0.18.7"
   },
   "devDependencies": {
