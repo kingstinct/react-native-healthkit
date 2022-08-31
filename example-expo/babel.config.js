@@ -8,6 +8,8 @@ module.exports = {
         extensions: ['.js', '.ts', '.tsx'],
         alias: {
           '@kingstinct/react-native-healthkit': '../src',
+          'example': '../example',
+          'example/src/App': '../example/src/App',
           'react': './node_modules/react',
           'react-native': './node_modules/react-native',
           'react-native-paper': './node_modules/react-native-paper',
