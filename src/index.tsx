@@ -1,10 +1,10 @@
 import { Platform } from 'react-native'
 
 import {
-  HKAuthorizationRequestStatus, HKBiologicalSex, HKBloodType, HKFitzpatrickSkinType, HKUnit, HKWheelchairUse,
+  HKAuthorizationRequestStatus, HKBiologicalSex, HKBloodType, HKFitzpatrickSkinType, HKUnits, HKWheelchairUse,
 } from './native-types'
 
-import type { ReactNativeHealthkit } from './types'
+import type ReactNativeHealthkit from './index.ios'
 
 const notAvailableError = `[@kingstinct/react-native-healthkit] Platform "${
   Platform.OS
@@ -22,9 +22,8 @@ function UnavailableFn<T = unknown>(retVal: T) {
   }
 }
 
-const Healthkit: ReactNativeHealthkit = {
+const Healthkit: typeof ReactNativeHealthkit = {
   authorizationStatusFor: UnavailableFn(Promise.resolve(false)),
-  buildUnitWithPrefix: UnavailableFn(HKUnit.Atmospheres),
   disableAllBackgroundDelivery: UnavailableFn(Promise.resolve(false)),
   disableBackgroundDelivery: UnavailableFn(Promise.resolve(false)),
   enableBackgroundDelivery: UnavailableFn(Promise.resolve(false)),
@@ -35,7 +34,7 @@ const Healthkit: ReactNativeHealthkit = {
   getMostRecentCategorySample: UnavailableFn(Promise.resolve(null)),
   getMostRecentQuantitySample: UnavailableFn(Promise.resolve(null)),
   getMostRecentWorkout: UnavailableFn(Promise.resolve(null)),
-  getPreferredUnit: UnavailableFn(Promise.resolve(HKUnit.Atmospheres)),
+  getPreferredUnit: UnavailableFn(Promise.resolve(HKUnits.Count)),
   getPreferredUnits: UnavailableFn(Promise.resolve([])),
   getRequestStatusForAuthorization: UnavailableFn(Promise.resolve(HKAuthorizationRequestStatus.unknown)),
   getWheelchairUse: UnavailableFn(Promise.resolve(HKWheelchairUse.notSet)),
@@ -65,11 +64,10 @@ const Healthkit: ReactNativeHealthkit = {
   useMostRecentQuantitySample: UnavailableFn(null),
   useMostRecentWorkout: UnavailableFn(null),
   useSubscribeToChanges: UnavailableFn([null, () => null]),
-  useHealthkitAuthorization: UnavailableFn([null, async () => Promise.resolve(null)] as const),
+  useHealthkitAuthorization: UnavailableFn([null, async () => Promise.resolve(HKAuthorizationRequestStatus.unknown)] as const),
   useIsHealthDataAvailable: () => false,
 }
 
-export * from './native-types'
 export * from './types'
 
 export default Healthkit

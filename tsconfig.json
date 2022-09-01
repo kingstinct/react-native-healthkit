@@ -2,7 +2,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@kingstinct/react-native-healthkit": [ "./src/index" ]
+      "@kingstinct/react-native-healthkit": [ "./src/index" ],
+      "@kingstinct/react-native-healthkit/*": [ "./src/*" ]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
@@ -16,9 +17,8 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
+    "noUncheckedIndexedAccess": true,
     "noStrictGenericChecks": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
