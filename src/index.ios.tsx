@@ -5,6 +5,7 @@ import useMostRecentQuantitySample from './hooks/useMostRecentQuantitySample'
 import useMostRecentWorkout from './hooks/useMostRecentWorkout'
 import useSubscribeToChanges from './hooks/useSubscribeToChanges'
 import Native from './native-types'
+import deleteQuantitySample from './utils/deleteQuantitySample'
 import getDateOfBirth from './utils/getDateOfBirth'
 import getMostRecentCategorySample from './utils/getMostRecentCategorySample'
 import getMostRecentQuantitySample from './utils/getMostRecentQuantitySample'
@@ -59,6 +60,9 @@ const Healthkit = {
   queryWorkouts,
 
   requestAuthorization,
+
+  // delete methods
+  deleteQuantitySample,
 
   // save methods
   saveCategorySample,

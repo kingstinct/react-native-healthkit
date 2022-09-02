@@ -6,6 +6,7 @@ import useHealthkitAuthorization from '@kingstinct/react-native-healthkit/hooks/
 import useMostRecentQuantitySample from '@kingstinct/react-native-healthkit/hooks/useMostRecentQuantitySample'
 import useMostRecentWorkout from '@kingstinct/react-native-healthkit/hooks/useMostRecentWorkout'
 import useStatisticsForQuantity from '@kingstinct/react-native-healthkit/hooks/useStatisticsForQuantity'
+import deleteQuantitySample from '@kingstinct/react-native-healthkit/utils/deleteQuantitySample'
 import saveQuantitySample from '@kingstinct/react-native-healthkit/utils/saveQuantitySample'
 import saveWorkoutSample from '@kingstinct/react-native-healthkit/utils/saveWorkoutSample'
 import dayjs from 'dayjs'
@@ -280,6 +281,29 @@ const SaveWorkout = () => {
   )
 }
 
+const DeleteQuantity = () => {
+  const typeToDelete = HKQuantityTypeIdentifier.stepCount
+  const latestValue = useMostRecentQuantitySample(typeToDelete)
+
+  const deleteFn = useCallback(() => {
+    if (latestValue) {
+      void deleteQuantitySample(typeToDelete, latestValue?.uuid)
+    }
+  }, [latestValue, typeToDelete])
+
+  return (
+    <>
+      <LatestListItem
+        key={typeToDelete}
+        icon='clock'
+        title='Latest value'
+        identifier={typeToDelete}
+      />
+      <Button onPress={deleteFn}>Delete Last Value</Button>
+    </>
+  )
+}
+
 const SaveQuantity = () => {
   const [typeToSave, setTypeToSave] = useState<HKQuantityTypeIdentifier>(HKQuantityTypeIdentifier.stepCount)
   const [menuVisible, setMenuVisible] = useState<boolean>(false)
@@ -416,7 +440,11 @@ const App = () => {
             <SaveQuantity />
           </List.Accordion>
 
-          <List.Accordion title='Save Workout' id='4'>
+          <List.Accordion title='Delete Latest Quantity' id='4'>
+            <DeleteQuantity />
+          </List.Accordion>
+
+          <List.Accordion title='Save Workout' id='5'>
             <SaveWorkout />
           </List.Accordion>
         </List.AccordionGroup>
