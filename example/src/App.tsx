@@ -12,12 +12,13 @@ import saveWorkoutSample from '@kingstinct/react-native-healthkit/utils/saveWork
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import React, { useCallback, useState } from 'react'
-import { ScrollView, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import {
   Button, List, Menu, TextInput, Provider,
 } from 'react-native-paper'
 
 import type { HKUnit, HealthkitReadAuthorization, HealthkitWriteAuthorization } from '@kingstinct/react-native-healthkit'
+import type { ComponentProps } from 'react'
 import type { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 
 dayjs.extend(relativeTime)
@@ -30,11 +31,13 @@ const LatestListItem: React.FC<{
 }> = ({
   identifier, unit, title, icon,
 }) => {
-  const latestValue = useMostRecentQuantitySample(identifier, unit)
+  const latestValue = useMostRecentQuantitySample(identifier, unit),
+        left = useCallback((props: Omit<ComponentProps<typeof List.Icon>, 'icon'>) => <List.Icon {...props} icon={icon} />, [icon])
+
   return (
     <List.Item
       title={title || identifier}
-      left={(props) => <List.Icon {...props} icon={icon} />}
+      left={left}
       description={latestValue
         ? `${latestValue.unit === '%' ? (latestValue.quantity * 100).toFixed(1) : latestValue.quantity.toFixed(latestValue.unit === 'count' || latestValue.unit === 'count/min' ? 0 : 2)} ${latestValue.unit} (${dayjs(latestValue.endDate).fromNow()})`
         : 'No data found'}
@@ -100,12 +103,13 @@ const TodayListItem: React.FC<{
 }> = ({
   identifier, option, unit, title, icon,
 }) => {
-  const latestValue = useStatisticsForQuantity(identifier, [option], dayjs().startOf('day').toDate(), undefined, unit)
+  const latestValue = useStatisticsForQuantity(identifier, [option], dayjs().startOf('day').toDate(), undefined, unit),
+        left = useCallback((props: Omit<ComponentProps<typeof List.Icon>, 'icon'>) => <List.Icon {...props} icon={icon} />, [icon])
 
   return (
     <List.Item
       title={title}
-      left={(props) => <List.Icon {...props} icon={icon} />}
+      left={left}
       description={latestValue
         ? `${latestValue.sumQuantity?.unit === 'count'
           ? latestValue.sumQuantity?.quantity
@@ -215,7 +219,6 @@ const SaveWorkout = () => {
   const [distanceMetersStr, setDistanceMetersStr] = useState<string>('1000')
 
   const save = useCallback(() => {
-    console.log('typeToSave', typeToSave)
     const val = parseFloat(kcalStr)
     const distance = parseFloat(distanceMetersStr)
     if (val !== undefined && !Number.isNaN(val) && distance !== undefined && !Number.isNaN(distance)) {
@@ -403,54 +406,61 @@ const readPermissions: readonly HealthkitReadAuthorization[] = [
 const App = () => {
   const [status, request] = useHealthkitAuthorization(readPermissions, [...saveableCountTypes, ...saveableMassTypes, ...saveableWorkoutStuff])
 
-  return status !== HKAuthorizationRequestStatus.unnecessary ? <View style={{ paddingTop: 100 }}><Button onPress={request}>Authorize</Button></View> : (
-    <Provider>
-      <ScrollView style={{ marginTop: 100, flex: 1, width: '100%' }}>
-        <LatestWorkout icon='run' title='Latest workout' />
-        <List.AccordionGroup>
-          <List.Accordion title='Latest values' id='1'>
-            {
-              LATEST_QUANTITIES_TO_SHOW.map((e) => (
-                <LatestListItem
-                  key={e.identifier}
-                  icon={e.icon}
-                  title={e.title}
-                  identifier={e.identifier}
-                />
-              ))
-            }
-          </List.Accordion>
+  return status !== HKAuthorizationRequestStatus.unnecessary
+    ? <View style={styles.buttonWrapper}><Button onPress={request}>Authorize</Button></View>
+    : (
+      <Provider>
+        <ScrollView style={styles.scrollView}>
+          <LatestWorkout icon='run' title='Latest workout' />
+          <List.AccordionGroup>
+            <List.Accordion title='Latest values' id='1'>
+              {
+                LATEST_QUANTITIES_TO_SHOW.map((e) => (
+                  <LatestListItem
+                    key={e.identifier}
+                    icon={e.icon}
+                    title={e.title}
+                    identifier={e.identifier}
+                  />
+                ))
+              }
+            </List.Accordion>
 
-          <List.Accordion title='Today stats' id='2'>
-            {
-              TODAY_STATS_TO_SHOW.map((e) => (
-                <TodayListItem
-                  key={e.identifier}
-                  icon={e.icon}
-                  title={e.title}
-                  identifier={e.identifier}
-                  option={e.option}
-                  unit={e.unit}
-                />
-              ))
-            }
-          </List.Accordion>
+            <List.Accordion title='Today stats' id='2'>
+              {
+                TODAY_STATS_TO_SHOW.map((e) => (
+                  <TodayListItem
+                    key={e.identifier}
+                    icon={e.icon}
+                    title={e.title}
+                    identifier={e.identifier}
+                    option={e.option}
+                    unit={e.unit}
+                  />
+                ))
+              }
+            </List.Accordion>
 
-          <List.Accordion title='Save Quantity' id='3'>
-            <SaveQuantity />
-          </List.Accordion>
+            <List.Accordion title='Save Quantity' id='3'>
+              <SaveQuantity />
+            </List.Accordion>
 
-          <List.Accordion title='Delete Latest Quantity' id='4'>
-            <DeleteQuantity />
-          </List.Accordion>
+            <List.Accordion title='Delete Latest Quantity' id='4'>
+              <DeleteQuantity />
+            </List.Accordion>
 
-          <List.Accordion title='Save Workout' id='5'>
-            <SaveWorkout />
-          </List.Accordion>
-        </List.AccordionGroup>
-      </ScrollView>
-    </Provider>
-  )
+            <List.Accordion title='Save Workout' id='5'>
+              <SaveWorkout />
+            </List.Accordion>
+          </List.AccordionGroup>
+        </ScrollView>
+      </Provider>
+    )
 }
+
+const styles = StyleSheet.create({
+  scrollView: { marginTop: 100, flex: 1, width: '100%' },
+  buttonWrapper: { paddingTop: 100 },
+})
 
 export default App

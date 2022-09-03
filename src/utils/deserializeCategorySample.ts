@@ -1,7 +1,7 @@
 import type { HKCategorySampleRaw, HKCategoryTypeIdentifier } from '../native-types'
 import type { HKCategorySample } from '../types'
 
-const deserializCategorySample = <T extends HKCategoryTypeIdentifier>(
+const deserializeCategorySample = <T extends HKCategoryTypeIdentifier>(
   sample: HKCategorySampleRaw<T>,
 ): HKCategorySample<T> => ({
   ...sample,
@@ -9,4 +9,4 @@ const deserializCategorySample = <T extends HKCategoryTypeIdentifier>(
   endDate: new Date(sample.endDate),
 })
 
-export default deserializCategorySample
+export default deserializeCategorySample

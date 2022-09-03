@@ -49,6 +49,7 @@
     "@commitlint/config-conventional": "12",
     "@graphql-eslint/eslint-plugin": ">=3",
     "@release-it/conventional-changelog": "2",
+    "@testing-library/react-hooks": "^8.0.1",
     "@types/jest": ">=26",
     "@types/react": "17",
     "@types/react-native": "0.67",
@@ -82,19 +83,13 @@
     "react": "17",
     "react-native": "0.68",
     "react-native-builder-bob": "^0.18.1",
+    "react-test-renderer": "^16.9.0",
     "release-it": "14",
     "typescript": ">=4"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
-  },
-  "jest": {
-    "preset": "react-native",
-    "modulePathIgnorePatterns": [
-      "<rootDir>/example/node_modules",
-      "<rootDir>/lib/"
-    ]
   },
   "husky": {
     "hooks": {
@@ -103,9 +98,7 @@
     }
   },
   "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
+    "extends": [ "@commitlint/config-conventional" ]
   },
   "publishConfig": {
     "access": "public",

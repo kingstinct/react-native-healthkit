@@ -26,8 +26,6 @@ function useMostRecentWorkout<
       optionsRef.current,
     )
 
-    console.log({ energyUnit, distanceUnit })
-
     setWorkout(await getMostRecentWorkout({
       energyUnit,
       distanceUnit,

@@ -804,8 +804,11 @@ export enum BloodGlucoseUnit {
 export type SpeedUnit<TLength extends LengthUnit, TTime extends TimeUnit> =`${TLength}/${TTime}`;
 export type CountPerTime<TTime extends TimeUnit> =`count/${TTime}`;
 
-export type HKUnit = BloodGlucoseUnit | CountPerTime<TimeUnit> | EnergyUnit | FrequencyUnit | HKUnits | LengthUnit | MassUnit | PressureUnit | SpeedUnit<LengthUnit, TimeUnit> | TemperatureUnit | TimeUnit | VolumeUnit
-| `${BloodGlucoseUnit}` | `${EnergyUnit}` | `${FrequencyUnit}` | `${HKUnits}` | `${LengthUnit}` | `${MassUnit}` | `${PressureUnit}` | `${TemperatureUnit}` | `${TimeUnit}` | `${VolumeUnit}`;
+export type HKUnit = BloodGlucoseUnit | CountPerTime<TimeUnit> | EnergyUnit
+| FrequencyUnit | HKUnits | LengthUnit | MassUnit | PressureUnit | SpeedUnit<LengthUnit, TimeUnit>
+| TemperatureUnit | TimeUnit | VolumeUnit
+| `${BloodGlucoseUnit}` | `${EnergyUnit}` | `${FrequencyUnit}` | `${HKUnits}` | `${LengthUnit}`
+| `${MassUnit}` | `${PressureUnit}` | `${TemperatureUnit}` | `${TimeUnit}` | `${VolumeUnit}`;
 
 export type HKDevice = {
   readonly name: string; // ex: "Apple Watch"
@@ -957,7 +960,10 @@ type ReactNativeHealthkitTypeNative = {
   ) => Promise<boolean>;
   readonly disableAllBackgroundDelivery: () => Promise<boolean>;
 
-  readonly saveCorrelationSample: <TIdentifier extends HKCorrelationTypeIdentifier, TSamples extends readonly (HKCategorySampleRawForSaving | HKQuantitySampleRawForSaving)[]>(
+  readonly saveCorrelationSample: <
+    TIdentifier extends HKCorrelationTypeIdentifier,
+    TSamples extends readonly (HKCategorySampleRawForSaving | HKQuantitySampleRawForSaving)[]
+  >(
     typeIdentifier: TIdentifier,
     samples: TSamples,
     start: string,
@@ -994,7 +1000,10 @@ type ReactNativeHealthkitTypeNative = {
     write: WritePermissions,
     read: ReadPermissions
   ): Promise<boolean>;
-  readonly saveQuantitySample: <TType extends HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TType> = UnitForIdentifier<TType>> (
+  readonly saveQuantitySample: <
+    TType extends HKQuantityTypeIdentifier,
+    TUnit extends UnitForIdentifier<TType> = UnitForIdentifier<TType>
+  > (
     identifier: TType,
     unit: TUnit,
     value: number,
@@ -1039,7 +1048,10 @@ type ReactNativeHealthkitTypeNative = {
     end: string,
     metadata: unknown
   ) => Promise<boolean>;
-  readonly queryStatisticsForQuantity: <TIdentifier extends HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TIdentifier>>(
+  readonly queryStatisticsForQuantity: <
+    TIdentifier extends HKQuantityTypeIdentifier,
+    TUnit extends UnitForIdentifier<TIdentifier>
+  >(
     identifier: HKQuantityTypeIdentifier,
     unit: TUnit,
     from: string,
