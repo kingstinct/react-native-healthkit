@@ -1,3 +1,5 @@
+## [5.1.1](https://github.com/kingstinct/react-native-healthkit/compare/v5.1.0...v5.1.1) (2022-09-03)
+
 # [5.1.0](https://github.com/kingstinct/react-native-healthkit/compare/v4.4.6...v5.1.0) (2022-09-02)
 
 
