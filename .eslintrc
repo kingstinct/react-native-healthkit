@@ -1,3 +1,11 @@
 {
-  "extends": "eslint-config-kingstinct/react-native"
+  "extends": "eslint-config-kingstinct/react-native",
+  "overrides": [
+    {
+      "files": ["package.json"],
+      "rules": {
+        "jsonc/array-bracket-newline": 0
+      }
+    }
+  ]
 }

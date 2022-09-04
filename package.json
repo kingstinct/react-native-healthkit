@@ -46,11 +46,13 @@
   "homepage": "https://github.com/kingstinct/react-native-healthkit#readme",
   "devDependencies": {
     "@babel/core": ">=7",
+    "@babel/preset-env": "^7.18.10",
     "@commitlint/config-conventional": "12",
     "@graphql-eslint/eslint-plugin": ">=3",
     "@release-it/conventional-changelog": "2",
-    "@testing-library/react-hooks": "^8.0.1",
+    "@testing-library/react-native": "^11.0.0",
     "@types/jest": ">=26",
+    "@types/node": "^18.7.14",
     "@types/react": "17",
     "@types/react-native": "0.67",
     "@typescript-eslint/eslint-plugin": ">=5",
@@ -78,13 +80,15 @@
     "graphql": ">=16",
     "husky": "8",
     "jest": ">=26",
+    "jest-environment-jsdom": "^29.0.2",
     "metro-react-native-babel-preset": "^0.70.3",
     "pod-install": "^0.1.0",
     "react": "17",
     "react-native": "0.68",
     "react-native-builder-bob": "^0.18.1",
-    "react-test-renderer": "^16.9.0",
+    "react-test-renderer": "17",
     "release-it": "14",
+    "ts-node": "^10.9.1",
     "typescript": ">=4"
   },
   "peerDependencies": {
@@ -98,7 +102,9 @@
     }
   },
   "commitlint": {
-    "extends": [ "@commitlint/config-conventional" ]
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "publishConfig": {
     "access": "public",

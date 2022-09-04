@@ -3,7 +3,10 @@ import {
   NativeModules,
 } from 'react-native'
 
-import type { EmitterSubscription } from 'react-native'
+import type {
+  EmitterSubscription,
+  NativeModule,
+} from 'react-native'
 
 export const HKWorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier' as const
 export const HKAudiogramTypeIdentifier = 'HKAudiogramTypeIdentifier' as const
@@ -534,12 +537,30 @@ export type MetadataMapperForCorrelationIdentifier<
 export type UnitForIdentifier<T extends HKQuantityTypeIdentifier> = T extends HKQuantityTypeIdentifier.bloodGlucose ? BloodGlucoseUnit
   : T extends HKQuantityTypeIdentifier.appleExerciseTime | HKQuantityTypeIdentifier.appleMoveTime | HKQuantityTypeIdentifier.appleStandTime ? TimeUnit
     : T extends HKQuantityTypeIdentifier.activeEnergyBurned | HKQuantityTypeIdentifier.basalEnergyBurned | HKQuantityTypeIdentifier.dietaryEnergyConsumed ? EnergyUnit
-      : T extends HKQuantityTypeIdentifier.distanceCycling | HKQuantityTypeIdentifier.distanceDownhillSnowSports | HKQuantityTypeIdentifier.distanceSwimming | HKQuantityTypeIdentifier.distanceWalkingRunning | HKQuantityTypeIdentifier.distanceWheelchair | HKQuantityTypeIdentifier.sixMinuteWalkTestDistance | HKQuantityTypeIdentifier.waistCircumference ? LengthUnit
-        : T extends HKQuantityTypeIdentifier.bodyFatPercentage | HKQuantityTypeIdentifier.oxygenSaturation | HKQuantityTypeIdentifier.walkingAsymmetryPercentage | HKQuantityTypeIdentifier.walkingDoubleSupportPercentage ? HKUnits.Percent
+      : T extends HKQuantityTypeIdentifier.distanceCycling | HKQuantityTypeIdentifier.distanceDownhillSnowSports
+      | HKQuantityTypeIdentifier.distanceSwimming | HKQuantityTypeIdentifier.distanceWalkingRunning
+      | HKQuantityTypeIdentifier.distanceWheelchair | HKQuantityTypeIdentifier.sixMinuteWalkTestDistance
+      | HKQuantityTypeIdentifier.waistCircumference ? LengthUnit
+        : T extends HKQuantityTypeIdentifier.bodyFatPercentage | HKQuantityTypeIdentifier.oxygenSaturation | HKQuantityTypeIdentifier.walkingAsymmetryPercentage
+        | HKQuantityTypeIdentifier.walkingDoubleSupportPercentage ? HKUnits.Percent
           : T extends HKQuantityTypeIdentifier.basalBodyTemperature | HKQuantityTypeIdentifier.basalBodyTemperature ? TemperatureUnit
-            : T extends HKQuantityTypeIdentifier.stairAscentSpeed | HKQuantityTypeIdentifier.stairDescentSpeed | HKQuantityTypeIdentifier.walkingSpeed | HKQuantityTypeIdentifier.walkingSpeed ? SpeedUnit<LengthUnit, TimeUnit>
-              : T extends HKQuantityTypeIdentifier.flightsClimbed | HKQuantityTypeIdentifier.numberOfAlcoholicBeverages | HKQuantityTypeIdentifier.numberOfTimesFallen | HKQuantityTypeIdentifier.pushCount | HKQuantityTypeIdentifier.stepCount | HKQuantityTypeIdentifier.swimmingStrokeCount ? HKUnits.Count
-                : T extends HKQuantityTypeIdentifier.dietaryBiotin | HKQuantityTypeIdentifier.dietaryCaffeine | HKQuantityTypeIdentifier.dietaryCalcium | HKQuantityTypeIdentifier.dietaryCarbohydrates | HKQuantityTypeIdentifier.dietaryChloride | HKQuantityTypeIdentifier.dietaryCholesterol | HKQuantityTypeIdentifier.dietaryChromium | HKQuantityTypeIdentifier.dietaryCopper | HKQuantityTypeIdentifier.dietaryFatMonounsaturated | HKQuantityTypeIdentifier.dietaryFatPolyunsaturated | HKQuantityTypeIdentifier.dietaryFatSaturated | HKQuantityTypeIdentifier.dietaryFatTotal | HKQuantityTypeIdentifier.dietaryFiber | HKQuantityTypeIdentifier.dietaryFolate | HKQuantityTypeIdentifier.dietaryIodine | HKQuantityTypeIdentifier.dietaryIodine | HKQuantityTypeIdentifier.dietaryIron | HKQuantityTypeIdentifier.dietaryMagnesium | HKQuantityTypeIdentifier.dietaryManganese | HKQuantityTypeIdentifier.dietaryMolybdenum | HKQuantityTypeIdentifier.dietaryNiacin | HKQuantityTypeIdentifier.dietaryPantothenicAcid | HKQuantityTypeIdentifier.dietaryPhosphorus | HKQuantityTypeIdentifier.dietaryPotassium | HKQuantityTypeIdentifier.dietaryProtein | HKQuantityTypeIdentifier.dietaryRiboflavin | HKQuantityTypeIdentifier.dietarySelenium | HKQuantityTypeIdentifier.dietarySodium | HKQuantityTypeIdentifier.dietarySugar | HKQuantityTypeIdentifier.dietaryThiamin | HKQuantityTypeIdentifier.dietaryVitaminA | HKQuantityTypeIdentifier.dietaryVitaminB6 | HKQuantityTypeIdentifier.dietaryVitaminB12 | HKQuantityTypeIdentifier.dietaryVitaminC | HKQuantityTypeIdentifier.dietaryVitaminD | HKQuantityTypeIdentifier.dietaryVitaminE | HKQuantityTypeIdentifier.dietaryVitaminK | HKQuantityTypeIdentifier.dietaryZinc ? MassUnit
+            : T extends HKQuantityTypeIdentifier.stairAscentSpeed | HKQuantityTypeIdentifier.stairDescentSpeed | HKQuantityTypeIdentifier.walkingSpeed
+            | HKQuantityTypeIdentifier.walkingSpeed ? SpeedUnit<LengthUnit, TimeUnit>
+              : T extends HKQuantityTypeIdentifier.flightsClimbed | HKQuantityTypeIdentifier.numberOfAlcoholicBeverages | HKQuantityTypeIdentifier.numberOfTimesFallen
+              | HKQuantityTypeIdentifier.pushCount | HKQuantityTypeIdentifier.stepCount | HKQuantityTypeIdentifier.swimmingStrokeCount ? HKUnits.Count
+                : T extends HKQuantityTypeIdentifier.dietaryBiotin | HKQuantityTypeIdentifier.dietaryCaffeine | HKQuantityTypeIdentifier.dietaryCalcium
+                | HKQuantityTypeIdentifier.dietaryCarbohydrates | HKQuantityTypeIdentifier.dietaryChloride | HKQuantityTypeIdentifier.dietaryCholesterol
+                | HKQuantityTypeIdentifier.dietaryChromium | HKQuantityTypeIdentifier.dietaryCopper | HKQuantityTypeIdentifier.dietaryFatMonounsaturated
+                | HKQuantityTypeIdentifier.dietaryFatPolyunsaturated | HKQuantityTypeIdentifier.dietaryFatSaturated | HKQuantityTypeIdentifier.dietaryFatTotal
+                | HKQuantityTypeIdentifier.dietaryFiber | HKQuantityTypeIdentifier.dietaryFolate | HKQuantityTypeIdentifier.dietaryIodine | HKQuantityTypeIdentifier.dietaryIodine
+                | HKQuantityTypeIdentifier.dietaryIron | HKQuantityTypeIdentifier.dietaryMagnesium | HKQuantityTypeIdentifier.dietaryManganese
+                | HKQuantityTypeIdentifier.dietaryMolybdenum | HKQuantityTypeIdentifier.dietaryNiacin | HKQuantityTypeIdentifier.dietaryPantothenicAcid
+                | HKQuantityTypeIdentifier.dietaryPhosphorus | HKQuantityTypeIdentifier.dietaryPotassium | HKQuantityTypeIdentifier.dietaryProtein
+                | HKQuantityTypeIdentifier.dietaryRiboflavin | HKQuantityTypeIdentifier.dietarySelenium | HKQuantityTypeIdentifier.dietarySodium
+                | HKQuantityTypeIdentifier.dietarySugar | HKQuantityTypeIdentifier.dietaryThiamin | HKQuantityTypeIdentifier.dietaryVitaminA
+                | HKQuantityTypeIdentifier.dietaryVitaminB6 | HKQuantityTypeIdentifier.dietaryVitaminB12 | HKQuantityTypeIdentifier.dietaryVitaminC
+                | HKQuantityTypeIdentifier.dietaryVitaminD | HKQuantityTypeIdentifier.dietaryVitaminE | HKQuantityTypeIdentifier.dietaryVitaminK
+                | HKQuantityTypeIdentifier.dietaryZinc ? MassUnit
                   : T extends HKQuantityTypeIdentifier.dietaryWater ? VolumeUnit
                     : T extends HKQuantityTypeIdentifier.insulinDelivery ? HKUnits.InternationalUnit | `${HKUnits.InternationalUnit}`
                       : T extends HKQuantityTypeIdentifier.heartRate | HKQuantityTypeIdentifier.restingHeartRate | HKQuantityTypeIdentifier.walkingHeartRateAverage ? CountPerTime<TimeUnit>
@@ -1080,7 +1101,7 @@ interface HealthkitEventEmitter extends NativeEventEmitter {
 }
 
 export const EventEmitter = new NativeEventEmitter(
-  NativeModules.ReactNativeHealthkit,
+  NativeModules.ReactNativeHealthkit as NativeModule,
 ) as HealthkitEventEmitter
 
 export default Native
