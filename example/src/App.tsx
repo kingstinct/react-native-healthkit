@@ -51,19 +51,21 @@ const LatestWorkout: React.FC<{
 }> = ({
   title, icon,
 }) => {
-  const latestValue = useMostRecentWorkout()
+  const latestValue = useMostRecentWorkout(),
+        left = useCallback((props: Omit<ComponentProps<typeof List.Icon>, 'icon'>) => <List.Icon {...props} icon={icon} />, [icon])
 
   return (
     <List.Accordion title='Latest workout' id='workout'>
       <List.Item
         title={title}
-        left={(props) => <List.Icon {...props} icon={icon} />}
+        left={left}
         description={latestValue
           ? `${TRANSLATED_WORKOUT_TYPES_TO_SHOW[latestValue.workoutActivityType as WorkoutType] ?? `Untranslated workout type (${latestValue.workoutActivityType})`} (${dayjs(latestValue.endDate).fromNow()})`
           : 'No data found'}
       />
       <List.Item
         title='Distance'
+        // eslint-disable-next-line react/no-unstable-nested-components
         left={(props) => <List.Icon {...props} icon='map-marker-distance' />}
         description={latestValue?.totalDistance
           ? `${latestValue.totalDistance.quantity.toFixed(2)} ${latestValue.totalDistance.unit}`
@@ -71,6 +73,7 @@ const LatestWorkout: React.FC<{
       />
       <List.Item
         title='Energy'
+        // eslint-disable-next-line react/no-unstable-nested-components
         left={(props) => <List.Icon {...props} icon='fire' />}
         description={latestValue?.totalEnergyBurned
           ? `${latestValue.totalEnergyBurned.quantity.toFixed(0)} ${latestValue.totalEnergyBurned.unit}`
@@ -78,6 +81,7 @@ const LatestWorkout: React.FC<{
       />
       <List.Item
         title='Metadata'
+        // eslint-disable-next-line react/no-unstable-nested-components
         left={(props) => <List.Icon {...props} icon='database' />}
         description={latestValue?.metadata
           ? `${JSON.stringify(latestValue.metadata)}`
@@ -85,6 +89,7 @@ const LatestWorkout: React.FC<{
       />
       <List.Item
         title='Device'
+        // eslint-disable-next-line react/no-unstable-nested-components
         left={(props) => <List.Icon {...props} icon='watch' />}
         description={latestValue?.device
           ? `${latestValue.device.name}`
@@ -250,7 +255,6 @@ const SaveWorkout = () => {
             <Menu.Item
               key={type}
               onPress={() => {
-                console.log('type', type)
                 setTypeToSave(parseInt(type, 10) as WorkoutType)
                 setMenuVisible(false)
               }}

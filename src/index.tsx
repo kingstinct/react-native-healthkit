@@ -15,6 +15,7 @@ let hasWarned = false
 function UnavailableFn<T = unknown>(retVal: T) {
   return () => {
     if (!hasWarned) {
+      // eslint-disable-next-line no-console
       console.warn(notAvailableError)
       hasWarned = true
     }

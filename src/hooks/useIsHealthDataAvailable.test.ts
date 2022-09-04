@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { renderHook } from '@testing-library/react-native'
 
 import Native from '../native-types'

@@ -20,6 +20,7 @@ const useHealthkitAuthorization = (read: readonly HealthkitReadAuthorization[], 
 
   const refreshAuthStatus = useCallback(async () => {
     const auth = await getRequestStatusForAuthorization(readMemo.current, writeMemo.current)
+
     setStatus(auth)
     return auth
   }, [])

@@ -15,38 +15,43 @@ React Native bindings for HealthKit with full TypeScript and Promise support cov
 | Document Types              | ✅    | ❌    | ✅       | [CDA documents](https://developer.apple.com/documentation/healthkit/hkcdadocument) exposed as Base64 data  |
 | Clinical Records            | ✅    | ❌    | ✅       | Lab results etc in [FHIR JSON format](https://www.hl7.org/fhir/json.html)  |
 
-## Disclaimer
+### Disclaimer
 
-This library is provided without any warranty and is not affiliated with Apple in any way. The data might be incomplete or inaccurate.
+This library is provided as-is without any warranty and is not affiliated with Apple in any way. The data might be incomplete or inaccurate.
 
 ## Installation
 
-### Native App
-1. Install package
-```sh
-yarn add @kingstinct/react-native-healthkit # or npm install @kingstinct/react-native-healthkit
-npx pod-install
-```
-
-2. Remember to set `NSHealthUpdateUsageDescription` and `NSHealthShareUsageDescription` in your `Info.plist` 
-
-3. Enable the HealthKit capability for the project in Xcode. 
-
-4. Since this package is using Swift you might also need to add a bridging header in your project if you haven't already, you can [find more about that in the official React Native docs](https://reactnative.dev/docs/native-modules-ios#exporting-swift)
-
-5. During runtime you can check if HealthKit is available on the device with `isHealthDataAvailable` and request permissions with `requestAuthorization`. Failing to request authorization will result in the app crashing.
+### Native or Expo Bare Workflow
+1. `yarn add @kingstinct/react-native-healthkit` (or `npm install @kingstinct/react-native-healthkit`)
+2. `npx pod-install`
+3. Set `NSHealthUpdateUsageDescription` and `NSHealthShareUsageDescription` in your `Info.plist` 
+4. Enable the HealthKit capability for the project in Xcode.
+5. Since this package is using Swift you might also need to add a bridging header in your project if you haven't already, you can [find more about that in the official React Native docs](https://reactnative.dev/docs/native-modules-ios#exporting-swift)
+6. During runtime check and request permissions with `requestAuthorization`. Failing to request authorization, or requesting a permission you haven't requested yet, will result in the app crashing.
 
 ### Expo Managed Workflow
 Usage with Expo is possible - just keep in mind it will not work in Expo Go and [you'll need to roll your own Dev Client](https://docs.expo.dev/development/getting-started/). 
 
-1. Install package
- ```sh
-yarn add @kingstinct/react-native-healthkit # or npm install @kingstinct/react-native-healthkit
+1. `yarn add @kingstinct/react-native-healthkit` (or `npm install @kingstinct/react-native-healthkit`)
+2. Update your app.json:
+```json
+{
+  "expo": {
+    "ios": {
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "<< your usage description here >>",
+        "NSHealthUpdateUsageDescription": "<< your usage description here >>"
+      },
+      "entitlements": {
+        "com.apple.developer.healthkit": true,
+        "com.apple.developer.healthkit.background-delivery": true
+      }
+    }
+  }
+}
 ```
-
-2. See the [example app.json](https://github.com/Kingstinct/react-native-healthkit/blob/8e82d921f57c9bc0912af5f52f53c181ee8e4b5a/example/app.json#L24-L31) for how to apply this to your project.
-
-3. During runtime you can check if HealthKit is available on the device with `isHealthDataAvailable` and request permissions with `requestAuthorization`. Failing to request authorization will result in the app crashing.
+3. Build a new Dev Client
+4. During runtime check and request permissions with `requestAuthorization`. Failing to request authorization, or requesting a permission you haven't requested yet, will result in the app crashing.
 
 ## Usage
 
