@@ -23,7 +23,7 @@
     "test-only": "jest",
     "test": "concurrently \"yarn test-only\" \"yarn typecheck\" \"yarn lint\"",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "lint": "eslint \"**/*.{js,ts,tsx}\" --cache",
     "prepare": "bob build",
     "release": "release-it",
     "example": "yarn --cwd example",

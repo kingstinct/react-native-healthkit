@@ -19,7 +19,6 @@
       "distribution": "internal"
     },
     "production": {
-      "developmentClient": true,
       "ios": {
         "autoIncrement": "buildNumber"
       }

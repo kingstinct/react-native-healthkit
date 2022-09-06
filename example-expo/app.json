@@ -31,7 +31,7 @@
         "com.apple.developer.healthkit": true,
         "com.apple.developer.healthkit.background-delivery": true
       },
-      "buildNumber": "2"
+      "buildNumber": "3"
     },
     "android": {
       "adaptiveIcon": {
