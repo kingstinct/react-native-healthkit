@@ -59,6 +59,13 @@ class ReactNativeHealthkit: RCTEventEmitter {
         self._hasListeners = true
     }
 
+    
+    @objc(canAccessProtectedData:withRejecter:)
+    func canAccessProtectedData(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        resolve(UIApplication.shared.isProtectedDataAvailable);
+    }
+
+
     func objectTypeFromString(typeIdentifier: String) -> HKObjectType? {
         if(typeIdentifier.starts(with: HKCharacteristicTypeIdentifier_PREFIX)){
             let identifier = HKCharacteristicTypeIdentifier.init(rawValue: typeIdentifier);
@@ -236,7 +243,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         return [
             "uuid": sample.uuid.uuidString,
-            "device": self.serializeDevice(_device: sample.device),
+            "device": self.serializeDevice(_device: sample.device) as Any,
             "quantityType": sample.quantityType.identifier,
             "endDate": endDate,
             "startDate": startDate,
@@ -253,7 +260,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         return [
             "uuid": sample.uuid.uuidString,
-            "device": self.serializeDevice(_device: sample.device),
+            "device": self.serializeDevice(_device: sample.device) as Any,
             "categoryType": sample.categoryType.identifier,
             "endDate": endDate,
             "startDate": startDate,
@@ -386,7 +393,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
 
         let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
-        let sampleUuid = UUID.init(uuidString: uuid) as! UUID;
+        let sampleUuid = UUID.init(uuidString: uuid)!;
 
         guard let sampleType = HKObjectType.quantityType(forIdentifier: identifier) else {
             return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
@@ -868,7 +875,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 "name": sourceRevision.source.name,
                 "bundleIdentifier": sourceRevision.source.bundleIdentifier
             ],
-            "version": sourceRevision.version
+            "version": sourceRevision.version as Any
         ] as [String : Any];
 
         if #available(iOS 11, *) {
@@ -1215,14 +1222,22 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
         for route in _routes {
             let routeMetadata = self.serializeMetadata(metadata: route.metadata) as! Dictionary<String, Any>
-            let routeLocations = (await getRouteLocations(store: store, route: route)).map{serializeLocation(location: $0)}
+            let routeCLLocations = (await getRouteLocations(store: store, route: route))
+            let routeLocations = routeCLLocations.enumerated().map{(i, loc) in serializeLocation(location: loc, previousLocation: i == 0 ? nil: routeCLLocations[i - 1])}
             let routeInfos: Dictionary<String, Any> = ["locations": routeLocations]
             allRoutes.append(routeInfos.merging(routeMetadata) { (current, _) in current })
         }
         return allRoutes
     }
 
-    func serializeLocation(location: CLLocation) -> Dictionary<String, Any> {
+    func serializeLocation(location: CLLocation, previousLocation: CLLocation?) -> Dictionary<String, Any> {
+        var distance: CLLocationDistance?
+        if let previousLocation = previousLocation {
+            distance = location.distance(from: previousLocation)
+        }
+        else {
+            distance = nil
+        }
         return [
             "longitude": location.coordinate.longitude,
             "latitude": location.coordinate.latitude,
@@ -1232,6 +1247,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
             "horizontalAccuracy": location.horizontalAccuracy,
             "speedAccuracy": location.speedAccuracy,
             "verticalAccuracy": location.verticalAccuracy,
+            "distance": distance as Any
         ]
     }
 
@@ -1250,7 +1266,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
             return reject("INVALID_UUID_ERROR", "Invalid UUID received", nil)
         }
 
-        async {
+        Task {
             do {
                 let locations = await getSerializedWorkoutLocations(store: store, workoutUUID: _workoutUUID)
                 resolve(locations)

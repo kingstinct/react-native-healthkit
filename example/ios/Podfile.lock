@@ -74,7 +74,7 @@ PODS:
   - fmt (6.2.1)
   - glog (0.3.5)
   - hermes-engine (0.11.0)
-  - kingstinct-react-native-healthkit (4.4.6):
+  - kingstinct-react-native-healthkit (5.1.1):
     - React
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.1100)
@@ -554,7 +554,7 @@ SPEC CHECKSUMS:
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 476ee3e89abb49e07f822b48323c51c57124b572
   hermes-engine: 84e3af1ea01dd7351ac5d8689cbbea1f9903ffc3
-  kingstinct-react-native-healthkit: 8a6964341ed4d7189d57bdeb98cff1a6a7727bf5
+  kingstinct-react-native-healthkit: caaf2433704c7ec60583e5055fddf810947f31f5
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   RCT-Folly: 4d8508a426467c48885f1151029bc15fa5d7b3b8

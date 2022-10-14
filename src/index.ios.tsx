@@ -29,8 +29,10 @@ const Healthkit = {
   authorizationStatusFor: Native.authorizationStatusFor.bind(Native),
 
   isHealthDataAvailable: Native.isHealthDataAvailable.bind(Native),
+  canAccessProtectedData: Native.canAccessProtectedData.bind(Native),
 
-  disableAllBackgroundDelivery: Native.disableAllBackgroundDelivery.bind(Native),
+  disableAllBackgroundDelivery:
+    Native.disableAllBackgroundDelivery.bind(Native),
   disableBackgroundDelivery: Native.disableBackgroundDelivery.bind(Native),
   enableBackgroundDelivery: Native.enableBackgroundDelivery.bind(Native),
 

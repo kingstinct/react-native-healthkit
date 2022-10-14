@@ -158,4 +158,13 @@ RCT_EXTERN_METHOD(getWorkoutRoutes:(NSString)workoutUUID
                   reject:(RCTPromiseRejectBlock)reject
 )
 
+RCT_EXTERN_METHOD(getWorkoutRoutes:(NSString)workoutUUID
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(canAccessProtectedData:(RCTPromiseResolveBlock)resolve
+withRejecter:(RCTPromiseRejectBlock)reject)
+
+
 @end
