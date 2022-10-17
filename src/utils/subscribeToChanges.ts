@@ -1,31 +1,31 @@
-import Native, { EventEmitter } from "../native-types";
+import Native, { EventEmitter } from '../native-types'
 
-import type { HKSampleTypeIdentifier } from "..";
+import type { HKSampleTypeIdentifier } from '..'
 
 const subscribeToChanges = async (
   identifier: HKSampleTypeIdentifier,
-  callback: () => void
+  callback: () => void,
 ) => {
   const subscription = EventEmitter.addListener(
-    "onChange",
+    'onChange',
     ({ typeIdentifier }) => {
       if (typeIdentifier === identifier) {
-        callback();
+        callback()
       }
-    }
-  );
+    },
+  )
 
   const queryId = await Native.subscribeToObserverQuery(identifier).catch(
     async (error) => {
-      subscription.remove();
-      return Promise.reject(error);
-    }
-  );
+      subscription.remove()
+      return Promise.reject(error)
+    },
+  )
 
   return async () => {
-    subscription.remove();
-    return Native.unsubscribeQuery(queryId);
-  };
-};
+    subscription.remove()
+    return Native.unsubscribeQuery(queryId)
+  }
+}
 
-export default subscribeToChanges;
+export default subscribeToChanges
