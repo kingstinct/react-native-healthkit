@@ -1,5 +1,4 @@
-import { EventEmitter } from '..'
-import Native from '../native-types'
+import Native, { EventEmitter } from '../native-types'
 
 import type { HKSampleTypeIdentifier } from '..'
 
