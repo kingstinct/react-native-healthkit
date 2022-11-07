@@ -1,3 +1,18 @@
+# [5.2.0](https://github.com/kingstinct/react-native-healthkit/compare/v5.1.1...v5.2.0) (2022-11-07)
+
+
+### Bug Fixes
+
+* clean test run ([49c81d7](https://github.com/kingstinct/react-native-healthkit/commit/49c81d7fcf75e7e970c6841696c858a5d0e73ce5))
+* EventEmitter import ([54c03a6](https://github.com/kingstinct/react-native-healthkit/commit/54c03a69a98ee1deaf8b2873b245b48445035e13))
+* improve readme ([326038a](https://github.com/kingstinct/react-native-healthkit/commit/326038a049f2da2c7ce0010c62d0a2d93794db9e))
+* make tests pass, make EAS build workflow not wait ([1da9701](https://github.com/kingstinct/react-native-healthkit/commit/1da97015242b4761dd276efbb8b75788f172d716))
+
+
+### Features
+
+* adding canAccessProtect data and distance to workoutLocation ([b0ce174](https://github.com/kingstinct/react-native-healthkit/commit/b0ce174e3fcd7a289d3dbc8e4aa63408e6326476))
+
 ## [5.1.1](https://github.com/kingstinct/react-native-healthkit/compare/v5.1.0...v5.1.1) (2022-09-03)
 
 # [5.1.0](https://github.com/kingstinct/react-native-healthkit/compare/v4.4.6...v5.1.0) (2022-09-02)
