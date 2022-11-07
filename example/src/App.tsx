@@ -1,6 +1,9 @@
 /* eslint-disable import/no-unresolved */
-import {
-  HKStatisticsOptions, HKQuantityTypeIdentifier, HKAuthorizationRequestStatus, HKWorkoutActivityType,
+import Healthkit, {
+  HKAuthorizationRequestStatus,
+  HKQuantityTypeIdentifier,
+  HKStatisticsOptions,
+  HKWorkoutActivityType,
 } from '@kingstinct/react-native-healthkit'
 import useHealthkitAuthorization from '@kingstinct/react-native-healthkit/hooks/useHealthkitAuthorization'
 import useMostRecentQuantitySample from '@kingstinct/react-native-healthkit/hooks/useMostRecentQuantitySample'
@@ -11,116 +14,175 @@ import saveQuantitySample from '@kingstinct/react-native-healthkit/utils/saveQua
 import saveWorkoutSample from '@kingstinct/react-native-healthkit/utils/saveWorkoutSample'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import {
-  Button, List, Menu, TextInput, Provider,
+  Button,
+  List,
+  Menu,
+  Provider,
+  Text,
+  TextInput,
 } from 'react-native-paper'
 
-import type { HKUnit, HealthkitReadAuthorization, HealthkitWriteAuthorization } from '@kingstinct/react-native-healthkit'
+import type {
+  HealthkitReadAuthorization,
+  HealthkitWriteAuthorization,
+  HKUnit,
+} from '@kingstinct/react-native-healthkit'
 import type { ComponentProps } from 'react'
 import type { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 
 dayjs.extend(relativeTime)
 
 const LatestListItem: React.FC<{
-  readonly identifier: HKQuantityTypeIdentifier,
-  readonly unit?: HKUnit
-  readonly icon: IconSource
-  readonly title: string
+  readonly identifier: HKQuantityTypeIdentifier;
+  readonly unit?: HKUnit;
+  readonly icon: IconSource;
+  readonly title: string;
 }> = ({
   identifier, unit, title, icon,
 }) => {
   const latestValue = useMostRecentQuantitySample(identifier, unit),
-        left = useCallback((props: Omit<ComponentProps<typeof List.Icon>, 'icon'>) => <List.Icon {...props} icon={icon} />, [icon])
+        left = useCallback(
+          (props: Omit<ComponentProps<typeof List.Icon>, 'icon'>) => (
+            <List.Icon {...props} icon={icon} />
+          ),
+          [icon],
+        )
 
   return (
     <List.Item
       title={title || identifier}
       left={left}
-      description={latestValue
-        ? `${latestValue.unit === '%' ? (latestValue.quantity * 100).toFixed(1) : latestValue.quantity.toFixed(latestValue.unit === 'count' || latestValue.unit === 'count/min' ? 0 : 2)} ${latestValue.unit} (${dayjs(latestValue.endDate).fromNow()})`
-        : 'No data found'}
+      description={
+        latestValue
+          ? `${
+            latestValue.unit === '%'
+              ? (latestValue.quantity * 100).toFixed(1)
+              : latestValue.quantity.toFixed(
+                latestValue.unit === 'count'
+                      || latestValue.unit === 'count/min'
+                  ? 0
+                  : 2,
+              )
+          } ${latestValue.unit} (${dayjs(latestValue.endDate).fromNow()})`
+          : 'No data found'
+      }
     />
   )
 }
 
 const LatestWorkout: React.FC<{
-  readonly icon: IconSource
-  readonly title: string
-}> = ({
-  title, icon,
-}) => {
+  readonly icon: IconSource;
+  readonly title: string;
+}> = ({ title, icon }) => {
   const latestValue = useMostRecentWorkout(),
-        left = useCallback((props: Omit<ComponentProps<typeof List.Icon>, 'icon'>) => <List.Icon {...props} icon={icon} />, [icon])
+        left = useCallback(
+          (props: Omit<ComponentProps<typeof List.Icon>, 'icon'>) => (
+            <List.Icon {...props} icon={icon} />
+          ),
+          [icon],
+        )
 
   return (
     <List.Accordion title='Latest workout' id='workout'>
       <List.Item
         title={title}
         left={left}
-        description={latestValue
-          ? `${TRANSLATED_WORKOUT_TYPES_TO_SHOW[latestValue.workoutActivityType as WorkoutType] ?? `Untranslated workout type (${latestValue.workoutActivityType})`} (${dayjs(latestValue.endDate).fromNow()})`
-          : 'No data found'}
+        description={
+          latestValue
+            ? `${
+              TRANSLATED_WORKOUT_TYPES_TO_SHOW[
+                latestValue.workoutActivityType as WorkoutType
+              ]
+                ?? `Untranslated workout type (${latestValue.workoutActivityType})`
+            } (${dayjs(latestValue.endDate).fromNow()})`
+            : 'No data found'
+        }
       />
       <List.Item
         title='Distance'
         // eslint-disable-next-line react/no-unstable-nested-components
         left={(props) => <List.Icon {...props} icon='map-marker-distance' />}
-        description={latestValue?.totalDistance
-          ? `${latestValue.totalDistance.quantity.toFixed(2)} ${latestValue.totalDistance.unit}`
-          : 'No data found'}
+        description={
+          latestValue?.totalDistance
+            ? `${latestValue.totalDistance.quantity.toFixed(2)} ${
+              latestValue.totalDistance.unit
+            }`
+            : 'No data found'
+        }
       />
       <List.Item
         title='Energy'
         // eslint-disable-next-line react/no-unstable-nested-components
         left={(props) => <List.Icon {...props} icon='fire' />}
-        description={latestValue?.totalEnergyBurned
-          ? `${latestValue.totalEnergyBurned.quantity.toFixed(0)} ${latestValue.totalEnergyBurned.unit}`
-          : 'No data found'}
+        description={
+          latestValue?.totalEnergyBurned
+            ? `${latestValue.totalEnergyBurned.quantity.toFixed(0)} ${
+              latestValue.totalEnergyBurned.unit
+            }`
+            : 'No data found'
+        }
       />
       <List.Item
         title='Metadata'
         // eslint-disable-next-line react/no-unstable-nested-components
         left={(props) => <List.Icon {...props} icon='database' />}
-        description={latestValue?.metadata
-          ? `${JSON.stringify(latestValue.metadata)}`
-          : 'No data found'}
+        description={
+          latestValue?.metadata
+            ? `${JSON.stringify(latestValue.metadata)}`
+            : 'No data found'
+        }
       />
       <List.Item
         title='Device'
         // eslint-disable-next-line react/no-unstable-nested-components
         left={(props) => <List.Icon {...props} icon='watch' />}
-        description={latestValue?.device
-          ? `${latestValue.device.name}`
-          : 'No data found'}
+        description={
+          latestValue?.device ? `${latestValue.device.name}` : 'No data found'
+        }
       />
     </List.Accordion>
   )
 }
 
 const TodayListItem: React.FC<{
-  readonly identifier: HKQuantityTypeIdentifier,
-  readonly unit: HKUnit,
-  readonly title: string,
-  readonly icon: IconSource
-  readonly option: HKStatisticsOptions
+  readonly identifier: HKQuantityTypeIdentifier;
+  readonly unit: HKUnit;
+  readonly title: string;
+  readonly icon: IconSource;
+  readonly option: HKStatisticsOptions;
 }> = ({
   identifier, option, unit, title, icon,
 }) => {
-  const latestValue = useStatisticsForQuantity(identifier, [option], dayjs().startOf('day').toDate(), undefined, unit),
-        left = useCallback((props: Omit<ComponentProps<typeof List.Icon>, 'icon'>) => <List.Icon {...props} icon={icon} />, [icon])
+  const latestValue = useStatisticsForQuantity(
+          identifier,
+          [option],
+          dayjs().startOf('day').toDate(),
+          undefined,
+          unit,
+        ),
+        left = useCallback(
+          (props: Omit<ComponentProps<typeof List.Icon>, 'icon'>) => (
+            <List.Icon {...props} icon={icon} />
+          ),
+          [icon],
+        )
 
   return (
     <List.Item
       title={title}
       left={left}
-      description={latestValue
-        ? `${latestValue.sumQuantity?.unit === 'count'
-          ? latestValue.sumQuantity?.quantity
-          : latestValue.sumQuantity?.quantity.toFixed(2)
-        } (${latestValue.sumQuantity?.unit})`
-        : 'No data found'}
+      description={
+        latestValue
+          ? `${
+            latestValue.sumQuantity?.unit === 'count'
+              ? latestValue.sumQuantity?.quantity
+              : latestValue.sumQuantity?.quantity.toFixed(2)
+          } (${latestValue.sumQuantity?.unit})`
+          : 'No data found'
+      }
     />
   )
 }
@@ -215,10 +277,12 @@ const TRANSLATED_WORKOUT_TYPES_TO_SHOW = {
   [HKWorkoutActivityType.walking]: 'Walking',
 }
 
-type WorkoutType = keyof typeof TRANSLATED_WORKOUT_TYPES_TO_SHOW
+type WorkoutType = keyof typeof TRANSLATED_WORKOUT_TYPES_TO_SHOW;
 
 const SaveWorkout = () => {
-  const [typeToSave, setTypeToSave] = useState<WorkoutType>(HKWorkoutActivityType.americanFootball)
+  const [typeToSave, setTypeToSave] = useState<WorkoutType>(
+    HKWorkoutActivityType.americanFootball,
+  )
   const [menuVisible, setMenuVisible] = useState<boolean>(false)
   const [kcalStr, setkcalStr] = useState<string>('50')
   const [distanceMetersStr, setDistanceMetersStr] = useState<string>('1000')
@@ -226,19 +290,28 @@ const SaveWorkout = () => {
   const save = useCallback(() => {
     const val = parseFloat(kcalStr)
     const distance = parseFloat(distanceMetersStr)
-    if (val !== undefined && !Number.isNaN(val) && distance !== undefined && !Number.isNaN(distance)) {
-      void saveWorkoutSample(typeToSave, [
-        {
-          quantity: distance,
-          unit: 'm',
-          quantityType: HKQuantityTypeIdentifier.distanceWalkingRunning,
-        },
-        {
-          quantity: val,
-          unit: 'kcal',
-          quantityType: HKQuantityTypeIdentifier.activeEnergyBurned,
-        },
-      ], new Date())
+    if (
+      val !== undefined
+      && !Number.isNaN(val)
+      && distance !== undefined
+      && !Number.isNaN(distance)
+    ) {
+      void saveWorkoutSample(
+        typeToSave,
+        [
+          {
+            quantity: distance,
+            unit: 'm',
+            quantityType: HKQuantityTypeIdentifier.distanceWalkingRunning,
+          },
+          {
+            quantity: val,
+            unit: 'kcal',
+            quantityType: HKQuantityTypeIdentifier.activeEnergyBurned,
+          },
+        ],
+        new Date(),
+      )
       setkcalStr('0')
     }
   }, [kcalStr, typeToSave, distanceMetersStr])
@@ -248,20 +321,26 @@ const SaveWorkout = () => {
       <Menu
         visible={menuVisible}
         onDismiss={() => setMenuVisible(false)}
-        anchor={<Button uppercase={false} onPress={() => setMenuVisible(true)}>{TRANSLATED_WORKOUT_TYPES_TO_SHOW[typeToSave]}</Button>}
+        anchor={(
+          <Button uppercase={false} onPress={() => setMenuVisible(true)}>
+            {TRANSLATED_WORKOUT_TYPES_TO_SHOW[typeToSave]}
+          </Button>
+        )}
       >
-        {
-          Object.keys(TRANSLATED_WORKOUT_TYPES_TO_SHOW).map((type) => (
-            <Menu.Item
-              key={type}
-              onPress={() => {
-                setTypeToSave(parseInt(type, 10) as WorkoutType)
-                setMenuVisible(false)
-              }}
-              title={TRANSLATED_WORKOUT_TYPES_TO_SHOW[type as unknown as WorkoutType] ?? `Untranslated workout type (${type})`}
-            />
-          ))
-        }
+        {Object.keys(TRANSLATED_WORKOUT_TYPES_TO_SHOW).map((type) => (
+          <Menu.Item
+            key={type}
+            onPress={() => {
+              setTypeToSave(parseInt(type, 10) as WorkoutType)
+              setMenuVisible(false)
+            }}
+            title={
+              TRANSLATED_WORKOUT_TYPES_TO_SHOW[
+                type as unknown as WorkoutType
+              ] ?? `Untranslated workout type (${type})`
+            }
+          />
+        ))}
       </Menu>
       <TextInput
         accessibilityLabel='Value'
@@ -312,7 +391,9 @@ const DeleteQuantity = () => {
 }
 
 const SaveQuantity = () => {
-  const [typeToSave, setTypeToSave] = useState<HKQuantityTypeIdentifier>(HKQuantityTypeIdentifier.stepCount)
+  const [typeToSave, setTypeToSave] = useState<HKQuantityTypeIdentifier>(
+    HKQuantityTypeIdentifier.stepCount,
+  )
   const [menuVisible, setMenuVisible] = useState<boolean>(false)
   const [saveValueStr, setSaveValueStr] = useState<string>('0')
 
@@ -337,20 +418,22 @@ const SaveQuantity = () => {
       <Menu
         visible={menuVisible}
         onDismiss={() => setMenuVisible(false)}
-        anchor={<Button uppercase={false} onPress={() => setMenuVisible(true)}>{typeToSave.replace('HKQuantityTypeIdentifier', '')}</Button>}
+        anchor={(
+          <Button uppercase={false} onPress={() => setMenuVisible(true)}>
+            {typeToSave.replace('HKQuantityTypeIdentifier', '')}
+          </Button>
+        )}
       >
-        {
-          [...saveableCountTypes, ...saveableMassTypes].map((type) => (
-            <Menu.Item
-              key={type}
-              onPress={() => {
-                setTypeToSave(type)
-                setMenuVisible(false)
-              }}
-              title={type.replace('HKQuantityTypeIdentifier', '')}
-            />
-          ))
-        }
+        {[...saveableCountTypes, ...saveableMassTypes].map((type) => (
+          <Menu.Item
+            key={type}
+            onPress={() => {
+              setTypeToSave(type)
+              setMenuVisible(false)
+            }}
+            title={type.replace('HKQuantityTypeIdentifier', '')}
+          />
+        ))}
       </Menu>
       <TextInput
         accessibilityLabel='Value'
@@ -408,58 +491,69 @@ const readPermissions: readonly HealthkitReadAuthorization[] = [
 ]
 
 const App = () => {
-  const [status, request] = useHealthkitAuthorization(readPermissions, [...saveableCountTypes, ...saveableMassTypes, ...saveableWorkoutStuff])
+  const [status, request] = useHealthkitAuthorization(readPermissions, [
+    ...saveableCountTypes,
+    ...saveableMassTypes,
+    ...saveableWorkoutStuff,
+  ])
 
-  return status !== HKAuthorizationRequestStatus.unnecessary
-    ? <View style={styles.buttonWrapper}><Button onPress={request}>Authorize</Button></View>
-    : (
-      <Provider>
-        <ScrollView style={styles.scrollView}>
-          <LatestWorkout icon='run' title='Latest workout' />
-          <List.AccordionGroup>
-            <List.Accordion title='Latest values' id='1'>
-              {
-                LATEST_QUANTITIES_TO_SHOW.map((e) => (
-                  <LatestListItem
-                    key={e.identifier}
-                    icon={e.icon}
-                    title={e.title}
-                    identifier={e.identifier}
-                  />
-                ))
-              }
-            </List.Accordion>
+  const [canAccessProtectedData, setAccessProtectedData] = useState<boolean>(false)
 
-            <List.Accordion title='Today stats' id='2'>
-              {
-                TODAY_STATS_TO_SHOW.map((e) => (
-                  <TodayListItem
-                    key={e.identifier}
-                    icon={e.icon}
-                    title={e.title}
-                    identifier={e.identifier}
-                    option={e.option}
-                    unit={e.unit}
-                  />
-                ))
-              }
-            </List.Accordion>
+  useEffect(() => {
+    Healthkit.canAccessProtectedData()
+      .then(setAccessProtectedData)
+      .catch(() => setAccessProtectedData(false))
+  }, [])
 
-            <List.Accordion title='Save Quantity' id='3'>
-              <SaveQuantity />
-            </List.Accordion>
+  return status !== HKAuthorizationRequestStatus.unnecessary ? (
+    <View style={styles.buttonWrapper}>
+      <Button onPress={request}>Authorize</Button>
+    </View>
+  ) : (
+    <Provider>
+      <ScrollView style={styles.scrollView}>
+        <LatestWorkout icon='run' title='Latest workout' />
+        <List.AccordionGroup>
+          <List.Accordion title='Latest values' id='1'>
+            {LATEST_QUANTITIES_TO_SHOW.map((e) => (
+              <LatestListItem
+                key={e.identifier}
+                icon={e.icon}
+                title={e.title}
+                identifier={e.identifier}
+              />
+            ))}
+          </List.Accordion>
 
-            <List.Accordion title='Delete Latest Quantity' id='4'>
-              <DeleteQuantity />
-            </List.Accordion>
+          <List.Accordion title='Today stats' id='2'>
+            {TODAY_STATS_TO_SHOW.map((e) => (
+              <TodayListItem
+                key={e.identifier}
+                icon={e.icon}
+                title={e.title}
+                identifier={e.identifier}
+                option={e.option}
+                unit={e.unit}
+              />
+            ))}
+          </List.Accordion>
 
-            <List.Accordion title='Save Workout' id='5'>
-              <SaveWorkout />
-            </List.Accordion>
-          </List.AccordionGroup>
-        </ScrollView>
-      </Provider>
-    )
+          <List.Accordion title='Save Quantity' id='3'>
+            <SaveQuantity />
+          </List.Accordion>
+
+          <List.Accordion title='Delete Latest Quantity' id='4'>
+            <DeleteQuantity />
+          </List.Accordion>
+
+          <List.Accordion title='Save Workout' id='5'>
+            <SaveWorkout />
+          </List.Accordion>
+        </List.AccordionGroup>
+        <Text>{`Can access protected data: ${canAccessProtectedData}`}</Text>
+      </ScrollView>
+    </Provider>
+  )
 }
 
 const styles = StyleSheet.create({

@@ -31,6 +31,7 @@ const mockModule: (NativeModule & typeof Native) = {
   saveWorkoutSample: jest.fn(),
   subscribeToObserverQuery: jest.fn(),
   unsubscribeQuery: jest.fn(),
+  canAccessProtectedData: jest.fn(),
 }
 
 NativeModules.ReactNativeHealthkit = mockModule
