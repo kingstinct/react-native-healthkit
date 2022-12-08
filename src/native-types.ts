@@ -29,7 +29,7 @@ export enum HKQuantityTypeIdentifier {
   pushCount = 'HKQuantityTypeIdentifierPushCount', // Scalar(Count),               Cumulative
   distanceSwimming = 'HKQuantityTypeIdentifierDistanceSwimming', // Length,                      Cumulative
   swimmingStrokeCount = 'HKQuantityTypeIdentifierSwimmingStrokeCount', // Scalar(Count),               Cumulative
-  vo2Max = 'HKQuantityTypeIdentifierVo2Max', // ml/(kg*min)                  Discrete
+  vo2Max = 'HKQuantityTypeIdentifierVO2Max', // ml/(kg*min)                  Discrete
   distanceDownhillSnowSports = 'HKQuantityTypeIdentifierDistanceDownhillSnowSports', // Length,                      Cumulative
 
   appleStandTime = 'HKQuantityTypeIdentifierAppleStandTime', // Time,                        Cumulative
@@ -113,12 +113,21 @@ export enum HKQuantityTypeIdentifier {
   stairAscentSpeed = 'HKQuantityTypeIdentifierStairAscentSpeed',
   stairDescentSpeed = 'HKQuantityTypeIdentifierStairDescentSpeed',
 
-  uvExposure = 'HKQuantityTypeIdentifierUvExposure', // Scalar (Count), Discrete
+  uvExposure = 'HKQuantityTypeIdentifierUVExposure', // Scalar (Count), Discrete
 
   appleMoveTime = 'HKQuantityTypeIdentifierAppleMoveTime', // Time,                        Cumulative
   appleWalkingSteadiness = 'HKQuantityTypeIdentifierAppleWalkingSteadiness', // Scalar(Percent, 0.0 - 1.0),  Discrete
 
   numberOfAlcoholicBeverages = 'HKQuantityTypeIdentifierNumberOfAlcoholicBeverages', // Scalar(Count),               Cumulative
+
+  atrialFibrillationBurden = 'HKQuantityTypeIdentifierAtrialFibrillationBurden', // Scalar(Percent, 0.0 - 1.0),  Discrete
+
+  underwaterDepth = 'HKQuantityTypeIdentifierUnderwaterDepth', // Length, Discrete
+
+  waterTemperature = 'HKQuantityTypeIdentifierWaterTemperature', // Temperature, Discrete
+
+  appleSleepingWristTemperature = 'HKQuantityTypeIdentifierAppleSleepingWristTemperature', // Temperature, Discrete
+
 }
 
 export type TypeToUnitMapping = {
@@ -483,8 +492,11 @@ export enum HKCategoryValueOvulationTestResult {
 
 export enum HKCategoryValueSleepAnalysis {
   inBed = 0,
-  asleep = 1,
+  asleepUnspecified = 1,
   awake = 2,
+  asleepCore = 3,
+  asleepDeep = 4,
+  asleepREM = 5
 }
 
 export enum HKCategoryValueAppetiteChanges {
