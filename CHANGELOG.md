@@ -1,3 +1,10 @@
+## [5.2.1](https://github.com/kingstinct/react-native-healthkit/compare/v5.2.0...v5.2.1) (2022-12-08)
+
+
+### Bug Fixes
+
+* add more sleep types and fixing VO2Max and UVExposure ([207614c](https://github.com/kingstinct/react-native-healthkit/commit/207614c30a19ed4a8b5b5617bddff931dc7308b4))
+
 # [5.2.0](https://github.com/kingstinct/react-native-healthkit/compare/v5.1.1...v5.2.0) (2022-11-07)
 
 
