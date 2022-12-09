@@ -398,7 +398,8 @@ const DeleteSample = () => {
   const deleteFn = useCallback(() => {
     if (latestValue) {
       void deleteSamples({ identifier: typeToDelete, startDate: new Date(new Date(latestValue.startDate).getTime() - 1000), endDate: new Date(new Date(latestValue.endDate).getTime() + 1000) })
-  }}, [latestValue, typeToDelete])
+    }
+  }, [latestValue, typeToDelete])
 
   return (
     <>
@@ -516,7 +517,7 @@ const readPermissions: readonly HealthkitReadAuthorization[] = [
 
 const App = () => {
   const [status, request] = useHealthkitAuthorization(readPermissions, [
-      HKQuantityTypeIdentifier.bodyMass,
+    HKQuantityTypeIdentifier.bodyMass,
     ...saveableCountTypes,
     ...saveableMassTypes,
     ...saveableWorkoutStuff,
