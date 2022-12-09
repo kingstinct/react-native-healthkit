@@ -409,6 +409,28 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
     }
 
+    @objc(deleteSamples:start:end:resolve:reject:)
+    func deleteSamples(typeIdentifier: String, start: Date, end: Date, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+        }
+
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
+
+        guard let sampleType = HKObjectType.quantityType(forIdentifier: identifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+        }
+
+        let samplePredicate = HKQuery.predicateForSamples(withStart: start, end: end, options: HKQueryOptions.strictStartDate);
+
+        store.deleteObjects(of: sampleType, predicate: samplePredicate) { (success: Bool, deletedObjectCount: Int, error: Error?) in
+            guard let err = error else {
+                return resolve(success);
+            }
+            reject(GENERIC_ERROR, err.localizedDescription, error);
+        }
+    }
+
     @objc(saveCorrelationSample:samples:start:end:metadata:resolve:reject:)
     func saveCorrelationSample(typeIdentifier: String, samples: Array<Dictionary<String, Any>>, start: Date, end: Date, metadata: Dictionary<String, Any>, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
         guard let store = _store else {

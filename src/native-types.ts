@@ -1212,6 +1212,11 @@ type ReactNativeHealthkitTypeNative = {
     typeIdentifier: TIdentifier,
     uuid: string
   ) => Promise<boolean>;
+  readonly deleteSamples: <TIdentifier extends HKQuantityTypeIdentifier>(
+    identifier: TIdentifier,
+    start: string,
+    end: string,
+  ) => Promise<boolean>;
   readonly queryWorkoutSamples: <
     TEnergy extends EnergyUnit,
     TDistance extends LengthUnit

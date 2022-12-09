@@ -68,6 +68,13 @@ RCT_EXTERN_METHOD(deleteQuantitySample:(NSString)typeIdentifier
                   reject:(RCTPromiseRejectBlock)reject
 )
 
+RCT_EXTERN_METHOD(deleteSamples:(NSString)typeIdentifier
+                  start:(NSDate)start
+                  end:(NSDate)end
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
 RCT_EXTERN_METHOD(subscribeToObserverQuery:(NSString)typeIdentifier
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
