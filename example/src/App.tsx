@@ -10,6 +10,7 @@ import useMostRecentQuantitySample from '@kingstinct/react-native-healthkit/hook
 import useMostRecentWorkout from '@kingstinct/react-native-healthkit/hooks/useMostRecentWorkout'
 import useStatisticsForQuantity from '@kingstinct/react-native-healthkit/hooks/useStatisticsForQuantity'
 import deleteQuantitySample from '@kingstinct/react-native-healthkit/utils/deleteQuantitySample'
+import deleteSamples from '@kingstinct/react-native-healthkit/utils/deleteSamples'
 import saveQuantitySample from '@kingstinct/react-native-healthkit/utils/saveQuantitySample'
 import saveWorkoutSample from '@kingstinct/react-native-healthkit/utils/saveWorkoutSample'
 import dayjs from 'dayjs'
@@ -390,6 +391,29 @@ const DeleteQuantity = () => {
   )
 }
 
+const DeleteSample = () => {
+  const typeToDelete = HKQuantityTypeIdentifier.bodyMass
+  const latestValue = useMostRecentQuantitySample(typeToDelete)
+
+  const deleteFn = useCallback(() => {
+    if (latestValue) {
+      void deleteSamples({ identifier: typeToDelete, startDate: new Date(new Date(latestValue.startDate).getTime() - 1000), endDate: new Date(new Date(latestValue.endDate).getTime() + 1000) })
+    }
+  }, [latestValue, typeToDelete])
+
+  return (
+    <>
+      <LatestListItem
+        key={typeToDelete}
+        icon='clock'
+        title='Latest value'
+        identifier={typeToDelete}
+      />
+      <Button onPress={deleteFn}>Delete Last Value</Button>
+    </>
+  )
+}
+
 const SaveQuantity = () => {
   const [typeToSave, setTypeToSave] = useState<HKQuantityTypeIdentifier>(
     HKQuantityTypeIdentifier.stepCount,
@@ -397,7 +421,7 @@ const SaveQuantity = () => {
   const [menuVisible, setMenuVisible] = useState<boolean>(false)
   const [saveValueStr, setSaveValueStr] = useState<string>('0')
 
-  const unit = saveableMassTypes.includes(typeToSave) ? 'g' : 'count'
+  const unit = saveableMassTypes.includes(typeToSave) || typeToSave === HKQuantityTypeIdentifier.bodyMass ? 'g' : 'count'
 
   const save = useCallback(() => {
     const val = parseFloat(saveValueStr)
@@ -424,7 +448,7 @@ const SaveQuantity = () => {
           </Button>
         )}
       >
-        {[...saveableCountTypes, ...saveableMassTypes].map((type) => (
+        {[...saveableCountTypes, ...saveableMassTypes, HKQuantityTypeIdentifier.bodyMass].map((type) => (
           <Menu.Item
             key={type}
             onPress={() => {
@@ -484,6 +508,7 @@ const readPermissions: readonly HealthkitReadAuthorization[] = [
   HKQuantityTypeIdentifier.heartRate,
   HKQuantityTypeIdentifier.swimmingStrokeCount,
   HKQuantityTypeIdentifier.bodyFatPercentage,
+  HKQuantityTypeIdentifier.bodyMass,
   ...LATEST_QUANTITIES_TO_SHOW.map((entry) => entry.identifier),
   ...TODAY_STATS_TO_SHOW.map((entry) => entry.identifier),
   ...saveableMassTypes,
@@ -492,6 +517,7 @@ const readPermissions: readonly HealthkitReadAuthorization[] = [
 
 const App = () => {
   const [status, request] = useHealthkitAuthorization(readPermissions, [
+    HKQuantityTypeIdentifier.bodyMass,
     ...saveableCountTypes,
     ...saveableMassTypes,
     ...saveableWorkoutStuff,
@@ -548,6 +574,10 @@ const App = () => {
 
           <List.Accordion title='Save Workout' id='5'>
             <SaveWorkout />
+          </List.Accordion>
+
+          <List.Accordion title='Delete Latest body mass Value' id='6'>
+            <DeleteSample />
           </List.Accordion>
         </List.AccordionGroup>
         <Text>{`Can access protected data: ${canAccessProtectedData}`}</Text>

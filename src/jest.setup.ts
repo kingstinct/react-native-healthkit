@@ -10,6 +10,7 @@ const mockModule: (NativeModule & typeof Native) = {
   requestAuthorization: jest.fn(),
   saveQuantitySample: jest.fn(),
   deleteQuantitySample: jest.fn(),
+  deleteSamples: jest.fn(),
   disableAllBackgroundDelivery: jest.fn(),
   disableBackgroundDelivery: jest.fn(),
   enableBackgroundDelivery: jest.fn(),
