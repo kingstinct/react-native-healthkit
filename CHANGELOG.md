@@ -1,3 +1,16 @@
+# [5.3.0](https://github.com/kingstinct/react-native-healthkit/compare/v5.2.1...v5.3.0) (2022-12-20)
+
+
+### Bug Fixes
+
+* **lint:** use lint to fix warnings ([f078fc7](https://github.com/kingstinct/react-native-healthkit/commit/f078fc76e6a12ae183ca241cc6bd0593737aad09))
+
+
+### Features
+
+* add new method deleteSamples ([aad94fa](https://github.com/kingstinct/react-native-healthkit/commit/aad94fa35210e54f9f020b6186479913e7d2661e))
+* **example:** add example for deleteSamples method ([64b5f05](https://github.com/kingstinct/react-native-healthkit/commit/64b5f05f16625be80c30091dc2921e28e4680b83))
+
 ## [5.2.1](https://github.com/kingstinct/react-native-healthkit/compare/v5.2.0...v5.2.1) (2022-12-08)
 
 
