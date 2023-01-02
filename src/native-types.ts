@@ -495,7 +495,7 @@ export enum HKCategoryValueSleepAnalysis {
   awake = 2,
   asleepCore = 3,
   asleepDeep = 4,
-  asleepREM = 5,
+  asleepREM = 5
 }
 
 export enum HKCategoryValueAppetiteChanges {
@@ -1214,7 +1214,7 @@ type ReactNativeHealthkitTypeNative = {
   readonly deleteSamples: <TIdentifier extends HKQuantityTypeIdentifier>(
     identifier: TIdentifier,
     start: string,
-    end: string
+    end: string,
   ) => Promise<boolean>;
   readonly queryWorkoutSamples: <
     TEnergy extends EnergyUnit,
