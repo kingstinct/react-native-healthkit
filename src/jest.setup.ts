@@ -2,7 +2,7 @@ import { NativeModule, NativeModules } from 'react-native'
 
 import type Native from './native-types'
 
-const mockModule: (NativeModule & typeof Native) = {
+const mockModule: NativeModule & typeof Native = {
   isHealthDataAvailable: jest.fn(),
   addListener: jest.fn(),
   removeListeners: jest.fn(),
@@ -25,6 +25,7 @@ const mockModule: (NativeModule & typeof Native) = {
   queryCategorySamples: jest.fn(),
   queryCorrelationSamples: jest.fn(),
   queryQuantitySamples: jest.fn(),
+  querySources: jest.fn(),
   queryStatisticsForQuantity: jest.fn(),
   queryWorkoutSamples: jest.fn(),
   saveCategorySample: jest.fn(),

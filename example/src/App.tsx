@@ -4,10 +4,12 @@ import Healthkit, {
   HKQuantityTypeIdentifier,
   HKStatisticsOptions,
   HKWorkoutActivityType,
+  HKCategoryTypeIdentifier,
 } from '@kingstinct/react-native-healthkit'
 import useHealthkitAuthorization from '@kingstinct/react-native-healthkit/hooks/useHealthkitAuthorization'
 import useMostRecentQuantitySample from '@kingstinct/react-native-healthkit/hooks/useMostRecentQuantitySample'
 import useMostRecentWorkout from '@kingstinct/react-native-healthkit/hooks/useMostRecentWorkout'
+import useSources from '@kingstinct/react-native-healthkit/hooks/useSources'
 import useStatisticsForQuantity from '@kingstinct/react-native-healthkit/hooks/useStatisticsForQuantity'
 import deleteQuantitySample from '@kingstinct/react-native-healthkit/utils/deleteQuantitySample'
 import deleteSamples from '@kingstinct/react-native-healthkit/utils/deleteSamples'
@@ -188,6 +190,36 @@ const TodayListItem: React.FC<{
   )
 }
 
+const SourceListItem: React.FC<{
+  readonly identifier: HKCategoryTypeIdentifier | HKQuantityTypeIdentifier;
+  readonly title: string;
+  readonly icon: IconSource;
+}> = ({ identifier, title, icon }) => {
+  const sources = useSources(identifier),
+        left = useCallback(
+          (props: Omit<ComponentProps<typeof List.Icon>, 'icon'>) => (
+            <List.Icon {...props} icon={icon} />
+          ),
+          [icon],
+        )
+
+  return (
+    <List.Item
+      title={title}
+      left={left}
+      description={
+        sources
+          ? `${
+            sources.length === 1
+              ? `1 source for this data type`
+              : `${sources.length} sources for this data type`
+          }`
+          : 'No sources found'
+      }
+    />
+  )
+}
+
 // feel free to add more :)
 const LATEST_QUANTITIES_TO_SHOW = [
   {
@@ -269,6 +301,23 @@ const TODAY_STATS_TO_SHOW = [
   },
 ]
 
+const SOURCES_TO_SHOW = [
+  {
+    identifier: HKQuantityTypeIdentifier.restingHeartRate,
+    icon: 'heart',
+    title: 'Resting Heart Rate',
+  },
+  {
+    identifier: HKQuantityTypeIdentifier.stepCount,
+    icon: 'walk',
+    title: 'Steps',
+  },
+  {
+    identifier: HKCategoryTypeIdentifier.sexualActivity,
+    icon: 'bed',
+    title: 'Sexual activity',
+  },
+]
 // Note: we need to add a translation to present a workout type in a meaningful way since it maps to a number enum on
 // the native side
 const TRANSLATED_WORKOUT_TYPES_TO_SHOW = {
@@ -397,7 +446,11 @@ const DeleteSample = () => {
 
   const deleteFn = useCallback(() => {
     if (latestValue) {
-      void deleteSamples({ identifier: typeToDelete, startDate: new Date(new Date(latestValue.startDate).getTime() - 1000), endDate: new Date(new Date(latestValue.endDate).getTime() + 1000) })
+      void deleteSamples({
+        identifier: typeToDelete,
+        startDate: new Date(new Date(latestValue.startDate).getTime() - 1000),
+        endDate: new Date(new Date(latestValue.endDate).getTime() + 1000),
+      })
     }
   }, [latestValue, typeToDelete])
 
@@ -421,7 +474,10 @@ const SaveQuantity = () => {
   const [menuVisible, setMenuVisible] = useState<boolean>(false)
   const [saveValueStr, setSaveValueStr] = useState<string>('0')
 
-  const unit = saveableMassTypes.includes(typeToSave) || typeToSave === HKQuantityTypeIdentifier.bodyMass ? 'g' : 'count'
+  const unit = saveableMassTypes.includes(typeToSave)
+    || typeToSave === HKQuantityTypeIdentifier.bodyMass
+    ? 'g'
+    : 'count'
 
   const save = useCallback(() => {
     const val = parseFloat(saveValueStr)
@@ -448,7 +504,11 @@ const SaveQuantity = () => {
           </Button>
         )}
       >
-        {[...saveableCountTypes, ...saveableMassTypes, HKQuantityTypeIdentifier.bodyMass].map((type) => (
+        {[
+          ...saveableCountTypes,
+          ...saveableMassTypes,
+          HKQuantityTypeIdentifier.bodyMass,
+        ].map((type) => (
           <Menu.Item
             key={type}
             onPress={() => {
@@ -511,6 +571,7 @@ const readPermissions: readonly HealthkitReadAuthorization[] = [
   HKQuantityTypeIdentifier.bodyMass,
   ...LATEST_QUANTITIES_TO_SHOW.map((entry) => entry.identifier),
   ...TODAY_STATS_TO_SHOW.map((entry) => entry.identifier),
+  ...SOURCES_TO_SHOW.map((entry) => entry.identifier),
   ...saveableMassTypes,
   ...saveableCountTypes,
 ]
@@ -564,19 +625,30 @@ const App = () => {
             ))}
           </List.Accordion>
 
-          <List.Accordion title='Save Quantity' id='3'>
+          <List.Accordion title='Sources' id='3'>
+            {SOURCES_TO_SHOW.map((e) => (
+              <SourceListItem
+                key={e.identifier}
+                identifier={e.identifier}
+                title={e.title}
+                icon={e.icon}
+              />
+            ))}
+          </List.Accordion>
+
+          <List.Accordion title='Save Quantity' id='4'>
             <SaveQuantity />
           </List.Accordion>
 
-          <List.Accordion title='Delete Latest Quantity' id='4'>
+          <List.Accordion title='Delete Latest Quantity' id='5'>
             <DeleteQuantity />
           </List.Accordion>
 
-          <List.Accordion title='Save Workout' id='5'>
+          <List.Accordion title='Save Workout' id='6'>
             <SaveWorkout />
           </List.Accordion>
 
-          <List.Accordion title='Delete Latest body mass Value' id='6'>
+          <List.Accordion title='Delete Latest body mass Value' id='7'>
             <DeleteSample />
           </List.Accordion>
         </List.AccordionGroup>

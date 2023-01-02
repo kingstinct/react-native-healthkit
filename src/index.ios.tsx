@@ -17,6 +17,7 @@ import getRequestStatusForAuthorization from './utils/getRequestStatusForAuthori
 import queryCategorySamples from './utils/queryCategorySamples'
 import queryCorrelationSamples from './utils/queryCorrelationSamples'
 import queryQuantitySamples from './utils/queryQuantitySamples'
+import querySources from './utils/querySources'
 import queryStatisticsForQuantity from './utils/queryStatisticsForQuantity'
 import queryWorkouts from './utils/queryWorkouts'
 import requestAuthorization from './utils/requestAuthorization'
@@ -61,6 +62,7 @@ const Healthkit = {
   queryQuantitySamples,
   queryStatisticsForQuantity,
   queryWorkouts,
+  querySources,
 
   requestAuthorization,
 
