@@ -76,7 +76,9 @@ jobs:
           message: |
             Expo preview is ready for review.
 
-            Or just scan this QR code:
+            There should soon be a [new native build available here](https://expo.dev/accounts/react-native-healthkit/projects/healthkit-example-expo)
+
+            With that installed just scan this QR code:
             ![QR Preview](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=exp%2Bhealthkit-example-expo%3A%2F%2Fu.expo.dev%2Fupdate%2F${{ env.BUILD_ID }})
 
   eas-ios:
