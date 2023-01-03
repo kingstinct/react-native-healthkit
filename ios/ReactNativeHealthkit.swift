@@ -269,6 +269,14 @@ class ReactNativeHealthkit: RCTEventEmitter {
             "sourceRevision": self.serializeSourceRevision(_sourceRevision: sample.sourceRevision) as Any,
         ]
     }
+    
+    func serializeSource(source: HKSource) -> NSDictionary {
+        
+        return [
+            "bundleIdentifier": source.bundleIdentifier,
+            "name": source.name
+        ]
+    }
 
     @objc(getBiologicalSex:withRejecter:)
     func getBiologicalSex(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
@@ -1113,6 +1121,41 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
 
         store.execute(q);
+    }
+    
+    @objc(querySources:resolve:reject:)
+    func querySources(typeIdentifier: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+        }
+
+        guard let type = objectTypeFromString(typeIdentifier: typeIdentifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+        }
+        
+        let query = HKSourceQuery(sampleType: type as! HKSampleType, samplePredicate: nil) { (query: HKSourceQuery, source: Set<HKSource>?, error: Error?) in
+            guard let err = error else {
+                guard let sources = source else {
+                    return resolve([]);
+                }
+                let arr: NSMutableArray = [];
+
+                for s in sources {
+                    if let source = s as? HKSource {
+                        let serialized = self.serializeSource(source: source);
+
+                        arr.add(serialized)
+                    }
+                }
+
+                return resolve(arr);
+            }
+            reject(GENERIC_ERROR, err.localizedDescription, err);
+            
+        }
+
+        store.execute(query);
     }
 
     @objc(requestAuthorization:read:resolve:withRejecter:)

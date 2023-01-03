@@ -127,7 +127,6 @@ export enum HKQuantityTypeIdentifier {
   waterTemperature = 'HKQuantityTypeIdentifierWaterTemperature', // Temperature, Discrete
 
   appleSleepingWristTemperature = 'HKQuantityTypeIdentifierAppleSleepingWristTemperature', // Temperature, Discrete
-
 }
 
 export type TypeToUnitMapping = {
@@ -1246,6 +1245,11 @@ type ReactNativeHealthkitTypeNative = {
     limit: number,
     ascending: boolean
   ) => Promise<readonly HKQuantitySampleRaw<TIdentifier, TUnit>[]>;
+  readonly querySources: <
+    TIdentifier extends HKCategoryTypeIdentifier | HKQuantityTypeIdentifier
+  >(
+    identifier: TIdentifier
+  ) => Promise<readonly HKSource[]>;
   readonly saveCategorySample: <T extends HKCategoryTypeIdentifier>(
     identifier: T,
     value: HKCategoryValueForIdentifier<T>,
