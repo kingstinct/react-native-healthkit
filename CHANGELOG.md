@@ -1,3 +1,15 @@
+# [5.4.0](https://github.com/kingstinct/react-native-healthkit/compare/v5.3.0...v5.4.0) (2023-01-03)
+
+
+### Bug Fixes
+
+* **lint:** fix few changes caused by default formatter ([ebe98a0](https://github.com/kingstinct/react-native-healthkit/commit/ebe98a0d0187056802264c40d9c82cae5ce7d1e0))
+
+
+### Features
+
+* **hk sources:** add func for fetching hk sources ([3d534b4](https://github.com/kingstinct/react-native-healthkit/commit/3d534b40f1e2560599849f08258bcec1b050dfa4))
+
 # [5.3.0](https://github.com/kingstinct/react-native-healthkit/compare/v5.2.1...v5.3.0) (2022-12-20)
 
 
