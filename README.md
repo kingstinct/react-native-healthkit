@@ -122,6 +122,10 @@ We're striving to do as straight a mapping as possible to the Native Libraries. 
 
 For accessing Clinical Records use old version (3.x) or use specific branch ""
 
+## Android alternatives
+
+For a similar library for Android, check out [react-native-health-connect](https://github.com/matinzd/react-native-health-connect/) that works with the new Health Connect. For Google Fit [react-native-google-fit](https://www.npmjs.com/package/react-native-google-fit) seems to be the most popular option, and and another possible option is to work directly with the Google Fit REST API which I've some experience with.
+
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
