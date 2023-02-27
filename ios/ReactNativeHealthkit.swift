@@ -685,6 +685,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         store.execute(query);
 
         self._runningQueries.updateValue(query, forKey: queryId);
+        resolve(queryId);
     }
 
     @objc(unsubscribeQuery:resolve:reject:)
@@ -1034,7 +1035,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         let q = HKCorrelationQuery(type: sampleType, predicate: predicate, samplePredicates: nil) { (query: HKCorrelationQuery, _correlations: [HKCorrelation]?, error: Error?) in
             guard let err = error else {
-                guard let correlations = _correlations else {
+                guard let correlations, !correlations.isEmpty = _correlations else {
                     return resolve([]);
                 }
 
