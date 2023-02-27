@@ -1035,7 +1035,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         let q = HKCorrelationQuery(type: sampleType, predicate: predicate, samplePredicates: nil) { (query: HKCorrelationQuery, _correlations: [HKCorrelation]?, error: Error?) in
             guard let err = error else {
-                guard let correlations= _correlations, !correlations.isEmpty  else {
+                guard let correlations = _correlations, !correlations.isEmpty  else {
                     return resolve([]);
                 }
 
