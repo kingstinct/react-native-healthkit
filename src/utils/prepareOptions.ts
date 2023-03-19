@@ -7,8 +7,9 @@ const prepareOptions = (options: GenericQueryOptions) => {
   const ascending = options.ascending ?? limit === 0
   const from = serializeDate(options.from)
   const to = serializeDate(options.to)
+  const anchor = options.anchor ?? -1
   return {
-    limit, ascending, from, to,
+    limit, ascending, from, to, anchor,
   }
 }
 

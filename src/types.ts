@@ -37,6 +37,7 @@ export type GenericQueryOptions = {
   readonly to?: Date;
   readonly limit?: number;
   readonly ascending?: boolean;
+  readonly anchor?: number
 };
 
 export interface HKWorkout<
@@ -69,132 +70,11 @@ export interface QueryStatisticsResponse<TIdentifier extends HKQuantityTypeIdent
   > {
   readonly mostRecentQuantityDateInterval?: { readonly from: Date; readonly to: Date };
 }
-/*
-export type IsHealthDataAvailableFn = () => Promise<boolean>;
-
-export type GetBloodTypeFn = () => Promise<HKBloodType>;
-
-export type GetDateOfBirthFn = () => Promise<Date>;
-export type GetBiologicalSexFn = () => Promise<HKBiologicalSex>;
-export type GetWheelchairUseFn = () => Promise<HKWheelchairUse>;
-export type GetFitzpatrickSkinTypeFn = () => Promise<HKFitzpatrickSkinType>;
-
-export type AuthorizationStatusForFn = (
-  type: HealthkitReadAuthorization
-) => Promise<boolean>;
-
-export type QueryCategorySamplesFn = <T extends HKCategoryTypeIdentifier>(
-  identifier: T,
-  options: GenericQueryOptions
-) => Promise<readonly HKCategorySample<T>[]>;
-
-export type GetRequestStatusForAuthorizationFn = (
-  read: readonly HealthkitReadAuthorization[],
-  write?: readonly HealthkitWriteAuthorization[]
-) => Promise<HKAuthorizationRequestStatus>;
-
-export type RequestAuthorizationFn = (
-  read: readonly HealthkitReadAuthorization[],
-  write?: readonly HealthkitWriteAuthorization[]
-) => Promise<boolean>;
-
-export type SaveQuantitySampleFn = <TType extends HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TType>>(
-  identifier: TType,
-  unit: TUnit,
-  value: number,
-  options?: {
-    readonly start?: Date;
-    readonly end?: Date;
-    readonly metadata?: MetadataMapperForQuantityIdentifier<TType>;
-  }
-) => Promise<boolean>;
-
-export type QueryQuantitySamplesFn = <
-  TIdentifier extends HKQuantityTypeIdentifier,
-  TUnit extends UnitForIdentifier<TIdentifier>
->(
-  identifier: TIdentifier,
-  options: GenericQueryOptions & { readonly unit?: TUnit }
-) => Promise<readonly HKQuantitySample<TIdentifier>[]>; */
 
 export type HKCategorySampleForSaving =Omit<HKCategorySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
 
 export type HKQuantitySampleForSaving =Omit<HKQuantitySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
-/*
-export type SaveCategorySampleFn = <T extends HKCategoryTypeIdentifier>(
-  identifier: T,
-  value: HKCategoryValueForIdentifier<T>,
-  options?: {
-    readonly start?: Date;
-    readonly end?: Date;
-    readonly metadata?: MetadataMapperForCategoryIdentifier<T>;
-  }
-) => Promise<boolean>;
 
-export type MostRecentCategorySampleHook = <T extends HKCategoryTypeIdentifier>(
-  identifier: T
-) => HKCategorySample<T> | null;
-
-export type MostRecentCorrelationSampleHook = <
-  T extends HKCorrelationTypeIdentifier
->(
-  identifer: T
-) => HKCorrelation<T> | null;
-
-export type MostRecentQuantitySampleHook = <
-  TIdentifier extends HKQuantityTypeIdentifier,
-  TUnit extends UnitForIdentifier<TIdentifier>
->(
-  identifier: TIdentifier,
-  unit?: TUnit
-) => HKQuantitySample<TIdentifier> | null;
-
-export type MostRecentWorkoutHook = <
-  TEnergy extends EnergyUnit,
-  TDistance extends LengthUnit
->(
-  options?: Pick<
-  QueryWorkoutsOptions<TEnergy, TDistance>,
-  'distanceUnit' | 'energyUnit'
-  >
-) => HKWorkout<TEnergy, TDistance> | null;
-
-export type GetPreferredUnitsFn = (
-  identifiers: readonly HKQuantityTypeIdentifier[]
-) => Promise<readonly HKUnit[]>;
-
-export type GetPreferredUnitFn = (
-  identifier: HKQuantityTypeIdentifier
-) => Promise<HKUnit>;
-
-export type SaveCorrelationSampleFn = <
-  TIdentifier extends HKCorrelationTypeIdentifier
->(
-  typeIdentifier: TIdentifier,
-  samples: readonly (
-    | Omit<HKCategorySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
-    | Omit<HKQuantitySample<HKQuantityTypeIdentifier>, 'device' | 'endDate' | 'startDate' | 'uuid'>
-  )[],
-  options?: {
-    readonly start?: Date;
-    readonly end?: Date;
-    readonly metadata?: MetadataMapperForCorrelationIdentifier<TIdentifier>;
-  }
-) => Promise<boolean>;
-
-export type SaveWorkoutSampleFn<TIdentifier extends HKWorkoutActivityType, TQIdentifier extends HKQuantityTypeIdentifier> = (
-  typeIdentifier: TIdentifier,
-  quantities: readonly Omit<
-  HKQuantitySample<TQIdentifier>,
-  'device' | 'endDate' | 'startDate' | 'uuid'
-  >[],
-  start: Date,
-  options?: {
-    readonly end?: Date;
-    readonly metadata?: HKWorkoutMetadata;
-  }
-) => Promise<boolean>;
-*/
 export interface HKCorrelation<TIdentifier extends HKCorrelationTypeIdentifier>
   extends Omit<
   HKCorrelationRaw<TIdentifier>,
@@ -204,16 +84,3 @@ export interface HKCorrelation<TIdentifier extends HKCorrelationTypeIdentifier>
   readonly startDate: Date;
   readonly endDate: Date;
 }
-/*
-export type SubscribeToChangesHook = <
-  TIdentifier extends HKSampleTypeIdentifier
->(
-  identifier: TIdentifier,
-  onChange: () => void,
-  runInitialUpdate?: boolean
-) => void;
-
-export type GetWorkoutRoutesFn = (
-  workoutUUID: string
-) => Promise<readonly WorkoutRoute[]>;
-*/

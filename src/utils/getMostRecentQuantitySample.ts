@@ -13,7 +13,7 @@ async function getMostRecentQuantitySample<
     limit: 1,
     unit,
   })
-  return samples[0] || null
+  return samples.samples[0] || null
 }
 
 export default getMostRecentQuantitySample
