@@ -48,6 +48,7 @@
     "@babel/core": ">=7",
     "@babel/preset-env": "^7.18.10",
     "@commitlint/config-conventional": "12",
+    "@expo/config-plugins": "^6.0.1",
     "@graphql-eslint/eslint-plugin": ">=3",
     "@release-it/conventional-changelog": "2",
     "@testing-library/react-native": "^11.0.0",
