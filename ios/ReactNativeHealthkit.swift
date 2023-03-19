@@ -874,6 +874,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         guard let device = _device else {
             return nil;
         }
+      
         return [
             "name": device.name,
             "firmwareVersion": device.firmwareVersion,
@@ -882,6 +883,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
             "manufacturer": device.manufacturer,
             "model": device.model,
             "softwareVersion": device.softwareVersion,
+            "udiDeviceIdentifier": device.udiDeviceIdentifier
         ]
     }
 
