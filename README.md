@@ -39,12 +39,12 @@ Usage with Expo is possible - just keep in mind it will not work in Expo Go and 
   "expo": {
     "ios": {
       "infoPlist": {
-        "NSHealthShareUsageDescription": "<< your usage description here >>",
-        "NSHealthUpdateUsageDescription": "<< your usage description here >>"
+        "NSHealthShareUsageDescription": "<< your usage description here >>", // (optional) if you want to read healthkit data
+        "NSHealthUpdateUsageDescription": "<< your usage description here >>" // (optional) if you want to write healthkit data
       },
       "entitlements": {
-        "com.apple.developer.healthkit": true,
-        "com.apple.developer.healthkit.background-delivery": true
+        "com.apple.developer.healthkit": true, // required to use healthkit
+        "com.apple.developer.healthkit.background-delivery": true // (optional) if you want to use background delivery
       }
     }
   }
