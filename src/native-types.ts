@@ -994,6 +994,7 @@ export type HKDevice = {
   readonly manufacturer: string; // ex: "Apple Inc."
   readonly model: string; // ex: "Watch"
   readonly softwareVersion: string; // ex: "9.0"
+  readonly udiDeviceIdentifier: string | null
 };
 
 export type HKSource = {
