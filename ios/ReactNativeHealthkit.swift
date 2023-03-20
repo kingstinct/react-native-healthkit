@@ -1038,11 +1038,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
     
-        print("anchor: \(anchor)")
-    
-    let actualAnchor = anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor)
-    
-    print("actualAnchor: \(actualAnchor)")
+        let actualAnchor = anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor)
     
         let q = HKAnchoredObjectQuery(
           type: sampleType,
