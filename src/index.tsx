@@ -45,13 +45,13 @@ const Healthkit: typeof ReactNativeHealthkit = {
   queryCategorySamples: UnavailableFn(Promise.resolve({
     samples: [],
     deletedSamples: [],
-    newAnchor: -1,
+    newAnchor: '',
   })),
   queryCorrelationSamples: UnavailableFn(Promise.resolve([])),
   queryQuantitySamples: UnavailableFn(Promise.resolve({
     samples: [],
     deletedSamples: [],
-    newAnchor: -1,
+    newAnchor: '',
   })),
   queryStatisticsForQuantity: UnavailableFn(Promise.resolve({
     averageQuantity: undefined,

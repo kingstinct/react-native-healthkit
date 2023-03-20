@@ -104,7 +104,7 @@ RCT_EXTERN_METHOD(queryCategorySamples:(NSString)typeIdentifier
                   to:(NSDate)to
                   limit:(NSInteger)limit
                   ascending:(BOOL)ascending
-                  anchor:(NSInteger)limit
+                  anchor:(NSString)anchor
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
 )
@@ -140,7 +140,7 @@ RCT_EXTERN_METHOD(queryQuantitySamples:(NSString)typeIdentifier
                   to:(NSDate)to
                   limit:(NSInteger)limit
                   ascending:(BOOL)ascending
-                  anchor:(NSInteger)anchor
+                  anchor:(NSString)anchor
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
 )

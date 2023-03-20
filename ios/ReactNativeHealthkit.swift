@@ -983,9 +983,45 @@ class ReactNativeHealthkit: RCTEventEmitter {
         store.execute(q);
     }
 
+  func serializeAnchor(anchor: HKQueryAnchor) -> String {
+    let data = NSKeyedArchiver.archivedData(withRootObject: anchor)
+    let encoded = data.base64EncodedString();
+    
+    return encoded;
+  }
+  
+  func base64StringToHKQueryAnchor(base64String: String) -> HKQueryAnchor? {
+    // Step 1: Decode the base64 string to a Data object
+    guard let data = Data(base64Encoded: base64String) else {
+        print("Error: Invalid base64 string")
+        return nil
+    }
+
+    // Step 2: Use NSKeyedUnarchiver to unarchive the data and create an HKQueryAnchor object
+    do {
+        let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
+        unarchiver.requiresSecureCoding = true
+        let anchor = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
+      
+        return anchor as? HKQueryAnchor
+    } catch {
+        print("Error: Unable to unarchive HKQueryAnchor object: \(error)")
+        return nil
+    }
+}
 
   @objc(queryQuantitySamples:unitString:from:to:limit:ascending:anchor:resolve:reject:)
-  func queryQuantitySamples(typeIdentifier: String, unitString: String, from: Date, to: Date, limit: Int, ascending: Bool, anchor: Int, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+  func queryQuantitySamples(
+    typeIdentifier: String, 
+    unitString: String, 
+    from: Date, 
+    to: Date, 
+    limit: Int, 
+    ascending: Bool, 
+    anchor: String, 
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) -> Void {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
@@ -1002,10 +1038,16 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
     
+        print("anchor: \(anchor)")
+    
+    let actualAnchor = anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor)
+    
+    print("actualAnchor: \(actualAnchor)")
+    
         let q = HKAnchoredObjectQuery(
           type: sampleType,
           predicate: predicate,
-          anchor: anchor == -1 ? nil : HKQueryAnchor(fromValue: anchor),
+          anchor: actualAnchor,
           limit: limit
         ) { (
           query: HKAnchoredObjectQuery,
@@ -1028,7 +1070,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
               "deletedSamples": deletedSamples?.map({ sample in
                 return self.serializeDeletedSample(sample: sample)
               }) as Any,
-              "newAnchor": newAnchor as Any
+              "newAnchor": self.serializeAnchor(anchor: newAnchor!) as Any
             ]);
           }
           reject(GENERIC_ERROR, err.localizedDescription, err);
@@ -1104,7 +1146,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
 
   @objc(queryCategorySamples:from:to:limit:ascending:anchor:resolve:reject:)
-  func queryCategorySamples(typeIdentifier: String, from: Date, to: Date, limit: Int, ascending: Bool, anchor: Int, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+  func queryCategorySamples(typeIdentifier: String, from: Date, to: Date, limit: Int, ascending: Bool, anchor: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
@@ -1124,7 +1166,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         let q = HKAnchoredObjectQuery(
           type: sampleType,
           predicate: predicate,
-          anchor: anchor != -1 ? HKQueryAnchor(fromValue: anchor) : nil,
+          anchor: anchor != "" ? base64StringToHKQueryAnchor(base64String: anchor) : nil,
           limit: limit
         ) { (
           query: HKAnchoredObjectQuery,
@@ -1153,7 +1195,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
               "deletedSamples": deletedSamples?.map({ sample in
                 return self.serializeDeletedSample(sample: sample)
               }) as Any,
-              "newAnchor": newAnchor as Any
+              "newAnchor": self.serializeAnchor(anchor: newAnchor!) as Any
             ]);
           }
           reject(GENERIC_ERROR, err.localizedDescription, err);

@@ -8,7 +8,7 @@ import type { GenericQueryOptions, HKCategorySample } from '../types'
 export type QueryCategorySamplesResponse<T extends HKCategoryTypeIdentifier> = {
   readonly samples: readonly HKCategorySample<T>[],
   readonly deletedSamples: readonly DeletedCategorySampleRaw<T>[],
-  readonly newAnchor: number
+  readonly newAnchor: string
 }
 
 export type QueryCategorySamplesFn = <T extends HKCategoryTypeIdentifier>(

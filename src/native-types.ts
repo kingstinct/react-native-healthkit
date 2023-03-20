@@ -1113,13 +1113,13 @@ export type DeletedQuantitySampleRaw<T extends HKQuantityTypeIdentifier> = {
 export type QueryCategorySamplesResponseRaw<T extends HKCategoryTypeIdentifier> = {
   readonly samples: readonly HKCategorySampleRaw<T>[],
   readonly deletedSamples: readonly DeletedCategorySampleRaw<T>[],
-  readonly newAnchor: number
+  readonly newAnchor: string
 }
 
 export type QueryQuantitySamplesResponseRaw<T extends HKQuantityTypeIdentifier> = {
   readonly samples: readonly HKQuantitySampleRaw<T>[],
   readonly deletedSamples: readonly DeletedQuantitySampleRaw<T>[],
-  readonly newAnchor: number
+  readonly newAnchor: string
 }
 
 export type HKCorrelationRaw<TIdentifier extends HKCorrelationTypeIdentifier> =
@@ -1256,7 +1256,7 @@ type ReactNativeHealthkitTypeNative = {
     to: string,
     limit: number,
     ascending: boolean,
-    anchor: number
+    anchor: string
   ) => Promise<QueryCategorySamplesResponseRaw<T>>;
   readonly queryQuantitySamples: <
     TIdentifier extends HKQuantityTypeIdentifier,
@@ -1268,7 +1268,7 @@ type ReactNativeHealthkitTypeNative = {
     to: string,
     limit: number,
     ascending: boolean,
-    anchor: number
+    anchor: string
   ) => Promise<QueryQuantitySamplesResponseRaw<TIdentifier>>;
   readonly querySources: <
     TIdentifier extends HKCategoryTypeIdentifier | HKQuantityTypeIdentifier

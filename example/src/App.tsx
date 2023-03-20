@@ -13,11 +13,14 @@ import useSources from '@kingstinct/react-native-healthkit/hooks/useSources'
 import useStatisticsForQuantity from '@kingstinct/react-native-healthkit/hooks/useStatisticsForQuantity'
 import deleteQuantitySample from '@kingstinct/react-native-healthkit/utils/deleteQuantitySample'
 import deleteSamples from '@kingstinct/react-native-healthkit/utils/deleteSamples'
+import queryQuantitySamples from '@kingstinct/react-native-healthkit/utils/queryQuantitySamples'
 import saveQuantitySample from '@kingstinct/react-native-healthkit/utils/saveQuantitySample'
 import saveWorkoutSample from '@kingstinct/react-native-healthkit/utils/saveWorkoutSample'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, {
+  useCallback, useEffect, useRef, useState,
+} from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import {
   Button,
@@ -592,6 +595,8 @@ const App = () => {
       .catch(() => setAccessProtectedData(false))
   }, [])
 
+  const anchor = useRef<string>()
+
   return status !== HKAuthorizationRequestStatus.unnecessary ? (
     <View style={styles.buttonWrapper}>
       <Button onPress={request}>Authorize</Button>
@@ -599,6 +604,31 @@ const App = () => {
   ) : (
     <Provider>
       <ScrollView style={styles.scrollView}>
+        <Button onPress={async () => {
+          const res = await queryQuantitySamples(HKQuantityTypeIdentifier.stepCount, {
+            limit: 2,
+          })
+
+          anchor.current = res.newAnchor
+
+          alert(JSON.stringify(res))
+        }}
+        >
+          First 2 stepCount
+        </Button>
+        <Button onPress={async () => {
+          const res = await queryQuantitySamples(HKQuantityTypeIdentifier.stepCount, {
+            limit: 2,
+            anchor: anchor.current,
+          })
+
+          anchor.current = res.newAnchor
+
+          alert(JSON.stringify(res))
+        }}
+        >
+          Next 2 stepCount
+        </Button>
         <LatestWorkout icon='run' title='Latest workout' />
         <List.AccordionGroup>
           <List.Accordion title='Latest values' id='1'>

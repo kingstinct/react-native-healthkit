@@ -37,7 +37,7 @@ export type GenericQueryOptions = {
   readonly to?: Date;
   readonly limit?: number;
   readonly ascending?: boolean;
-  readonly anchor?: number
+  readonly anchor?: string
 };
 
 export interface HKWorkout<

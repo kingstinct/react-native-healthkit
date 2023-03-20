@@ -9,7 +9,7 @@ import type { GenericQueryOptions, HKQuantitySample } from '../types'
 export type QueryQuantitySamplesResponse<T extends HKQuantityTypeIdentifier> = {
   readonly samples: readonly HKQuantitySample<T>[],
   readonly deletedSamples: readonly DeletedQuantitySampleRaw<T>[],
-  readonly newAnchor: number
+  readonly newAnchor: string
 }
 
 export type QueryQuantitySamplesFn = <
