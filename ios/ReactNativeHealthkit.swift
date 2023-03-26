@@ -1090,8 +1090,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
             return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
         }
 
-        let from = from.timeIntervalSince1970 > 0 ? from : nil;
-        let to = to.timeIntervalSince1970 > 0 ? to : nil;
+        let from = from.timeIntervalSince1970 >= 0 ? from : nil;
+        let to = to.timeIntervalSince1970 >= 0 ? to : nil;
 
         let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
 
