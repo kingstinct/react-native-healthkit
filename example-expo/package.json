@@ -9,7 +9,8 @@
     "build-local": "npx eas-cli@latest build --platform=ios --profile=development --local",
     "build-local-sim": "npx eas-cli@latest build --platform=ios --profile=development --local",
     "build": "npx eas-cli@latest build --platform=ios --profile=development",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "postinstall": "cp ../app.plugin.js ./app.plugin.js"
   },
   "dependencies": {
     "@expo/match-media": "^0.3.0",

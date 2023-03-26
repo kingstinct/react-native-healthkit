@@ -39,7 +39,7 @@
       "policy": "sdkVersion"
     },
     "plugins": [
-      [ "../app.plugin",
+      [ "./app.plugin",
         {
           "NSHealthShareUsageDescription": "Overriden default message: This app uses HealthKit to store and sync your data"
         } ]
