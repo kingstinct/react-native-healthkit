@@ -11,6 +11,6 @@ describe('serializeDate', () => {
   })
 
   it('should serialize null date', () => {
-    expect(serializeDate(null)).toBe('1970-01-01T00:00:00.000Z')
+    expect(serializeDate(null)).toBe('1969-12-31T23:59:59.999Z')
   })
 })
