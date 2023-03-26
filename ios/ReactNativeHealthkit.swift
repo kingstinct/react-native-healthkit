@@ -983,8 +983,12 @@ class ReactNativeHealthkit: RCTEventEmitter {
         store.execute(q);
     }
 
-  func serializeAnchor(anchor: HKQueryAnchor) -> String {
-    let data = NSKeyedArchiver.archivedData(withRootObject: anchor)
+  func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
+    guard let anch = anchor else {
+      return nil
+    }
+    
+    let data = NSKeyedArchiver.archivedData(withRootObject: anch)
     let encoded = data.base64EncodedString();
     
     return encoded;
@@ -1066,7 +1070,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
               "deletedSamples": deletedSamples?.map({ sample in
                 return self.serializeDeletedSample(sample: sample)
               }) as Any,
-              "newAnchor": self.serializeAnchor(anchor: newAnchor!) as Any
+              "newAnchor": self.serializeAnchor(anchor: newAnchor) as Any
             ]);
           }
           reject(GENERIC_ERROR, err.localizedDescription, err);
@@ -1191,7 +1195,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
               "deletedSamples": deletedSamples?.map({ sample in
                 return self.serializeDeletedSample(sample: sample)
               }) as Any,
-              "newAnchor": self.serializeAnchor(anchor: newAnchor!) as Any
+              "newAnchor": self.serializeAnchor(anchor: newAnchor) as Any
             ]);
           }
           reject(GENERIC_ERROR, err.localizedDescription, err);
