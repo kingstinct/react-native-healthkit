@@ -5,7 +5,6 @@ import {
 } from './native-types'
 
 import type ReactNativeHealthkit from './index.ios'
-import type { QueryQuantitySamplesResponse } from './utils/queryQuantitySamples'
 
 const notAvailableError = `[@kingstinct/react-native-healthkit] Platform "${
   Platform.OS
