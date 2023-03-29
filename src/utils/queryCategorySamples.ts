@@ -2,28 +2,39 @@ import Native from '../native-types'
 import deserializCategorySample from './deserializeCategorySample'
 import prepareOptions from './prepareOptions'
 
-import type { HKCategoryTypeIdentifier } from '../native-types'
+import type { HKCategoryTypeIdentifier, DeletedCategorySampleRaw } from '../native-types'
 import type { GenericQueryOptions, HKCategorySample } from '../types'
+
+export type QueryCategorySamplesResponse<T extends HKCategoryTypeIdentifier> = {
+  readonly samples: readonly HKCategorySample<T>[],
+  readonly deletedSamples: readonly DeletedCategorySampleRaw<T>[],
+  readonly newAnchor: string
+}
 
 export type QueryCategorySamplesFn = <T extends HKCategoryTypeIdentifier>(
   identifier: T,
   options: GenericQueryOptions
-) => Promise<readonly HKCategorySample<T>[]>;
+) => Promise<QueryCategorySamplesResponse<T>>;
 
 const queryCategorySamples: QueryCategorySamplesFn = async (
   identifier,
   options,
 ) => {
   const opts = prepareOptions(options)
-  const results = await Native.queryCategorySamples(
+  const raw = await Native.queryCategorySamples(
     identifier,
     opts.from,
     opts.to,
     opts.limit,
     opts.ascending,
+    opts.anchor,
   )
 
-  return results.map(deserializCategorySample)
+  return {
+    samples: raw.samples.map(deserializCategorySample),
+    deletedSamples: raw.deletedSamples,
+    newAnchor: raw.newAnchor,
+  }
 }
 
 export default queryCategorySamples

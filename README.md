@@ -21,15 +21,34 @@ This library is provided as-is without any warranty and is not affiliated with A
 
 ## Installation
 
-### Native or Expo Bare Workflow
-1. `yarn add @kingstinct/react-native-healthkit` (or `npm install @kingstinct/react-native-healthkit`)
-2. `npx pod-install`
-3. Set `NSHealthUpdateUsageDescription` and `NSHealthShareUsageDescription` in your `Info.plist` 
-4. Enable the HealthKit capability for the project in Xcode.
-5. Since this package is using Swift you might also need to add a bridging header in your project if you haven't already, you can [find more about that in the official React Native docs](https://reactnative.dev/docs/native-modules-ios#exporting-swift)
-6. During runtime check and request permissions with `requestAuthorization`. Failing to request authorization, or requesting a permission you haven't requested yet, will result in the app crashing.
+### Expo Managed Workflow (easiest - with config plugin)
+Usage with Expo is possible - just keep in mind it will not work in Expo Go and [you'll need to roll your own Dev Client](https://docs.expo.dev/development/getting-started/). 
 
-### Expo Managed Workflow
+1. `yarn add @kingstinct/react-native-healthkit` (or `npm install @kingstinct/react-native-healthkit`)
+2. Update your app.json with the config plugin:
+```json
+{
+  "expo": {
+    "plugins": ["@kingstinct/react-native-healthkit"]
+  }
+}
+```
+this will give you defaults that make the app build without any further configuration. If you want, you can override the defaults:
+```json
+{
+  "expo": {
+    "plugins": ["@kingstinct/react-native-healthkit", {
+      "NSHealthShareUsageDescription": "Your own custom usage description",
+      "NSHealthUpdateUsageDescription": false,  // if you have no plans to update data, you can skip adding it to your info.plist
+      "background": false // if you have no plans to use it in background mode, skip adding it to the entitlements
+    }]
+  }
+}
+```
+3. Build a new Dev Client
+4. During runtime check and request permissions with `requestAuthorization`. Failing to request authorization, or requesting a permission you haven't requested yet, will result in the app crashing.
+
+### Expo Managed Workflow (manual)
 Usage with Expo is possible - just keep in mind it will not work in Expo Go and [you'll need to roll your own Dev Client](https://docs.expo.dev/development/getting-started/). 
 
 1. `yarn add @kingstinct/react-native-healthkit` (or `npm install @kingstinct/react-native-healthkit`)
@@ -53,6 +72,14 @@ Usage with Expo is possible - just keep in mind it will not work in Expo Go and 
 3. Build a new Dev Client
 4. During runtime check and request permissions with `requestAuthorization`. Failing to request authorization, or requesting a permission you haven't requested yet, will result in the app crashing.
 
+### Native or Expo Bare Workflow
+1. `yarn add @kingstinct/react-native-healthkit` (or `npm install @kingstinct/react-native-healthkit`)
+2. `npx pod-install`
+3. Set `NSHealthUpdateUsageDescription` and `NSHealthShareUsageDescription` in your `Info.plist` 
+4. Enable the HealthKit capability for the project in Xcode.
+5. Since this package is using Swift you might also need to add a bridging header in your project if you haven't already, you can [find more about that in the official React Native docs](https://reactnative.dev/docs/native-modules-ios#exporting-swift)
+6. During runtime check and request permissions with `requestAuthorization`. Failing to request authorization, or requesting a permission you haven't requested yet, will result in the app crashing.
+
 ## Usage
 
 Some hook examples:
@@ -62,9 +89,12 @@ import { HKQuantityTypeIdentifier, useHealthkitAuthorization } from '@kingstinct
 const [authorizationStatus, requestAuthorization] = useHealthkitAuthorization([HKQuantityTypeIdentifier.bloodGlucose])
 
 // make sure that you've requested authorization before requesting data, otherwise your app will crash
-import { useMostRecentQuantitySample, HKQuantityTypeIdentifier } from '@kingstinct/react-native-healthkit';
+import { useMostRecentQuantitySample, HKQuantityTypeIdentifier, useMostRecentCategorySample } from '@kingstinct/react-native-healthkit';
 
 const mostRecentBloodGlucoseSample = useMostRecentQuantitySample(HKQuantityTypeIdentifier.bloodGlucose)
+const lastBodyFatSample = useMostRecentQuantitySample(HKQuantityTypeIdentifier.bodyFatPercentage)
+const lastMindfulSession = useMostRecentCategorySample(HKCategoryTypeIdentifier.mindfulSession)
+const lastWorkout = useMostRecentWorkout()
 ```
 
 Some imperative examples:
@@ -104,14 +134,21 @@ Some imperative examples:
         },
       }
     );
+```
 
+### HealthKit Anchors (breaking change in 6.0)
+In 6.0 you can use HealthKit anchors to get changes and deleted items which is very useful for syncing. This is a breaking change - but a very easy one to handle that TypeScript should help you with. Most queries now return an object containing samples which is what was returned as only an array before. In addition you also get deletedSamples and a newAnchor you can use for more advanced use cases, example:
+```TypeScript
+  const { newAnchor, samples, deletedSamples } = await queryQuantitySamples(HKQuantityTypeIdentifier.stepCount, {
+    limit: 2,
+  })
 
-  /* Hooks */
-  const lastBodyFatSample = HealthKit.useMostRecentQuantitySample(HKQuantityTypeIdentifier.bodyFatPercentage);
-  const lastMindfulSession = Healthkit.useMostRecentCategorySample(
-    HKCategoryTypeIdentifier.mindfulSession
-  );
-  const lastWorkout = Healthkit.useMostRecentWorkout();
+  const nextResult = await queryQuantitySamples(HKQuantityTypeIdentifier.stepCount, {
+    limit: 2,
+    anchor: newAnchor,
+  })
+
+  // etc..
 ```
 
 ## A note on Apple Documentation

@@ -72,4 +72,6 @@ buck-out/
 web-build/
 dist/
 
+app.plugin.js
+
 # @end expo-cli

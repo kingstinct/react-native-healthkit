@@ -1,3 +1,9 @@
+# [6.0.0](https://github.com/kingstinct/react-native-healthkit/compare/v5.4.0...v6.0.0) (2023-03-29)
+
+### Breaking change and new feature
+
+* add support for healthkit anchors ([55](https://github.com/Kingstinct/react-native-healthkit/pull/55))
+
 # [5.4.0](https://github.com/kingstinct/react-native-healthkit/compare/v5.3.0...v5.4.0) (2023-01-03)
 
 

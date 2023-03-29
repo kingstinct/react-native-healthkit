@@ -1,7 +1,7 @@
 import type { HKQuantitySampleRaw, HKQuantityTypeIdentifier, UnitForIdentifier } from '../native-types'
 import type { HKQuantitySample } from '../types'
 
-function deserializeSample<
+function deserializeQuantitySample<
   TIdentifier extends HKQuantityTypeIdentifier,
   TUnit extends UnitForIdentifier<TIdentifier>
 >(
@@ -14,4 +14,4 @@ function deserializeSample<
   }
 }
 
-export default deserializeSample
+export default deserializeQuantitySample

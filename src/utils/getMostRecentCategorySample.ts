@@ -12,7 +12,7 @@ async function getMostRecentCategorySample<
     ascending: false,
   })
 
-  return samples[0] || null
+  return samples.samples[0] || null
 }
 
 export default getMostRecentCategorySample

@@ -1,7 +1,7 @@
 import { Platform } from 'react-native'
 
 import {
-  HKAuthorizationRequestStatus, HKBiologicalSex, HKBloodType, HKFitzpatrickSkinType, HKUnits, HKWheelchairUse,
+  HKAuthorizationRequestStatus, HKBiologicalSex, HKBloodType, HKFitzpatrickSkinType, HKQuantityTypeIdentifier, HKUnits, HKWheelchairUse, QueryQuantitySamplesResponseRaw,
 } from './native-types'
 
 import type ReactNativeHealthkit from './index.ios'
@@ -41,9 +41,17 @@ const Healthkit: typeof ReactNativeHealthkit = {
   getWheelchairUse: UnavailableFn(Promise.resolve(HKWheelchairUse.notSet)),
   getWorkoutRoutes: UnavailableFn(Promise.resolve([])),
   isHealthDataAvailable: async () => Promise.resolve(false),
-  queryCategorySamples: UnavailableFn(Promise.resolve([])),
+  queryCategorySamples: UnavailableFn(Promise.resolve({
+    samples: [],
+    deletedSamples: [],
+    newAnchor: '',
+  })),
   queryCorrelationSamples: UnavailableFn(Promise.resolve([])),
-  queryQuantitySamples: UnavailableFn(Promise.resolve([])),
+  queryQuantitySamples: UnavailableFn(Promise.resolve({
+    samples: [],
+    deletedSamples: [],
+    newAnchor: '',
+  })),
   queryStatisticsForQuantity: UnavailableFn(Promise.resolve({
     averageQuantity: undefined,
     maximumQuantity: undefined,

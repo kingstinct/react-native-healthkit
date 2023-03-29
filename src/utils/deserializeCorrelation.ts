@@ -1,5 +1,5 @@
 import deserializCategorySample from './deserializeCategorySample'
-import deserializeSample from './deserializeSample'
+import deserializeQuantitySample from './deserializeSample'
 
 import type {
   HKCategorySampleRaw, HKCorrelationRaw, HKCorrelationTypeIdentifier, HKQuantitySampleRaw, HKQuantityTypeIdentifier,
@@ -15,7 +15,7 @@ function deserializeCorrelation<
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
       if (o.quantity !== undefined) {
-        return deserializeSample(o as HKQuantitySampleRaw<HKQuantityTypeIdentifier>)
+        return deserializeQuantitySample(o as HKQuantitySampleRaw<HKQuantityTypeIdentifier>)
       }
 
       return deserializCategorySample(o as HKCategorySampleRaw)

@@ -1100,6 +1100,28 @@ export type HKCategorySampleRaw<
   readonly sourceRevision?: HKSourceRevision;
 };
 
+export type DeletedCategorySampleRaw<T extends HKCategoryTypeIdentifier> = {
+  readonly uuid: string;
+  readonly metadata: MetadataMapperForCategoryIdentifier<T>
+}
+
+export type DeletedQuantitySampleRaw<T extends HKQuantityTypeIdentifier> = {
+  readonly uuid: string;
+  readonly metadata: MetadataMapperForQuantityIdentifier<T>
+}
+
+export type QueryCategorySamplesResponseRaw<T extends HKCategoryTypeIdentifier> = {
+  readonly samples: readonly HKCategorySampleRaw<T>[],
+  readonly deletedSamples: readonly DeletedCategorySampleRaw<T>[],
+  readonly newAnchor: string
+}
+
+export type QueryQuantitySamplesResponseRaw<T extends HKQuantityTypeIdentifier> = {
+  readonly samples: readonly HKQuantitySampleRaw<T>[],
+  readonly deletedSamples: readonly DeletedQuantitySampleRaw<T>[],
+  readonly newAnchor: string
+}
+
 export type HKCorrelationRaw<TIdentifier extends HKCorrelationTypeIdentifier> =
   {
     readonly correlationType: HKCorrelationTypeIdentifier;
@@ -1233,8 +1255,9 @@ type ReactNativeHealthkitTypeNative = {
     from: string,
     to: string,
     limit: number,
-    ascending: boolean
-  ) => Promise<readonly HKCategorySampleRaw<T>[]>;
+    ascending: boolean,
+    anchor: string
+  ) => Promise<QueryCategorySamplesResponseRaw<T>>;
   readonly queryQuantitySamples: <
     TIdentifier extends HKQuantityTypeIdentifier,
     TUnit extends UnitForIdentifier<TIdentifier>
@@ -1244,8 +1267,9 @@ type ReactNativeHealthkitTypeNative = {
     from: string,
     to: string,
     limit: number,
-    ascending: boolean
-  ) => Promise<readonly HKQuantitySampleRaw<TIdentifier, TUnit>[]>;
+    ascending: boolean,
+    anchor: string
+  ) => Promise<QueryQuantitySamplesResponseRaw<TIdentifier>>;
   readonly querySources: <
     TIdentifier extends HKCategoryTypeIdentifier | HKQuantityTypeIdentifier
   >(
