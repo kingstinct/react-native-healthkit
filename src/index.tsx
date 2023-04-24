@@ -47,6 +47,11 @@ const Healthkit: typeof ReactNativeHealthkit = {
     newAnchor: '',
   })),
   queryCorrelationSamples: UnavailableFn(Promise.resolve([])),
+  queryHeartbeatSeriesSamples: UnavailableFn(Promise.resolve({
+    samples: [],
+    deletedSamples: [],
+    newAnchor: '',
+  })),
   queryQuantitySamples: UnavailableFn(Promise.resolve({
     samples: [],
     deletedSamples: [],

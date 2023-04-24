@@ -5,6 +5,7 @@ import type {
   HKCorrelationRaw,
   HKCorrelationTypeIdentifier,
   HKDevice,
+  HKHeartbeatSeriesSampleRaw,
   HKQuantityTypeIdentifier,
   HKSourceRevision,
   HKUnit,
@@ -44,6 +45,11 @@ export interface HKWorkout<
   TEnergy extends EnergyUnit = EnergyUnit,
   TDistance extends LengthUnit = LengthUnit
 > extends Omit<HKWorkoutRaw<TEnergy, TDistance>, 'endDate' | 'startDate'> {
+  readonly startDate: Date;
+  readonly endDate: Date;
+}
+
+export interface HKHeartbeatSeriesSample extends Omit<HKHeartbeatSeriesSampleRaw, 'endDate' | 'startDate'> {
   readonly startDate: Date;
   readonly endDate: Date;
 }
