@@ -1,3 +1,10 @@
+# [6.1.0](https://github.com/kingstinct/react-native-healthkit/compare/v6.0.0...v6.1.0) (2023-04-25)
+
+
+### Features
+
+* exposing HKHeartbeatSeriesQuery for Heartbeat series data ([e7c3cb2](https://github.com/kingstinct/react-native-healthkit/commit/e7c3cb2c006f9144e4d8c7cd27955621347add0c))
+
 # [6.0.0](https://github.com/kingstinct/react-native-healthkit/compare/v5.4.0...v6.0.0) (2023-03-29)
 
 ### Breaking change and new feature
