@@ -5,8 +5,6 @@ let INIT_ERROR = "HEALTHKIT_INIT_ERROR"
 let INIT_ERROR_MESSAGE = "HealthKit not initialized"
 let TYPE_IDENTIFIER_ERROR = "HEALTHKIT_TYPE_IDENTIFIER_NOT_RECOGNIZED_ERROR"
 let GENERIC_ERROR = "HEALTHKIT_ERROR"
-let HEARTBEAT_ERROR = "HEARTBEAT_ERROR"
-let HEARTBEAT_ERROR_MESSAGE = "Failed to retrieve HeartbeatSeries samples."
 
 let HKCharacteristicTypeIdentifier_PREFIX = "HKCharacteristicTypeIdentifier"
 let HKQuantityTypeIdentifier_PREFIX = "HKQuantityTypeIdentifier"
@@ -1425,7 +1423,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
     }
 
-    typealias HKAnchoredQueryResult = (samples: [HKSample], deletedSamples: [HKDeletedObject]?, newAnchor: HKQueryAnchor?);
+    typealias HKAnchoredObjectQueryResult = (samples: [HKSample], deletedSamples: [HKDeletedObject]?, newAnchor: HKQueryAnchor?);
 
     @available(iOS 13.0.0, *)
     func _queryHeartbeatSeriesSamples(
@@ -1433,10 +1431,9 @@ class ReactNativeHealthkit: RCTEventEmitter {
         predicate: NSPredicate?,
         limit: Int,
         anchor: HKQueryAnchor?
-    ) async throws -> HKAnchoredQueryResult? {
+    ) async throws -> HKAnchoredObjectQueryResult {
         let queryResult = try await withCheckedThrowingContinuation {
-            (continuation: CheckedContinuation<HKAnchoredQueryResult, Error>) in
-            
+            (continuation: CheckedContinuation<HKAnchoredObjectQueryResult, Error>) in
             let query = HKAnchoredObjectQuery(
                 type: HKSeriesType.heartbeat(),
                 predicate: predicate,
@@ -1451,14 +1448,13 @@ class ReactNativeHealthkit: RCTEventEmitter {
             ) in
                 if let err = error {
                     continuation.resume(throwing: err);
-                    return;
                 }
 
                 guard let samples = s else {
                     fatalError("Should not fail");
                 }
                                 
-                continuation.resume(returning: HKAnchoredQueryResult(samples: samples, deletedSamples: deletedSamples, newAnchor: newAnchor));
+                continuation.resume(returning: HKAnchoredObjectQueryResult(samples: samples, deletedSamples: deletedSamples, newAnchor: newAnchor));
             }
             
             store.execute(query);
@@ -1468,7 +1464,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
 
     @available(iOS 13.0.0, *)
-    func getHeartbeatSeriesHeartbeats(store: HKHealthStore, sample: HKHeartbeatSeriesSample) async throws -> [Dictionary<String, Any>]? {
+    func getHeartbeatSeriesHeartbeats(store: HKHealthStore, sample: HKHeartbeatSeriesSample) async throws -> [Dictionary<String, Any>] {
         let beatTimes = try await withCheckedThrowingContinuation {
             (continuation: CheckedContinuation<[Dictionary<String, Any>], Error>) in
             var allBeats: [Dictionary<String, Any>] = [];
@@ -1482,7 +1478,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
             ) in
                 if let err = error {
                     continuation.resume(throwing: err);
-                    return;
                 }
 
                 let timeDict: Dictionary<String, Any> = [
@@ -1545,14 +1540,10 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 
                 let actualAnchor = anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor);
                 
-                let _queryResult = try await _queryHeartbeatSeriesSamples(store: store, predicate: predicate, limit: limit, anchor: actualAnchor);
-                
-                guard let queryResult = _queryResult, let samples = queryResult.samples as! [HKHeartbeatSeriesSample]? else {
-                    return reject(HEARTBEAT_ERROR, HEARTBEAT_ERROR_MESSAGE, nil);
-                }
+                let queryResult = try await _queryHeartbeatSeriesSamples(store: store, predicate: predicate, limit: limit, anchor: actualAnchor);
                 
                 var allHeartbeatSamples: [Dictionary<String, Any>] = [];
-                for sample in samples {
+                for sample in queryResult.samples as! [HKHeartbeatSeriesSample] {
                     allHeartbeatSamples.append(try await getSerializedHeartbeatSeriesSample(store: store, sample: sample));
                 }
                 
@@ -1564,7 +1555,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                   "newAnchor": serializeAnchor(anchor: queryResult.newAnchor) as Any
                 ]);
             } catch {
-                reject(HEARTBEAT_ERROR, HEARTBEAT_ERROR_MESSAGE, nil);
+                reject(GENERIC_ERROR, error.localizedDescription, error);
             }
         }
     }
