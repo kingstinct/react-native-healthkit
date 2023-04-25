@@ -1422,4 +1422,141 @@ class ReactNativeHealthkit: RCTEventEmitter {
             }
         }
     }
+
+    typealias HKAnchoredObjectQueryResult = (samples: [HKSample], deletedSamples: [HKDeletedObject]?, newAnchor: HKQueryAnchor?);
+
+    @available(iOS 13.0.0, *)
+    func _queryHeartbeatSeriesSamples(
+        store: HKHealthStore,
+        predicate: NSPredicate?,
+        limit: Int,
+        anchor: HKQueryAnchor?
+    ) async throws -> HKAnchoredObjectQueryResult {
+        let queryResult = try await withCheckedThrowingContinuation {
+            (continuation: CheckedContinuation<HKAnchoredObjectQueryResult, Error>) in
+            let query = HKAnchoredObjectQuery(
+                type: HKSeriesType.heartbeat(),
+                predicate: predicate,
+                anchor: anchor,
+                limit: limit
+            ) { (
+                query: HKAnchoredObjectQuery,
+                s: [HKSample]?,
+                deletedSamples: [HKDeletedObject]?,
+                newAnchor: HKQueryAnchor?,
+                error: Error?
+            ) in
+                if let err = error {
+                    continuation.resume(throwing: err);
+                }
+
+                guard let samples = s else {
+                    fatalError("Should not fail");
+                }
+                                
+                continuation.resume(returning: HKAnchoredObjectQueryResult(samples: samples, deletedSamples: deletedSamples, newAnchor: newAnchor));
+            }
+            
+            store.execute(query);
+        }
+
+        return queryResult;
+    }
+
+    @available(iOS 13.0.0, *)
+    func getHeartbeatSeriesHeartbeats(store: HKHealthStore, sample: HKHeartbeatSeriesSample) async throws -> [Dictionary<String, Any>] {
+        let beatTimes = try await withCheckedThrowingContinuation {
+            (continuation: CheckedContinuation<[Dictionary<String, Any>], Error>) in
+            var allBeats: [Dictionary<String, Any>] = [];
+
+            let query = HKHeartbeatSeriesQuery(heartbeatSeries: sample) { (
+                query: HKHeartbeatSeriesQuery,
+                timeSinceSeriesStart: TimeInterval,
+                precededByGap: Bool,
+                done: Bool,
+                error: Error?
+            ) in
+                if let err = error {
+                    continuation.resume(throwing: err);
+                }
+
+                let timeDict: Dictionary<String, Any> = [
+                    "timeSinceSeriesStart": timeSinceSeriesStart,
+                    "precededByGap": precededByGap
+                ];
+                
+                allBeats.append(timeDict);
+
+                if done {
+                    continuation.resume(returning: allBeats);
+                }
+            }
+            
+            store.execute(query);
+        }
+        
+        return beatTimes;
+    }
+
+    @available(iOS 13.0.0, *)
+    func getSerializedHeartbeatSeriesSample(store: HKHealthStore, sample: HKHeartbeatSeriesSample) async throws -> Dictionary<String, Any> {
+        let sampleMetadata = self.serializeMetadata(metadata: sample.metadata) as! Dictionary<String, Any>;
+        let sampleHeartbeats = try await getHeartbeatSeriesHeartbeats(store: store, sample: sample);
+
+        return [
+            "uuid": sample.uuid.uuidString,
+            "device": self.serializeDevice(_device: sample.device) as Any,
+            "startDate": self._dateFormatter.string(from: sample.startDate),
+            "endDate": self._dateFormatter.string(from: sample.endDate),
+            "heartbeats": sampleHeartbeats as Any,
+            "metadata": self.serializeMetadata(metadata: sample.metadata),
+            "sourceRevision": self.serializeSourceRevision(_sourceRevision: sample.sourceRevision) as Any
+        ];
+    }
+
+    @available(iOS 13.0.0, *)
+    @objc(queryHeartbeatSeriesSamples:to:limit:ascending:anchor:resolve:reject:)
+    func queryHeartbeatSeriesSamples(
+        from: Date,
+        to: Date,
+        limit: Int,
+        ascending: Bool,
+        anchor: String,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+        }
+
+        Task {
+            do {
+                let from = from.timeIntervalSince1970 > 0 ? from : nil;
+                let to = to.timeIntervalSince1970 > 0 ? to : nil;
+                
+                let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
+                
+                let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
+                
+                let actualAnchor = anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor);
+                
+                let queryResult = try await _queryHeartbeatSeriesSamples(store: store, predicate: predicate, limit: limit, anchor: actualAnchor);
+                
+                var allHeartbeatSamples: [Dictionary<String, Any>] = [];
+                for sample in queryResult.samples as! [HKHeartbeatSeriesSample] {
+                    allHeartbeatSamples.append(try await getSerializedHeartbeatSeriesSample(store: store, sample: sample));
+                }
+                
+                resolve([
+                  "samples": allHeartbeatSamples as Any,
+                  "deletedSamples": queryResult.deletedSamples?.map({ sample in
+                    return serializeDeletedSample(sample: sample)
+                  }) as Any,
+                  "newAnchor": serializeAnchor(anchor: queryResult.newAnchor) as Any
+                ]);
+            } catch {
+                reject(GENERIC_ERROR, error.localizedDescription, error);
+            }
+        }
+    }
 }

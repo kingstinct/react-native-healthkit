@@ -13,6 +13,7 @@ import useSources from '@kingstinct/react-native-healthkit/hooks/useSources'
 import useStatisticsForQuantity from '@kingstinct/react-native-healthkit/hooks/useStatisticsForQuantity'
 import deleteQuantitySample from '@kingstinct/react-native-healthkit/utils/deleteQuantitySample'
 import deleteSamples from '@kingstinct/react-native-healthkit/utils/deleteSamples'
+import queryHeartbeatSeriesSamples from '@kingstinct/react-native-healthkit/utils/queryHeartbeatSeriesSamples'
 import queryQuantitySamples from '@kingstinct/react-native-healthkit/utils/queryQuantitySamples'
 import saveQuantitySample from '@kingstinct/react-native-healthkit/utils/saveQuantitySample'
 import saveWorkoutSample from '@kingstinct/react-native-healthkit/utils/saveWorkoutSample'
@@ -569,6 +570,8 @@ const readPermissions: readonly HealthkitReadAuthorization[] = [
   HKQuantityTypeIdentifier.distanceWalkingRunning,
   HKQuantityTypeIdentifier.oxygenSaturation,
   HKQuantityTypeIdentifier.heartRate,
+  HKQuantityTypeIdentifier.heartRateVariabilitySDNN,
+  'HKDataTypeIdentifierHeartbeatSeries',
   HKQuantityTypeIdentifier.swimmingStrokeCount,
   HKQuantityTypeIdentifier.bodyFatPercentage,
   HKQuantityTypeIdentifier.bodyMass,
@@ -596,6 +599,7 @@ const App = () => {
   }, [])
 
   const anchor = useRef<string>()
+  const heartbeatsAnchor = useRef<string>()
 
   return status !== HKAuthorizationRequestStatus.unnecessary ? (
     <View style={styles.buttonWrapper}>
@@ -628,6 +632,20 @@ const App = () => {
         }}
         >
           Next 2 stepCount
+        </Button>
+        <Button onPress={async () => {
+          const res = await queryHeartbeatSeriesSamples({
+            limit: 2,
+            anchor: heartbeatsAnchor.current,
+            ascending: true,
+          })
+
+          heartbeatsAnchor.current = res.newAnchor
+
+          alert(JSON.stringify(res))
+        }}
+        >
+          Next 2 HeartbeatSeries samples
         </Button>
         <LatestWorkout icon='run' title='Latest workout' />
         <List.AccordionGroup>

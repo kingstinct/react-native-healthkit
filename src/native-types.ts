@@ -745,6 +745,10 @@ contraceptive = 'HKCategoryTypeIdentifierContraceptive',
   appleWalkingSteadinessEvent = 'HKCategoryTypeIdentifierAppleWalkingSteadinessEvent',
   handwashingEvent = 'HKCategoryTypeIdentifierHandwashingEvent', // HKCategoryValue */
 
+export type HKHeartbeatSeriesSampleMetadata = HKGenericMetadata & {
+  readonly HKMetadataKeyAlgorithmVersion: string;
+}
+
 export type MetadataMapperForCategoryIdentifier<
   T extends HKCategoryTypeIdentifier
 > = T extends HKCategoryTypeIdentifier.sexualActivity
@@ -1024,6 +1028,21 @@ export type HKQuantitySampleRaw<
   readonly sourceRevision?: HKSourceRevision;
 };
 
+export type HKHeartbeatRaw = {
+  readonly timeSinceSeriesStart: number,
+  readonly precededByGap: boolean
+}
+
+export type HKHeartbeatSeriesSampleRaw = {
+  readonly uuid: string;
+  readonly device?: HKDevice;
+  readonly startDate: string;
+  readonly endDate: string;
+  readonly heartbeats: readonly HKHeartbeatRaw[];
+  readonly metadata?: HKHeartbeatSeriesSampleMetadata;
+  readonly sourceRevision?: HKSourceRevision;
+}
+
 export type HKQuantitySampleRawForSaving<
   TQuantityIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
   TUnit extends UnitForIdentifier<TQuantityIdentifier> = UnitForIdentifier<TQuantityIdentifier>
@@ -1105,6 +1124,11 @@ export type DeletedCategorySampleRaw<T extends HKCategoryTypeIdentifier> = {
   readonly metadata: MetadataMapperForCategoryIdentifier<T>
 }
 
+export type DeletedHeartbeatSeriesSampleRaw = {
+  readonly uuid: string;
+  readonly metadata: HKHeartbeatSeriesSampleMetadata;
+}
+
 export type DeletedQuantitySampleRaw<T extends HKQuantityTypeIdentifier> = {
   readonly uuid: string;
   readonly metadata: MetadataMapperForQuantityIdentifier<T>
@@ -1113,6 +1137,12 @@ export type DeletedQuantitySampleRaw<T extends HKQuantityTypeIdentifier> = {
 export type QueryCategorySamplesResponseRaw<T extends HKCategoryTypeIdentifier> = {
   readonly samples: readonly HKCategorySampleRaw<T>[],
   readonly deletedSamples: readonly DeletedCategorySampleRaw<T>[],
+  readonly newAnchor: string
+}
+
+export type QueryHeartbeatSeriesSamplesResponseRaw = {
+  readonly samples: readonly HKHeartbeatSeriesSampleRaw[],
+  readonly deletedSamples: readonly DeletedHeartbeatSeriesSampleRaw[],
   readonly newAnchor: string
 }
 
@@ -1258,6 +1288,13 @@ type ReactNativeHealthkitTypeNative = {
     ascending: boolean,
     anchor: string
   ) => Promise<QueryCategorySamplesResponseRaw<T>>;
+  readonly queryHeartbeatSeriesSamples: (
+    from: string,
+    to: string,
+    limit: number,
+    ascending: boolean,
+    anchor: string
+  ) => Promise<QueryHeartbeatSeriesSamplesResponseRaw>;
   readonly queryQuantitySamples: <
     TIdentifier extends HKQuantityTypeIdentifier,
     TUnit extends UnitForIdentifier<TIdentifier>
