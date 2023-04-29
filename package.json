@@ -17,7 +17,8 @@
     "!lib/typescript/example",
     "!**/__tests__",
     "!**/__fixtures__",
-    "!**/__mocks__"
+    "!**/__mocks__",
+    "app.plugin.js"
   ],
   "scripts": {
     "test-only": "jest",
