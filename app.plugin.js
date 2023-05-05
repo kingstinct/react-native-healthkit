@@ -40,7 +40,10 @@ const {
  */
 const withEntitlementsPlugin = (config, { background }) => withEntitlementsPlist(config, (config) => {
   config.modResults['com.apple.developer.healthkit'] = true
-  config.modResults['com.apple.developer.healthkit.background-delivery'] = background !== false
+  config.modResults['com.apple.developer.healthkit.access'] = []
+  if(background){
+    config.modResults['com.apple.developer.healthkit.background-delivery'] = true
+  }
   return config
 })
 
