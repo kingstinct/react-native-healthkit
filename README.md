@@ -37,11 +37,13 @@ this will give you defaults that make the app build without any further configur
 ```json
 {
   "expo": {
-    "plugins": ["@kingstinct/react-native-healthkit", {
-      "NSHealthShareUsageDescription": "Your own custom usage description",
-      "NSHealthUpdateUsageDescription": false,  // if you have no plans to update data, you can skip adding it to your info.plist
-      "background": false // if you have no plans to use it in background mode, skip adding it to the entitlements
-    }]
+    "plugins": [
+      ["@kingstinct/react-native-healthkit", {
+        "NSHealthShareUsageDescription": "Your own custom usage description",
+        "NSHealthUpdateUsageDescription": false,  // if you have no plans to update data, you can skip adding it to your info.plist
+        "background": false // if you have no plans to use it in background mode, skip adding it to the entitlements
+      }]
+    ]
   }
 }
 ```
