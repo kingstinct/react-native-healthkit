@@ -1240,7 +1240,7 @@ type ReactNativeHealthkitTypeNative = {
     identifier: HKSampleTypeIdentifier
   ): Promise<QueryId>;
   unsubscribeQuery(queryId: QueryId): Promise<boolean>;
-  authorizationStatusFor(type: HealthkitReadAuthorization): Promise<boolean>;
+  authorizationStatusFor(type: HealthkitReadAuthorization): Promise<HKAuthorizationStatus>;
   getRequestStatusForAuthorization(
     write: WritePermissions,
     read: ReadPermissions
