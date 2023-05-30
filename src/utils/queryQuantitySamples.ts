@@ -1,16 +1,11 @@
 import Native from '../native-types'
-import deserializeQuantitySample from './deserializeSample'
 import ensureUnit from './ensureUnit'
 import prepareOptions from './prepareOptions'
 
-import type { HKQuantityTypeIdentifier, UnitForIdentifier, DeletedQuantitySampleRaw } from '../native-types'
-import type { GenericQueryOptions, HKQuantitySample } from '../types'
-
-export type QueryQuantitySamplesResponse<T extends HKQuantityTypeIdentifier> = {
-  readonly samples: readonly HKQuantitySample<T>[],
-  readonly deletedSamples: readonly DeletedQuantitySampleRaw<T>[],
-  readonly newAnchor: string
-}
+import type {
+  HKQuantityTypeIdentifier, UnitForIdentifier, HKQuantitySampleRaw,
+} from '../native-types'
+import type { GenericQueryOptions } from '../types'
 
 export type QueryQuantitySamplesFn = <
   TIdentifier extends HKQuantityTypeIdentifier,
@@ -18,7 +13,7 @@ export type QueryQuantitySamplesFn = <
 >(
   identifier: TIdentifier,
   options: GenericQueryOptions & { readonly unit?: TUnit }
-) => Promise<QueryQuantitySamplesResponse<TIdentifier>>;
+) => Promise<HKQuantitySampleRaw<TIdentifier>>;
 
 const queryQuantitySamples: QueryQuantitySamplesFn = async (
   identifier,
@@ -34,14 +29,9 @@ const queryQuantitySamples: QueryQuantitySamplesFn = async (
     opts.to,
     opts.limit,
     opts.ascending,
-    opts.anchor,
   )
 
-  return {
-    deletedSamples: result.deletedSamples,
-    newAnchor: result.newAnchor,
-    samples: result.samples.map(deserializeQuantitySample),
-  }
+  return result
 }
 
 export default queryQuantitySamples

@@ -15,9 +15,11 @@ import getPreferredUnit from './utils/getPreferredUnit'
 import getPreferredUnits from './utils/getPreferredUnits'
 import getRequestStatusForAuthorization from './utils/getRequestStatusForAuthorization'
 import queryCategorySamples from './utils/queryCategorySamples'
+import queryCategorySamplesWithAnchor from './utils/queryCategorySamplesWithAnchor'
 import queryCorrelationSamples from './utils/queryCorrelationSamples'
 import queryHeartbeatSeriesSamples from './utils/queryHeartbeatSeriesSamples'
 import queryQuantitySamples from './utils/queryQuantitySamples'
+import queryQuantitySamplesWithAnchor from './utils/queryQuantitySamplesWithAnchor'
 import querySources from './utils/querySources'
 import queryStatisticsForQuantity from './utils/queryStatisticsForQuantity'
 import queryWorkouts from './utils/queryWorkouts'
@@ -59,9 +61,11 @@ const Healthkit = {
 
   // query methods
   queryCategorySamples,
+  queryCategorySamplesWithAnchor,
   queryCorrelationSamples,
   queryHeartbeatSeriesSamples,
   queryQuantitySamples,
+  queryQuantitySamplesWithAnchor,
   queryStatisticsForQuantity,
   queryWorkouts,
   querySources,
