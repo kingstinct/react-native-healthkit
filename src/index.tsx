@@ -1,10 +1,12 @@
 import { Platform } from 'react-native'
 
 import {
-  HKAuthorizationRequestStatus, HKAuthorizationStatus, HKBiologicalSex, HKBloodType, HKFitzpatrickSkinType, HKQuantityTypeIdentifier, HKUnits, HKWheelchairUse, QueryQuantitySamplesResponseRaw,
+  HKAuthorizationRequestStatus, HKAuthorizationStatus, HKBiologicalSex, HKBloodType, HKFitzpatrickSkinType, HKUnits, HKWheelchairUse, QueryQuantitySamplesResponseRaw,
 } from './native-types'
 
 import type ReactNativeHealthkit from './index.ios'
+import type { QueryCategorySamplesFn } from './utils/queryCategorySamples'
+import type { QueryQuantitySamplesFn } from './utils/queryQuantitySamples'
 
 const notAvailableError = `[@kingstinct/react-native-healthkit] Platform "${
   Platform.OS
@@ -41,7 +43,8 @@ const Healthkit: typeof ReactNativeHealthkit = {
   getWheelchairUse: UnavailableFn(Promise.resolve(HKWheelchairUse.notSet)),
   getWorkoutRoutes: UnavailableFn(Promise.resolve([])),
   isHealthDataAvailable: async () => Promise.resolve(false),
-  queryCategorySamples: UnavailableFn(Promise.resolve({
+  queryCategorySamples: UnavailableFn(Promise.resolve([])) as unknown as QueryCategorySamplesFn,
+  queryCategorySamplesWithAnchor: UnavailableFn(Promise.resolve({
     samples: [],
     deletedSamples: [],
     newAnchor: '',
@@ -52,7 +55,8 @@ const Healthkit: typeof ReactNativeHealthkit = {
     deletedSamples: [],
     newAnchor: '',
   })),
-  queryQuantitySamples: UnavailableFn(Promise.resolve({
+  queryQuantitySamples: UnavailableFn(Promise.resolve([])) as unknown as QueryQuantitySamplesFn,
+  queryQuantitySamplesWithAnchor: UnavailableFn(Promise.resolve({
     samples: [],
     deletedSamples: [],
     newAnchor: '',

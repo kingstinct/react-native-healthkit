@@ -1014,7 +1014,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
 }
 
-  @objc(queryQuantitySamples:unitString:from:to:limit:ascending:anchor:resolve:reject:)
+  @objc(queryQuantitySamples:unitString:from:to:limit:ascending:resolve:reject:)
   func queryQuantitySamples(
     typeIdentifier: String, 
     unitString: String, 
@@ -1022,7 +1022,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
     to: Date, 
     limit: Int, 
     ascending: Bool, 
-    anchor: String, 
     resolve: @escaping RCTPromiseResolveBlock,
     reject: @escaping RCTPromiseRejectBlock
   ) -> Void {
@@ -1042,38 +1041,24 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
     
-        let actualAnchor = anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor)
-    
-        let q = HKAnchoredObjectQuery(
-          type: sampleType,
-          predicate: predicate,
-          anchor: actualAnchor,
-          limit: limit
-        ) { (
-          query: HKAnchoredObjectQuery,
-          s: [HKSample]?,
-          deletedSamples: [HKDeletedObject]?,
-          newAnchor: HKQueryAnchor?,
-          error: Error?
-        ) in
-          guard let err = error else {
-              guard let samples = s else {
-                  return resolve([]);
-              }
+        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+            guard let err = error else {
+                guard let samples = sample else {
+                    return resolve([]);
+                }
+                let arr: NSMutableArray = [];
 
-            return resolve([
-              "samples": samples.map({ sample in
-                let serialized = self.serializeQuantitySample(sample: sample as! HKQuantitySample, unit: HKUnit.init(from: unitString))
+                for s in samples {
+                    if let sample = s as? HKQuantitySample {
+                        let serialized = self.serializeQuantitySample(sample: sample, unit: HKUnit.init(from: unitString))
 
-                return serialized
-              }) as Any,
-              "deletedSamples": deletedSamples?.map({ sample in
-                return self.serializeDeletedSample(sample: sample)
-              }) as Any,
-              "newAnchor": self.serializeAnchor(anchor: newAnchor) as Any
-            ]);
-          }
-          reject(GENERIC_ERROR, err.localizedDescription, err);
+                        arr.add(serialized)
+                    }
+                }
+
+                return resolve(arr);
+            }
+            reject(GENERIC_ERROR, err.localizedDescription, err);
         }
 
         store.execute(q);
@@ -1145,8 +1130,113 @@ class ReactNativeHealthkit: RCTEventEmitter {
         store.execute(q);
     }
 
-  @objc(queryCategorySamples:from:to:limit:ascending:anchor:resolve:reject:)
-  func queryCategorySamples(typeIdentifier: String, from: Date, to: Date, limit: Int, ascending: Bool, anchor: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+  @objc(queryCategorySamples:from:to:limit:ascending:resolve:reject:)
+  func queryCategorySamples(typeIdentifier: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+        }
+
+        let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier);
+        guard let sampleType = HKSampleType.categoryType(forIdentifier: identifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+        }
+
+        let from = from.timeIntervalSince1970 > 0 ? from : nil;
+        let to = to.timeIntervalSince1970 > 0 ? to : nil;
+
+        let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
+
+        let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
+      
+        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+            guard let err = error else {
+                guard let samples = sample else {
+                    return resolve([]);
+                }
+                let arr: NSMutableArray = [];
+
+                for s in samples {
+                    if let sample = s as? HKCategorySample {
+                        let serialized = self.serializeCategorySample(sample: sample);
+
+                        arr.add(serialized)
+                    }
+                }
+              return resolve(arr);
+            }
+
+          reject(GENERIC_ERROR, err.localizedDescription, err);
+        }
+
+        store.execute(q);
+    }
+
+  @objc(queryQuantitySamplesWithAnchor:unitString:from:to:limit:anchor:resolve:reject:)
+  func queryQuantitySamplesWithAnchor(
+    typeIdentifier: String, 
+    unitString: String, 
+    from: Date, 
+    to: Date, 
+    limit: Int,
+    anchor: String, 
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) -> Void {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+        }
+
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
+        guard let sampleType = HKSampleType.quantityType(forIdentifier: identifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+        }
+
+        let from = from.timeIntervalSince1970 > 0 ? from : nil;
+        let to = to.timeIntervalSince1970 > 0 ? to : nil;
+
+        let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
+
+        let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
+    
+        let actualAnchor = anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor)
+    
+        let q = HKAnchoredObjectQuery(
+          type: sampleType,
+          predicate: predicate,
+          anchor: actualAnchor,
+          limit: limit
+        ) { (
+          query: HKAnchoredObjectQuery,
+          s: [HKSample]?,
+          deletedSamples: [HKDeletedObject]?,
+          newAnchor: HKQueryAnchor?,
+          error: Error?
+        ) in
+          guard let err = error else {
+              guard let samples = s else {
+                  return resolve([]);
+              }
+
+            return resolve([
+              "samples": samples.map({ sample in
+                let serialized = self.serializeQuantitySample(sample: sample as! HKQuantitySample, unit: HKUnit.init(from: unitString))
+
+                return serialized
+              }) as Any,
+              "deletedSamples": deletedSamples?.map({ sample in
+                return self.serializeDeletedSample(sample: sample)
+              }) as Any,
+              "newAnchor": self.serializeAnchor(anchor: newAnchor) as Any
+            ]);
+          }
+          reject(GENERIC_ERROR, err.localizedDescription, err);
+        }
+
+        store.execute(q);
+    }
+
+  @objc(queryCategorySamplesWithAnchor:from:to:limit:anchor:resolve:reject:)
+  func queryCategorySamplesWithAnchor(typeIdentifier: String, from: Date, to: Date, limit: Int, anchor: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
