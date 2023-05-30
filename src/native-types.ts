@@ -1286,7 +1286,7 @@ type ReactNativeHealthkitTypeNative = {
     to: string,
     limit: number,
     ascending: boolean,
-  ) => Promise<HKCategorySampleRaw<T>[]>;
+  ) => Promise<readonly HKCategorySampleRaw<T>[]>;
   readonly queryQuantitySamples: <
     TIdentifier extends HKQuantityTypeIdentifier,
     TUnit extends UnitForIdentifier<TIdentifier>
@@ -1297,7 +1297,7 @@ type ReactNativeHealthkitTypeNative = {
     to: string,
     limit: number,
     ascending: boolean,
-  ) => Promise<HKQuantitySampleRaw<TIdentifier>[]>;
+  ) => Promise<readonly HKQuantitySampleRaw<TIdentifier>[]>;
   readonly queryCategorySamplesWithAnchor: <T extends HKCategoryTypeIdentifier>(
     identifier: T,
     from: string,
