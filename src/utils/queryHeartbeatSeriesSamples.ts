@@ -1,6 +1,6 @@
-import Native from '../native-types'
 import deserializeHeartbeatSeriesSample from './deserializeHeartbeatSeriesSample'
 import prepareOptions from './prepareOptions'
+import Native from '../native-types'
 
 import type { DeletedHeartbeatSeriesSampleRaw } from '../native-types'
 import type { GenericQueryOptions, HKHeartbeatSeriesSample } from '../types'

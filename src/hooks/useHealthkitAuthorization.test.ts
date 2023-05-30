@@ -1,8 +1,8 @@
 import { renderHook, act } from '@testing-library/react-native'
 
+import useHealthkitAuthorization from './useHealthkitAuthorization'
 import Native, { HKAuthorizationRequestStatus, HKCategoryTypeIdentifier } from '../native-types'
 import waitForNextUpdate from '../test-utils'
-import useHealthkitAuthorization from './useHealthkitAuthorization'
 
 describe('useHealthkitAuthorization', () => {
   test('should return shouldRequest', async () => {

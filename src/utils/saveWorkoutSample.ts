@@ -1,5 +1,5 @@
-import Native from '../native-types'
 import ensureMetadata from './ensureMetadata'
+import Native from '../native-types'
 
 import type { HKWorkoutActivityType, HKWorkoutMetadata } from '../native-types'
 import type { HKQuantitySampleForSaving } from '../types'

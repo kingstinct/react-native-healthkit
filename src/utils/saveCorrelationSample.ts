@@ -1,5 +1,5 @@
-import Native from '../native-types'
 import ensureMetadata from './ensureMetadata'
+import Native from '../native-types'
 
 import type { MetadataMapperForCorrelationIdentifier, HKCorrelationTypeIdentifier } from '../native-types'
 import type { HKCategorySampleForSaving, HKQuantitySampleForSaving } from '../types'

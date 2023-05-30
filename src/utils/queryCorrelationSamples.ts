@@ -1,6 +1,6 @@
-import Native from '../native-types'
 import deserializeCorrelation from './deserializeCorrelation'
 import prepareOptions from './prepareOptions'
+import Native from '../native-types'
 
 import type { HKCorrelationTypeIdentifier } from '../native-types'
 import type { GenericQueryOptions, HKCorrelation } from '../types'

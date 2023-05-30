@@ -1,7 +1,7 @@
-import Native from '../native-types'
 import deserializeWorkout from './deserializeWorkout'
 import getPreferredUnitsTyped from './getPreferredUnitsTyped'
 import prepareOptions from './prepareOptions'
+import Native from '../native-types'
 
 import type { EnergyUnit, LengthUnit } from '../native-types'
 import type { QueryWorkoutsOptions } from '../types'

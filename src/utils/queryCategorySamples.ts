@@ -1,6 +1,6 @@
-import Native from '../native-types'
 import deserializCategorySample from './deserializeCategorySample'
 import prepareOptions from './prepareOptions'
+import Native from '../native-types'
 
 import type { HKCategoryTypeIdentifier, DeletedCategorySampleRaw } from '../native-types'
 import type { GenericQueryOptions, HKCategorySample } from '../types'

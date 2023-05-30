@@ -1,7 +1,7 @@
-import Native from '../native-types'
 import deserializeQuantitySample from './deserializeSample'
 import ensureUnit from './ensureUnit'
 import prepareOptions from './prepareOptions'
+import Native from '../native-types'
 
 import type { HKQuantityTypeIdentifier, UnitForIdentifier, DeletedQuantitySampleRaw } from '../native-types'
 import type { GenericQueryOptions, HKQuantitySample } from '../types'

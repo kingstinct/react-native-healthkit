@@ -2,8 +2,8 @@ import {
   useState, useEffect, useCallback, useRef,
 } from 'react'
 
-import queryStatisticsForQuantity from '../utils/queryStatisticsForQuantity'
 import useSubscribeToChanges from './useSubscribeToChanges'
+import queryStatisticsForQuantity from '../utils/queryStatisticsForQuantity'
 
 import type { HKQuantityTypeIdentifier, HKStatisticsOptions, UnitForIdentifier } from '../native-types'
 import type { QueryStatisticsResponse } from '../types'

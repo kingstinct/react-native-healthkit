@@ -1,5 +1,5 @@
-import Native from '../native-types'
 import ensureUnit from './ensureUnit'
+import Native from '../native-types'
 
 import type { HKQuantityTypeIdentifier, HKStatisticsOptions, UnitForIdentifier } from '../native-types'
 

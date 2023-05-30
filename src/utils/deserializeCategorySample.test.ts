@@ -1,5 +1,5 @@
-import { HKCategorySampleRaw, HKCategoryTypeIdentifier } from '../types'
 import deserializeCategorySample from './deserializeCategorySample'
+import { HKCategorySampleRaw, HKCategoryTypeIdentifier } from '../types'
 
 describe('deserializeCategorySample', () => {
   it('should deserialize category sample', () => {

@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react-native'
 
+import useIsHealthDataAvailable from './useIsHealthDataAvailable'
 import Native from '../native-types'
 import waitForNextUpdate from '../test-utils'
-import useIsHealthDataAvailable from './useIsHealthDataAvailable'
 
 describe('useIsHealthDataAvailable', () => {
   test('should return false', async () => {

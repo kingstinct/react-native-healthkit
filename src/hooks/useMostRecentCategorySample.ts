@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 
-import getMostRecentCategorySample from '../utils/getMostRecentCategorySample'
 import useSubscribeToChanges from './useSubscribeToChanges'
+import getMostRecentCategorySample from '../utils/getMostRecentCategorySample'
 
 import type { HKCategoryTypeIdentifier } from '../native-types'
 import type { HKCategorySample } from '../types'
