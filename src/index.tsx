@@ -1,7 +1,7 @@
 import { Platform } from 'react-native'
 
 import {
-  HKAuthorizationRequestStatus, HKBiologicalSex, HKBloodType, HKFitzpatrickSkinType, HKQuantityTypeIdentifier, HKUnits, HKWheelchairUse, QueryQuantitySamplesResponseRaw,
+  HKAuthorizationRequestStatus, HKAuthorizationStatus, HKBiologicalSex, HKBloodType, HKFitzpatrickSkinType, HKQuantityTypeIdentifier, HKUnits, HKWheelchairUse, QueryQuantitySamplesResponseRaw,
 } from './native-types'
 
 import type ReactNativeHealthkit from './index.ios'
@@ -24,7 +24,7 @@ function UnavailableFn<T = unknown>(retVal: T) {
 }
 
 const Healthkit: typeof ReactNativeHealthkit = {
-  authorizationStatusFor: UnavailableFn(Promise.resolve(false)),
+  authorizationStatusFor: UnavailableFn(Promise.resolve(HKAuthorizationStatus.notDetermined)),
   disableAllBackgroundDelivery: UnavailableFn(Promise.resolve(false)),
   disableBackgroundDelivery: UnavailableFn(Promise.resolve(false)),
   enableBackgroundDelivery: UnavailableFn(Promise.resolve(false)),
