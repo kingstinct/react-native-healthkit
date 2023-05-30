@@ -14,6 +14,8 @@ const mockModule: (NativeModule & typeof Native) = {
   disableAllBackgroundDelivery: jest.fn(),
   disableBackgroundDelivery: jest.fn(),
   enableBackgroundDelivery: jest.fn(),
+  queryCategorySamplesWithAnchor: jest.fn(),
+  queryQuantitySamplesWithAnchor: jest.fn(),
   getBiologicalSex: jest.fn(),
   getBloodType: jest.fn(),
   getDateOfBirth: jest.fn(),

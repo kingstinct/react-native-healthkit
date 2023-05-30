@@ -14,7 +14,6 @@ import useStatisticsForQuantity from '@kingstinct/react-native-healthkit/hooks/u
 import deleteQuantitySample from '@kingstinct/react-native-healthkit/utils/deleteQuantitySample'
 import deleteSamples from '@kingstinct/react-native-healthkit/utils/deleteSamples'
 import queryHeartbeatSeriesSamples from '@kingstinct/react-native-healthkit/utils/queryHeartbeatSeriesSamples'
-import queryQuantitySamples from '@kingstinct/react-native-healthkit/utils/queryQuantitySamples'
 import saveQuantitySample from '@kingstinct/react-native-healthkit/utils/saveQuantitySample'
 import saveWorkoutSample from '@kingstinct/react-native-healthkit/utils/saveWorkoutSample'
 import dayjs from 'dayjs'
@@ -39,6 +38,7 @@ import type {
 } from '@kingstinct/react-native-healthkit'
 import type { ComponentProps } from 'react'
 import type { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
+import queryQuantitySamplesWithAnchor from '@kingstinct/react-native-healthkit/utils/queryQuantitySamplesWithAnchor'
 
 dayjs.extend(relativeTime)
 
@@ -609,7 +609,7 @@ const App = () => {
     <Provider>
       <ScrollView style={styles.scrollView}>
         <Button onPress={async () => {
-          const res = await queryQuantitySamples(HKQuantityTypeIdentifier.stepCount, {
+          const res = await queryQuantitySamplesWithAnchor(HKQuantityTypeIdentifier.stepCount, {
             limit: 2,
           })
 
@@ -621,7 +621,7 @@ const App = () => {
           First 2 stepCount
         </Button>
         <Button onPress={async () => {
-          const res = await queryQuantitySamples(HKQuantityTypeIdentifier.stepCount, {
+          const res = await queryQuantitySamplesWithAnchor(HKQuantityTypeIdentifier.stepCount, {
             limit: 2,
             anchor: anchor.current,
           })
