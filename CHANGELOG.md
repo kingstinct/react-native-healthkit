@@ -1,3 +1,15 @@
+# [7.0.0](https://github.com/kingstinct/react-native-healthkit/compare/v6.1.0...v7.0.0) (2023-05-31)
+
+### Features
+
+* Fix authorizationStatus return type ([64]https://github.com/Kingstinct/react-native-healthkit/pull/64)
+* Re-add queries without anchors - since anchored queries don't support sorting ([65](https://github.com/Kingstinct/react-native-healthkit/pull/65))
+
+### Maintenance
+
+* add swiftlint to pre-commit hook
+* remove Android traces - to improve maintainability.
+
 # [6.1.0](https://github.com/kingstinct/react-native-healthkit/compare/v6.0.0...v6.1.0) (2023-04-25)
 
 
