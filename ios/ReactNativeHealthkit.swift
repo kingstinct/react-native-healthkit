@@ -1,23 +1,22 @@
-import HealthKit;
-import CoreLocation;
-
+import HealthKit
+import CoreLocation
 
 @objc(ReactNativeHealthkit)
 @available(iOS 10.0, *)
 class ReactNativeHealthkit: RCTEventEmitter {
-    var _store : HKHealthStore?
-    var _runningQueries : Dictionary<String, HKQuery>;
-    var _dateFormatter : ISO8601DateFormatter;
+    var _store: HKHealthStore?
+    var _runningQueries: [String: HKQuery]
+    var _dateFormatter: ISO8601DateFormatter
     var _hasListeners = false
 
     override init() {
-        self._runningQueries = Dictionary<String, HKQuery>();
-        self._dateFormatter = ISO8601DateFormatter();
+        self._runningQueries = [String: HKQuery]()
+        self._dateFormatter = ISO8601DateFormatter()
 
-        if(HKHealthStore.isHealthDataAvailable()){
-            self._store = HKHealthStore.init();
+        if HKHealthStore.isHealthDataAvailable() {
+            self._store = HKHealthStore.init()
         }
-        super.init();
+        super.init()
     }
 
     deinit {
@@ -28,7 +27,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
     }
 
-    override func stopObserving() -> Void {
+    override func stopObserving() {
         self._hasListeners = false
         if let store = _store {
                 for query in self._runningQueries {
@@ -37,172 +36,169 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
     }
 
-    override func startObserving() -> Void {
+    override func startObserving() {
         self._hasListeners = true
     }
 
-    
     @objc(canAccessProtectedData:withRejecter:)
-    func canAccessProtectedData(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-        resolve(UIApplication.shared.isProtectedDataAvailable);
+    func canAccessProtectedData(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
+        resolve(UIApplication.shared.isProtectedDataAvailable)
     }
 
-
     @objc(isHealthDataAvailable:withRejecter:)
-    func isHealthDataAvailable(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+    func isHealthDataAvailable(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         resolve(HKHealthStore.isHealthDataAvailable())
     }
 
     @available(iOS 12.0, *)
     @objc(supportsHealthRecords:withRejecter:)
-    func supportsHealthRecords(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+    func supportsHealthRecords(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
-        resolve(store.supportsHealthRecords());
+        resolve(store.supportsHealthRecords())
     }
 
     @available(iOS 12.0, *)
     @objc(getRequestStatusForAuthorization:read:resolve:withRejecter:)
-    func getRequestStatusForAuthorization(toShare: NSDictionary, read: NSDictionary, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func getRequestStatusForAuthorization(toShare: NSDictionary, read: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
-        let share = sampleTypesFromDictionary(typeIdentifiers: toShare);
-        let toRead = objectTypesFromDictionary(typeIdentifiers: read);
+        let share = sampleTypesFromDictionary(typeIdentifiers: toShare)
+        let toRead = objectTypesFromDictionary(typeIdentifiers: read)
         store.getRequestStatusForAuthorization(toShare: share, read: toRead) { (status: HKAuthorizationRequestStatus, error: Error?) in
             guard let err = error else {
-                return resolve(status.rawValue);
+                return resolve(status.rawValue)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, err);
+            reject(GENERIC_ERROR, err.localizedDescription, err)
         }
     }
 
     @objc(getPreferredUnits:resolve:reject:)
-    func getPreferredUnits(forIdentifiers: NSArray, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func getPreferredUnits(forIdentifiers: NSArray, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
-        var quantityTypes = Set<HKQuantityType>();
+        var quantityTypes = Set<HKQuantityType>()
         for identifierString in forIdentifiers {
-            let identifier = HKQuantityTypeIdentifier.init(rawValue: identifierString as! String);
-            let type = HKSampleType.quantityType(forIdentifier: identifier);
-            if(type != nil){
-                quantityTypes.insert(type!);
+            let identifier = HKQuantityTypeIdentifier.init(rawValue: identifierString as! String)
+            let type = HKSampleType.quantityType(forIdentifier: identifier)
+            if type != nil {
+                quantityTypes.insert(type!)
             }
         }
 
-        store.preferredUnits(for: quantityTypes) { (typePerUnits: [HKQuantityType : HKUnit], error: Error?) in
-            let dic: NSMutableDictionary = NSMutableDictionary();
+        store.preferredUnits(for: quantityTypes) { (typePerUnits: [HKQuantityType: HKUnit], _: Error?) in
+            let dic: NSMutableDictionary = NSMutableDictionary()
 
             for typePerUnit in typePerUnits {
-                dic.setObject(typePerUnit.value.unitString, forKey: typePerUnit.key.identifier as NSCopying);
+                dic.setObject(typePerUnit.value.unitString, forKey: typePerUnit.key.identifier as NSCopying)
             }
 
-            resolve(dic);
+            resolve(dic)
         }
     }
 
     @objc(getBiologicalSex:withRejecter:)
-    func getBiologicalSex(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func getBiologicalSex(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         do {
-            let bioSex = try store.biologicalSex();
-            resolve(bioSex.biologicalSex.rawValue);
+            let bioSex = try store.biologicalSex()
+            resolve(bioSex.biologicalSex.rawValue)
         } catch {
-            reject(GENERIC_ERROR, error.localizedDescription, error);
+            reject(GENERIC_ERROR, error.localizedDescription, error)
         }
     }
 
     @objc(getDateOfBirth:withRejecter:)
-    func getDateOfBirth(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func getDateOfBirth(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         do {
-            let dateOfBirth = try store.dateOfBirth();
-            resolve(_dateFormatter.string(from: dateOfBirth));
+            let dateOfBirth = try store.dateOfBirth()
+            resolve(_dateFormatter.string(from: dateOfBirth))
         } catch {
-            reject(GENERIC_ERROR, error.localizedDescription, error);
+            reject(GENERIC_ERROR, error.localizedDescription, error)
         }
     }
 
     @objc(getBloodType:withRejecter:)
-    func getBloodType(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func getBloodType(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         do {
-            let bloodType = try store.bloodType();
-            resolve(bloodType.bloodType.rawValue);
+            let bloodType = try store.bloodType()
+            resolve(bloodType.bloodType.rawValue)
         } catch {
-            reject(GENERIC_ERROR, error.localizedDescription, error);
+            reject(GENERIC_ERROR, error.localizedDescription, error)
         }
     }
 
     @objc(getFitzpatrickSkinType:withRejecter:)
-    func getFitzpatrickSkinType(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func getFitzpatrickSkinType(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         do {
-            let fitzpatrickSkinType = try store.fitzpatrickSkinType();
-            resolve(fitzpatrickSkinType.skinType.rawValue);
+            let fitzpatrickSkinType = try store.fitzpatrickSkinType()
+            resolve(fitzpatrickSkinType.skinType.rawValue)
         } catch {
-            reject(GENERIC_ERROR, error.localizedDescription, error);
+            reject(GENERIC_ERROR, error.localizedDescription, error)
         }
     }
 
-
     @available(iOS 10.0, *)
     @objc(getWheelchairUse:withRejecter:)
-    func getWheelchairUse(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func getWheelchairUse(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         do {
-            let wheelchairUse = try store.wheelchairUse();
-            resolve(wheelchairUse.wheelchairUse.rawValue);
+            let wheelchairUse = try store.wheelchairUse()
+            resolve(wheelchairUse.wheelchairUse.rawValue)
         } catch {
-            reject(GENERIC_ERROR, error.localizedDescription, error);
+            reject(GENERIC_ERROR, error.localizedDescription, error)
         }
     }
 
     @objc(authorizationStatusFor:withResolver:withRejecter:)
-    func authorizationStatusFor(typeIdentifier: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func authorizationStatusFor(typeIdentifier: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         guard let objectType = objectTypeFromString(typeIdentifier: typeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
-        let authStatus = store.authorizationStatus(for: objectType);
-        resolve(authStatus.rawValue);
+        let authStatus = store.authorizationStatus(for: objectType)
+        resolve(authStatus.rawValue)
     }
 
     @objc(saveQuantitySample:unitString:value:start:end:metadata:resolve:reject:)
-    func saveQuantitySample(typeIdentifier: String, unitString: String, value: Double, start: Date, end: Date, metadata: Dictionary<String, Any>, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+    func saveQuantitySample(typeIdentifier: String, unitString: String, value: Double, start: Date, end: Date, metadata: [String: Any], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
-        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
 
         guard let type = HKObjectType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
-        let unit = HKUnit.init(from: unitString);
-        let quantity = HKQuantity.init(unit: unit, doubleValue: value);
+        let unit = HKUnit.init(from: unitString)
+        let quantity = HKQuantity.init(unit: unit, doubleValue: value)
         let sample = HKQuantitySample.init(
             type: type,
             quantity: quantity,
@@ -213,72 +209,72 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         store.save(sample) { (success: Bool, error: Error?) in
             guard let err = error else {
-                return resolve(success);
+                return resolve(success)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, error);
+            reject(GENERIC_ERROR, err.localizedDescription, error)
         }
     }
 
     @objc(deleteQuantitySample:uuid:resolve:reject:)
-    func deleteQuantitySample(typeIdentifier: String, uuid: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+    func deleteQuantitySample(typeIdentifier: String, uuid: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
-        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
-        let sampleUuid = UUID.init(uuidString: uuid)!;
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
+        let sampleUuid = UUID.init(uuidString: uuid)!
 
         guard let sampleType = HKObjectType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
-        let samplePredicate = HKQuery.predicateForObject(with: sampleUuid);
+        let samplePredicate = HKQuery.predicateForObject(with: sampleUuid)
 
-        store.deleteObjects(of: sampleType, predicate: samplePredicate) { (success: Bool, deletedObjectCount: Int, error: Error?) in
+        store.deleteObjects(of: sampleType, predicate: samplePredicate) { (success: Bool, _: Int, error: Error?) in
             guard let err = error else {
-                return resolve(success);
+                return resolve(success)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, error);
+            reject(GENERIC_ERROR, err.localizedDescription, error)
         }
     }
 
     @objc(deleteSamples:start:end:resolve:reject:)
-    func deleteSamples(typeIdentifier: String, start: Date, end: Date, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+    func deleteSamples(typeIdentifier: String, start: Date, end: Date, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
-        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
 
         guard let sampleType = HKObjectType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
-        let samplePredicate = HKQuery.predicateForSamples(withStart: start, end: end, options: HKQueryOptions.strictStartDate);
+        let samplePredicate = HKQuery.predicateForSamples(withStart: start, end: end, options: HKQueryOptions.strictStartDate)
 
-        store.deleteObjects(of: sampleType, predicate: samplePredicate) { (success: Bool, deletedObjectCount: Int, error: Error?) in
+        store.deleteObjects(of: sampleType, predicate: samplePredicate) { (success: Bool, _: Int, error: Error?) in
             guard let err = error else {
-                return resolve(success);
+                return resolve(success)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, error);
+            reject(GENERIC_ERROR, err.localizedDescription, error)
         }
     }
 
     @objc(saveCorrelationSample:samples:start:end:metadata:resolve:reject:)
-    func saveCorrelationSample(typeIdentifier: String, samples: Array<Dictionary<String, Any>>, start: Date, end: Date, metadata: Dictionary<String, Any>, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+    func saveCorrelationSample(typeIdentifier: String, samples: [[String: Any]], start: Date, end: Date, metadata: [String: Any], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
-        let identifier = HKCorrelationTypeIdentifier.init(rawValue: typeIdentifier);
+        let identifier = HKCorrelationTypeIdentifier.init(rawValue: typeIdentifier)
 
         guard let type = HKObjectType.correlationType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
-        var initializedSamples = Set<HKSample>();
+        var initializedSamples = Set<HKSample>()
         for sample in samples {
-            if(sample.keys.contains("quantityType")){
+            if sample.keys.contains("quantityType") {
                 let typeId = HKQuantityTypeIdentifier.init(rawValue: sample["quantityType"] as! String)
                 if let type = HKSampleType.quantityType(forIdentifier: typeId) {
                     let unitStr = sample["unit"] as! String
@@ -290,14 +286,14 @@ class ReactNativeHealthkit: RCTEventEmitter {
                     let quantitySample = HKQuantitySample.init(type: type, quantity: quantity, start: start, end: end, metadata: metadata)
                     initializedSamples.insert(quantitySample)
                 }
-            } else if(sample.keys.contains("categoryType")){
+            } else if sample.keys.contains("categoryType") {
                let typeId = HKCategoryTypeIdentifier.init(rawValue: sample["categoryType"] as! String)
                if let type = HKSampleType.categoryType(forIdentifier: typeId) {
                    let value = sample["value"] as! Int
                    let metadata = sample["metadata"] as? [String: Any]
 
                    let categorySample = HKCategorySample.init(type: type, value: value, start: start, end: end, metadata: metadata)
-                   initializedSamples.insert(categorySample);
+                   initializedSamples.insert(categorySample)
                }
             }
 
@@ -307,23 +303,23 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         store.save(correlation) { (success: Bool, error: Error?) in
             guard let err = error else {
-                return resolve(success);
+                return resolve(success)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, error);
+            reject(GENERIC_ERROR, err.localizedDescription, error)
         }
     }
 
     @objc(saveWorkoutSample:quantities:start:end:metadata:resolve:reject:)
-    func saveWorkoutSample(typeIdentifier: UInt, quantities: Array<Dictionary<String, Any>>, start: Date, end: Date, metadata: [String: Any], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+    func saveWorkoutSample(typeIdentifier: UInt, quantities: [[String: Any]], start: Date, end: Date, metadata: [String: Any], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         guard let type = HKWorkoutActivityType.init(rawValue: typeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier.description, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier.description, nil)
         }
 
-        var initializedSamples = [HKSample]();
+        var initializedSamples = [HKSample]()
         var totalEnergyBurned: HKQuantity?
         var totalDistance: HKQuantity?
         var totalSwimmingStrokeCount: HKQuantity?
@@ -338,78 +334,76 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
                 let unit = HKUnit.init(from: unitStr)
                 let quantity = HKQuantity.init(unit: unit, doubleValue: quantityVal)
-                if(quantity.is(compatibleWith: HKUnit.kilocalorie())){
-                    totalEnergyBurned = quantity;
+                if quantity.is(compatibleWith: HKUnit.kilocalorie()) {
+                    totalEnergyBurned = quantity
                 }
-                if(quantity.is(compatibleWith: HKUnit.meter())){
-                    totalDistance = quantity;
+                if quantity.is(compatibleWith: HKUnit.meter()) {
+                    totalDistance = quantity
                 }
-                if(typeId == HKQuantityTypeIdentifier.swimmingStrokeCount){
-                    totalSwimmingStrokeCount = quantity;
+                if typeId == HKQuantityTypeIdentifier.swimmingStrokeCount {
+                    totalSwimmingStrokeCount = quantity
                 }
-                if(typeId == HKQuantityTypeIdentifier.flightsClimbed){
-                    totalFlightsClimbed = quantity;
+                if typeId == HKQuantityTypeIdentifier.flightsClimbed {
+                    totalFlightsClimbed = quantity
                 }
                 let quantitySample = HKQuantitySample.init(type: type, quantity: quantity, start: start, end: end, metadata: metadata)
                 initializedSamples.append(quantitySample)
             }
         }
 
-        var workout: HKWorkout?;
+        var workout: HKWorkout?
 
-
-        if(totalSwimmingStrokeCount != nil){
+        if totalSwimmingStrokeCount != nil {
             workout = HKWorkout.init(activityType: type, start: start, end: end, workoutEvents: nil, totalEnergyBurned: totalEnergyBurned, totalDistance: totalDistance, totalSwimmingStrokeCount: totalSwimmingStrokeCount, device: nil, metadata: metadata)
         } else {
                 if #available(iOS 11, *) {
-                    if (totalFlightsClimbed != nil ){
+                    if totalFlightsClimbed != nil {
                         workout = HKWorkout.init(activityType: type, start: start, end: end, workoutEvents: nil, totalEnergyBurned: totalEnergyBurned, totalDistance: totalDistance, totalFlightsClimbed: totalFlightsClimbed, device: nil, metadata: metadata)
                     }
                 }
         }
 
-        if(workout == nil){
+        if workout == nil {
             workout = HKWorkout.init(activityType: type, start: start, end: end, workoutEvents: nil, totalEnergyBurned: totalEnergyBurned, totalDistance: totalDistance, metadata: metadata)
         }
 
         store.save(workout!) { (success: Bool, error: Error?) in
             guard let err = error else {
-                if(success){
+                if success {
                     store.add(initializedSamples, to: workout!) { (success, error: Error?) in
                         guard let err = error else {
-                            return resolve(success);
+                            return resolve(success)
                         }
-                        reject(GENERIC_ERROR, err.localizedDescription, error);
+                        reject(GENERIC_ERROR, err.localizedDescription, error)
                     }
-                    return;
+                    return
                 }
-                return resolve(success);
+                return resolve(success)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, error);
+            reject(GENERIC_ERROR, err.localizedDescription, error)
         }
-
 
     }
 
     @objc(saveCategorySample:value:start:end:metadata:resolve:reject:)
-    func saveCategorySample(typeIdentifier: String, value: Double, start: Date, end: Date, metadata: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+    func saveCategorySample(typeIdentifier: String, value: Double, start: Date, end: Date, metadata: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
-        let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier);
+        let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier)
 
         guard let type = HKObjectType.categoryType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
-        let sample = HKCategorySample.init(type: type, value: Int(value), start: start, end: end, metadata: metadata as? Dictionary<String, Any>)
+        let sample = HKCategorySample.init(type: type, value: Int(value), start: start, end: end, metadata: metadata as? [String: Any])
 
         store.save(sample) { (success: Bool, error: Error?) in
             guard let err = error else {
-                return resolve(success);
+                return resolve(success)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, error);
+            reject(GENERIC_ERROR, err.localizedDescription, error)
         }
     }
 
@@ -418,174 +412,170 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
 
     @objc(enableBackgroundDelivery:updateFrequency:resolve:reject:)
-    func enableBackgroundDelivery(typeIdentifier: String, updateFrequency: Int, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock){
+    func enableBackgroundDelivery(typeIdentifier: String, updateFrequency: Int, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         guard let sampleType = objectTypeFromString(typeIdentifier: typeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
         guard let frequency = HKUpdateFrequency.init(rawValue: updateFrequency) else {
-            return reject("UpdateFrequency not valid", "UpdateFrequency not valid", nil);
+            return reject("UpdateFrequency not valid", "UpdateFrequency not valid", nil)
         }
 
-        store.enableBackgroundDelivery(for: sampleType, frequency:frequency ) { (success, error) in
+        store.enableBackgroundDelivery(for: sampleType, frequency: frequency ) { (success, error) in
             guard let err = error else {
-                return resolve(success);
+                return resolve(success)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, err);
+            reject(GENERIC_ERROR, err.localizedDescription, err)
         }
     }
 
     @objc(disableAllBackgroundDelivery:reject:)
-    func disableAllBackgroundDelivery(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock){
+    func disableAllBackgroundDelivery(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         store.disableAllBackgroundDelivery(completion: { (success, error) in
             guard let err = error else {
-                return resolve(success);
+                return resolve(success)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, err);
+            reject(GENERIC_ERROR, err.localizedDescription, err)
         })
     }
 
     @objc(disableBackgroundDelivery:resolve:reject:)
-    func disableBackgroundDelivery(typeIdentifier: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock){
+    func disableBackgroundDelivery(typeIdentifier: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         guard let sampleType = objectTypeFromString(typeIdentifier: typeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
-
 
         store.disableBackgroundDelivery(for: sampleType) { (success, error) in
             guard let err = error else {
-                return resolve(success);
+                return resolve(success)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, err);
+            reject(GENERIC_ERROR, err.localizedDescription, err)
         }
     }
 
     @objc(subscribeToObserverQuery:resolve:reject:)
-    func subscribeToObserverQuery(typeIdentifier: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock){
+    func subscribeToObserverQuery(typeIdentifier: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         guard let sampleType = sampleTypeFromString(typeIdentifier: typeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
         let predicate = HKQuery.predicateForSamples(withStart: Date.init(), end: nil, options: HKQueryOptions.strictStartDate)
 
         let queryId = UUID().uuidString
 
-        func responder(query: HKObserverQuery, handler: @escaping HKObserverQueryCompletionHandler, error: Error?) -> Void {
-            if(error == nil){
+        func responder(query: HKObserverQuery, handler: @escaping HKObserverQueryCompletionHandler, error: Error?) {
+            if error == nil {
                 DispatchQueue.main.async {
-                    if(self.bridge != nil && self.bridge.isValid){
+                    if self.bridge != nil && self.bridge.isValid {
                         self.sendEvent(withName: "onChange", body: [
-                            "typeIdentifier": typeIdentifier,
-                        ]);
+                            "typeIdentifier": typeIdentifier
+                        ])
                     }
 
                 }
-                handler();
+                handler()
             }
         }
 
         let query = HKObserverQuery(sampleType: sampleType, predicate: predicate) { (query: HKObserverQuery, handler: @escaping HKObserverQueryCompletionHandler, error: Error?) in
             guard let err = error else {
-                return responder(query: query, handler: handler, error: error);
+                return responder(query: query, handler: handler, error: error)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, err);
+            reject(GENERIC_ERROR, err.localizedDescription, err)
         }
 
-        store.execute(query);
+        store.execute(query)
 
-        self._runningQueries.updateValue(query, forKey: queryId);
+        self._runningQueries.updateValue(query, forKey: queryId)
     }
 
     @objc(unsubscribeQuery:resolve:reject:)
-    func unsubscribeQuery(queryId: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) {
+    func unsubscribeQuery(queryId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         guard let query = self._runningQueries[queryId] else {
-            reject("Error", "Query with id " + queryId + " not found", nil);
-            return;
+            reject("Error", "Query with id " + queryId + " not found", nil)
+            return
         }
 
-        store.stop(query);
+        store.stop(query)
 
-        self._runningQueries.removeValue(forKey: queryId);
+        self._runningQueries.removeValue(forKey: queryId)
 
-        resolve(true);
+        resolve(true)
     }
-
 
     static override func requiresMainQueueSetup() -> Bool {
         return true
     }
 
     @objc(queryStatisticsForQuantity:unitString:from:to:options:resolve:reject:)
-    func queryStatisticsForQuantity(typeIdentifier: String, unitString: String, from: Date, to: Date, options: NSArray, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func queryStatisticsForQuantity(typeIdentifier: String, unitString: String, from: Date, to: Date, options: NSArray, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
-        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
         guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
         let predicate = HKQuery.predicateForSamples(withStart: from, end: to, options: HKQueryOptions.strictEndDate)
 
-        var opts = HKStatisticsOptions.init();
+        var opts = HKStatisticsOptions.init()
 
         for o in options {
-            let str = o as! String;
-            if(str == "cumulativeSum"){
+            let str = o as! String
+            if str == "cumulativeSum" {
                 opts.insert(HKStatisticsOptions.cumulativeSum)
-            }
-            else if(str == "discreteAverage"){
+            } else if str == "discreteAverage" {
                 opts.insert(HKStatisticsOptions.discreteAverage)
-            }else if(str == "discreteMax"){
+            } else if str == "discreteMax" {
                 opts.insert(HKStatisticsOptions.discreteMax)
-            }
-            else if(str == "discreteMin"){
+            } else if str == "discreteMin" {
                 opts.insert(HKStatisticsOptions.discreteMin)
             }
             if #available(iOS 12, *) {
-                    if(str == "discreteMostRecent"){
+                    if str == "discreteMostRecent" {
                         opts.insert(HKStatisticsOptions.discreteMostRecent)
                     }
             }
             if #available(iOS 13, *) {
-                if(str == "duration"){
+                if str == "duration" {
                     opts.insert(HKStatisticsOptions.duration)
                 }
-                if(str == "mostRecent"){
+                if str == "mostRecent" {
                     opts.insert(HKStatisticsOptions.mostRecent)
                 }
             }
 
-            if(str == "separateBySource"){
+            if str == "separateBySource" {
                 opts.insert(HKStatisticsOptions.separateBySource)
             }
         }
 
-        let query = HKStatisticsQuery.init(quantityType: quantityType, quantitySamplePredicate: predicate, options: opts) { (query, stats: HKStatistics?, error: Error?) in
+        let query = HKStatisticsQuery.init(quantityType: quantityType, quantitySamplePredicate: predicate, options: opts) { (_, stats: HKStatistics?, _: Error?) in
             if let gottenStats = stats {
-                var dic = Dictionary<String, Dictionary<String, Any>?>()
-                let unit = HKUnit.init(from: unitString);
+                var dic = [String: [String: Any]?]()
+                let unit = HKUnit.init(from: unitString)
                 if let averageQuantity = gottenStats.averageQuantity() {
                     dic.updateValue(serializeQuantity(unit: unit, quantity: averageQuantity), forKey: "averageQuantity")
                 }
@@ -606,52 +596,51 @@ class ReactNativeHealthkit: RCTEventEmitter {
                     if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
                         dic.updateValue([
                             "start": self._dateFormatter.string(from: mostRecentDateInterval.start),
-                            "end": self._dateFormatter.string(from: mostRecentDateInterval.end),
+                            "end": self._dateFormatter.string(from: mostRecentDateInterval.end)
                         ], forKey: "mostRecentQuantityDateInterval")
                     }
                 }
                 if #available(iOS 13, *) {
-                    let durationUnit = HKUnit.second();
+                    let durationUnit = HKUnit.second()
                     if let duration = gottenStats.duration() {
                         dic.updateValue(serializeQuantity(unit: durationUnit, quantity: duration), forKey: "duration")
                     }
                 }
 
-                resolve(dic);
+                resolve(dic)
             }
         }
 
-        store.execute(query);
+        store.execute(query)
     }
 
-
     @objc(queryWorkoutSamples:distanceUnitString:from:to:limit:ascending:resolve:reject:)
-    func queryWorkoutSamples(energyUnitString: String, distanceUnitString: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func queryWorkoutSamples(energyUnitString: String, distanceUnitString: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
-        let from = dateOrNilIfZero(date: from);
-        let to = dateOrNilIfZero(date: to);
+        let from = dateOrNilIfZero(date: from)
+        let to = dateOrNilIfZero(date: to)
 
-        let predicate = createPredicate(from: from, to: to);
+        let predicate = createPredicate(from: from, to: to)
 
-        let limit = limitOrNilIfZero(limit: limit);
+        let limit = limitOrNilIfZero(limit: limit)
 
         let energyUnit = HKUnit.init(from: energyUnitString)
         let distanceUnit = HKUnit.init(from: distanceUnitString)
 
-        let q = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: limit, sortDescriptors: getSortDescriptors(ascending: ascending)) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+        let q = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: limit, sortDescriptors: getSortDescriptors(ascending: ascending)) { (_: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
                 guard let samples = sample else {
-                    return resolve([]);
+                    return resolve([])
                 }
-                let arr: NSMutableArray = [];
+                let arr: NSMutableArray = []
 
                 for s in samples {
                     if let workout = s as? HKWorkout {
                         let endDate = self._dateFormatter.string(from: workout.endDate)
-                        let startDate = self._dateFormatter.string(from: workout.startDate);
+                        let startDate = self._dateFormatter.string(from: workout.startDate)
 
                         let dict: NSMutableDictionary = [
                             "uuid": workout.uuid.uuidString,
@@ -675,45 +664,45 @@ class ReactNativeHealthkit: RCTEventEmitter {
                     }
                 }
 
-                return resolve(arr);
+                return resolve(arr)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, err);
+            reject(GENERIC_ERROR, err.localizedDescription, err)
         }
 
-        store.execute(q);
+        store.execute(q)
     }
 
   @objc(queryQuantitySamples:unitString:from:to:limit:ascending:resolve:reject:)
   func queryQuantitySamples(
-    typeIdentifier: String, 
-    unitString: String, 
-    from: Date, 
-    to: Date, 
-    limit: Int, 
-    ascending: Bool, 
+    typeIdentifier: String,
+    unitString: String,
+    from: Date,
+    to: Date,
+    limit: Int,
+    ascending: Bool,
     resolve: @escaping RCTPromiseResolveBlock,
     reject: @escaping RCTPromiseRejectBlock
-  ) -> Void {
+  ) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
-        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
         guard let sampleType = HKSampleType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
-        let from = dateOrNilIfZero(date: from);
-        let to = dateOrNilIfZero(date: to);
-        let predicate = createPredicate(from: from, to: to);
-        let limit = limitOrNilIfZero(limit: limit);
-    
-        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: getSortDescriptors(ascending: ascending)) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+        let from = dateOrNilIfZero(date: from)
+        let to = dateOrNilIfZero(date: to)
+        let predicate = createPredicate(from: from, to: to)
+        let limit = limitOrNilIfZero(limit: limit)
+
+        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: getSortDescriptors(ascending: ascending)) { (_: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
                 guard let samples = sample else {
-                    return resolve([]);
+                    return resolve([])
                 }
-                let arr: NSMutableArray = [];
+                let arr: NSMutableArray = []
 
                 for s in samples {
                     if let sample = s as? HKQuantitySample {
@@ -723,37 +712,37 @@ class ReactNativeHealthkit: RCTEventEmitter {
                     }
                 }
 
-                return resolve(arr);
+                return resolve(arr)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, err);
+            reject(GENERIC_ERROR, err.localizedDescription, err)
         }
 
-        store.execute(q);
+        store.execute(q)
     }
 
     @objc(queryCorrelationSamples:from:to:resolve:reject:)
-    func queryCorrelationSamples(typeIdentifier: String, from: Date, to: Date, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func queryCorrelationSamples(typeIdentifier: String, from: Date, to: Date, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
-        let identifier = HKCorrelationTypeIdentifier.init(rawValue: typeIdentifier);
+        let identifier = HKCorrelationTypeIdentifier.init(rawValue: typeIdentifier)
         guard let sampleType = HKSampleType.correlationType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
-        let from = from.timeIntervalSince1970 >= 0 ? from : nil;
-        let to = to.timeIntervalSince1970 >= 0 ? to : nil;
+        let from = from.timeIntervalSince1970 >= 0 ? from : nil
+        let to = to.timeIntervalSince1970 >= 0 ? to : nil
 
-        let predicate = createPredicate(from: from, to: to);
+        let predicate = createPredicate(from: from, to: to)
 
-        let q = HKCorrelationQuery(type: sampleType, predicate: predicate, samplePredicates: nil) { (query: HKCorrelationQuery, _correlations: [HKCorrelation]?, error: Error?) in
+        let q = HKCorrelationQuery(type: sampleType, predicate: predicate, samplePredicates: nil) { (_: HKCorrelationQuery, _correlations: [HKCorrelation]?, error: Error?) in
             guard let err = error else {
                 guard let correlations = _correlations else {
-                    return resolve([]);
+                    return resolve([])
                 }
 
-                var qts = Set<HKQuantityType>();
+                var qts = Set<HKQuantityType>()
                 for c in correlations {
                     for object in c.objects {
                         if let quantitySample = object as? HKQuantitySample {
@@ -761,11 +750,11 @@ class ReactNativeHealthkit: RCTEventEmitter {
                         }
                     }
                 }
-                return store.preferredUnits(for: qts) { (map: [HKQuantityType : HKUnit], error: Error?) in
+                return store.preferredUnits(for: qts) { (map: [HKQuantityType: HKUnit], error: Error?) in
                     guard let e = error else {
-                        let collerationsToReturn: NSMutableArray = [];
+                        let collerationsToReturn: NSMutableArray = []
                         for c in correlations {
-                            let objects = NSMutableArray();
+                            let objects = NSMutableArray()
                             for o in c.objects {
                                 if let quantitySample = o as? HKQuantitySample {
                                     objects.add(serializeQuantitySample(sample: quantitySample, unit: map[quantitySample.quantityType]!))
@@ -782,94 +771,94 @@ class ReactNativeHealthkit: RCTEventEmitter {
                                 "objects": objects,
                                 "metadata": serializeMetadata(metadata: c.metadata),
                                 "startDate": self._dateFormatter.string(from: c.startDate),
-                                "endDate": self._dateFormatter.string(from: c.endDate),
+                                "endDate": self._dateFormatter.string(from: c.endDate)
                             ])
                         }
 
-                        return resolve(collerationsToReturn);
+                        return resolve(collerationsToReturn)
                     }
-                    reject(GENERIC_ERROR, e.localizedDescription, e);
+                    reject(GENERIC_ERROR, e.localizedDescription, e)
                 }
             }
-            reject(GENERIC_ERROR, err.localizedDescription, err);
+            reject(GENERIC_ERROR, err.localizedDescription, err)
         }
 
-        store.execute(q);
+        store.execute(q)
     }
 
   @objc(queryCategorySamples:from:to:limit:ascending:resolve:reject:)
-  func queryCategorySamples(typeIdentifier: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+  func queryCategorySamples(typeIdentifier: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
-        let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier);
+        let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier)
         guard let sampleType = HKSampleType.categoryType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
-        let from = dateOrNilIfZero(date: from);
-        let to = dateOrNilIfZero(date: to);
-        let predicate = createPredicate(from: from, to: to);
-        let limit = limitOrNilIfZero(limit: limit);
-      
-        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: getSortDescriptors(ascending: ascending)) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+        let from = dateOrNilIfZero(date: from)
+        let to = dateOrNilIfZero(date: to)
+        let predicate = createPredicate(from: from, to: to)
+        let limit = limitOrNilIfZero(limit: limit)
+
+        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: getSortDescriptors(ascending: ascending)) { (_: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
                 guard let samples = sample else {
-                    return resolve([]);
+                    return resolve([])
                 }
-                let arr: NSMutableArray = [];
+                let arr: NSMutableArray = []
 
                 for s in samples {
                     if let sample = s as? HKCategorySample {
-                        let serialized = serializeCategorySample(sample: sample);
+                        let serialized = serializeCategorySample(sample: sample)
 
                         arr.add(serialized)
                     }
                 }
-              return resolve(arr);
+              return resolve(arr)
             }
 
-          reject(GENERIC_ERROR, err.localizedDescription, err);
+          reject(GENERIC_ERROR, err.localizedDescription, err)
         }
 
-        store.execute(q);
+        store.execute(q)
     }
 
   @objc(queryQuantitySamplesWithAnchor:unitString:from:to:limit:anchor:resolve:reject:)
   func queryQuantitySamplesWithAnchor(
-    typeIdentifier: String, 
-    unitString: String, 
-    from: Date, 
-    to: Date, 
+    typeIdentifier: String,
+    unitString: String,
+    from: Date,
+    to: Date,
     limit: Int,
-    anchor: String, 
+    anchor: String,
     resolve: @escaping RCTPromiseResolveBlock,
     reject: @escaping RCTPromiseRejectBlock
-  ) -> Void {
+  ) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
-        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier);
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
         guard let sampleType = HKSampleType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
-        let from = dateOrNilIfZero(date: from);
-        let to = dateOrNilIfZero(date: to);
-        let predicate = createPredicate(from: from, to: to);
-        let limit = limitOrNilIfZero(limit: limit);
-    
-        let actualAnchor = deserializeHKQueryAnchor(anchor: anchor);
-    
+        let from = dateOrNilIfZero(date: from)
+        let to = dateOrNilIfZero(date: to)
+        let predicate = createPredicate(from: from, to: to)
+        let limit = limitOrNilIfZero(limit: limit)
+
+        let actualAnchor = deserializeHKQueryAnchor(anchor: anchor)
+
         let q = HKAnchoredObjectQuery(
           type: sampleType,
           predicate: predicate,
           anchor: actualAnchor,
           limit: limit
         ) { (
-          query: HKAnchoredObjectQuery,
+          _: HKAnchoredObjectQuery,
           s: [HKSample]?,
           deletedSamples: [HKDeletedObject]?,
           newAnchor: HKQueryAnchor?,
@@ -877,7 +866,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         ) in
           guard let err = error else {
               guard let samples = s else {
-                  return resolve([]);
+                  return resolve([])
               }
 
             return resolve([
@@ -890,37 +879,37 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 return serializeDeletedSample(sample: sample)
               }) as Any,
               "newAnchor": serializeAnchor(anchor: newAnchor) as Any
-            ]);
+            ])
           }
-          reject(GENERIC_ERROR, err.localizedDescription, err);
+          reject(GENERIC_ERROR, err.localizedDescription, err)
         }
 
-        store.execute(q);
+        store.execute(q)
     }
 
   @objc(queryCategorySamplesWithAnchor:from:to:limit:anchor:resolve:reject:)
-  func queryCategorySamplesWithAnchor(typeIdentifier: String, from: Date, to: Date, limit: Int, anchor: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+  func queryCategorySamplesWithAnchor(typeIdentifier: String, from: Date, to: Date, limit: Int, anchor: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
-        let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier);
+        let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier)
         guard let sampleType = HKSampleType.categoryType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
 
-        let from = dateOrNilIfZero(date: from);
-        let to = dateOrNilIfZero(date: to);
-        let predicate = createPredicate(from: from, to: to);
-        let limit = limitOrNilIfZero(limit: limit);
-      
+        let from = dateOrNilIfZero(date: from)
+        let to = dateOrNilIfZero(date: to)
+        let predicate = createPredicate(from: from, to: to)
+        let limit = limitOrNilIfZero(limit: limit)
+
         let q = HKAnchoredObjectQuery(
           type: sampleType,
           predicate: predicate,
           anchor: anchor != "" ? base64StringToHKQueryAnchor(base64String: anchor) : nil,
           limit: limit
         ) { (
-          query: HKAnchoredObjectQuery,
+          _: HKAnchoredObjectQuery,
           s: [HKSample]?,
           deletedSamples: [HKDeletedObject]?,
           newAnchor: HKQueryAnchor?,
@@ -928,14 +917,14 @@ class ReactNativeHealthkit: RCTEventEmitter {
         ) in
           guard let err = error else {
             guard let samples = s else {
-                return resolve([]);
+                return resolve([])
             }
-            
-            let arr: NSMutableArray = [];
+
+            let arr: NSMutableArray = []
 
             for s in samples {
                 if let sample = s as? HKCategorySample {
-                    let serialized = serializeCategorySample(sample: sample);
+                    let serialized = serializeCategorySample(sample: sample)
 
                     arr.add(serialized)
                 }
@@ -947,70 +936,70 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 return serializeDeletedSample(sample: sample)
               }) as Any,
               "newAnchor": serializeAnchor(anchor: newAnchor) as Any
-            ]);
+            ])
           }
-          reject(GENERIC_ERROR, err.localizedDescription, err);
+          reject(GENERIC_ERROR, err.localizedDescription, err)
         }
 
-        store.execute(q);
+        store.execute(q)
     }
-    
+
     @objc(querySources:resolve:reject:)
-    func querySources(typeIdentifier: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
+    func querySources(typeIdentifier: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         guard let type = objectTypeFromString(typeIdentifier: typeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
+            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
         }
-        
-        let query = HKSourceQuery(sampleType: type as! HKSampleType, samplePredicate: nil) { (query: HKSourceQuery, source: Set<HKSource>?, error: Error?) in
+
+        let query = HKSourceQuery(sampleType: type as! HKSampleType, samplePredicate: nil) { (_: HKSourceQuery, source: Set<HKSource>?, error: Error?) in
             guard let err = error else {
                 guard let sources = source else {
-                    return resolve([]);
+                    return resolve([])
                 }
-                let arr: NSMutableArray = [];
+                let arr: NSMutableArray = []
 
                 for s in sources {
                     if let source = s as? HKSource {
-                        let serialized = serializeSource(source: source);
+                        let serialized = serializeSource(source: source)
 
                         arr.add(serialized)
                     }
                 }
 
-                return resolve(arr);
+                return resolve(arr)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, err);
-            
+            reject(GENERIC_ERROR, err.localizedDescription, err)
+
         }
 
-        store.execute(query);
+        store.execute(query)
     }
 
     @objc(requestAuthorization:read:resolve:withRejecter:)
-    func requestAuthorization(toShare: NSDictionary, read: NSDictionary, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    func requestAuthorization(toShare: NSDictionary, read: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
-        let share = sampleTypesFromDictionary(typeIdentifiers: toShare);
-        let toRead = objectTypesFromDictionary(typeIdentifiers: read);
+        let share = sampleTypesFromDictionary(typeIdentifiers: toShare)
+        let toRead = objectTypesFromDictionary(typeIdentifiers: read)
 
         store.requestAuthorization(toShare: share, read: toRead) { (success: Bool, error: Error?) in
             guard let err = error else {
-                return resolve(success);
+                return resolve(success)
             }
-            reject(GENERIC_ERROR, err.localizedDescription, err);
+            reject(GENERIC_ERROR, err.localizedDescription, err)
         }
     }
 
     @available(iOS 13.0.0, *)
     func getWorkoutByID(store: HKHealthStore,
                         workoutUUID: UUID) async -> HKWorkout? {
-        let workoutPredicate = HKQuery.predicateForObject(with: workoutUUID);
+        let workoutPredicate = HKQuery.predicateForObject(with: workoutUUID)
 
         let samples = try! await withCheckedThrowingContinuation {
             (continuation: CheckedContinuation<[HKSample], Error>) in
@@ -1018,7 +1007,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                                                 predicate: workoutPredicate,
                                                 anchor: nil,
                                                 limit: 1) {
-                (query, samples, deletedObjects, anchor, error) in
+                (_, samples, _, _, error) in
 
                 if let hasError = error {
                     continuation.resume(throwing: hasError)
@@ -1041,9 +1030,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
         return workouts.first ?? nil
     }
 
-
     @available(iOS 13.0.0, *)
-    func _getWorkoutRoutes(store: HKHealthStore, workoutUUID: UUID) async -> [HKWorkoutRoute]?{
+    func _getWorkoutRoutes(store: HKHealthStore, workoutUUID: UUID) async -> [HKWorkoutRoute]? {
         guard let workout = await getWorkoutByID(store: store, workoutUUID: workoutUUID) else {
             return nil
         }
@@ -1055,7 +1043,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                                                 predicate: workoutPredicate,
                                                 anchor: nil,
                                                 limit: HKObjectQueryNoLimit) {
-                (query, samples, deletedObjects, anchor, error) in
+                (_, samples, _, _, error) in
 
                 if let hasError = error {
                     continuation.resume(throwing: hasError)
@@ -1085,7 +1073,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
             var allLocations: [CLLocation] = []
 
             let query = HKWorkoutRouteQuery(route: route) {
-                (query, locationsOrNil, done, errorOrNil) in
+                (_, locationsOrNil, done, errorOrNil) in
 
                 if let error = errorOrNil {
                     continuation.resume(throwing: error)
@@ -1118,21 +1106,20 @@ class ReactNativeHealthkit: RCTEventEmitter {
             return nil
         }
         for route in _routes {
-            let routeMetadata = serializeMetadata(metadata: route.metadata) as! Dictionary<String, Any>
+            let routeMetadata = serializeMetadata(metadata: route.metadata) as! [String: Any]
             let routeCLLocations = (await getRouteLocations(store: store, route: route))
-            let routeLocations = routeCLLocations.enumerated().map{(i, loc) in serializeLocation(location: loc, previousLocation: i == 0 ? nil: routeCLLocations[i - 1])}
-            let routeInfos: Dictionary<String, Any> = ["locations": routeLocations]
+            let routeLocations = routeCLLocations.enumerated().map {(i, loc) in serializeLocation(location: loc, previousLocation: i == 0 ? nil: routeCLLocations[i - 1])}
+            let routeInfos: [String: Any] = ["locations": routeLocations]
             allRoutes.append(routeInfos.merging(routeMetadata) { (current, _) in current })
         }
         return allRoutes
     }
 
-    func serializeLocation(location: CLLocation, previousLocation: CLLocation?) -> Dictionary<String, Any> {
+    func serializeLocation(location: CLLocation, previousLocation: CLLocation?) -> [String: Any] {
         var distance: CLLocationDistance?
         if let previousLocation = previousLocation {
             distance = location.distance(from: previousLocation)
-        }
-        else {
+        } else {
             distance = nil
         }
         return [
@@ -1153,7 +1140,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     func getWorkoutRoutes(
         workoutUUID: String,
         resolve: @escaping RCTPromiseResolveBlock,
-        reject: @escaping RCTPromiseRejectBlock){
+        reject: @escaping RCTPromiseRejectBlock) {
 
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
@@ -1167,14 +1154,13 @@ class ReactNativeHealthkit: RCTEventEmitter {
             do {
                 let locations = await getSerializedWorkoutLocations(store: store, workoutUUID: _workoutUUID)
                 resolve(locations)
-            }
-            catch {
+            } catch {
                 reject("WORKOUT_LOCATION_ERROR", "Failed to retrieve workout locations", nil)
             }
         }
     }
 
-    typealias HKAnchoredObjectQueryResult = (samples: [HKSample], deletedSamples: [HKDeletedObject]?, newAnchor: HKQueryAnchor?);
+    typealias HKAnchoredObjectQueryResult = (samples: [HKSample], deletedSamples: [HKDeletedObject]?, newAnchor: HKQueryAnchor?)
 
     @available(iOS 13.0.0, *)
     func _queryHeartbeatSeriesSamplesWithAnchor(
@@ -1191,68 +1177,68 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 anchor: anchor,
                 limit: limit
             ) { (
-                query: HKAnchoredObjectQuery,
+                _: HKAnchoredObjectQuery,
                 s: [HKSample]?,
                 deletedSamples: [HKDeletedObject]?,
                 newAnchor: HKQueryAnchor?,
                 error: Error?
             ) in
                 if let err = error {
-                    continuation.resume(throwing: err);
+                    continuation.resume(throwing: err)
                 }
 
                 guard let samples = s else {
-                    fatalError("Should not fail");
+                    fatalError("Should not fail")
                 }
-                                
-                continuation.resume(returning: HKAnchoredObjectQueryResult(samples: samples, deletedSamples: deletedSamples, newAnchor: newAnchor));
+
+                continuation.resume(returning: HKAnchoredObjectQueryResult(samples: samples, deletedSamples: deletedSamples, newAnchor: newAnchor))
             }
-            
-            store.execute(query);
+
+            store.execute(query)
         }
 
-        return queryResult;
+        return queryResult
     }
 
     @available(iOS 13.0.0, *)
     func getHeartbeatSeriesHeartbeats(store: HKHealthStore, sample: HKHeartbeatSeriesSample) async throws -> [Dictionary<String, Any>] {
         let beatTimes = try await withCheckedThrowingContinuation {
             (continuation: CheckedContinuation<[Dictionary<String, Any>], Error>) in
-            var allBeats: [Dictionary<String, Any>] = [];
+            var allBeats: [Dictionary<String, Any>] = []
 
             let query = HKHeartbeatSeriesQuery(heartbeatSeries: sample) { (
-                query: HKHeartbeatSeriesQuery,
+                _: HKHeartbeatSeriesQuery,
                 timeSinceSeriesStart: TimeInterval,
                 precededByGap: Bool,
                 done: Bool,
                 error: Error?
             ) in
                 if let err = error {
-                    continuation.resume(throwing: err);
+                    continuation.resume(throwing: err)
                 }
 
-                let timeDict: Dictionary<String, Any> = [
+                let timeDict: [String: Any] = [
                     "timeSinceSeriesStart": timeSinceSeriesStart,
                     "precededByGap": precededByGap
-                ];
-                
-                allBeats.append(timeDict);
+                ]
+
+                allBeats.append(timeDict)
 
                 if done {
-                    continuation.resume(returning: allBeats);
+                    continuation.resume(returning: allBeats)
                 }
             }
-            
-            store.execute(query);
+
+            store.execute(query)
         }
-        
-        return beatTimes;
+
+        return beatTimes
     }
 
     @available(iOS 13.0.0, *)
-    func getSerializedHeartbeatSeriesSample(store: HKHealthStore, sample: HKHeartbeatSeriesSample) async throws -> Dictionary<String, Any> {
-        let sampleMetadata = serializeMetadata(metadata: sample.metadata) as! Dictionary<String, Any>;
-        let sampleHeartbeats = try await getHeartbeatSeriesHeartbeats(store: store, sample: sample);
+    func getSerializedHeartbeatSeriesSample(store: HKHealthStore, sample: HKHeartbeatSeriesSample) async throws -> [String: Any] {
+        let sampleMetadata = serializeMetadata(metadata: sample.metadata) as! [String: Any]
+        let sampleHeartbeats = try await getHeartbeatSeriesHeartbeats(store: store, sample: sample)
 
         return [
             "uuid": sample.uuid.uuidString,
@@ -1262,7 +1248,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
             "heartbeats": sampleHeartbeats as Any,
             "metadata": serializeMetadata(metadata: sample.metadata),
             "sourceRevision": serializeSourceRevision(_sourceRevision: sample.sourceRevision) as Any
-        ];
+        ]
     }
 
     @available(iOS 13.0.0, *)
@@ -1276,36 +1262,36 @@ class ReactNativeHealthkit: RCTEventEmitter {
         reject: @escaping RCTPromiseRejectBlock
     ) {
         guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         Task {
             do {
-                let from = dateOrNilIfZero(date: from);
-                let to = dateOrNilIfZero(date: to);
-            
-                let predicate = createPredicate(from: from, to: to);
-            
-                let limit = limitOrNilIfZero(limit: limit);
-                
-                let actualAnchor = deserializeHKQueryAnchor(anchor: anchor);
-                
-                let queryResult = try await _queryHeartbeatSeriesSamplesWithAnchor(store: store, predicate: predicate, limit: limit, anchor: actualAnchor);
-                
-                var allHeartbeatSamples: [Dictionary<String, Any>] = [];
+                let from = dateOrNilIfZero(date: from)
+                let to = dateOrNilIfZero(date: to)
+
+                let predicate = createPredicate(from: from, to: to)
+
+                let limit = limitOrNilIfZero(limit: limit)
+
+                let actualAnchor = deserializeHKQueryAnchor(anchor: anchor)
+
+                let queryResult = try await _queryHeartbeatSeriesSamplesWithAnchor(store: store, predicate: predicate, limit: limit, anchor: actualAnchor)
+
+                var allHeartbeatSamples: [Dictionary<String, Any>] = []
                 for sample in queryResult.samples as! [HKHeartbeatSeriesSample] {
-                    allHeartbeatSamples.append(try await getSerializedHeartbeatSeriesSample(store: store, sample: sample));
+                    allHeartbeatSamples.append(try await getSerializedHeartbeatSeriesSample(store: store, sample: sample))
                 }
-                
+
                 resolve([
                   "samples": allHeartbeatSamples as Any,
                   "deletedSamples": queryResult.deletedSamples?.map({ sample in
                     return serializeDeletedSample(sample: sample)
                   }) as Any,
                   "newAnchor": serializeAnchor(anchor: queryResult.newAnchor) as Any
-                ]);
+                ])
             } catch {
-                reject(GENERIC_ERROR, error.localizedDescription, error);
+                reject(GENERIC_ERROR, error.localizedDescription, error)
             }
         }
     }
@@ -1319,13 +1305,13 @@ class ReactNativeHealthkit: RCTEventEmitter {
   ) async throws -> [HKSample] {
       let samples = try await withCheckedThrowingContinuation {
           (continuation: CheckedContinuation<[HKSample], Error>) in
-          
+
           let query = HKSampleQuery(
               sampleType: HKSeriesType.heartbeat(),
               predicate: predicate,
               limit: limit,
               sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)]
-          ) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+          ) { (_: HKSampleQuery, sample: [HKSample]?, error: Error?) in
               if let err = error {
                   continuation.resume(throwing: err)
               } else {
@@ -1335,14 +1321,12 @@ class ReactNativeHealthkit: RCTEventEmitter {
                   continuation.resume(returning: actualSamples)
               }
           }
-          
+
           store.execute(query)
       }
 
       return samples
   }
-
-  
 
   @available(iOS 13.0.0, *)
   @objc(queryHeartbeatSeriesSamples:to:limit:ascending:resolve:reject:)
@@ -1355,20 +1339,20 @@ class ReactNativeHealthkit: RCTEventEmitter {
       reject: @escaping RCTPromiseRejectBlock
   ) {
       guard let store = _store else {
-          return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+          return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
       }
 
       Task {
           do {
-              let from = dateOrNilIfZero(date: from);
-              let to = dateOrNilIfZero(date: to);
+              let from = dateOrNilIfZero(date: from)
+              let to = dateOrNilIfZero(date: to)
 
-              let predicate = createPredicate(from: from, to: to);
+              let predicate = createPredicate(from: from, to: to)
 
-              let limit = limitOrNilIfZero(limit: limit);
+              let limit = limitOrNilIfZero(limit: limit)
 
-              let samples = try await _queryHeartbeatSeriesSamples(store: store, predicate: predicate, limit: limit, ascending:ascending);
-              
+              let samples = try await _queryHeartbeatSeriesSamples(store: store, predicate: predicate, limit: limit, ascending: ascending)
+
               var allHeartbeatSamples: [Dictionary<String, Any>] = []
               for sample in samples as! [HKHeartbeatSeriesSample] {
                   allHeartbeatSamples.append(try await getSerializedHeartbeatSeriesSample(store: store, sample: sample))

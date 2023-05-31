@@ -49,6 +49,8 @@ Remember to add tests for your change if possible. Run the unit tests by:
 yarn test
 ```
 
+You can use `npx solidarity` to make sure everything is set up correctly, for example [make sure you haft `swiftlint` installed](https://github.com/realm/SwiftLint#installation) since we use this as a pre-commit git hook.
+
 To edit the Objective-C files, open `example/ios/ReactNativeHealthkitExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > @kingstinct/react-native-healthkit`.
 
 To edit the Kotlin files, open `example/android` in Android studio and find the source files at `kingstinctreactnativehealthkit` under `Android`.
