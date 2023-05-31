@@ -1321,6 +1321,11 @@ type ReactNativeHealthkitTypeNative = {
     to: string,
     limit: number,
     ascending: boolean,
+  ) => Promise<readonly HKHeartbeatSeriesSampleRaw[]>;
+  readonly queryHeartbeatSeriesSamplesWithAnchor: (
+    from: string,
+    to: string,
+    limit: number,
     anchor: string
   ) => Promise<QueryHeartbeatSeriesSamplesResponseRaw>;
   readonly querySources: <

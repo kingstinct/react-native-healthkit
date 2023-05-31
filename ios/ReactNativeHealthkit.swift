@@ -20,6 +20,62 @@ let SpeedUnit =  HKUnit(from: "m/s") // HKUnit.meter().unitDivided(by: HKUnit.se
 // Support for MET data: HKAverageMETs 8.24046 kcal/hr·kg
 let METUnit = HKUnit(from: "kcal/hr·kg")
 
+func dateOrNilIfZero(date: Date) -> Date? {
+    return date.timeIntervalSince1970 > 0 ? date : nil
+}
+
+func limitOrNilIfZero(limit: Int) -> Int {
+    return limit == 0 ? HKObjectQueryNoLimit : limit
+}
+
+func createPredicate(from: Date?, to: Date?) -> NSPredicate? {
+    if from != nil || to != nil {
+        return HKQuery.predicateForSamples(withStart: from, end: to, options: [.strictEndDate, .strictStartDate])
+    } else {
+        return nil
+    }
+}
+
+func deserializeHKQueryAnchor(anchor: String) -> HKQueryAnchor? {
+    return anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor)
+}
+
+func getSortDescriptors(ascending: Bool) -> [NSSortDescriptor] {
+    return [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)]
+}
+
+
+func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
+  guard let anch = anchor else {
+    return nil
+  }
+  
+  let data = NSKeyedArchiver.archivedData(withRootObject: anch)
+  let encoded = data.base64EncodedString();
+  
+  return encoded;
+}
+
+func base64StringToHKQueryAnchor(base64String: String) -> HKQueryAnchor? {
+  // Step 1: Decode the base64 string to a Data object
+  guard let data = Data(base64Encoded: base64String) else {
+      print("Error: Invalid base64 string")
+      return nil
+  }
+
+  // Step 2: Use NSKeyedUnarchiver to unarchive the data and create an HKQueryAnchor object
+  do {
+      let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
+      unarchiver.requiresSecureCoding = true
+      let anchor = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
+    
+      return anchor as? HKQueryAnchor
+  } catch {
+      print("Error: Unable to unarchive HKQueryAnchor object: \(error)")
+      return nil
+  }
+}
+
 @objc(ReactNativeHealthkit)
 @available(iOS 10.0, *)
 class ReactNativeHealthkit: RCTEventEmitter {
@@ -931,17 +987,17 @@ class ReactNativeHealthkit: RCTEventEmitter {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
         }
 
-        let from = from.timeIntervalSince1970 > 0 ? from : nil;
-        let to = to.timeIntervalSince1970 > 0 ? to : nil;
+        let from = dateOrNilIfZero(date: from);
+        let to = dateOrNilIfZero(date: to);
 
-        let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
+        let predicate = createPredicate(from: from, to: to);
 
-        let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
+        let limit = limitOrNilIfZero(limit: limit);
 
         let energyUnit = HKUnit.init(from: energyUnitString)
         let distanceUnit = HKUnit.init(from: distanceUnitString)
 
-        let q = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+        let q = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: limit, sortDescriptors: getSortDescriptors(ascending: ascending)) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
                 guard let samples = sample else {
                     return resolve([]);
@@ -983,37 +1039,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
         store.execute(q);
     }
 
-  func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
-    guard let anch = anchor else {
-      return nil
-    }
-    
-    let data = NSKeyedArchiver.archivedData(withRootObject: anch)
-    let encoded = data.base64EncodedString();
-    
-    return encoded;
-  }
-  
-  func base64StringToHKQueryAnchor(base64String: String) -> HKQueryAnchor? {
-    // Step 1: Decode the base64 string to a Data object
-    guard let data = Data(base64Encoded: base64String) else {
-        print("Error: Invalid base64 string")
-        return nil
-    }
-
-    // Step 2: Use NSKeyedUnarchiver to unarchive the data and create an HKQueryAnchor object
-    do {
-        let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
-        unarchiver.requiresSecureCoding = true
-        let anchor = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
-      
-        return anchor as? HKQueryAnchor
-    } catch {
-        print("Error: Unable to unarchive HKQueryAnchor object: \(error)")
-        return nil
-    }
-}
-
   @objc(queryQuantitySamples:unitString:from:to:limit:ascending:resolve:reject:)
   func queryQuantitySamples(
     typeIdentifier: String, 
@@ -1034,14 +1059,12 @@ class ReactNativeHealthkit: RCTEventEmitter {
             return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
         }
 
-        let from = from.timeIntervalSince1970 > 0 ? from : nil;
-        let to = to.timeIntervalSince1970 > 0 ? to : nil;
-
-        let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
-
-        let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
+        let from = dateOrNilIfZero(date: from);
+        let to = dateOrNilIfZero(date: to);
+        let predicate = createPredicate(from: from, to: to);
+        let limit = limitOrNilIfZero(limit: limit);
     
-        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: getSortDescriptors(ascending: ascending)) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
                 guard let samples = sample else {
                     return resolve([]);
@@ -1078,7 +1101,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         let from = from.timeIntervalSince1970 >= 0 ? from : nil;
         let to = to.timeIntervalSince1970 >= 0 ? to : nil;
 
-        let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
+        let predicate = createPredicate(from: from, to: to);
 
         let q = HKCorrelationQuery(type: sampleType, predicate: predicate, samplePredicates: nil) { (query: HKCorrelationQuery, _correlations: [HKCorrelation]?, error: Error?) in
             guard let err = error else {
@@ -1141,14 +1164,12 @@ class ReactNativeHealthkit: RCTEventEmitter {
             return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
         }
 
-        let from = from.timeIntervalSince1970 > 0 ? from : nil;
-        let to = to.timeIntervalSince1970 > 0 ? to : nil;
-
-        let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
-
-        let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
+        let from = dateOrNilIfZero(date: from);
+        let to = dateOrNilIfZero(date: to);
+        let predicate = createPredicate(from: from, to: to);
+        let limit = limitOrNilIfZero(limit: limit);
       
-        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)]) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+        let q = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: getSortDescriptors(ascending: ascending)) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
                 guard let samples = sample else {
                     return resolve([]);
@@ -1191,14 +1212,12 @@ class ReactNativeHealthkit: RCTEventEmitter {
             return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
         }
 
-        let from = from.timeIntervalSince1970 > 0 ? from : nil;
-        let to = to.timeIntervalSince1970 > 0 ? to : nil;
-
-        let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
-
-        let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
+        let from = dateOrNilIfZero(date: from);
+        let to = dateOrNilIfZero(date: to);
+        let predicate = createPredicate(from: from, to: to);
+        let limit = limitOrNilIfZero(limit: limit);
     
-        let actualAnchor = anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor)
+        let actualAnchor = deserializeHKQueryAnchor(anchor: anchor);
     
         let q = HKAnchoredObjectQuery(
           type: sampleType,
@@ -1226,7 +1245,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
               "deletedSamples": deletedSamples?.map({ sample in
                 return self.serializeDeletedSample(sample: sample)
               }) as Any,
-              "newAnchor": self.serializeAnchor(anchor: newAnchor) as Any
+              "newAnchor": serializeAnchor(anchor: newAnchor) as Any
             ]);
           }
           reject(GENERIC_ERROR, err.localizedDescription, err);
@@ -1246,12 +1265,10 @@ class ReactNativeHealthkit: RCTEventEmitter {
             return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil);
         }
 
-        let from = from.timeIntervalSince1970 > 0 ? from : nil;
-        let to = to.timeIntervalSince1970 > 0 ? to : nil;
-
-        let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
-
-        let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
+        let from = dateOrNilIfZero(date: from);
+        let to = dateOrNilIfZero(date: to);
+        let predicate = createPredicate(from: from, to: to);
+        let limit = limitOrNilIfZero(limit: limit);
       
         let q = HKAnchoredObjectQuery(
           type: sampleType,
@@ -1285,7 +1302,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
               "deletedSamples": deletedSamples?.map({ sample in
                 return self.serializeDeletedSample(sample: sample)
               }) as Any,
-              "newAnchor": self.serializeAnchor(anchor: newAnchor) as Any
+              "newAnchor": serializeAnchor(anchor: newAnchor) as Any
             ]);
           }
           reject(GENERIC_ERROR, err.localizedDescription, err);
@@ -1516,7 +1533,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     typealias HKAnchoredObjectQueryResult = (samples: [HKSample], deletedSamples: [HKDeletedObject]?, newAnchor: HKQueryAnchor?);
 
     @available(iOS 13.0.0, *)
-    func _queryHeartbeatSeriesSamples(
+    func _queryHeartbeatSeriesSamplesWithAnchor(
         store: HKHealthStore,
         predicate: NSPredicate?,
         limit: Int,
@@ -1605,12 +1622,11 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
 
     @available(iOS 13.0.0, *)
-    @objc(queryHeartbeatSeriesSamples:to:limit:ascending:anchor:resolve:reject:)
-    func queryHeartbeatSeriesSamples(
+    @objc(queryHeartbeatSeriesSamplesWithAnchor:to:limit:anchor:resolve:reject:)
+    func queryHeartbeatSeriesSamplesWithAnchor(
         from: Date,
         to: Date,
         limit: Int,
-        ascending: Bool,
         anchor: String,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
@@ -1621,16 +1637,16 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         Task {
             do {
-                let from = from.timeIntervalSince1970 > 0 ? from : nil;
-                let to = to.timeIntervalSince1970 > 0 ? to : nil;
+                let from = dateOrNilIfZero(date: from);
+                let to = dateOrNilIfZero(date: to);
+            
+                let predicate = createPredicate(from: from, to: to);
+            
+                let limit = limitOrNilIfZero(limit: limit);
                 
-                let predicate = from != nil || to != nil ? HKQuery.predicateForSamples(withStart: from, end: to, options: [HKQueryOptions.strictEndDate, HKQueryOptions.strictStartDate]) : nil;
+                let actualAnchor = deserializeHKQueryAnchor(anchor: anchor);
                 
-                let limit = limit == 0 ? HKObjectQueryNoLimit : limit;
-                
-                let actualAnchor = anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor);
-                
-                let queryResult = try await _queryHeartbeatSeriesSamples(store: store, predicate: predicate, limit: limit, anchor: actualAnchor);
+                let queryResult = try await _queryHeartbeatSeriesSamplesWithAnchor(store: store, predicate: predicate, limit: limit, anchor: actualAnchor);
                 
                 var allHeartbeatSamples: [Dictionary<String, Any>] = [];
                 for sample in queryResult.samples as! [HKHeartbeatSeriesSample] {
@@ -1649,4 +1665,76 @@ class ReactNativeHealthkit: RCTEventEmitter {
             }
         }
     }
+
+  @available(iOS 13.0.0, *)
+  func _queryHeartbeatSeriesSamples(
+      store: HKHealthStore,
+      predicate: NSPredicate?,
+      limit: Int,
+      ascending: Bool
+  ) async throws -> [HKSample] {
+      let samples = try await withCheckedThrowingContinuation {
+          (continuation: CheckedContinuation<[HKSample], Error>) in
+          
+          let query = HKSampleQuery(
+              sampleType: HKSeriesType.heartbeat(),
+              predicate: predicate,
+              limit: limit,
+              sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)]
+          ) { (query: HKSampleQuery, sample: [HKSample]?, error: Error?) in
+              if let err = error {
+                  continuation.resume(throwing: err)
+              } else {
+                  guard let actualSamples = sample else {
+                      fatalError("Should not fail")
+                  }
+                  continuation.resume(returning: actualSamples)
+              }
+          }
+          
+          store.execute(query)
+      }
+
+      return samples
+  }
+
+  
+
+  @available(iOS 13.0.0, *)
+  @objc(queryHeartbeatSeriesSamples:to:limit:ascending:resolve:reject:)
+  func queryHeartbeatSeriesSamples(
+      from: Date,
+      to: Date,
+      limit: Int,
+      ascending: Bool,
+      resolve: @escaping RCTPromiseResolveBlock,
+      reject: @escaping RCTPromiseRejectBlock
+  ) {
+      guard let store = _store else {
+          return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil);
+      }
+
+      Task {
+          do {
+              let from = dateOrNilIfZero(date: from);
+              let to = dateOrNilIfZero(date: to);
+
+              let predicate = createPredicate(from: from, to: to);
+
+              let limit = limitOrNilIfZero(limit: limit);
+
+              let samples = try await _queryHeartbeatSeriesSamples(store: store, predicate: predicate, limit: limit, ascending:ascending);
+              
+              var allHeartbeatSamples: [Dictionary<String, Any>] = []
+              for sample in samples as! [HKHeartbeatSeriesSample] {
+                  allHeartbeatSamples.append(try await getSerializedHeartbeatSeriesSample(store: store, sample: sample))
+              }
+
+              resolve(allHeartbeatSamples as Any)
+          } catch {
+              reject(GENERIC_ERROR, error.localizedDescription, error)
+          }
+      }
+  }
+
 }

@@ -26,7 +26,7 @@ const mockModule: (NativeModule & typeof Native) = {
   getWorkoutRoutes: jest.fn(),
   queryCategorySamples: jest.fn(),
   queryCorrelationSamples: jest.fn(),
-  queryHeartbeatSeriesSamples: jest.fn(),
+  queryHeartbeatSeriesSamplesWithAnchor: jest.fn(),
   queryQuantitySamples: jest.fn(),
   querySources: jest.fn(),
   queryStatisticsForQuantity: jest.fn(),

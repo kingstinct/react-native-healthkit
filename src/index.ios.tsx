@@ -17,7 +17,7 @@ import getRequestStatusForAuthorization from './utils/getRequestStatusForAuthori
 import queryCategorySamples from './utils/queryCategorySamples'
 import queryCategorySamplesWithAnchor from './utils/queryCategorySamplesWithAnchor'
 import queryCorrelationSamples from './utils/queryCorrelationSamples'
-import queryHeartbeatSeriesSamples from './utils/queryHeartbeatSeriesSamples'
+import queryHeartbeatSeriesSamples from './utils/queryHeartbeatSeriesSamplesWithAnchor'
 import queryQuantitySamples from './utils/queryQuantitySamples'
 import queryQuantitySamplesWithAnchor from './utils/queryQuantitySamplesWithAnchor'
 import querySources from './utils/querySources'
