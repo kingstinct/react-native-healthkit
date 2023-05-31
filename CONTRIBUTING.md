@@ -18,12 +18,6 @@ To start the packager:
 yarn example start
 ```
 
-To run the example app on Android:
-
-```sh
-yarn example android
-```
-
 To run the example app on iOS:
 
 ```sh
@@ -48,6 +42,8 @@ Remember to add tests for your change if possible. Run the unit tests by:
 ```sh
 yarn test
 ```
+
+You can use `npx solidarity` to make sure everything is set up correctly, for example [make sure you haft `swiftlint` installed](https://github.com/realm/SwiftLint#installation) since we use this as a pre-commit git hook.
 
 To edit the Objective-C files, open `example/ios/ReactNativeHealthkitExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > @kingstinct/react-native-healthkit`.
 
@@ -83,7 +79,6 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn lint`: lint files with ESLint.
 - `yarn test`: run unit tests with Jest.
 - `yarn example start`: start the Metro server for the example app.
-- `yarn example android`: run the example app on Android.
 - `yarn example ios`: run the example app on iOS.
 
 ### Sending a pull request

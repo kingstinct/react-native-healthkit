@@ -29,13 +29,6 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 
-# Android/IJ
-#
-.idea
-.gradle
-local.properties
-android.iml
-
 # Cocoapods
 #
 example/ios/Pods
@@ -46,12 +39,6 @@ node_modules/
 npm-debug.log
 yarn-debug.log
 yarn-error.log
-
-# BUCK
-buck-out/
-\.buckd/
-android/app/libs
-android/keystores/debug.keystore
 
 # Expo
 .expo/*

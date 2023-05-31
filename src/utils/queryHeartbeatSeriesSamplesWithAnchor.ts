@@ -11,19 +11,23 @@ export type QueryHeartbeatSeriesSamplesResponse = {
   readonly newAnchor: string
 }
 
-export type QueryHeartbeatSeriesSamplesFn = (options: Omit<GenericQueryOptions, 'anchor'>) => Promise<readonly HKHeartbeatSeriesSample[]>;
+export type QueryHeartbeatSeriesSamplesFn = (options: Omit<GenericQueryOptions, 'ascending'>) => Promise<QueryHeartbeatSeriesSamplesResponse>;
 
-const queryHeartbeatSeriesSamples: QueryHeartbeatSeriesSamplesFn = async (options) => {
+const queryHeartbeatSeriesSamplesWithAnchor: QueryHeartbeatSeriesSamplesFn = async (options) => {
   const opts = prepareOptions(options)
 
-  const result = await Native.queryHeartbeatSeriesSamples(
+  const result = await Native.queryHeartbeatSeriesSamplesWithAnchor(
     opts.from,
     opts.to,
     opts.limit,
-    opts.ascending,
+    opts.anchor,
   )
 
-  return result.map(deserializeHeartbeatSeriesSample)
+  return {
+    deletedSamples: result.deletedSamples,
+    newAnchor: result.newAnchor,
+    samples: result.samples.map(deserializeHeartbeatSeriesSample),
+  }
 }
 
-export default queryHeartbeatSeriesSamples
+export default queryHeartbeatSeriesSamplesWithAnchor

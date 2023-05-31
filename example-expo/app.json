@@ -25,13 +25,6 @@
       "bundleIdentifier": "com.kingstinct.healthkitexample.expo",
       "buildNumber": "3"
     },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      },
-      "package": "com.kingstinct.healthkitexample.expo"
-    },
     "web": {
       "favicon": "./assets/favicon.png"
     },

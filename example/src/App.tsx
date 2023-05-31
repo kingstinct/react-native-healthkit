@@ -13,8 +13,8 @@ import useSources from '@kingstinct/react-native-healthkit/hooks/useSources'
 import useStatisticsForQuantity from '@kingstinct/react-native-healthkit/hooks/useStatisticsForQuantity'
 import deleteQuantitySample from '@kingstinct/react-native-healthkit/utils/deleteQuantitySample'
 import deleteSamples from '@kingstinct/react-native-healthkit/utils/deleteSamples'
-import queryHeartbeatSeriesSamples from '@kingstinct/react-native-healthkit/utils/queryHeartbeatSeriesSamples'
-import queryQuantitySamples from '@kingstinct/react-native-healthkit/utils/queryQuantitySamples'
+import queryHeartbeatSeriesSamplesWithAnchor from '@kingstinct/react-native-healthkit/utils/queryHeartbeatSeriesSamplesWithAnchor'
+import queryQuantitySamplesWithAnchor from '@kingstinct/react-native-healthkit/utils/queryQuantitySamplesWithAnchor'
 import saveQuantitySample from '@kingstinct/react-native-healthkit/utils/saveQuantitySample'
 import saveWorkoutSample from '@kingstinct/react-native-healthkit/utils/saveWorkoutSample'
 import dayjs from 'dayjs'
@@ -609,7 +609,7 @@ const App = () => {
     <Provider>
       <ScrollView style={styles.scrollView}>
         <Button onPress={async () => {
-          const res = await queryQuantitySamples(HKQuantityTypeIdentifier.stepCount, {
+          const res = await queryQuantitySamplesWithAnchor(HKQuantityTypeIdentifier.stepCount, {
             limit: 2,
           })
 
@@ -621,7 +621,7 @@ const App = () => {
           First 2 stepCount
         </Button>
         <Button onPress={async () => {
-          const res = await queryQuantitySamples(HKQuantityTypeIdentifier.stepCount, {
+          const res = await queryQuantitySamplesWithAnchor(HKQuantityTypeIdentifier.stepCount, {
             limit: 2,
             anchor: anchor.current,
           })
@@ -634,10 +634,9 @@ const App = () => {
           Next 2 stepCount
         </Button>
         <Button onPress={async () => {
-          const res = await queryHeartbeatSeriesSamples({
+          const res = await queryHeartbeatSeriesSamplesWithAnchor({
             limit: 2,
             anchor: heartbeatsAnchor.current,
-            ascending: true,
           })
 
           heartbeatsAnchor.current = res.newAnchor

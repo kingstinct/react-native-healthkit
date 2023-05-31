@@ -103,6 +103,13 @@ RCT_EXTERN_METHOD(queryHeartbeatSeriesSamples:(NSDate)from
                   to:(NSDate)to
                   limit:(NSInteger)limit
                   ascending:(BOOL)ascending
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(queryHeartbeatSeriesSamplesWithAnchor:(NSDate)from
+                  to:(NSDate)to
+                  limit:(NSInteger)limit
                   anchor:(NSString)anchor
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
@@ -113,6 +120,14 @@ RCT_EXTERN_METHOD(queryCategorySamples:(NSString)typeIdentifier
                   to:(NSDate)to
                   limit:(NSInteger)limit
                   ascending:(BOOL)ascending
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(queryCategorySamplesWithAnchor:(NSString)typeIdentifier
+                  from:(NSDate)from
+                  to:(NSDate)to
+                  limit:(NSInteger)limit
                   anchor:(NSString)anchor
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
@@ -149,6 +164,15 @@ RCT_EXTERN_METHOD(queryQuantitySamples:(NSString)typeIdentifier
                   to:(NSDate)to
                   limit:(NSInteger)limit
                   ascending:(BOOL)ascending
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(queryQuantitySamplesWithAnchor:(NSString)typeIdentifier
+                  unitString:(NSString)unitString
+                  from:(NSDate)from
+                  to:(NSDate)to
+                  limit:(NSInteger)limit
                   anchor:(NSString)anchor
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject

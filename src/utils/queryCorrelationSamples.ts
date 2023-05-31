@@ -9,7 +9,7 @@ export type QueryCorrelationSamplesFn = <
   TIdentifier extends HKCorrelationTypeIdentifier
 >(
   typeIdentifier: TIdentifier,
-  options: Omit<GenericQueryOptions, 'ascending' | 'limit'>
+  options: Omit<GenericQueryOptions, 'anchor' | 'ascending' | 'limit'>
 ) => Promise<readonly HKCorrelation<TIdentifier>[]>;
 
 const queryCorrelationSamples: QueryCorrelationSamplesFn = async (

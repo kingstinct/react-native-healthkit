@@ -10,7 +10,6 @@
   "files": [
     "src",
     "lib",
-    "android",
     "ios",
     "cpp",
     "kingstinct-react-native-healthkit.podspec",
@@ -25,11 +24,17 @@
     "test": "concurrently \"yarn test-only\" \"yarn typecheck\" \"yarn lint\"",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\" --cache",
-    "prepare": "bob build",
+    "prepare": "bob build && husky install",
     "release": "release-it",
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
     "bootstrap": "yarn example && yarn && yarn pods"
+  },
+  "lint-staged": {
+    "*.swift": "swiftlint ios --fix",
+    "*.ts": "eslint --fix",
+    "*.js": "eslint --fix",
+    "*.json": "eslint --fix"
   },
   "keywords": [
     "react-native",
@@ -52,7 +57,7 @@
     "@expo/config-plugins": "^6.0.1",
     "@graphql-eslint/eslint-plugin": ">=3",
     "@release-it/conventional-changelog": "2",
-    "@testing-library/react-native": "^11.0.0",
+    "@testing-library/react-native": "12",
     "@types/jest": ">=26",
     "@types/node": "^18.7.14",
     "@types/react": "~18.0.27",
@@ -82,25 +87,22 @@
     "husky": "8",
     "jest": ">=26",
     "jest-environment-jsdom": "^29.0.2",
+    "lint-staged": "^13.2.2",
     "metro-react-native-babel-preset": "^0.70.3",
     "pod-install": "^0.1.0",
     "react": "18.2.0",
     "react-native": "0.71.8",
     "react-native-builder-bob": "^0.18.1",
-    "react-test-renderer": "17",
+    "react-test-renderer": "18",
     "release-it": "14",
+    "solidarity": "^3.0.4",
+    "solidarity-react-native": "^2.1.2",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "yarn lint && yarn typescript"
-    }
   },
   "commitlint": {
     "extends": [

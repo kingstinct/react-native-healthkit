@@ -1286,15 +1286,7 @@ type ReactNativeHealthkitTypeNative = {
     to: string,
     limit: number,
     ascending: boolean,
-    anchor: string
-  ) => Promise<QueryCategorySamplesResponseRaw<T>>;
-  readonly queryHeartbeatSeriesSamples: (
-    from: string,
-    to: string,
-    limit: number,
-    ascending: boolean,
-    anchor: string
-  ) => Promise<QueryHeartbeatSeriesSamplesResponseRaw>;
+  ) => Promise<readonly HKCategorySampleRaw<T>[]>;
   readonly queryQuantitySamples: <
     TIdentifier extends HKQuantityTypeIdentifier,
     TUnit extends UnitForIdentifier<TIdentifier>
@@ -1305,8 +1297,37 @@ type ReactNativeHealthkitTypeNative = {
     to: string,
     limit: number,
     ascending: boolean,
+  ) => Promise<readonly HKQuantitySampleRaw<TIdentifier>[]>;
+  readonly queryCategorySamplesWithAnchor: <T extends HKCategoryTypeIdentifier>(
+    identifier: T,
+    from: string,
+    to: string,
+    limit: number,
+    anchor: string
+  ) => Promise<QueryCategorySamplesResponseRaw<T>>;
+  readonly queryQuantitySamplesWithAnchor: <
+    TIdentifier extends HKQuantityTypeIdentifier,
+    TUnit extends UnitForIdentifier<TIdentifier>
+  >(
+    identifier: TIdentifier,
+    unit: TUnit,
+    from: string,
+    to: string,
+    limit: number,
     anchor: string
   ) => Promise<QueryQuantitySamplesResponseRaw<TIdentifier>>;
+  readonly queryHeartbeatSeriesSamples: (
+    from: string,
+    to: string,
+    limit: number,
+    ascending: boolean,
+  ) => Promise<readonly HKHeartbeatSeriesSampleRaw[]>;
+  readonly queryHeartbeatSeriesSamplesWithAnchor: (
+    from: string,
+    to: string,
+    limit: number,
+    anchor: string
+  ) => Promise<QueryHeartbeatSeriesSamplesResponseRaw>;
   readonly querySources: <
     TIdentifier extends HKCategoryTypeIdentifier | HKQuantityTypeIdentifier
   >(
