@@ -17,7 +17,7 @@ export type QueryQuantitySamplesWithAnchorFn = <
   TUnit extends UnitForIdentifier<TIdentifier>
 >(
   identifier: TIdentifier,
-  options: GenericQueryOptions & { readonly unit?: TUnit }
+  options: Omit<GenericQueryOptions, 'ascending'> & { readonly unit?: TUnit }
 ) => Promise<QueryQuantitySamplesWithAnchorResponse<TIdentifier>>;
 
 const queryQuantitySamplesWithAnchor: QueryQuantitySamplesWithAnchorFn = async (

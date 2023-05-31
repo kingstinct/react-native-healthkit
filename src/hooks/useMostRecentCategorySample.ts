@@ -4,7 +4,6 @@ import useSubscribeToChanges from './useSubscribeToChanges'
 import getMostRecentCategorySample from '../utils/getMostRecentCategorySample'
 
 import type { HKCategorySampleRaw, HKCategoryTypeIdentifier } from '../native-types'
-import type { HKCategorySample } from '../types'
 
 function useMostRecentCategorySample<
   TCategory extends HKCategoryTypeIdentifier

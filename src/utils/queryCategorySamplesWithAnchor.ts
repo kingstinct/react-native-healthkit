@@ -13,7 +13,7 @@ export type QueryCategorySamplesWithAnchorResponse<T extends HKCategoryTypeIdent
 
 export type QueryCategorySamplesWithAnchorFn = <T extends HKCategoryTypeIdentifier>(
   identifier: T,
-  options: GenericQueryOptions
+  options: Omit<GenericQueryOptions, 'ascending'>
 ) => Promise<QueryCategorySamplesWithAnchorResponse<T>>;
 
 const queryCategorySamplesWithAnchor: QueryCategorySamplesWithAnchorFn = async (

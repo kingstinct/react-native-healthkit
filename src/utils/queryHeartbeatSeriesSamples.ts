@@ -11,7 +11,7 @@ export type QueryHeartbeatSeriesSamplesResponse = {
   readonly newAnchor: string
 }
 
-export type QueryHeartbeatSeriesSamplesFn = (options: Omit<GenericQueryOptions, 'ascending'>) => Promise<readonly HKHeartbeatSeriesSample[]>;
+export type QueryHeartbeatSeriesSamplesFn = (options: GenericQueryOptions) => Promise<readonly HKHeartbeatSeriesSample[]>;
 
 const queryHeartbeatSeriesSamples: QueryHeartbeatSeriesSamplesFn = async (options) => {
   const opts = prepareOptions(options)
