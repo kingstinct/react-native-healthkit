@@ -6,7 +6,7 @@ import type { GenericQueryOptions } from '../types'
 
 export type QueryCategorySamplesFn = <T extends HKCategoryTypeIdentifier>(
   identifier: T,
-  options: GenericQueryOptions
+  options: Omit<GenericQueryOptions, 'anchor'>
 ) => Promise<readonly HKCategorySampleRaw<T>[]>;
 
 const queryCategorySamples: QueryCategorySamplesFn = async (

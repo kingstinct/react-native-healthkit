@@ -12,7 +12,7 @@ export type QueryQuantitySamplesFn = <
   TUnit extends UnitForIdentifier<TIdentifier>
 >(
   identifier: TIdentifier,
-  options: GenericQueryOptions & { readonly unit?: TUnit }
+  options: Omit<GenericQueryOptions, 'anchor'> & { readonly unit?: TUnit }
 ) => Promise<readonly HKQuantitySampleRaw<TIdentifier>[]>;
 
 const queryQuantitySamples: QueryQuantitySamplesFn = async (
