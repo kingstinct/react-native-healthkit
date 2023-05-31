@@ -18,12 +18,6 @@ To start the packager:
 yarn example start
 ```
 
-To run the example app on Android:
-
-```sh
-yarn example android
-```
-
 To run the example app on iOS:
 
 ```sh
@@ -85,7 +79,6 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn lint`: lint files with ESLint.
 - `yarn test`: run unit tests with Jest.
 - `yarn example start`: start the Metro server for the example app.
-- `yarn example android`: run the example app on Android.
 - `yarn example ios`: run the example app on iOS.
 
 ### Sending a pull request
