@@ -1,3 +1,10 @@
+## [7.0.1](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.0...v7.0.1) (2023-06-17)
+
+
+### Bug Fixes
+
+* don’t modify info.plist when not necessary ([672064a](https://github.com/kingstinct/react-native-healthkit/commit/672064a184753c2add8fb54661ebbad128add083))
+
 # [7.0.0](https://github.com/kingstinct/react-native-healthkit/compare/v6.1.0...v7.0.0) (2023-05-31)
 
 ### Features
