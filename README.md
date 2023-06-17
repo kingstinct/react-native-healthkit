@@ -159,7 +159,7 @@ We're striving to do as straight a mapping as possible to the Native Libraries. 
 
 ## Clinical Records
 
-For accessing Clinical Records use old version (3.x) or use specific branch ""
+For accessing Clinical Records use old version (3.x) or use specific branch "including-clinical-records"
 
 ## Android alternatives
 
@@ -168,6 +168,12 @@ For a similar library for Android, check out [react-native-health-connect](https
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+
+## Sponsorship and enterprise-grade support
+
+If you're using @kingstinct/react-native-healthkit to build your production app [please consider funding its continued development](https://github.com/sponsors/Kingstinct). It helps us spend more time on keeping this library as good as it can be.
+
+At Kingstinct we're also able to provide enterprise-grade support for this package, [find us here](https://kingstinct.com) or [drop an email](mailto:healthkit@kingstinct.com) for more information. Also feel free to join our [Discord community](https://discord.gg/EHScS93v).
 
 ## License
 
