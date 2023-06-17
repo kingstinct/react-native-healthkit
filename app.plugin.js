@@ -40,16 +40,35 @@ const {
  */
 const withEntitlementsPlugin = (config, { background }) => withEntitlementsPlist(config, (config) => {
   config.modResults['com.apple.developer.healthkit'] = true
-  config.modResults['com.apple.developer.healthkit.background-delivery'] = background !== false
+
+  // background is enabled by default, but possible to opt-out from
+  // (haven't seen any drawbacks from having it enabled)
+  if (background !== false) {
+    config.modResults['com.apple.developer.healthkit.background-delivery'] = true
+  }
+
   return config
 })
 
 /**
  * @type {ConfigPlugin<InfoPlistConfig>}
  */
-const withInfoPlistPlugin = (config, { NSHealthShareUsageDescription, NSHealthUpdateUsageDescription }) => withInfoPlist(config, (config) => {
-  config.modResults.NSHealthShareUsageDescription = NSHealthShareUsageDescription || (NSHealthShareUsageDescription === false ? undefined : `${config.name} wants to read your health data`)
-  config.modResults.NSHealthUpdateUsageDescription = NSHealthUpdateUsageDescription || (NSHealthUpdateUsageDescription === false ? undefined : `${config.name} wants to update your health data`)
+const withInfoPlistPlugin = (config,
+  /**
+  * @type {{NSHealthShareUsageDescription: string | boolean, NSHealthUpdateUsageDescription: string | boolean}}
+  * */
+  {
+    NSHealthShareUsageDescription,
+    NSHealthUpdateUsageDescription,
+  }) => withInfoPlist(config, (config) => {
+  if (NSHealthShareUsageDescription !== false) {
+    config.modResults.NSHealthShareUsageDescription = NSHealthShareUsageDescription ?? `${config.name} wants to read your health data`
+  }
+
+  if (NSHealthUpdateUsageDescription !== false) {
+    config.modResults.NSHealthUpdateUsageDescription = NSHealthUpdateUsageDescription ?? `${config.name} wants to update your health data`
+  }
+
   return config
 })
 
