@@ -1,3 +1,10 @@
+## [7.0.3](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.2...v7.0.3) (2023-06-18)
+
+
+### Bug Fixes
+
+* make config plugin work without specifying props ([f7b8bc7](https://github.com/kingstinct/react-native-healthkit/commit/f7b8bc790a2ac6b9066d9a6569ecae7be4583c0c))
+
 ## [7.0.2](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.1...v7.0.2) (2023-06-18)
 
 
