@@ -36,14 +36,20 @@ const {
 */
 
 /**
- * @type {ConfigPlugin<{background: BackgroundConfig}>}
- */
-const withEntitlementsPlugin = (config, { background }) => withEntitlementsPlist(config, (config) => {
+   * @type {ConfigPlugin<{background: BackgroundConfig}>}
+   */
+const withEntitlementsPlugin = (
+  config,
+  /**
+   * @type {{background: BackgroundConfig} | undefined}
+   * */
+  props,
+) => withEntitlementsPlist(config, (config) => {
   config.modResults['com.apple.developer.healthkit'] = true
 
   // background is enabled by default, but possible to opt-out from
   // (haven't seen any drawbacks from having it enabled)
-  if (background !== false) {
+  if (props?.background !== false) {
     config.modResults['com.apple.developer.healthkit.background-delivery'] = true
   }
 
@@ -55,18 +61,15 @@ const withEntitlementsPlugin = (config, { background }) => withEntitlementsPlist
  */
 const withInfoPlistPlugin = (config,
   /**
-  * @type {{NSHealthShareUsageDescription: string | boolean, NSHealthUpdateUsageDescription: string | boolean}}
+  * @type {{NSHealthShareUsageDescription: string | boolean, NSHealthUpdateUsageDescription: string | boolean} | undefined}
   * */
-  {
-    NSHealthShareUsageDescription,
-    NSHealthUpdateUsageDescription,
-  }) => withInfoPlist(config, (config) => {
-  if (NSHealthShareUsageDescription !== false) {
-    config.modResults.NSHealthShareUsageDescription = NSHealthShareUsageDescription ?? `${config.name} wants to read your health data`
+  props) => withInfoPlist(config, (config) => {
+  if (props?.NSHealthShareUsageDescription !== false) {
+    config.modResults.NSHealthShareUsageDescription = props.NSHealthShareUsageDescription ?? `${config.name} wants to read your health data`
   }
 
-  if (NSHealthUpdateUsageDescription !== false) {
-    config.modResults.NSHealthUpdateUsageDescription = NSHealthUpdateUsageDescription ?? `${config.name} wants to update your health data`
+  if (props?.NSHealthUpdateUsageDescription !== false) {
+    config.modResults.NSHealthUpdateUsageDescription = props.NSHealthUpdateUsageDescription ?? `${config.name} wants to update your health data`
   }
 
   return config
@@ -77,9 +80,9 @@ const pkg = require('./package.json')
 /**
  * @type {ConfigPlugin<AppPluginConfig>}
 */
-const healthkitAppPlugin = (config, { NSHealthShareUsageDescription, NSHealthUpdateUsageDescription, background }) => withPlugins(config, [
-  [withEntitlementsPlugin, { background }],
-  [withInfoPlistPlugin, { NSHealthShareUsageDescription, NSHealthUpdateUsageDescription }],
+const healthkitAppPlugin = (config, props) => withPlugins(config, [
+  [withEntitlementsPlugin, props],
+  [withInfoPlistPlugin, props],
 ])
 
 /**
