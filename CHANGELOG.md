@@ -1,3 +1,10 @@
+## [7.0.2](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.1...v7.0.2) (2023-06-18)
+
+
+### Bug Fixes
+
+* deserialization of non-anchor queries ([bd8808f](https://github.com/kingstinct/react-native-healthkit/commit/bd8808f35eb0cb63b85357e9d8adf8e977920df8))
+
 ## [7.0.1](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.0...v7.0.1) (2023-06-17)
 
 
