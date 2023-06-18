@@ -4,13 +4,14 @@ import ensureUnit from '../utils/ensureUnit'
 import getMostRecentQuantitySample from '../utils/getMostRecentQuantitySample'
 import subscribeToChanges from '../utils/subscribeToChanges'
 
-import type { HKQuantitySampleRaw, HKQuantityTypeIdentifier, UnitForIdentifier } from '../native-types'
+import type { HKQuantityTypeIdentifier, UnitForIdentifier } from '../native-types'
+import type { HKQuantitySample } from '../types'
 
 function useMostRecentQuantitySample<
   TIdentifier extends HKQuantityTypeIdentifier,
   TUnit extends UnitForIdentifier<TIdentifier>
 >(identifier: TIdentifier, unit?: TUnit) {
-  const [lastSample, setLastSample] = useState<HKQuantitySampleRaw<
+  const [lastSample, setLastSample] = useState<HKQuantitySample<
   TIdentifier
   > | null>(null)
 
