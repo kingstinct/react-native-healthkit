@@ -2,12 +2,21 @@ import { NativeEventEmitter, NativeModules } from 'react-native'
 
 import type { EmitterSubscription, NativeModule } from 'react-native'
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkworkouttypeidentifier
+ */
 export const HKWorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier' as const
 export const HKAudiogramTypeIdentifier = 'HKAudiogramTypeIdentifier' as const
+
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkworkoutroutetypeidentifier
+ */
 export const HKWorkoutRouteTypeIdentifier = 'HKWorkoutRouteTypeIdentifier' as const
 export const HKDataTypeIdentifierHeartbeatSeries = 'HKDataTypeIdentifierHeartbeatSeries' as const
 
-// Straight mapping to https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier
+ */
 export enum HKQuantityTypeIdentifier {
   bodyMassIndex = 'HKQuantityTypeIdentifierBodyMassIndex',
   bodyFatPercentage = 'HKQuantityTypeIdentifierBodyFatPercentage', // Scalar(Percent, 0.0 - 1.0),  Discrete
@@ -127,6 +136,18 @@ export enum HKQuantityTypeIdentifier {
   waterTemperature = 'HKQuantityTypeIdentifierWaterTemperature', // Temperature, Discrete
 
   appleSleepingWristTemperature = 'HKQuantityTypeIdentifierAppleSleepingWristTemperature', // Temperature, Discrete
+
+  timeInDaylight = 'HKQuantityTypeIdentifierTimeInDaylight', // Time, Cumulative
+
+  physicalEffort = 'HKQuantityTypeIdentifierPhysicalEffort', // Scalar(Percent, 0.0 - 1.0),  Discrete
+
+  cyclingSpeed = 'HKQuantityTypeIdentifierCyclingSpeed', // Length/Time, Discrete
+
+  cyclingPower = 'HKQuantityTypeIdentifierCyclingPower', // Power, Discrete
+
+  cyclingFunctionalThresholdPower = 'HKQuantityTypeIdentifierCyclingFunctionalThresholdPower', // Power, Discrete
+
+  cyclingCadence = 'HKQuantityTypeIdentifierCyclingCadence', // Scalar(Count)/Time, Discrete
 }
 
 export type TypeToUnitMapping = {
@@ -143,11 +164,17 @@ export enum HKHeartRateMotionContext {
   sedentary = 1,
 }
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkcorrelationtypeidentifier
+ */
 export enum HKCorrelationTypeIdentifier {
   bloodPressure = 'HKCorrelationTypeIdentifierBloodPressure',
   food = 'HKCorrelationTypeIdentifierFood',
 }
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier
+ */
 export enum HKCategoryTypeIdentifier {
   sleepAnalysis = 'HKCategoryTypeIdentifierSleepAnalysis',
   appleStandHour = 'HKCategoryTypeIdentifierAppleStandHour',
@@ -160,6 +187,9 @@ export enum HKCategoryTypeIdentifier {
   highHeartRateEvent = 'HKCategoryTypeIdentifierHighHeartRateEvent',
   lowHeartRateEvent = 'HKCategoryTypeIdentifierLowHeartRateEvent',
   irregularHeartRhythmEvent = 'HKCategoryTypeIdentifierIrregularHeartRhythmEvent',
+  /**
+   * @deprecated Use environmentalAudioExposureEvent instead.
+   */
   audioExposureEvent = 'HKCategoryTypeIdentifierAudioExposureEvent',
   toothbrushingEvent = 'HKCategoryTypeIdentifierToothbrushingEvent',
   lowCardioFitnessEvent = 'HKCategoryTypeIdentifierLowCardioFitnessEvent',
@@ -390,12 +420,18 @@ export interface HKWorkoutMetadata
   readonly HKIndoorWorkout?: HKIndoorWorkout;
 }
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkauthorizationrequeststatus
+ */
 export enum HKAuthorizationRequestStatus {
   unknown = 0,
   shouldRequest = 1,
   unnecessary = 2,
 }
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkauthorizationstatus
+ */
 export enum HKAuthorizationStatus {
   notDetermined = 0,
   sharingDenied = 1,
@@ -410,6 +446,9 @@ export type HKQuantity<
   readonly quantity: number;
 };
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkbloodtype
+ */
 export enum HKBloodType {
   notSet = 0,
   aPositive = 1,
@@ -422,6 +461,9 @@ export enum HKBloodType {
   oNegative = 8,
 }
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkbiologicalsex
+ */
 export enum HKBiologicalSex {
   notSet = 0,
   female = 1,
@@ -429,6 +471,9 @@ export enum HKBiologicalSex {
   other = 3,
 }
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkfitzpatrickskintype
+ */
 export enum HKFitzpatrickSkinType {
   notSet = 0,
   I = 1,
@@ -439,6 +484,9 @@ export enum HKFitzpatrickSkinType {
   VI = 6,
 }
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkstatisticsoptions
+ */
 export enum HKStatisticsOptions {
   cumulativeSum = 'cumulativeSum',
   discreteAverage = 'discreteAverage',
@@ -466,6 +514,9 @@ export type QueryStatisticsResponseRaw<
   readonly duration?: HKQuantity<HKQuantityTypeIdentifier, TimeUnit>;
 };
 
+/**
+ * https://developer.apple.com/documentation/healthkit/hkcategoryvaluecervicalmucusquality
+ */
 export enum HKCategoryValueCervicalMucusQuality {
   dry = 1,
   sticky = 2,
@@ -474,6 +525,9 @@ export enum HKCategoryValueCervicalMucusQuality {
   eggWhite = 5,
 }
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkcategoryvaluemenstrualflow
+ */
 export enum HKCategoryValueMenstrualFlow {
   unspecified = 1,
   none = 5,
@@ -482,6 +536,9 @@ export enum HKCategoryValueMenstrualFlow {
   heavy = 4,
 }
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkcategoryvalueovulationtestresult
+ */
 export enum HKCategoryValueOvulationTestResult {
   negative = 1,
   luteinizingHormoneSurge = 2,
@@ -489,6 +546,9 @@ export enum HKCategoryValueOvulationTestResult {
   estrogenSurge = 4,
 }
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkcategoryvaluesleepanalysis
+ */
 export enum HKCategoryValueSleepAnalysis {
   inBed = 0,
   asleepUnspecified = 1,
@@ -498,6 +558,9 @@ export enum HKCategoryValueSleepAnalysis {
   asleepREM = 5
 }
 
+/**
+ * https://developer.apple.com/documentation/healthkit/hkcategoryvalueappetitechanges
+ */
 export enum HKCategoryValueAppetiteChanges {
   decreased = 2,
   increased = 3,
@@ -505,11 +568,17 @@ export enum HKCategoryValueAppetiteChanges {
   unspecified = 0,
 }
 
+/**
+ * https://developer.apple.com/documentation/healthkit/hkcategoryvaluepresence
+ */
 export enum HKCategoryValuePresence {
   notPresent = 1,
   present = 0,
 }
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkcategoryvalueseverity
+ */
 export enum HKCategoryValueSeverity {
   notPresent = 1,
   mild = 2,
@@ -518,10 +587,16 @@ export enum HKCategoryValueSeverity {
   unspecified = 0,
 }
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkcategoryvalue/notapplicable
+ */
 export enum HKCategoryValueNotApplicable {
   notApplicable = 0,
 }
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkcategoryvalue
+ */
 export type HKCategoryValue =
   | HKCategoryValueAppetiteChanges
   | HKCategoryValueCervicalMucusQuality
@@ -533,6 +608,9 @@ export type HKCategoryValue =
   | HKCategoryValueSleepAnalysis
   | number;
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkinsulindeliveryreason
+ */
 export enum HKInsulinDeliveryReason {
   basal = 1,
   bolus = 2,
@@ -728,6 +806,9 @@ export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier> =
                         ? HKCategoryValueAppleStandHour
                         : number;
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkcategoryvaluepregnancytestresult
+ */
 enum HKCategoryValuePregnancyTestResult {
   positive = 2,
   negative = 1,
@@ -990,6 +1071,9 @@ export type HKUnit =
   | `${TimeUnit}`
   | `${VolumeUnit}`;
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkdevice
+ */
 export type HKDevice = {
   readonly name: string; // ex: "Apple Watch"
   readonly firmwareVersion: string | null;
@@ -1001,11 +1085,17 @@ export type HKDevice = {
   readonly udiDeviceIdentifier: string | null
 };
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkobject/1615781-source
+ */
 export type HKSource = {
   readonly name: string;
   readonly bundleIdentifier: string;
 };
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkobject/1615483-sourcerevision
+ */
 export type HKSourceRevision = {
   readonly source: HKSource;
   readonly version: string;
@@ -1013,6 +1103,9 @@ export type HKSourceRevision = {
   readonly productType?: string;
 };
 
+/**
+ * See https://developer.apple.com/documentation/healthkit/hkquantitysample
+ */
 export type HKQuantitySampleRaw<
   TQuantityIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
   TUnit extends UnitForIdentifier<TQuantityIdentifier> = UnitForIdentifier<TQuantityIdentifier>
@@ -1163,6 +1256,7 @@ export type HKCorrelationRaw<TIdentifier extends HKCorrelationTypeIdentifier> =
 
 type QueryId = string;
 
+/** See https://developer.apple.com/documentation/healthkit/hkupdatefrequency */
 export enum HKUpdateFrequency {
   immediate = 1,
   hourly = 2,
@@ -1189,6 +1283,7 @@ export type WorkoutRoute = {
 };
 
 type ReactNativeHealthkitTypeNative = {
+  /** See https://developer.apple.com/documentation/healthkit/hkhealthstore/1614180-ishealthdataavailable */
   isHealthDataAvailable(): Promise<boolean>;
   canAccessProtectedData(): Promise<boolean>;
   getBloodType(): Promise<HKBloodType>;
@@ -1197,13 +1292,16 @@ type ReactNativeHealthkitTypeNative = {
   getFitzpatrickSkinType(): Promise<HKFitzpatrickSkinType>;
   readonly getWheelchairUse: () => Promise<HKWheelchairUse>;
 
+  /** See https://developer.apple.com/documentation/healthkit/hkhealthstore/1614175-enablebackgrounddelivery */
   readonly enableBackgroundDelivery: (
     typeIdentifier: HKSampleTypeIdentifier,
     updateFrequency: HKUpdateFrequency
   ) => Promise<boolean>;
+  /** https://developer.apple.com/documentation/healthkit/hkhealthstore/1614177-disablebackgrounddelivery */
   readonly disableBackgroundDelivery: (
     typeIdentifier: HKSampleTypeIdentifier
   ) => Promise<boolean>;
+  /** See https://developer.apple.com/documentation/healthkit/hkhealthstore/1614158-disableallbackgrounddelivery */
   readonly disableAllBackgroundDelivery: () => Promise<boolean>;
 
   readonly saveCorrelationSample: <
@@ -1240,11 +1338,14 @@ type ReactNativeHealthkitTypeNative = {
     identifier: HKSampleTypeIdentifier
   ): Promise<QueryId>;
   unsubscribeQuery(queryId: QueryId): Promise<boolean>;
+  /** See https://developer.apple.com/documentation/healthkit/hkhealthstore/1614154-authorizationstatus */
   authorizationStatusFor(type: HealthkitReadAuthorization): Promise<HKAuthorizationStatus>;
+  /** See https://developer.apple.com/documentation/healthkit/hkhealthstore/2994346-getrequeststatusforauthorization */
   getRequestStatusForAuthorization(
     write: WritePermissions,
     read: ReadPermissions
   ): Promise<HKAuthorizationRequestStatus>;
+  /** See https://developer.apple.com/documentation/healthkit/hkhealthstore/1614152-requestauthorization */
   requestAuthorization(
     write: WritePermissions,
     read: ReadPermissions

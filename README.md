@@ -8,12 +8,12 @@ React Native bindings for HealthKit with full TypeScript and Promise support cov
 
 | Data Types                  | Query | Save  | Subscribe | Examples                               |
 | ----------------------------|:------|:------|:----------|:---------------------------------------|
-| 80+ Quantity Types          | ✅    | ✅    | ✅       | Steps, energy burnt, blood glucose etc.. |
+| 100+ Quantity Types         | ✅    | ✅    | ✅       | Steps, energy burnt, blood glucose etc.. |
 | 63 Category Types           | ✅    | ✅    | ✅       | Sleep analysis, mindful sessions etc.. |
 | 75+ Workout Activity Types  | ✅    | ✅    | ✅       | Swimming, running, table tennis etc..  |
 | Correlation Types           | ✅    | ✅    | ✅       | Food and blood pressure                |
 | Document Types              | ✅    | ❌    | ✅       | [CDA documents](https://developer.apple.com/documentation/healthkit/hkcdadocument) exposed as Base64 data  |
-| Clinical Records            | ✅    | ❌    | ✅       | Lab results etc in [FHIR JSON format](https://www.hl7.org/fhir/json.html)  |
+| Clinical Records            | ⚠️    | ❌    | ⚠️       | Lab results etc in [FHIR JSON format](https://www.hl7.org/fhir/json.html)  |
 
 ### Disclaimer
 

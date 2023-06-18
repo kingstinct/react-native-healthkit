@@ -4,6 +4,7 @@ import type {
   HealthkitReadAuthorization, HealthkitWriteAuthorization, ReadPermissions, WritePermissions,
 } from '../native-types'
 
+/** See https://developer.apple.com/documentation/healthkit/hkhealthstore/1614152-requestauthorization */
 const requestAuthorization = async (
   read: readonly HealthkitReadAuthorization[],
   write: readonly HealthkitWriteAuthorization[] = [],
