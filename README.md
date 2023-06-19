@@ -1,8 +1,10 @@
 # @kingstinct/react-native-healthkit
 
-[![Test](https://github.com/Kingstinct/react-native-healthkit/actions/workflows/test.yml/badge.svg)](https://github.com/Kingstinct/react-native-healthkit/actions/workflows/test.yml)
-[![@kingstinct/react-native-healthkit on NPM](https://img.shields.io/npm/v/@kingstinct/react-native-healthkit)](https://www.npmjs.com/package/@kingstinct/react-native-healthkit)
-![npm](https://img.shields.io/npm/dt/@kingstinct/react-native-healthkit)
+[![Test Status](https://github.com/Kingstinct/react-native-healthkit/actions/workflows/test.yml/badge.svg)](https://github.com/Kingstinct/react-native-healthkit/actions/workflows/test.yml)
+[![Latest version on NPM](https://img.shields.io/npm/v/@kingstinct/react-native-healthkit)](https://www.npmjs.com/package/@kingstinct/react-native-healthkit)
+[![Downloads on NPM](https://img.shields.io/npm/dt/@kingstinct/react-native-healthkit)](https://www.npmjs.com/package/@kingstinct/react-native-healthkit)
+[![Discord](https://dcbadge.vercel.app/api/server/EHScS93v?style=flat)](https://discord.gg/EHScS93v)
+
 
 React Native bindings for HealthKit with full TypeScript and Promise support covering about any kind of data. Keeping TypeScript mappings as close as possible to HealthKit - both in regards to naming and serialization. This will make it easier to keep this library up-to-date with HealthKit as well as browsing [the official documentation](https://developer.apple.com/documentation/healthkit) (and if something - metadata properties for example - is not typed it will still be accessible).
 
@@ -13,7 +15,7 @@ React Native bindings for HealthKit with full TypeScript and Promise support cov
 | 75+ Workout Activity Types  | ✅    | ✅    | ✅       | Swimming, running, table tennis etc..  |
 | Correlation Types           | ✅    | ✅    | ✅       | Food and blood pressure                |
 | Document Types              | ✅    | ❌    | ✅       | [CDA documents](https://developer.apple.com/documentation/healthkit/hkcdadocument) exposed as Base64 data  |
-| Clinical Records            | ⚠️    | ❌    | ⚠️       | Lab results etc in [FHIR JSON format](https://www.hl7.org/fhir/json.html)  |
+| Clinical Records            | ⚠️    | ❌    | ⚠️       | Lab results etc in [FHIR JSON format](https://www.hl7.org/fhir/json.html) (see [Clinical Records](https://github.com/kingstinct/react-native-healthkit#clinical-records))  |
 
 ### Disclaimer
 
@@ -159,7 +161,7 @@ We're striving to do as straight a mapping as possible to the Native Libraries. 
 
 ## Clinical Records
 
-For accessing Clinical Records use old version (3.x) or use specific branch "including-clinical-records"
+For accessing Clinical Records use old version (3.x) or use specific branch "including-clinical-records". The reason is we cannot refer to this code natively in apps without getting approval from Apple, this could probably be solved by the config plugin but we haven't had time to look into it yet.
 
 ## Android alternatives
 
