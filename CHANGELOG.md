@@ -1,3 +1,5 @@
+## [7.0.4](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.3...v7.0.4) (2023-06-24)
+
 ## [7.0.3](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.2...v7.0.3) (2023-06-18)
 
 
