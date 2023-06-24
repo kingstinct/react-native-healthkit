@@ -178,7 +178,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
 
         guard let objectType = objectTypeFromString(typeIdentifier: typeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         let authStatus = store.authorizationStatus(for: objectType)
@@ -194,7 +194,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
 
         guard let type = HKObjectType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         let unit = HKUnit.init(from: unitString)
@@ -225,7 +225,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         let sampleUuid = UUID.init(uuidString: uuid)!
 
         guard let sampleType = HKObjectType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         let samplePredicate = HKQuery.predicateForObject(with: sampleUuid)
@@ -247,7 +247,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
 
         guard let sampleType = HKObjectType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         let samplePredicate = HKQuery.predicateForSamples(withStart: start, end: end, options: HKQueryOptions.strictStartDate)
@@ -269,7 +269,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         let identifier = HKCorrelationTypeIdentifier.init(rawValue: typeIdentifier)
 
         guard let type = HKObjectType.correlationType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         var initializedSamples = Set<HKSample>()
@@ -316,7 +316,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
 
         guard let type = HKWorkoutActivityType.init(rawValue: typeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier.description, nil)
+          return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize HKWorkoutActivityType " + typeIdentifier.description, nil)
         }
 
         var initializedSamples = [HKSample]()
@@ -394,7 +394,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier)
 
         guard let type = HKObjectType.categoryType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         let sample = HKCategorySample.init(type: type, value: Int(value), start: start, end: end, metadata: metadata as? [String: Any])
@@ -418,7 +418,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
 
         guard let sampleType = objectTypeFromString(typeIdentifier: typeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         guard let frequency = HKUpdateFrequency.init(rawValue: updateFrequency) else {
@@ -454,7 +454,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
 
         guard let sampleType = objectTypeFromString(typeIdentifier: typeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         store.disableBackgroundDelivery(for: sampleType) { (success, error) in
@@ -472,7 +472,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
 
         guard let sampleType = sampleTypeFromString(typeIdentifier: typeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         let predicate = HKQuery.predicateForSamples(withStart: Date.init(), end: nil, options: HKQueryOptions.strictStartDate)
@@ -535,7 +535,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
         guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         let predicate = HKQuery.predicateForSamples(withStart: from, end: to, options: HKQueryOptions.strictEndDate)
@@ -689,7 +689,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
         guard let sampleType = HKSampleType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         let from = dateOrNilIfZero(date: from)
@@ -728,7 +728,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         let identifier = HKCorrelationTypeIdentifier.init(rawValue: typeIdentifier)
         guard let sampleType = HKSampleType.correlationType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         let from = from.timeIntervalSince1970 >= 0 ? from : nil
@@ -794,7 +794,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier)
         guard let sampleType = HKSampleType.categoryType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         let from = dateOrNilIfZero(date: from)
@@ -842,7 +842,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
         guard let sampleType = HKSampleType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         let from = dateOrNilIfZero(date: from)
@@ -895,7 +895,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier)
         guard let sampleType = HKSampleType.categoryType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         let from = dateOrNilIfZero(date: from)
@@ -952,7 +952,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
 
         guard let type = objectTypeFromString(typeIdentifier: typeIdentifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, typeIdentifier, nil)
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
         let query = HKSourceQuery(sampleType: type as! HKSampleType, samplePredicate: nil) { (_: HKSourceQuery, source: Set<HKSource>?, error: Error?) in

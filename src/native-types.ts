@@ -1,4 +1,4 @@
-import { NativeEventEmitter, NativeModules } from 'react-native'
+import { NativeEventEmitter, NativeModules, Platform } from 'react-native'
 
 import type { EmitterSubscription, NativeModule } from 'react-native'
 
@@ -137,17 +137,21 @@ export enum HKQuantityTypeIdentifier {
 
   appleSleepingWristTemperature = 'HKQuantityTypeIdentifierAppleSleepingWristTemperature', // Temperature, Discrete
 
-  timeInDaylight = 'HKQuantityTypeIdentifierTimeInDaylight', // Time, Cumulative
+  timeInDaylight = 'HKQuantityTypeIdentifierTimeInDaylight',
 
-  physicalEffort = 'HKQuantityTypeIdentifierPhysicalEffort', // Scalar(Percent, 0.0 - 1.0),  Discrete
+  physicalEffort = 'HKQuantityTypeIdentifierPhysicalEffort',
 
-  cyclingSpeed = 'HKQuantityTypeIdentifierCyclingSpeed', // Length/Time, Discrete
+  cyclingSpeed = 'HKQuantityTypeIdentifierCyclingSpeed',
 
-  cyclingPower = 'HKQuantityTypeIdentifierCyclingPower', // Power, Discrete
+  cyclingPower = 'HKQuantityTypeIdentifierCyclingPower',
 
-  cyclingFunctionalThresholdPower = 'HKQuantityTypeIdentifierCyclingFunctionalThresholdPower', // Power, Discrete
+  cyclingFunctionalThresholdPower = 'HKQuantityTypeIdentifierCyclingFunctionalThresholdPower',
 
-  cyclingCadence = 'HKQuantityTypeIdentifierCyclingCadence', // Scalar(Count)/Time, Discrete
+  cyclingCadence = 'HKQuantityTypeIdentifierCyclingCadence',
+
+  environmentalSoundReduction = 'HKQuantityTypeIdentifierEnvironmentalSoundReduction',
+
+  heartRateRecoveryOneMinute = 'HKQuantityTypeIdentifierHeartRateRecoveryOneMinute',
 }
 
 export type TypeToUnitMapping = {
