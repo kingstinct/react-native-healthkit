@@ -118,7 +118,11 @@ export declare enum HKQuantityTypeIdentifier {
     cyclingFunctionalThresholdPower = "HKQuantityTypeIdentifierCyclingFunctionalThresholdPower",
     cyclingCadence = "HKQuantityTypeIdentifierCyclingCadence",
     environmentalSoundReduction = "HKQuantityTypeIdentifierEnvironmentalSoundReduction",
-    heartRateRecoveryOneMinute = "HKQuantityTypeIdentifierHeartRateRecoveryOneMinute"
+    heartRateRecoveryOneMinute = "HKQuantityTypeIdentifierHeartRateRecoveryOneMinute",
+    runningGroundContactTime = "HKQuantityTypeIdentifierRunningGroundContactTime",
+    runningStrideLength = "HKQuantityTypeIdentifierRunningStrideLength",
+    runningPower = "HKQuantityTypeIdentifierRunningPower",
+    runningVerticalOscillation = "HKQuantityTypeIdentifierRunningVerticalOscillation"
 }
 export type TypeToUnitMapping = {
     readonly [key in HKQuantityTypeIdentifier]: HKUnit;
