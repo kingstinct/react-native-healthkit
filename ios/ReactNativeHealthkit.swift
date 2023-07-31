@@ -121,8 +121,9 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
 
         do {
-            let dateOfBirth = try store.dateOfBirth()
-            resolve(_dateFormatter.string(from: dateOfBirth))
+            let dateOfBirth = try store.dateOfBirthComponents()
+            
+            resolve(_dateFormatter.string(from: dateOfBirth.date!))
         } catch {
             reject(GENERIC_ERROR, error.localizedDescription, error)
         }
