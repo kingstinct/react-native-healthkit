@@ -152,6 +152,14 @@ export enum HKQuantityTypeIdentifier {
   environmentalSoundReduction = 'HKQuantityTypeIdentifierEnvironmentalSoundReduction',
 
   heartRateRecoveryOneMinute = 'HKQuantityTypeIdentifierHeartRateRecoveryOneMinute',
+
+  runningGroundContactTime = 'HKQuantityTypeIdentifierRunningGroundContactTime',
+
+  runningStrideLength = 'HKQuantityTypeIdentifierRunningStrideLength',
+
+  runningPower = 'HKQuantityTypeIdentifierRunningPower',
+
+  runningVerticalOscillation = 'HKQuantityTypeIdentifierRunningVerticalOscillation',
 }
 
 export type TypeToUnitMapping = {
