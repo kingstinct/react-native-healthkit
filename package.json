@@ -24,7 +24,6 @@
     "test": "concurrently \"yarn test-only\" \"yarn typecheck\" \"yarn lint\"",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\" --cache",
-    "prepare": "bob build && husky install",
     "release": "release-it",
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
