@@ -432,6 +432,12 @@ export interface HKWorkoutMetadata
   readonly HKIndoorWorkout?: HKIndoorWorkout;
 }
 
+export interface HKWorkoutEvent {
+  readonly type: string,
+  readonly startDate: string,
+  readonly endDate: string,
+}
+
 /**
  * See https://developer.apple.com/documentation/healthkit/hkauthorizationrequeststatus
  */
@@ -1185,6 +1191,7 @@ export type HKWorkoutRaw<
   readonly endDate: string;
   readonly metadata?: HKWorkoutMetadata;
   readonly sourceRevision?: HKSourceRevision;
+  readonly events?: readonly HKWorkoutEvent[];
 };
 
 // Straight mapping to https://developer.apple.com/documentation/healthkit/hkcharacteristictypeidentifier
