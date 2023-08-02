@@ -358,6 +358,7 @@ export interface HKWorkoutMetadata extends HKGenericMetadata {
 }
 export interface HKWorkoutEvent {
     readonly type: string;
+    readonly metaData: any;
     readonly startDate: string;
     readonly endDate: string;
 }

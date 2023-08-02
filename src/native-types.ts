@@ -434,6 +434,7 @@ export interface HKWorkoutMetadata
 
 export interface HKWorkoutEvent {
   readonly type: string,
+  readonly metaData: any,
   readonly startDate: string,
   readonly endDate: string,
 }

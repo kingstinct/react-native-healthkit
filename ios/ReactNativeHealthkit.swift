@@ -665,6 +665,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                                 let eventEndDate = self._dateFormatter.string(from: event.dateInterval.end)
                                 let eventDict: [String: Any] = [
                                     "type": event.type,
+                                    "metaData": event.metadata,
                                     "startDate": eventStartDate,
                                     "endDate": eventEndDate
                                 ]
