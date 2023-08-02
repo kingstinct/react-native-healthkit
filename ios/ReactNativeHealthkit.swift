@@ -658,7 +658,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                             "sourceRevision": serializeSourceRevision(_sourceRevision: workout.sourceRevision) as Any
                         ]
 
-                        /*if let events = workout.workoutEvents?.filter({ $0.type == .laps || $0.type == .pause || $0.type == .resume || $0.type == .segment || $0.type == .stop || $0.type == .start}) {
+                        if let events = workout.workoutEvents {
                             var eventDicts: [[String: Any]] = []
                             for event in events {
                                 let eventStartDate = self._dateFormatter.string(from: event.dateInterval.start)
@@ -670,8 +670,9 @@ class ReactNativeHealthkit: RCTEventEmitter {
                                 ]
                                 eventDicts.append(eventDict)
                             }
-                            dict.setValue(eventDicts, forKey: "workoutEvents")
-                        }*/
+                            dict["workoutEvents"] = eventDicts
+                        }
+
 
                         if #available(iOS 11, *) {
                             dict.setValue(serializeQuantity(unit: HKUnit.count(), quantity: workout.totalFlightsClimbed), forKey: "totalFlightsClimbed")

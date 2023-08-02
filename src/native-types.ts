@@ -1191,7 +1191,7 @@ export type HKWorkoutRaw<
   readonly endDate: string;
   readonly metadata?: HKWorkoutMetadata;
   readonly sourceRevision?: HKSourceRevision;
-  // readonly events?: readonly HKWorkoutEvent[];
+  readonly events?: readonly HKWorkoutEvent[];
 };
 
 // Straight mapping to https://developer.apple.com/documentation/healthkit/hkcharacteristictypeidentifier
