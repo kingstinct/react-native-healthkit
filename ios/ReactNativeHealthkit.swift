@@ -670,7 +670,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                                 ]
                                 eventDicts.append(eventDict)
                             }
-                            dict["workoutEvents"] = eventDicts
+                            dict["events"] = eventDicts
                         }
 
 
