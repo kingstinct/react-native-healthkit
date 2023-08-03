@@ -1,3 +1,10 @@
+## [7.0.5](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.4...v7.0.5) (2023-08-03)
+
+
+### Bug Fixes
+
+* nullability on getMostRecent queries ([4acb077](https://github.com/kingstinct/react-native-healthkit/commit/4acb07737447d3326a17d7aa317123db8ae052b1))
+
 ## [7.0.4](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.3...v7.0.4) (2023-06-24)
 
 ## [7.0.3](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.2...v7.0.3) (2023-06-18)
