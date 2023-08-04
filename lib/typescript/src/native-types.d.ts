@@ -356,12 +356,8 @@ export interface HKWorkoutMetadata extends HKGenericMetadata {
     readonly HKElevationAscended?: HKQuantity<HKQuantityTypeIdentifier, LengthUnit>;
     readonly HKIndoorWorkout?: HKIndoorWorkout;
 }
-interface Metadata {
-    readonly [key: string]: any;
-}
 export interface HKWorkoutEvent {
     readonly type: string;
-    readonly metaData: Metadata;
     readonly startDate: string;
     readonly endDate: string;
 }
@@ -799,7 +795,7 @@ export type HKWorkoutRaw<TEnergy extends EnergyUnit, TDistance extends LengthUni
     readonly endDate: string;
     readonly metadata?: HKWorkoutMetadata;
     readonly sourceRevision?: HKSourceRevision;
-    readonly events?: HKWorkoutMetadata;
+    readonly events?: HKWorkoutEvent;
 };
 export declare enum HKCharacteristicTypeIdentifier {
     fitzpatrickSkinType = "HKCharacteristicTypeIdentifierFitzpatrickSkinType",
