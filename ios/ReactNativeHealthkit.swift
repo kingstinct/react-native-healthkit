@@ -673,20 +673,30 @@ class ReactNativeHealthkit: RCTEventEmitter {
                             dict["events"] = eventDicts
                         }
 
-                        if let activities = workout.workoutActivities {
-                            var activitiesDicts: [[String: Any]] = []
-                            for activity in activities {
-                                let activityStartDate = self._dateFormatter.string(from: activity.startDate)
-                                let activityEndDate = self._dateFormatter.string(from: activity.endDate)
-                                let activityDict: [String: Any] = [
-                                    "startDate": activityStartDate,
-                                    "endDate": activityEndDate,
-                                    "duration": activity.duration,
-                                ]
-                                activitiesDicts.append(activityDict)
+                        var activitiesDicts: [[String: Any]] = []
+                        if #available(iOS 16.0, *) {
+                            let activities: [HKWorkoutActivity] = workout.workoutActivities
+                            
+                            if !activities.isEmpty{
+                                for activity in activities {
+                                    var activityStartDate = ""
+                                    var activityEndDate = ""
+                                    if let start = activity.startDate as Date? {
+                                        activityStartDate = self._dateFormatter.string(from: activity.startDate)
+                                    }
+                                    if let end = activity.startDate as Date? {
+                                        activityEndDate = self._dateFormatter.string(from: activity.startDate)
+                                    }
+                                    let activityDict: [String: Any] = [
+                                        "startDate": activityStartDate,
+                                        "endDate": activityEndDate,
+                                        "duration": activity.duration,
+                                    ]
+                                    activitiesDicts.append(activityDict)
+                                }
                             }
-                            dict["activities"] = activitiesDicts
                         }
+                        dict["activities"] = activitiesDicts
 
                         if #available(iOS 11, *) {
                             dict.setValue(serializeQuantity(unit: HKUnit.count(), quantity: workout.totalFlightsClimbed), forKey: "totalFlightsClimbed")
