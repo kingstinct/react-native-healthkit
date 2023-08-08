@@ -27,3 +27,4 @@ let SpeedUnit =  HKUnit(from: "m/s") // HKUnit.meter().unitDivided(by: HKUnit.se
 // Support for MET data: HKAverageMETs 8.24046 kcal/hr·kg
 let METUnit = HKUnit(from: "kcal/hr·kg")
 
+ 
