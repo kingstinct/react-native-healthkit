@@ -685,7 +685,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                                         activityStartDate = self._dateFormatter.string(from: activity.startDate)
                                     }
                                     if let end = activity.startDate as Date? {
-                                        activityEndDate = self._dateFormatter.string(from: activity.startDate)
+                                        activityEndDate = self._dateFormatter.string(from: activity.endDate)
                                     }
                                     let activityDict: [String: Any] = [
                                         "startDate": activityStartDate,
