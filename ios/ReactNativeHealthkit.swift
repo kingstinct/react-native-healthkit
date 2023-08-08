@@ -690,7 +690,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
                                     let activityDict: [String: Any] = [
                                         "startDate": activityStartDate,
                                         "endDate": activityEndDate,
-                                        //"duration": activity.duration,
                                     ]
                                     activitiesDicts.append(activityDict)
                                 }
