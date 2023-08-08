@@ -364,7 +364,6 @@ export interface HKWorkoutEvent {
 export interface HKWorkoutActivity {
     readonly startDate: string;
     readonly endDate: string;
-    readonly duration: number;
 }
 /**
  * See https://developer.apple.com/documentation/healthkit/hkauthorizationrequeststatus

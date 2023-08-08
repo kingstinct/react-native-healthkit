@@ -673,11 +673,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                             dict["events"] = eventDicts
                         }
 
-                        var activitiesDicts: [[String: Any]] = [
-                                        "startDate": "test",
-                                        "endDate": "activityEndDate",
-                                        "duration": 0,
-                                    ]
+                        var activitiesDicts: [[String: Any]] = []
                         if #available(iOS 16.0, *) {
                             let activities: [HKWorkoutActivity] = workout.workoutActivities
                             
@@ -694,7 +690,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                                     let activityDict: [String: Any] = [
                                         "startDate": activityStartDate,
                                         "endDate": activityEndDate,
-                                        "duration": activity.duration,
+                                        //"duration": activity.duration,
                                     ]
                                     activitiesDicts.append(activityDict)
                                 }
