@@ -361,6 +361,11 @@ export interface HKWorkoutEvent {
     readonly startDate: string;
     readonly endDate: string;
 }
+export interface HKWorkoutActivity {
+    readonly startDate: string;
+    readonly endDate: string;
+    readonly duration: number;
+}
 /**
  * See https://developer.apple.com/documentation/healthkit/hkauthorizationrequeststatus
  */
@@ -796,6 +801,7 @@ export type HKWorkoutRaw<TEnergy extends EnergyUnit, TDistance extends LengthUni
     readonly metadata?: HKWorkoutMetadata;
     readonly sourceRevision?: HKSourceRevision;
     readonly events?: HKWorkoutEvent;
+    readonly activities?: HKWorkoutActivity;
 };
 export declare enum HKCharacteristicTypeIdentifier {
     fitzpatrickSkinType = "HKCharacteristicTypeIdentifierFitzpatrickSkinType",
