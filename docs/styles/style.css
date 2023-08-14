@@ -23,11 +23,25 @@ body {
   margin-bottom: 30px;
 }
 
+.code-window-prism {
+  max-width: 768px; 
+  backdrop-filter: blur(40px); 
+  -webkit-backdrop-filter: blur(40px);
+  opacity: 0.9;
+}
+
+@media(min-width: 768px) {
+  .code-window-prism {
+    border-radius: 10px;
+  }
+}
+
 .code-window {
   background-color: #0009; 
-  border-radius: 5px; 
+  border-radius: 5px;
   border: 1px solid white; 
-  backdrop-filter: blur(4px); 
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   text-align: left; 
   padding: 10px;
   padding-left: 20px;
@@ -77,14 +91,15 @@ body {
 }
 
 .contrast-safe-text {
-  backdrop-filter: blur(4px); 
-  background-color: #fff9; 
-  border-radius: 10px; 
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  background-color: #fff8;
+  border-radius: 10px;
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
-  padding-left: 5px; 
+  padding-left: 5px;
   padding-right: 5px;
-  padding: 6.09px
+  padding: 6px;
 }
 
 li:first-child .contrast-safe-text {
@@ -98,12 +113,17 @@ li:last-child .contrast-safe-text {
 .tabs{
   display: flex;
   flex: 1;
+  padding-top: 15px;
+  margin-top: 10px;
   align-self: center;
   color: 'black';
   text-decoration: none;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
+  border-top: 1px solid #0001;
+  padding-left: 30px;
+  padding-right: 10px;
 }
 
 .tabs a:visited {
@@ -118,7 +138,7 @@ li:last-child .contrast-safe-text {
 
 .tabs a:link {
   color: black;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 header {
@@ -144,6 +164,7 @@ header {
   left: 50%;
   max-width: 720px;
   width: 100%;
+  margin-top: 50px;
 }
 
 .section .white {

@@ -27,7 +27,8 @@
   <!-- <div class="oop"></div> -->
   <div class="fixed">
     <h1 class="large" style="backdrop-filter: blur(4px); 
-    background-color: #fff6; border-radius: 10px; padding-top: 5px; padding-bottom: 5px;">Access HealthKit seamlessy and effortlessly with Expo and React Native</h1>
+    -webkit-backdrop-filter: blur(4px);
+    background-color: #fff8; border-radius: 10px; padding-top: 5px; padding-bottom: 5px;">Access HealthKit seamlessy and effortlessly with Expo and React Native</h1>
     <div style="border-radius: 5px;">
       <ul style="text-align: left; 
         list-style: none; display: flex;     
@@ -99,8 +100,7 @@
 </div>
 <div class="section" id="auth">
   <div class="p fixed">
-    
-      <pre  style="max-width: 768px; border-radius: 10px;backdrop-filter: blur(40px); opacity: 0.95;"><code class="language-tsx"> // request authorization
+    <pre class="code-window-prism"><code class="language-tsx">// request authorization
 
 import { 
   Text, 
@@ -133,7 +133,7 @@ export default () => {
 <div class="section" id="data">
   <div class="p fixed">
     
-      <pre style="max-width: 768px; border-radius: 10px;backdrop-filter: blur(40px); opacity: 0.95;"><code class="language-tsx">// get data 
+      <pre class="code-window-prism"><code class="language-tsx">// get data 
 
 import { 
   Text, 
@@ -156,7 +156,7 @@ export default () => {
   </div>
 </div>
 
-<div style="position: fixed; padding-top: 20px; padding-bottom: 20px; padding-right: 20px; right: 0px; left: 0px; z-index: 9999999999; backdrop-filter: blur(4px); background-color: #fff5;">
+<div style="position: fixed; padding-top: 20px; padding-bottom: 20px; padding-right: 20px; right: 0px; left: 0px; z-index: 9999999999; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); background-color: #fff5;">
   <div style="vertical-align: middle;">
     <a href="#home"><img src="./images/healthkit.png" style="width:10vw;height:7vw; margin-left: 10px;vertical-align: middle;">
     <div style="display:inline-block; vertical-align: middle;">
