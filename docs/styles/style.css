@@ -177,9 +177,13 @@ header {
   color: #fff;
 }
 
-.section:nth-child(1) {
-  background-color: #fff;
+h1 {
+  user-select: none;
+  -webkit-user-select: none;
+}
 
+.section:nth-child(1) {
+  background-color: #224430;
   /* background-image: url('../images/heart-data.jpg'); */
   background-image: url('../images/diet.jpg');
   background-position: center;
@@ -191,7 +195,7 @@ header {
 
 .section:nth-child(2) {
   box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
-  background-color: #fff;
+  background-color: #ccd;
   background-image: url('../images/hollander.jpg');
   background-position: center;
   background-size: cover;
@@ -215,7 +219,7 @@ header {
 
 .section:nth-child(4) {
   box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
-  background-color: #85c20a;
+  background-color: #cce;
   background-image: url('../images/tie-shoes.jpg');
   background-position: center;
   background-size: cover;

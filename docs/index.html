@@ -50,7 +50,7 @@
 <div class="section" id="install">
   <div class="fixed">
     <h1 style="color: black;" style="user-select: none;">
-      1. Install with <span class="toggle-expo-rn">Expo</span>
+      1. Install <span class="toggle-expo-rn">with Expo</span> ⚙️
     </h1>
     <ol class="expo-only instructions">
       <li><p>Install dependency</p><div class="code-window">
@@ -103,7 +103,7 @@
 </div>
 <div class="section" id="auth">
   <div class="p fixed">
-    <pre class="code-window-prism"><code class="language-tsx">// --- 2. Request Authorization ---
+    <pre class="code-window-prism"><code class="language-tsx">// --- 2. Authorize 🔒 ---
 
 import { 
   Text, 
@@ -136,7 +136,7 @@ export default () => {
 <div class="section" id="data">
   <div class="p fixed">
     
-      <pre class="code-window-prism"><code class="language-tsx">// --- 3. Get Data ---
+      <pre class="code-window-prism"><code class="language-tsx">// --- 3. Launch 🚀 ---
 
 import { 
   Text, 
@@ -171,9 +171,9 @@ export default () => {
     </a>
   </div>
   <div class="tabs">
-    <a href="#install">1. Install</a>
-    <a href="#auth">2. Request Authorization</a>
-    <a href="#data">3. Get Data</a>
+    <a href="#install">1. Install ⚙️</a>
+    <a href="#auth">2. Authorize 🔒</a>
+    <a href="#data">3. Launch 🚀</a>
   </div>
 </div>
   <script>
@@ -187,8 +187,8 @@ export default () => {
       })
 
       function toggleExpoRn(evt){
-        const toggleToRN = this.innerHTML === 'Expo'
-        this.innerHTML = toggleToRN ? 'React Native' : 'Expo'
+        const toggleToRN = this.innerHTML === 'with Expo'
+        this.innerHTML = toggleToRN ? 'with React Native' : 'with Expo'
         document.querySelectorAll('.rn-only').forEach(el => {
           el.style.display = toggleToRN ? 'block' : 'none'
         })
