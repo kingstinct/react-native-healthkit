@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>@kingstinct/react-native-healthkit</title>
-  <meta name="description" content="Access HealthKit seamlessy and effortlessly with Expo and React Native">
+  <meta name="description" content="Access HealthKit seamlessly and effortlessly with Expo and React Native">
   <meta name="keywords" content="TypeScript, HealthKit, iOS, React Native">
   <meta name="author" content="Kingstinct">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://kingstinct.com/react-native-healthkit" />
   <meta property="og:image" content="./images/heart-data.jpg" />
   <meta name="twitter:title" content="@kingstinct/react-native-healthkit">
-  <meta name="twitter:description" content="Access HealthKit seamlessy and effortlessly with Expo and React Native">
+  <meta name="twitter:description" content="Access HealthKit seamlessly and effortlessly with Expo and React Native">
   <meta name="twitter:image" content=" ./images/heart-data.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="./images/healthkit.png">
@@ -27,19 +27,22 @@
   <!-- <div class="oop"></div> -->
   <div class="fixed">
     <h1 class="large" style="backdrop-filter: blur(4px); 
-    -webkit-backdrop-filter: blur(4px);
-    background-color: #fff8; border-radius: 10px; padding-top: 5px; padding-bottom: 5px;">Access HealthKit seamlessy and effortlessly with Expo and React Native</h1>
+    
+    background-color: #fffa; border-radius: 10px; padding: 10px;">Access HealthKit seamlessly and effortlessly with Expo and React Native</h1>
     <div style="border-radius: 5px;">
-      <ul style="text-align: left; 
+      <ul  class="contrast-safe-text" style="text-align: left; 
         list-style: none; display: flex;     
-        padding-inline-start: 0px;
+        padding-inline-start: 10px;
+      
         flex-direction: column;
         gap: 10px;">
-        <li>✅<span class="contrast-safe-text">Save, query and subscribe to all 100+ <b>Quantity Types</b></span></li>
-        <li>✅<span class="contrast-safe-text">Save, query and subscribe to all 63+ <b>Category Types</b></span></li>
-        <li>✅<span class="contrast-safe-text">Save, query and subscribe to all 75+ <b>Workout Types</b></span></li>
-        <li>✅<span class="contrast-safe-text"><b>Developer Ergonomics</b>: TypeScript, Promises, Expo Plugin</span></li>
-        <li>✅<span class="contrast-safe-text"><b>Future-proof</b> - by mapping closely to the Official APIs</span></li>
+        <li>✅ All 100+ <b>Quantity Types</b></li>
+        <li>✅ All 63+ <b>Category Types</b></li>
+        <li>✅ All 75+ <b>Workout Types</b></li>
+        <li>✅ Save, query and subscribe to data</li>
+        <li>✅ TypeScript, Promise-based, Expo Plugin</li>
+        <li>✅ Convenient hooks</li>
+        <li>✅ <b>Future-proof</b> - mapping closely to the Native API</li>
       </ul>
     </div>
   </div>
@@ -47,7 +50,7 @@
 <div class="section" id="install">
   <div class="fixed">
     <h1 style="color: black;" style="user-select: none;">
-      Install with <span class="toggle-expo-rn">Expo</span>
+      1. Install with <span class="toggle-expo-rn">Expo</span>
     </h1>
     <ol class="expo-only instructions">
       <li><p>Install dependency</p><div class="code-window">
@@ -56,7 +59,7 @@
           Copy
           </div>
       </div></li>
-      <li><p>Add config plugin</p>  <div class="code-window">
+      <li><p>Add Config Plugin</p>  <div class="code-window">
       
         <pre>{
   "expo": {
@@ -100,7 +103,7 @@
 </div>
 <div class="section" id="auth">
   <div class="p fixed">
-    <pre class="code-window-prism"><code class="language-tsx">// request authorization
+    <pre class="code-window-prism"><code class="language-tsx">// --- 2. Request Authorization ---
 
 import { 
   Text, 
@@ -133,7 +136,7 @@ export default () => {
 <div class="section" id="data">
   <div class="p fixed">
     
-      <pre class="code-window-prism"><code class="language-tsx">// get data 
+      <pre class="code-window-prism"><code class="language-tsx">// --- 3. Get Data ---
 
 import { 
   Text, 
@@ -168,9 +171,9 @@ export default () => {
     </a>
   </div>
   <div class="tabs">
-    <a href="#install">Install</a>
-    <a href="#auth">Request Authorization</a>
-    <a href="#data">Get Data</a>
+    <a href="#install">1. Install</a>
+    <a href="#auth">2. Request Authorization</a>
+    <a href="#data">3. Get Data</a>
   </div>
 </div>
   <script>

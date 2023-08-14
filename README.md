@@ -23,10 +23,10 @@ This library is provided as-is without any warranty and is not affiliated with A
 
 ## Installation
 
-### Expo Managed Workflow (easiest - with config plugin)
+### Expo
 Usage with Expo is possible - just keep in mind it will not work in Expo Go and [you'll need to roll your own Dev Client](https://docs.expo.dev/development/getting-started/). 
 
-1. `yarn add @kingstinct/react-native-healthkit` (or `npm install @kingstinct/react-native-healthkit`)
+1. `yarn add @kingstinct/react-native-healthkit`
 2. Update your app.json with the config plugin:
 ```json
 {
@@ -42,49 +42,25 @@ this will give you defaults that make the app build without any further configur
     "plugins": [
       ["@kingstinct/react-native-healthkit", {
         "NSHealthShareUsageDescription": "Your own custom usage description",
-        "NSHealthUpdateUsageDescription": false,  // if you have no plans to update data, you can skip adding it to your info.plist
-        "background": false // if you have no plans to use it in background mode, skip adding it to the entitlements
+        "NSHealthUpdateUsageDescription": false,  // if you have no plans to update data, you could skip adding it to your info.plist
+        "background": false // if you have no plans to use it in background mode, you could skip adding it to the entitlements
       }]
     ]
   }
 }
 ```
 3. Build a new Dev Client
-4. During runtime check and request permissions with `requestAuthorization`. Failing to request authorization, or requesting a permission you haven't requested yet, will result in the app crashing.
-
-### Expo Managed Workflow (manual)
-Usage with Expo is possible - just keep in mind it will not work in Expo Go and [you'll need to roll your own Dev Client](https://docs.expo.dev/development/getting-started/). 
-
-1. `yarn add @kingstinct/react-native-healthkit` (or `npm install @kingstinct/react-native-healthkit`)
-2. Update your app.json:
-```json
-{
-  "expo": {
-    "ios": {
-      "infoPlist": {
-        "NSHealthShareUsageDescription": "<< your usage description here >>", // (optional) if you want to read healthkit data
-        "NSHealthUpdateUsageDescription": "<< your usage description here >>" // (optional) if you want to write healthkit data
-      },
-      "entitlements": {
-        "com.apple.developer.healthkit": true, // required to use healthkit
-        "com.apple.developer.healthkit.background-delivery": true // (optional) if you want to use background delivery
-      }
-    }
-  }
-}
-```
-3. Build a new Dev Client
-4. During runtime check and request permissions with `requestAuthorization`. Failing to request authorization, or requesting a permission you haven't requested yet, will result in the app crashing.
 
 ### Native or Expo Bare Workflow
-1. `yarn add @kingstinct/react-native-healthkit` (or `npm install @kingstinct/react-native-healthkit`)
+1. `yarn add @kingstinct/react-native-healthkit`
 2. `npx pod-install`
 3. Set `NSHealthUpdateUsageDescription` and `NSHealthShareUsageDescription` in your `Info.plist` 
 4. Enable the HealthKit capability for the project in Xcode.
 5. Since this package is using Swift you might also need to add a bridging header in your project if you haven't already, you can [find more about that in the official React Native docs](https://reactnative.dev/docs/native-modules-ios#exporting-swift)
-6. During runtime check and request permissions with `requestAuthorization`. Failing to request authorization, or requesting a permission you haven't requested yet, will result in the app crashing.
 
 ## Usage
+
+During runtime check and request permissions with `requestAuthorization`. Failing to request authorization, or requesting a permission you haven't requested yet, will result in the app crashing. This is easy to miss - for example by requesting authorization in the same component where you have a hook trying to fetch data right away.. :)
 
 Some hook examples:
 ```TypeScript
