@@ -1,5 +1,6 @@
 import HealthKit
 import CoreLocation
+import WorkoutKit
 
 @objc(ReactNativeHealthkit)
 @available(iOS 10.0, *)
@@ -672,7 +673,15 @@ class ReactNativeHealthkit: RCTEventEmitter {
                             }
                             dict["events"] = eventDicts
                         }
-
+                        
+                        if #available(iOS 17.0, *) {
+                            let workoutplan = workout.workoutPlan
+                            let workoutId = workoutplan?.id
+                            if (id){
+                                dict["workoutPlanId"] = workoutId
+                            }
+                        }
+                        
                         var activitiesDicts: [[String: Any]] = []
                         if #available(iOS 16.0, *) {
                             let activities: [HKWorkoutActivity] = workout.workoutActivities
