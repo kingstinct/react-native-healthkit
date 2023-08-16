@@ -616,6 +616,19 @@ class ReactNativeHealthkit: RCTEventEmitter {
         store.execute(query)
     }
 
+    @available(iOS 17.0, *)
+    func fetchWorkoutPlan(for workout: HKWorkout, completion: @escaping (WorkoutPlan?) -> Void) {
+        Task {
+            do {
+                let workoutplan = try await workout.workoutPlan
+                completion(workoutplan)
+            } catch {
+                print("Error: \(error)")
+                completion(nil)
+            }
+        }
+    }
+
     @objc(queryWorkoutSamples:distanceUnitString:from:to:limit:ascending:resolve:reject:)
     func queryWorkoutSamples(energyUnitString: String, distanceUnitString: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
@@ -633,11 +646,18 @@ class ReactNativeHealthkit: RCTEventEmitter {
         let distanceUnit = HKUnit.init(from: distanceUnitString)
 
         let q = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: limit, sortDescriptors: getSortDescriptors(ascending: ascending)) { (_: HKSampleQuery, sample: [HKSample]?, error: Error?) in
-            guard let err = error else {
+            
+                if let err = error {
+                            reject(GENERIC_ERROR, err.localizedDescription, err)
+                            return
+                        }
+                
                 guard let samples = sample else {
                     return resolve([])
                 }
                 let arr: NSMutableArray = []
+                var completedWorkoutCount = 0
+                let totalWorkouts = samples.count
 
                 for s in samples {
                     if let workout = s as? HKWorkout {
@@ -645,7 +665,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                         let startDate = self._dateFormatter.string(from: workout.startDate)
 
 
-                        let dict: NSMutableDictionary = [
+                        var dict: NSMutableDictionary = [
                             "uuid": workout.uuid.uuidString,
                             "device": serializeDevice(_device: workout.device) as Any,
                             "duration": workout.duration,
@@ -674,13 +694,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
                             dict["events"] = eventDicts
                         }
                         
-                        if #available(iOS 17.0, *) {
-                            let workoutplan = workout.workoutPlan
-                            let workoutId = workoutplan?.id
-                            if (id){
-                                dict["workoutPlanId"] = workoutId
-                            }
-                        }
                         
                         var activitiesDicts: [[String: Any]] = []
                         if #available(iOS 16.0, *) {
@@ -705,14 +718,27 @@ class ReactNativeHealthkit: RCTEventEmitter {
                         if #available(iOS 11, *) {
                             dict.setValue(serializeQuantity(unit: HKUnit.count(), quantity: workout.totalFlightsClimbed), forKey: "totalFlightsClimbed")
                         }
-
-                        arr.add(dict)
+                        
+                        if #available(iOS 17.0, *) {
+                            self.fetchWorkoutPlan(for: workout) { workoutplan in
+                                if let workoutplanId = workoutplan?.id {
+                                    dict["workoutPlanId"] = workoutplanId.uuidString
+                                }
+                                arr.add(dict)
+                                completedWorkoutCount += 1
+                                if completedWorkoutCount == totalWorkouts {
+                                    return resolve(arr)
+                                }
+                            }
+                        } else {
+                            arr.add(dict)
+                            completedWorkoutCount += 1
+                            if completedWorkoutCount == totalWorkouts {
+                                return resolve(arr)
+                            }
+                        }
                     }
                 }
-
-                return resolve(arr)
-            }
-            reject(GENERIC_ERROR, err.localizedDescription, err)
         }
 
         store.execute(q)

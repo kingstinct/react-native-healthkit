@@ -800,6 +800,7 @@ export type HKWorkoutRaw<TEnergy extends EnergyUnit, TDistance extends LengthUni
     readonly sourceRevision?: HKSourceRevision;
     readonly events?: HKWorkoutEvent;
     readonly activities?: HKWorkoutActivity;
+    readonly workoutPlanId?: string;
 };
 export declare enum HKCharacteristicTypeIdentifier {
     fitzpatrickSkinType = "HKCharacteristicTypeIdentifierFitzpatrickSkinType",
