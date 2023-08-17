@@ -184,8 +184,8 @@ h1 {
 
 .section:nth-child(1) {
   background-color: #224430;
-  /* background-image: url('../images/heart-data.jpg'); */
-  background-image: url('../images/diet.jpg');
+  /* background-image: url('../images/heart-data.webp'); */
+  background-image: url('../images/diet.webp');
   background-position: center;
   background-size: cover;
   color: #000;
@@ -196,7 +196,7 @@ h1 {
 .section:nth-child(2) {
   box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
   background-color: #ccd;
-  background-image: url('../images/hollander.jpg');
+  background-image: url('../images/hollander.webp');
   background-position: center;
   background-size: cover;
   color: #fff;
@@ -208,7 +208,7 @@ h1 {
 .section:nth-child(3) {
   box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
   background-color: #f44;
-  background-image: url('../images/heart-data.jpg');
+  background-image: url('../images/heart-data.webp');
   background-position: center;
   background-size: cover;
   color: #fff;
@@ -220,7 +220,7 @@ h1 {
 .section:nth-child(4) {
   box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
   background-color: #cce;
-  background-image: url('../images/tie-shoes.jpg');
+  background-image: url('../images/tie-shoes.webp');
   background-position: center;
   background-size: cover;
   color: #fff;
@@ -232,7 +232,7 @@ h1 {
 .section:nth-child(5) {
   box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
   background-color: #850ac2;
-  background-image: url('../images/running-sunset.jpg');
+  background-image: url('../images/running-sunset.webp');
   background-position: center;
   background-size: cover;
   color: #fff;
