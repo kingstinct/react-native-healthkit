@@ -1,3 +1,10 @@
+## [7.0.6](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.5...v7.0.6) (2023-08-21)
+
+
+### Bug Fixes
+
+* remove text-decoration in header ([f0d0423](https://github.com/kingstinct/react-native-healthkit/commit/f0d04239845b37a43e4d191006752a2a4e49d04e))
+
 ## [7.0.5](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.4...v7.0.5) (2023-08-03)
 
 
