@@ -670,6 +670,34 @@ export enum HKQuantityTypeIdentifier {
    * @since iOS 16
    */
   heartRateRecoveryOneMinute = 'HKQuantityTypeIdentifierHeartRateRecoveryOneMinute',
+
+  /** 
+   * Running Ground Contact Time
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunninggroundcontacttime Apple Docs HKQuantityTypeIdentifierRunningGroundContactTime}
+   * @since iOS 16
+   */
+  runningGroundContactTime = 'HKQuantityTypeIdentifierRunningGroundContactTime',
+
+  /** 
+   * Running Stride Length
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningstridelength Apple Docs HKQuantityTypeIdentifierRunningStrideLength}
+   * @since iOS 16
+   */
+  runningStrideLength = 'HKQuantityTypeIdentifierRunningStrideLength',
+
+  /** 
+   * Running Power
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningpower Apple Docs HKQuantityTypeIdentifierRunningPower}
+   * @since iOS 16
+   */
+  runningPower = 'HKQuantityTypeIdentifierRunningPower',
+
+  /** 
+   * Running Vertical Oscillation
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningverticaloscillation Apple Docs HKQuantityTypeIdentifierRunningVerticalOscillation}
+   * @since iOS 16
+   */
+  runningVerticalOscillation = 'HKQuantityTypeIdentifierRunningVerticalOscillation',
 }
 
 export type TypeToUnitMapping = {
@@ -1673,6 +1701,16 @@ HKCategorySampleRaw<TCategory>,
 'device' | 'endDate' | 'startDate' | 'uuid'
 >;
 
+export interface HKWorkoutEvent {
+  readonly type: string,
+  readonly startDate: string,
+  readonly endDate: string,
+}
+
+export interface HKWorkoutActivity {
+  readonly startDate: string,
+}
+
 export type HKWorkoutRaw<
   TEnergy extends EnergyUnit,
   TDistance extends LengthUnit
@@ -1695,6 +1733,9 @@ export type HKWorkoutRaw<
   readonly endDate: string;
   readonly metadata?: HKWorkoutMetadata;
   readonly sourceRevision?: HKSourceRevision;
+  readonly events?: HKWorkoutEvent;
+  readonly activities?: HKWorkoutActivity;
+  readonly workoutPlanId?: string;
 };
 
 // Straight mapping to https://developer.apple.com/documentation/healthkit/hkcharacteristictypeidentifier
