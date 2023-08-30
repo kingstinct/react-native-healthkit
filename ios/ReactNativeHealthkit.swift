@@ -616,20 +616,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
         store.execute(query)
     }
 
-    //Helper function with completions so that async fetching of workout plan can be done
-    @available(iOS 17.0, *)
-    func fetchWorkoutPlan(for workout: HKWorkout, completion: @escaping (WorkoutPlan?) -> Void) {
-        Task {
-            do {
-                let workoutplan = try await workout.workoutPlan
-                completion(workoutplan)
-            } catch {
-                print("Error: \(error)")
-                completion(nil)
-            }
-        }
-    }
-
     @objc(queryWorkoutSamples:distanceUnitString:from:to:limit:ascending:resolve:reject:)
     func queryWorkoutSamples(energyUnitString: String, distanceUnitString: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         
@@ -730,7 +716,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                         
                         if #available(iOS 17.0, *) {
                             do {
-                                let workoutplan = try await self.fetchWorkoutPlan(for: workout)
+                                let workoutplan = try await workout.workoutPlan
                                 if let workoutplanId = workoutplan?.id {
                                     dict["workoutPlanId"] = workoutplanId.uuidString
                                 }
