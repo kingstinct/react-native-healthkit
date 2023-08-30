@@ -1702,13 +1702,27 @@ HKCategorySampleRaw<TCategory>,
 >;
 
 export interface HKWorkoutEvent {
-  readonly type: string,
+  readonly type: HKWorkoutEventType,
   readonly startDate: string,
   readonly endDate: string,
 }
 
+export enum HKWorkoutEventType {
+  pause = 1,
+  resume = 2,
+  lap = 3,
+  marker = 4,
+  motionPaused = 5,
+  motionResumed = 6,
+  segment = 7,
+  pauseOrResumeRequest = 8,
+}
+
 export interface HKWorkoutActivity {
   readonly startDate: string,
+  readonly endDate: string,
+  readonly uuid: string,
+  readonly duration: number,
 }
 
 export type HKWorkoutRaw<
