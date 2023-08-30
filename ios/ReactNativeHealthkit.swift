@@ -640,9 +640,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
                     return resolve([])
                 }
                 let arr: NSMutableArray = []
-                //create counts for completed workouts so that we can resolve the promise when all workouts have been serialized
-                var completedWorkoutCount = 0
-                let totalWorkouts = samples.count
                 
                 for s in samples {
                     if let workout = s as? HKWorkout {
