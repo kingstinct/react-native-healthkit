@@ -1,127 +1,612 @@
 import { NativeEventEmitter } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
 /**
- * See https://developer.apple.com/documentation/healthkit/hkworkouttypeidentifier
+ * Represents a workout type identifier.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkworkouttypeidentifier Apple Docs HKWorkoutTypeIdentifier}
  */
 export declare const HKWorkoutTypeIdentifier: "HKWorkoutTypeIdentifier";
+/**
+ * Represents an audiogram type identifier.
+ */
 export declare const HKAudiogramTypeIdentifier: "HKAudiogramTypeIdentifier";
 /**
- * See https://developer.apple.com/documentation/healthkit/hkworkoutroutetypeidentifier
+ * Represents a workout route type identifier.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutroutetypeidentifier Apple Docs HKWorkoutRouteTypeIdentifier}
  */
 export declare const HKWorkoutRouteTypeIdentifier: "HKWorkoutRouteTypeIdentifier";
 export declare const HKDataTypeIdentifierHeartbeatSeries: "HKDataTypeIdentifierHeartbeatSeries";
 /**
- * See https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier
+ * Represents a quantity type identifier.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier Apple Docs HKQuantityTypeIdentifier}
  */
 export declare enum HKQuantityTypeIdentifier {
+    /**
+     * Body Mass Index
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbodymassindex Apple Docs HKQuantityTypeIdentifierBodyMassIndex}
+     */
     bodyMassIndex = "HKQuantityTypeIdentifierBodyMassIndex",
+    /**
+       * Body Fat Percentage
+       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbodyfatpercentage Apple Docs HKQuantityTypeIdentifierBodyFatPercentage}
+       */
     bodyFatPercentage = "HKQuantityTypeIdentifierBodyFatPercentage",
+    /**
+       * Height
+       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierheight Apple Docs HKQuantityTypeIdentifierHeight}
+       */
     height = "HKQuantityTypeIdentifierHeight",
+    /**
+       * Body Mass
+       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbodymass Apple Docs HKQuantityTypeIdentifierBodyMass}
+       */
     bodyMass = "HKQuantityTypeIdentifierBodyMass",
+    /**
+       * Lean Body Mass
+       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierleanbodymass Apple Docs HKQuantityTypeIdentifierLeanBodyMass}
+       */
     leanBodyMass = "HKQuantityTypeIdentifierLeanBodyMass",
+    /**
+     * Waist Circumference
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierwaistcircumference Apple Docs HKQuantityTypeIdentifierWaistCircumference}
+     */
     waistCircumference = "HKQuantityTypeIdentifierWaistCircumference",
+    /**
+     * Step Count
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierstepcount Apple Docs HKQuantityTypeIdentifierStepCount}
+     */
     stepCount = "HKQuantityTypeIdentifierStepCount",
+    /**
+     * Distance Walking Running
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdistancewalkingrunning Apple Docs HKQuantityTypeIdentifierDistanceWalkingRunning}
+     */
     distanceWalkingRunning = "HKQuantityTypeIdentifierDistanceWalkingRunning",
+    /**
+     * Distance Cycling
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdistancecycling Apple Docs HKQuantityTypeIdentifierDistanceCycling}
+     */
     distanceCycling = "HKQuantityTypeIdentifierDistanceCycling",
+    /**
+     * Distance Wheelchair
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdistancewheelchair Apple Docs HKQuantityTypeIdentifierDistanceWheelchair}
+     */
     distanceWheelchair = "HKQuantityTypeIdentifierDistanceWheelchair",
+    /**
+     * Basal Energy Burned
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbasalenergyburned Apple Docs HKQuantityTypeIdentifierBasalEnergyBurned}
+     */
     basalEnergyBurned = "HKQuantityTypeIdentifierBasalEnergyBurned",
+    /**
+     * Active Energy Burned
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifieractiveenergyburned Apple Docs HKQuantityTypeIdentifierActiveEnergyBurned}
+     */
     activeEnergyBurned = "HKQuantityTypeIdentifierActiveEnergyBurned",
+    /**
+     * Flights Climbed
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierflightsclimbed Apple Docs HKQuantityTypeIdentifierFlightsClimbed}
+     */
     flightsClimbed = "HKQuantityTypeIdentifierFlightsClimbed",
+    /**
+     * Nike Fuel
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifiernikefuel Apple Docs HKQuantityTypeIdentifierNikeFuel}
+     */
     nikeFuel = "HKQuantityTypeIdentifierNikeFuel",
+    /**
+     * Apple Exercise Time
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierappleexercisetime Apple Docs HKQuantityTypeIdentifierAppleExerciseTime}
+     */
     appleExerciseTime = "HKQuantityTypeIdentifierAppleExerciseTime",
+    /**
+     * Push Count
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierpushcount Apple Docs HKQuantityTypeIdentifierPushCount}
+     */
     pushCount = "HKQuantityTypeIdentifierPushCount",
+    /**
+     * Distance Swimming
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdistanceswimming Apple Docs HKQuantityTypeIdentifierDistanceSwimming}
+     */
     distanceSwimming = "HKQuantityTypeIdentifierDistanceSwimming",
+    /**
+     * Swimming Stroke Count
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierswimmingstrokecount Apple Docs HKQuantityTypeIdentifierSwimmingStrokeCount}
+     */
     swimmingStrokeCount = "HKQuantityTypeIdentifierSwimmingStrokeCount",
+    /**
+     * VO2 Max
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifiervo2max Apple Docs HKQuantityTypeIdentifierVO2Max}
+     */
     vo2Max = "HKQuantityTypeIdentifierVO2Max",
+    /**
+     * Distance Downhill Snow Sports
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdistancedownhillsnowsports Apple Docs HKQuantityTypeIdentifierDistanceDownhillSnowSports}
+     */
     distanceDownhillSnowSports = "HKQuantityTypeIdentifierDistanceDownhillSnowSports",
+    /**
+     * Apple Stand Time
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierapplestandtime Apple Docs HKQuantityTypeIdentifierAppleStandTime}
+     */
     appleStandTime = "HKQuantityTypeIdentifierAppleStandTime",
+    /**
+     * Heart Rate
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierheartrate Apple Docs HKQuantityTypeIdentifierHeartRate}
+     */
     heartRate = "HKQuantityTypeIdentifierHeartRate",
+    /**
+     * Body Temperature
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbodytemperature Apple Docs HKQuantityTypeIdentifierBodyTemperature}
+     */
     bodyTemperature = "HKQuantityTypeIdentifierBodyTemperature",
+    /**
+     * Basal Body Temperature
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbasalbodytemperature Apple Docs HKQuantityTypeIdentifierBasalBodyTemperature}
+     */
     basalBodyTemperature = "HKQuantityTypeIdentifierBasalBodyTemperature",
+    /**
+     * Blood Pressure Systolic
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbloodpressuresystolic Apple Docs HKQuantityTypeIdentifierBloodPressureSystolic}
+     */
     bloodPressureSystolic = "HKQuantityTypeIdentifierBloodPressureSystolic",
+    /**
+     * Blood Pressure Diastolic
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbloodpressurediastolic Apple Docs HKQuantityTypeIdentifierBloodPressureDiastolic}
+     */
     bloodPressureDiastolic = "HKQuantityTypeIdentifierBloodPressureDiastolic",
+    /**
+     * Respiratory Rate
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrespiratoryrate Apple Docs HKQuantityTypeIdentifierRespiratoryRate}
+     */
     respiratoryRate = "HKQuantityTypeIdentifierRespiratoryRate",
+    /**
+     * Resting Heart Rate
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrestingheartrate Apple Docs HKQuantityTypeIdentifierRestingHeartRate}
+     */
     restingHeartRate = "HKQuantityTypeIdentifierRestingHeartRate",
+    /**
+     * Walking Heart Rate Average
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierwalkingheartrateaverage Apple Docs HKQuantityTypeIdentifierWalkingHeartRateAverage}
+     * @since iOS 11.0
+     */
     walkingHeartRateAverage = "HKQuantityTypeIdentifierWalkingHeartRateAverage",
+    /**
+     * Heart Rate Variability SDNN
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierheartratevariabilitysdnn Apple Docs HKQuantityTypeIdentifierHeartRateVariabilitySDNN}
+     * @since iOS 11.0
+    */
     heartRateVariabilitySDNN = "HKQuantityTypeIdentifierHeartRateVariabilitySDNN",
+    /**
+     * Oxygen Saturation
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifieroxygensaturation Apple Docs HKQuantityTypeIdentifierOxygenSaturation}
+     * @since iOS 8.0
+     */
     oxygenSaturation = "HKQuantityTypeIdentifierOxygenSaturation",
+    /**
+     * Peripheral Perfusion Index
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierperipheralperfusionindex Apple Docs HKQuantityTypeIdentifierPeripheralPerfusionIndex}
+     * @since iOS 8.0
+     */
     peripheralPerfusionIndex = "HKQuantityTypeIdentifierPeripheralPerfusionIndex",
+    /**
+     * Blood Glucose
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbloodglucose Apple Docs HKQuantityTypeIdentifierBloodGlucose}
+     */
     bloodGlucose = "HKQuantityTypeIdentifierBloodGlucose",
+    /**
+     * Number Of Times Fallen
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifiernumberoftimesfallen Apple Docs HKQuantityTypeIdentifierNumberOfTimesFallen}
+     */
     numberOfTimesFallen = "HKQuantityTypeIdentifierNumberOfTimesFallen",
+    /**
+     * Electrodermal Activity
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierelectrodermalactivity Apple Docs HKQuantityTypeIdentifierElectrodermalActivity}
+     */
     electrodermalActivity = "HKQuantityTypeIdentifierElectrodermalActivity",
+    /**
+     * Inhaler Usage
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierinhalerusage Apple Docs HKQuantityTypeIdentifierInhalerUsage}
+     * @since iOS 8
+     */
     inhalerUsage = "HKQuantityTypeIdentifierInhalerUsage",
+    /**
+     * Insulin Delivery
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierinsulindelivery Apple Docs HKQuantityTypeIdentifierInsulinDelivery}
+     * @since iOS 11
+     */
     insulinDelivery = "HKQuantityTypeIdentifierInsulinDelivery",
+    /**
+     * Blood Alcohol Content
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbloodalcoholcontent Apple Docs HKQuantityTypeIdentifierBloodAlcoholContent}
+     * @since iOS 8
+     */
     bloodAlcoholContent = "HKQuantityTypeIdentifierBloodAlcoholContent",
+    /**
+     * Forced Vital Capacity
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierforcedvitalcapacity Apple Docs HKQuantityTypeIdentifierForcedVitalCapacity}
+     */
     forcedVitalCapacity = "HKQuantityTypeIdentifierForcedVitalCapacity",
+    /**
+     * Forced Expiratory Volume1
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierforcedexpiratoryvolume1 Apple Docs HKQuantityTypeIdentifierForcedExpiratoryVolume1}
+     * @since iOS 8
+     */
     forcedExpiratoryVolume1 = "HKQuantityTypeIdentifierForcedExpiratoryVolume1",
+    /**
+     * Peak Expiratory Flow Rate
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierpeakexpiratoryflowrate Apple Docs HKQuantityTypeIdentifierPeakExpiratoryFlowRate}
+     * @since iOS 8
+     */
     peakExpiratoryFlowRate = "HKQuantityTypeIdentifierPeakExpiratoryFlowRate",
+    /**
+     * Environmental Audio Exposure
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierenvironmentalaudioexposure Apple Docs HKQuantityTypeIdentifierEnvironmentalAudioExposure}
+     * @since iOS 13
+     */
     environmentalAudioExposure = "HKQuantityTypeIdentifierEnvironmentalAudioExposure",
+    /**
+     * Headphone Audio Exposure
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierheadphoneaudioexposure Apple Docs HKQuantityTypeIdentifierHeadphoneAudioExposure}
+     * @since iOS 13
+     */
     headphoneAudioExposure = "HKQuantityTypeIdentifierHeadphoneAudioExposure",
+    /**
+       * Dietary Fat Total
+       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfattotal Apple Docs HKQuantityTypeIdentifierDietaryFatTotal}
+       * @since iOS 8
+       */
     dietaryFatTotal = "HKQuantityTypeIdentifierDietaryFatTotal",
+    /**
+       * Dietary Fat Polyunsaturated
+       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfatpolyunsaturated Apple Docs HKQuantityTypeIdentifierDietaryFatPolyunsaturated}
+       */
     dietaryFatPolyunsaturated = "HKQuantityTypeIdentifierDietaryFatPolyunsaturated",
+    /**
+       * Dietary Fat Monounsaturated
+       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfatmonounsaturated Apple Docs HKQuantityTypeIdentifierDietaryFatMonounsaturated}
+       */
     dietaryFatMonounsaturated = "HKQuantityTypeIdentifierDietaryFatMonounsaturated",
+    /**
+     * Dietary Fat Saturated
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfatsaturated Apple Docs HKQuantityTypeIdentifierDietaryFatSaturated}
+     */
     dietaryFatSaturated = "HKQuantityTypeIdentifierDietaryFatSaturated",
+    /**
+      * Dietary Cholesterol
+      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarycholesterol Apple Docs HKQuantityTypeIdentifierDietaryCholesterol}
+      */
     dietaryCholesterol = "HKQuantityTypeIdentifierDietaryCholesterol",
+    /**
+      * Dietary Sodium
+      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarysodium Apple Docs HKQuantityTypeIdentifierDietarySodium}
+      */
     dietarySodium = "HKQuantityTypeIdentifierDietarySodium",
+    /**
+      * Dietary Carbohydrates
+      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarycarbohydrates Apple Docs HKQuantityTypeIdentifierDietaryCarbohydrates}
+      */
     dietaryCarbohydrates = "HKQuantityTypeIdentifierDietaryCarbohydrates",
+    /**
+      * Dietary Fiber
+      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfiber Apple Docs HKQuantityTypeIdentifierDietaryFiber}
+      */
     dietaryFiber = "HKQuantityTypeIdentifierDietaryFiber",
+    /**
+     * Dietary Sugar
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarysugar Apple Docs HKQuantityTypeIdentifierDietarySugar}
+     */
     dietarySugar = "HKQuantityTypeIdentifierDietarySugar",
+    /**
+     * Dietary Energy Consumed
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryenergyconsumed Apple Docs HKQuantityTypeIdentifierDietaryEnergyConsumed}
+     */
     dietaryEnergyConsumed = "HKQuantityTypeIdentifierDietaryEnergyConsumed",
+    /**
+     * Dietary Protein
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryprotein Apple Docs HKQuantityTypeIdentifierDietaryProtein}
+     */
     dietaryProtein = "HKQuantityTypeIdentifierDietaryProtein",
+    /**
+     * Dietary Vitamin A
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryvitamina Apple Docs HKQuantityTypeIdentifierDietaryVitaminA}
+     */
     dietaryVitaminA = "HKQuantityTypeIdentifierDietaryVitaminA",
+    /**
+     * Dietary Vitamin B6
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryvitaminb6 Apple Docs HKQuantityTypeIdentifierDietaryVitaminB6}
+     */
     dietaryVitaminB6 = "HKQuantityTypeIdentifierDietaryVitaminB6",
+    /**
+     * Dietary Vitamin B12
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryvitaminb12 Apple Docs HKQuantityTypeIdentifierDietaryVitaminB12}
+     */
     dietaryVitaminB12 = "HKQuantityTypeIdentifierDietaryVitaminB12",
+    /**
+     * Dietary Vitamin C
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryvitaminc Apple Docs HKQuantityTypeIdentifierDietaryVitaminC}
+     */
     dietaryVitaminC = "HKQuantityTypeIdentifierDietaryVitaminC",
+    /**
+     * Dietary Vitamin D
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryvitamind Apple Docs HKQuantityTypeIdentifierDietaryVitaminD}
+     */
     dietaryVitaminD = "HKQuantityTypeIdentifierDietaryVitaminD",
+    /**
+     * Dietary Vitamin E
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryvitamine Apple Docs HKQuantityTypeIdentifierDietaryVitaminE}
+     */
     dietaryVitaminE = "HKQuantityTypeIdentifierDietaryVitaminE",
+    /**
+     * Dietary Vitamin K
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryvitamink Apple Docs HKQuantityTypeIdentifierDietaryVitaminK}
+     */
     dietaryVitaminK = "HKQuantityTypeIdentifierDietaryVitaminK",
+    /**
+     * Dietary Calcium
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarycalcium Apple Docs HKQuantityTypeIdentifierDietaryCalcium}
+     */
     dietaryCalcium = "HKQuantityTypeIdentifierDietaryCalcium",
+    /**
+      * Dietary Iron
+      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryiron Apple Docs HKQuantityTypeIdentifierDietaryIron}
+      */
     dietaryIron = "HKQuantityTypeIdentifierDietaryIron",
+    /**
+      * Dietary Thiamin
+      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarythiamin Apple Docs HKQuantityTypeIdentifierDietaryThiamin}
+      */
     dietaryThiamin = "HKQuantityTypeIdentifierDietaryThiamin",
+    /**
+      * Dietary Riboflavin
+      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryriboflavin Apple Docs HKQuantityTypeIdentifierDietaryRiboflavin}
+      */
     dietaryRiboflavin = "HKQuantityTypeIdentifierDietaryRiboflavin",
+    /**
+      * Dietary Niacin
+      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryniacin Apple Docs HKQuantityTypeIdentifierDietaryNiacin}
+      */
     dietaryNiacin = "HKQuantityTypeIdentifierDietaryNiacin",
+    /**
+      * Dietary Folate
+      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfolate Apple Docs HKQuantityTypeIdentifierDietaryFolate}
+      */
     dietaryFolate = "HKQuantityTypeIdentifierDietaryFolate",
+    /**
+      * Dietary Biotin
+      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarybiotin Apple Docs HKQuantityTypeIdentifierDietaryBiotin}
+      */
     dietaryBiotin = "HKQuantityTypeIdentifierDietaryBiotin",
+    /**
+      * Dietary Pantothenic Acid
+      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarypantothenicacid Apple Docs HKQuantityTypeIdentifierDietaryPantothenicAcid}
+      */
     dietaryPantothenicAcid = "HKQuantityTypeIdentifierDietaryPantothenicAcid",
+    /**
+      * Dietary Phosphorus
+      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryphosphorus Apple Docs HKQuantityTypeIdentifierDietaryPhosphorus}
+      */
     dietaryPhosphorus = "HKQuantityTypeIdentifierDietaryPhosphorus",
+    /**
+      * Dietary Iodine
+      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryiodine Apple Docs HKQuantityTypeIdentifierDietaryIodine}
+      */
     dietaryIodine = "HKQuantityTypeIdentifierDietaryIodine",
+    /**
+     * Dietary Magnesium
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarymagnesium Apple Docs HKQuantityTypeIdentifierDietaryMagnesium}
+     */
     dietaryMagnesium = "HKQuantityTypeIdentifierDietaryMagnesium",
+    /**
+     * Dietary Zinc
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryzinc Apple Docs HKQuantityTypeIdentifierDietaryZinc}
+     */
     dietaryZinc = "HKQuantityTypeIdentifierDietaryZinc",
+    /**
+     * Dietary Selenium
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryselenium Apple Docs HKQuantityTypeIdentifierDietarySelenium}
+     */
     dietarySelenium = "HKQuantityTypeIdentifierDietarySelenium",
+    /**
+     * Dietary Copper
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarycopper Apple Docs HKQuantityTypeIdentifierDietaryCopper}
+     */
     dietaryCopper = "HKQuantityTypeIdentifierDietaryCopper",
+    /**
+     * Dietary Manganese
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarymanganese Apple Docs HKQuantityTypeIdentifierDietaryManganese}
+     */
     dietaryManganese = "HKQuantityTypeIdentifierDietaryManganese",
+    /**
+     * Dietary Chromium
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarychromium Apple Docs HKQuantityTypeIdentifierDietaryChromium}
+     */
     dietaryChromium = "HKQuantityTypeIdentifierDietaryChromium",
+    /**
+     * Dietary Molybdenum
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarymolybdenum Apple Docs HKQuantityTypeIdentifierDietaryMolybdenum}
+     */
     dietaryMolybdenum = "HKQuantityTypeIdentifierDietaryMolybdenum",
+    /**
+     * Dietary Chloride
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarychloride Apple Docs HKQuantityTypeIdentifierDietaryChloride}
+     * @since iOS 8
+     */
     dietaryChloride = "HKQuantityTypeIdentifierDietaryChloride",
+    /**
+     * Dietary Potassium
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarypotassium Apple Docs HKQuantityTypeIdentifierDietaryPotassium}
+     * @since iOS 8
+     */
     dietaryPotassium = "HKQuantityTypeIdentifierDietaryPotassium",
+    /**
+     * Dietary Caffeine
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarycaffeine Apple Docs HKQuantityTypeIdentifierDietaryCaffeine}
+     * @since iOS 8
+     */
     dietaryCaffeine = "HKQuantityTypeIdentifierDietaryCaffeine",
+    /**
+     * Dietary Water
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarywater Apple Docs HKQuantityTypeIdentifierDietaryWater}
+     * @since iOS 9
+     */
     dietaryWater = "HKQuantityTypeIdentifierDietaryWater",
+    /**
+     * Six Minute Walk Test Distance
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifiersixminutewalktestdistance Apple Docs HKQuantityTypeIdentifierSixMinuteWalkTestDistance}
+     * @since iOS 14
+     */
     sixMinuteWalkTestDistance = "HKQuantityTypeIdentifierSixMinuteWalkTestDistance",
+    /**
+     * Walking Speed
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierwalkingspeed Apple Docs HKQuantityTypeIdentifierWalkingSpeed}
+     * @since iOS 14
+     */
     walkingSpeed = "HKQuantityTypeIdentifierWalkingSpeed",
+    /**
+     * Walking Step Length
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierwalkingsteplength Apple Docs HKQuantityTypeIdentifierWalkingStepLength}
+     * @since iOS 14
+     */
     walkingStepLength = "HKQuantityTypeIdentifierWalkingStepLength",
+    /**
+     * Walking Asymmetry Percentage
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierwalkingasymmetrypercentage Apple Docs HKQuantityTypeIdentifierWalkingAsymmetryPercentage}
+     * @since iOS 14
+     */
     walkingAsymmetryPercentage = "HKQuantityTypeIdentifierWalkingAsymmetryPercentage",
+    /**
+     * Walking Double Support Percentage
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierwalkingdoublesupportpercentage Apple Docs HKQuantityTypeIdentifierWalkingDoubleSupportPercentage}
+     * @since iOS 14
+     */
     walkingDoubleSupportPercentage = "HKQuantityTypeIdentifierWalkingDoubleSupportPercentage",
+    /**
+     * Stair Ascent Speed
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierstairascentspeed Apple Docs HKQuantityTypeIdentifierStairAscentSpeed}
+     * @since iOS 14
+     */
     stairAscentSpeed = "HKQuantityTypeIdentifierStairAscentSpeed",
+    /**
+     * Stair Descent Speed
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierstairdescentspeed Apple Docs HKQuantityTypeIdentifierStairDescentSpeed}
+     * @since iOS 14
+     */
     stairDescentSpeed = "HKQuantityTypeIdentifierStairDescentSpeed",
+    /**
+     * UV Exposure
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifieruvexposure Apple Docs HKQuantityTypeIdentifierUVExposure}
+     * @since iOS 9
+     */
     uvExposure = "HKQuantityTypeIdentifierUVExposure",
+    /**
+     * Apple Move Time
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierapplemovetime Apple Docs HKQuantityTypeIdentifierAppleMoveTime}
+     * @since iOS 14.5
+     */
     appleMoveTime = "HKQuantityTypeIdentifierAppleMoveTime",
+    /**
+     * Apple Walking Steadiness
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierapplewalkingsteadiness Apple Docs HKQuantityTypeIdentifierAppleWalkingSteadiness}
+     * @since iOS 15
+     */
     appleWalkingSteadiness = "HKQuantityTypeIdentifierAppleWalkingSteadiness",
+    /**
+     * Number Of Alcoholic Beverages
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifiernumberofalcoholicbeverages Apple Docs HKQuantityTypeIdentifierNumberOfAlcoholicBeverages}
+     * @since iOS 15
+     */
     numberOfAlcoholicBeverages = "HKQuantityTypeIdentifierNumberOfAlcoholicBeverages",
+    /**
+     * Atrial Fibrillation Burden
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifieratrialfibrillationburden Apple Docs HKQuantityTypeIdentifierAtrialFibrillationBurden}
+     * @since iOS 16
+     */
     atrialFibrillationBurden = "HKQuantityTypeIdentifierAtrialFibrillationBurden",
+    /**
+     * Underwater Depth
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierunderwaterdepth Apple Docs HKQuantityTypeIdentifierUnderwaterDepth}
+     * @since iOS 16
+     */
     underwaterDepth = "HKQuantityTypeIdentifierUnderwaterDepth",
+    /**
+     * Water Temperature
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierwatertemperature Apple Docs HKQuantityTypeIdentifierWaterTemperature}
+     * @since iOS 16
+     */
     waterTemperature = "HKQuantityTypeIdentifierWaterTemperature",
+    /**
+     * Apple Sleeping Wrist Temperature
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierapplesleepingwristtemperature Apple Docs HKQuantityTypeIdentifierAppleSleepingWristTemperature}
+     * @since iOS 17
+     */
     appleSleepingWristTemperature = "HKQuantityTypeIdentifierAppleSleepingWristTemperature",
+    /**
+     * Time In Daylight
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifiertimeindaylight Apple Docs HKQuantityTypeIdentifierTimeInDaylight}
+     * @since iOS 17
+     */
     timeInDaylight = "HKQuantityTypeIdentifierTimeInDaylight",
+    /**
+     * Physical Effort
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierphysicaleffort Apple Docs HKQuantityTypeIdentifierPhysicalEffort}
+     * @since iOS 17
+     */
     physicalEffort = "HKQuantityTypeIdentifierPhysicalEffort",
+    /**
+     * Cycling Speed
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifiercyclingspeed Apple Docs HKQuantityTypeIdentifierCyclingSpeed}
+     * @since iOS 17
+     */
     cyclingSpeed = "HKQuantityTypeIdentifierCyclingSpeed",
+    /**
+     * Cycling Power
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifiercyclingpower Apple Docs HKQuantityTypeIdentifierCyclingPower}
+     * @since iOS 17
+     */
     cyclingPower = "HKQuantityTypeIdentifierCyclingPower",
+    /**
+     * Cycling Functional Threshold Power
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifiercyclingfunctionalthresholdpower Apple Docs HKQuantityTypeIdentifierCyclingFunctionalThresholdPower}
+     * @since iOS 17
+     */
     cyclingFunctionalThresholdPower = "HKQuantityTypeIdentifierCyclingFunctionalThresholdPower",
+    /**
+     * Cycling Cadence
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifiercyclingcadence Apple Docs HKQuantityTypeIdentifierCyclingCadence}
+     * @since iOS 17
+     */
     cyclingCadence = "HKQuantityTypeIdentifierCyclingCadence",
+    /**
+     * Environmental Sound Reduction
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierenvironmentalsoundreduction Apple Docs HKQuantityTypeIdentifierEnvironmentalSoundReduction}
+     * @since iOS 16
+     */
     environmentalSoundReduction = "HKQuantityTypeIdentifierEnvironmentalSoundReduction",
+    /**
+     * Heart Rate Recovery One Minute
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierheartraterecoveryoneminute Apple Docs HKQuantityTypeIdentifierHeartRateRecoveryOneMinute}
+     * @since iOS 16
+     */
     heartRateRecoveryOneMinute = "HKQuantityTypeIdentifierHeartRateRecoveryOneMinute",
+    /**
+     * Running Ground Contact Time
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunninggroundcontacttime Apple Docs HKQuantityTypeIdentifierRunningGroundContactTime}
+     * @since iOS 16
+     */
     runningGroundContactTime = "HKQuantityTypeIdentifierRunningGroundContactTime",
+    /**
+     * Running Stride Length
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningstridelength Apple Docs HKQuantityTypeIdentifierRunningStrideLength}
+     * @since iOS 16
+     */
     runningStrideLength = "HKQuantityTypeIdentifierRunningStrideLength",
+    /**
+     * Running Power
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningpower Apple Docs HKQuantityTypeIdentifierRunningPower}
+     * @since iOS 16
+     */
     runningPower = "HKQuantityTypeIdentifierRunningPower",
+    /**
+     * Running Vertical Oscillation
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningverticaloscillation Apple Docs HKQuantityTypeIdentifierRunningVerticalOscillation}
+     * @since iOS 16
+     */
     runningVerticalOscillation = "HKQuantityTypeIdentifierRunningVerticalOscillation"
 }
 export type TypeToUnitMapping = {
@@ -136,14 +621,14 @@ export declare enum HKHeartRateMotionContext {
     sedentary = 1
 }
 /**
- * See https://developer.apple.com/documentation/healthkit/hkcorrelationtypeidentifier
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcorrelationtypeidentifier Apple Docs }
  */
 export declare enum HKCorrelationTypeIdentifier {
     bloodPressure = "HKCorrelationTypeIdentifierBloodPressure",
     food = "HKCorrelationTypeIdentifierFood"
 }
 /**
- * See https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier Apple Docs }
  */
 export declare enum HKCategoryTypeIdentifier {
     sleepAnalysis = "HKCategoryTypeIdentifierSleepAnalysis",
@@ -356,16 +841,8 @@ export interface HKWorkoutMetadata extends HKGenericMetadata {
     readonly HKElevationAscended?: HKQuantity<HKQuantityTypeIdentifier, LengthUnit>;
     readonly HKIndoorWorkout?: HKIndoorWorkout;
 }
-export interface HKWorkoutEvent {
-    readonly type: string;
-    readonly startDate: string;
-    readonly endDate: string;
-}
-export interface HKWorkoutActivity {
-    readonly startDate: string;
-}
 /**
- * See https://developer.apple.com/documentation/healthkit/hkauthorizationrequeststatus
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkauthorizationrequeststatus Apple Docs }
  */
 export declare enum HKAuthorizationRequestStatus {
     unknown = 0,
@@ -373,7 +850,7 @@ export declare enum HKAuthorizationRequestStatus {
     unnecessary = 2
 }
 /**
- * See https://developer.apple.com/documentation/healthkit/hkauthorizationstatus
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkauthorizationstatus Apple Docs }
  */
 export declare enum HKAuthorizationStatus {
     notDetermined = 0,
@@ -385,7 +862,7 @@ export type HKQuantity<TIdentifier extends HKQuantityTypeIdentifier = HKQuantity
     readonly quantity: number;
 };
 /**
- * See https://developer.apple.com/documentation/healthkit/hkbloodtype
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkbloodtype Apple Docs }
  */
 export declare enum HKBloodType {
     notSet = 0,
@@ -399,7 +876,7 @@ export declare enum HKBloodType {
     oNegative = 8
 }
 /**
- * See https://developer.apple.com/documentation/healthkit/hkbiologicalsex
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkbiologicalsex Apple Docs }
  */
 export declare enum HKBiologicalSex {
     notSet = 0,
@@ -408,7 +885,7 @@ export declare enum HKBiologicalSex {
     other = 3
 }
 /**
- * See https://developer.apple.com/documentation/healthkit/hkfitzpatrickskintype
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkfitzpatrickskintype Apple Docs }
  */
 export declare enum HKFitzpatrickSkinType {
     notSet = 0,
@@ -420,7 +897,7 @@ export declare enum HKFitzpatrickSkinType {
     VI = 6
 }
 /**
- * See https://developer.apple.com/documentation/healthkit/hkstatisticsoptions
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkstatisticsoptions Apple Docs }
  */
 export declare enum HKStatisticsOptions {
     cumulativeSum = "cumulativeSum",
@@ -445,7 +922,7 @@ export type QueryStatisticsResponseRaw<TIdentifier extends HKQuantityTypeIdentif
     readonly duration?: HKQuantity<HKQuantityTypeIdentifier, TimeUnit>;
 };
 /**
- * https://developer.apple.com/documentation/healthkit/hkcategoryvaluecervicalmucusquality
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluecervicalmucusquality Apple Docs }
  */
 export declare enum HKCategoryValueCervicalMucusQuality {
     dry = 1,
@@ -455,7 +932,7 @@ export declare enum HKCategoryValueCervicalMucusQuality {
     eggWhite = 5
 }
 /**
- * See https://developer.apple.com/documentation/healthkit/hkcategoryvaluemenstrualflow
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluemenstrualflow Apple Docs }
  */
 export declare enum HKCategoryValueMenstrualFlow {
     unspecified = 1,
@@ -465,7 +942,7 @@ export declare enum HKCategoryValueMenstrualFlow {
     heavy = 4
 }
 /**
- * See https://developer.apple.com/documentation/healthkit/hkcategoryvalueovulationtestresult
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalueovulationtestresult Apple Docs }
  */
 export declare enum HKCategoryValueOvulationTestResult {
     negative = 1,
@@ -474,7 +951,7 @@ export declare enum HKCategoryValueOvulationTestResult {
     estrogenSurge = 4
 }
 /**
- * See https://developer.apple.com/documentation/healthkit/hkcategoryvaluesleepanalysis
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluesleepanalysis Apple Docs }
  */
 export declare enum HKCategoryValueSleepAnalysis {
     inBed = 0,
@@ -485,7 +962,7 @@ export declare enum HKCategoryValueSleepAnalysis {
     asleepREM = 5
 }
 /**
- * https://developer.apple.com/documentation/healthkit/hkcategoryvalueappetitechanges
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalueappetitechanges
  */
 export declare enum HKCategoryValueAppetiteChanges {
     decreased = 2,
@@ -494,14 +971,14 @@ export declare enum HKCategoryValueAppetiteChanges {
     unspecified = 0
 }
 /**
- * https://developer.apple.com/documentation/healthkit/hkcategoryvaluepresence
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluepresence
  */
 export declare enum HKCategoryValuePresence {
     notPresent = 1,
     present = 0
 }
 /**
- * See https://developer.apple.com/documentation/healthkit/hkcategoryvalueseverity
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalueseverity Apple Docs }
  */
 export declare enum HKCategoryValueSeverity {
     notPresent = 1,
@@ -511,17 +988,17 @@ export declare enum HKCategoryValueSeverity {
     unspecified = 0
 }
 /**
- * See https://developer.apple.com/documentation/healthkit/hkcategoryvalue/notapplicable
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalue/notapplicable Apple Docs }
  */
 export declare enum HKCategoryValueNotApplicable {
     notApplicable = 0
 }
 /**
- * See https://developer.apple.com/documentation/healthkit/hkcategoryvalue
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalue Apple Docs }
  */
 export type HKCategoryValue = HKCategoryValueAppetiteChanges | HKCategoryValueCervicalMucusQuality | HKCategoryValueLowCardioFitnessEvent | HKCategoryValueMenstrualFlow | HKCategoryValueOvulationTestResult | HKCategoryValuePresence | HKCategoryValueSeverity | HKCategoryValueSleepAnalysis | number;
 /**
- * See https://developer.apple.com/documentation/healthkit/hkinsulindeliveryreason
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkinsulindeliveryreason Apple Docs }
  */
 export declare enum HKInsulinDeliveryReason {
     basal = 1,
@@ -540,7 +1017,7 @@ export type MetadataMapperForCorrelationIdentifier<TCorrelationTypeIdentifier = 
 export type UnitForIdentifier<T extends HKQuantityTypeIdentifier> = T extends HKQuantityTypeIdentifier.bloodGlucose ? BloodGlucoseUnit : T extends HKQuantityTypeIdentifier.appleExerciseTime | HKQuantityTypeIdentifier.appleMoveTime | HKQuantityTypeIdentifier.appleStandTime ? TimeUnit : T extends HKQuantityTypeIdentifier.activeEnergyBurned | HKQuantityTypeIdentifier.basalEnergyBurned | HKQuantityTypeIdentifier.dietaryEnergyConsumed ? EnergyUnit : T extends HKQuantityTypeIdentifier.distanceCycling | HKQuantityTypeIdentifier.distanceDownhillSnowSports | HKQuantityTypeIdentifier.distanceSwimming | HKQuantityTypeIdentifier.distanceWalkingRunning | HKQuantityTypeIdentifier.distanceWheelchair | HKQuantityTypeIdentifier.sixMinuteWalkTestDistance | HKQuantityTypeIdentifier.waistCircumference ? LengthUnit : T extends HKQuantityTypeIdentifier.bodyFatPercentage | HKQuantityTypeIdentifier.oxygenSaturation | HKQuantityTypeIdentifier.walkingAsymmetryPercentage | HKQuantityTypeIdentifier.walkingDoubleSupportPercentage ? HKUnits.Percent : T extends HKQuantityTypeIdentifier.basalBodyTemperature | HKQuantityTypeIdentifier.basalBodyTemperature ? TemperatureUnit : T extends HKQuantityTypeIdentifier.stairAscentSpeed | HKQuantityTypeIdentifier.stairDescentSpeed | HKQuantityTypeIdentifier.walkingSpeed | HKQuantityTypeIdentifier.walkingSpeed ? SpeedUnit<LengthUnit, TimeUnit> : T extends HKQuantityTypeIdentifier.flightsClimbed | HKQuantityTypeIdentifier.numberOfAlcoholicBeverages | HKQuantityTypeIdentifier.numberOfTimesFallen | HKQuantityTypeIdentifier.pushCount | HKQuantityTypeIdentifier.stepCount | HKQuantityTypeIdentifier.swimmingStrokeCount ? HKUnits.Count : T extends HKQuantityTypeIdentifier.dietaryBiotin | HKQuantityTypeIdentifier.dietaryCaffeine | HKQuantityTypeIdentifier.dietaryCalcium | HKQuantityTypeIdentifier.dietaryCarbohydrates | HKQuantityTypeIdentifier.dietaryChloride | HKQuantityTypeIdentifier.dietaryCholesterol | HKQuantityTypeIdentifier.dietaryChromium | HKQuantityTypeIdentifier.dietaryCopper | HKQuantityTypeIdentifier.dietaryFatMonounsaturated | HKQuantityTypeIdentifier.dietaryFatPolyunsaturated | HKQuantityTypeIdentifier.dietaryFatSaturated | HKQuantityTypeIdentifier.dietaryFatTotal | HKQuantityTypeIdentifier.dietaryFiber | HKQuantityTypeIdentifier.dietaryFolate | HKQuantityTypeIdentifier.dietaryIodine | HKQuantityTypeIdentifier.dietaryIodine | HKQuantityTypeIdentifier.dietaryIron | HKQuantityTypeIdentifier.dietaryMagnesium | HKQuantityTypeIdentifier.dietaryManganese | HKQuantityTypeIdentifier.dietaryMolybdenum | HKQuantityTypeIdentifier.dietaryNiacin | HKQuantityTypeIdentifier.dietaryPantothenicAcid | HKQuantityTypeIdentifier.dietaryPhosphorus | HKQuantityTypeIdentifier.dietaryPotassium | HKQuantityTypeIdentifier.dietaryProtein | HKQuantityTypeIdentifier.dietaryRiboflavin | HKQuantityTypeIdentifier.dietarySelenium | HKQuantityTypeIdentifier.dietarySodium | HKQuantityTypeIdentifier.dietarySugar | HKQuantityTypeIdentifier.dietaryThiamin | HKQuantityTypeIdentifier.dietaryVitaminA | HKQuantityTypeIdentifier.dietaryVitaminB6 | HKQuantityTypeIdentifier.dietaryVitaminB12 | HKQuantityTypeIdentifier.dietaryVitaminC | HKQuantityTypeIdentifier.dietaryVitaminD | HKQuantityTypeIdentifier.dietaryVitaminE | HKQuantityTypeIdentifier.dietaryVitaminK | HKQuantityTypeIdentifier.dietaryZinc ? MassUnit : T extends HKQuantityTypeIdentifier.dietaryWater ? VolumeUnit : T extends HKQuantityTypeIdentifier.insulinDelivery ? HKUnits.InternationalUnit | `${HKUnits.InternationalUnit}` : T extends HKQuantityTypeIdentifier.heartRate | HKQuantityTypeIdentifier.restingHeartRate | HKQuantityTypeIdentifier.walkingHeartRateAverage ? CountPerTime<TimeUnit> : HKUnit;
 export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier> = T extends HKCategoryTypeIdentifier.cervicalMucusQuality ? HKCategoryValueCervicalMucusQuality : T extends HKCategoryTypeIdentifier.menstrualFlow ? HKCategoryValueMenstrualFlow : T extends HKCategoryTypeIdentifier.ovulationTestResult ? HKCategoryValueOvulationTestResult : T extends HKCategoryTypeIdentifier.sleepAnalysis ? HKCategoryValueSleepAnalysis : T extends HKCategoryTypeIdentifier.highHeartRateEvent | HKCategoryTypeIdentifier.intermenstrualBleeding | HKCategoryTypeIdentifier.mindfulSession | HKCategoryTypeIdentifier.sexualActivity ? HKCategoryValueNotApplicable : T extends HKCategoryTypeIdentifier.abdominalCramps | HKCategoryTypeIdentifier.abdominalCramps | HKCategoryTypeIdentifier.acne | HKCategoryTypeIdentifier.bladderIncontinence | HKCategoryTypeIdentifier.bloating | HKCategoryTypeIdentifier.breastPain | HKCategoryTypeIdentifier.chestTightnessOrPain | HKCategoryTypeIdentifier.chills | HKCategoryTypeIdentifier.constipation | HKCategoryTypeIdentifier.coughing | HKCategoryTypeIdentifier.diarrhea | HKCategoryTypeIdentifier.dizziness | HKCategoryTypeIdentifier.drySkin | HKCategoryTypeIdentifier.fainting | HKCategoryTypeIdentifier.fatigue | HKCategoryTypeIdentifier.fever | HKCategoryTypeIdentifier.generalizedBodyAche | HKCategoryTypeIdentifier.hairLoss | HKCategoryTypeIdentifier.headache | HKCategoryTypeIdentifier.heartburn | HKCategoryTypeIdentifier.hotFlashes | HKCategoryTypeIdentifier.lossOfSmell | HKCategoryTypeIdentifier.lossOfTaste | HKCategoryTypeIdentifier.lowerBackPain | HKCategoryTypeIdentifier.memoryLapse | HKCategoryTypeIdentifier.moodChanges | HKCategoryTypeIdentifier.nausea | HKCategoryTypeIdentifier.nightSweats | HKCategoryTypeIdentifier.pelvicPain | HKCategoryTypeIdentifier.rapidPoundingOrFlutteringHeartbeat | HKCategoryTypeIdentifier.runnyNose | HKCategoryTypeIdentifier.shortnessOfBreath | HKCategoryTypeIdentifier.sinusCongestion | HKCategoryTypeIdentifier.skippedHeartbeat | HKCategoryTypeIdentifier.soreThroat | HKCategoryTypeIdentifier.vaginalDryness | HKCategoryTypeIdentifier.vomiting | HKCategoryTypeIdentifier.wheezing ? HKCategoryValueSeverity : T extends HKCategoryTypeIdentifier.appetiteChanges | HKCategoryTypeIdentifier.sleepChanges ? HKCategoryValuePresence : T extends HKCategoryTypeIdentifier.lowCardioFitnessEvent ? HKCategoryValueLowCardioFitnessEvent : T extends HKCategoryTypeIdentifier.pregnancyTestResult ? HKCategoryValuePregnancyTestResult : T extends HKCategoryTypeIdentifier.pregnancyTestResult ? HKCategoryValuePregnancyTestResult : T extends HKCategoryTypeIdentifier.appleStandHour ? HKCategoryValueAppleStandHour : number;
 /**
- * See https://developer.apple.com/documentation/healthkit/hkcategoryvaluepregnancytestresult
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluepregnancytestresult Apple Docs }
  */
 declare enum HKCategoryValuePregnancyTestResult {
     positive = 2,
@@ -728,7 +1205,7 @@ export type SpeedUnit<TLength extends LengthUnit, TTime extends TimeUnit> = `${T
 export type CountPerTime<TTime extends TimeUnit> = `count/${TTime}`;
 export type HKUnit = BloodGlucoseUnit | CountPerTime<TimeUnit> | EnergyUnit | FrequencyUnit | HKUnits | LengthUnit | MassUnit | PressureUnit | SpeedUnit<LengthUnit, TimeUnit> | TemperatureUnit | TimeUnit | VolumeUnit | `${BloodGlucoseUnit}` | `${EnergyUnit}` | `${FrequencyUnit}` | `${HKUnits}` | `${LengthUnit}` | `${MassUnit}` | `${PressureUnit}` | `${TemperatureUnit}` | `${TimeUnit}` | `${VolumeUnit}`;
 /**
- * See https://developer.apple.com/documentation/healthkit/hkdevice
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkdevice Apple Docs }
  */
 export type HKDevice = {
     readonly name: string;
@@ -741,14 +1218,14 @@ export type HKDevice = {
     readonly udiDeviceIdentifier: string | null;
 };
 /**
- * See https://developer.apple.com/documentation/healthkit/hkobject/1615781-source
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkobject/1615781-source Apple Docs }
  */
 export type HKSource = {
     readonly name: string;
     readonly bundleIdentifier: string;
 };
 /**
- * See https://developer.apple.com/documentation/healthkit/hkobject/1615483-sourcerevision
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkobject/1615483-sourcerevision Apple Docs }
  */
 export type HKSourceRevision = {
     readonly source: HKSource;
@@ -757,7 +1234,7 @@ export type HKSourceRevision = {
     readonly productType?: string;
 };
 /**
- * See https://developer.apple.com/documentation/healthkit/hkquantitysample
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitysample Apple Docs }
  */
 export type HKQuantitySampleRaw<TQuantityIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TQuantityIdentifier> = UnitForIdentifier<TQuantityIdentifier>> = {
     readonly uuid: string;
@@ -785,6 +1262,27 @@ export type HKHeartbeatSeriesSampleRaw = {
 };
 export type HKQuantitySampleRawForSaving<TQuantityIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TQuantityIdentifier> = UnitForIdentifier<TQuantityIdentifier>> = Omit<HKQuantitySampleRaw<TQuantityIdentifier, TUnit>, 'device' | 'endDate' | 'startDate' | 'uuid'>;
 export type HKCategorySampleRawForSaving<TCategory extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier> = Omit<HKCategorySampleRaw<TCategory>, 'device' | 'endDate' | 'startDate' | 'uuid'>;
+export interface HKWorkoutEvent {
+    readonly type: HKWorkoutEventType;
+    readonly startDate: string;
+    readonly endDate: string;
+}
+export declare enum HKWorkoutEventType {
+    pause = 1,
+    resume = 2,
+    lap = 3,
+    marker = 4,
+    motionPaused = 5,
+    motionResumed = 6,
+    segment = 7,
+    pauseOrResumeRequest = 8
+}
+export interface HKWorkoutActivity {
+    readonly startDate: string;
+    readonly endDate: string;
+    readonly uuid: string;
+    readonly duration: number;
+}
 export type HKWorkoutRaw<TEnergy extends EnergyUnit, TDistance extends LengthUnit> = {
     readonly uuid: string;
     readonly device?: HKDevice;
@@ -861,7 +1359,9 @@ export type HKCorrelationRaw<TIdentifier extends HKCorrelationTypeIdentifier> = 
     readonly endDate: string;
 };
 type QueryId = string;
-/** See https://developer.apple.com/documentation/healthkit/hkupdatefrequency */
+/**
+* @see {@link https://developer.apple.com/documentation/healthkit/hkupdatefrequency Apple Docs }
+*/
 export declare enum HKUpdateFrequency {
     immediate = 1,
     hourly = 2,
@@ -885,7 +1385,9 @@ export type WorkoutRoute = {
     readonly HKMetadataKeySyncVersion?: number;
 };
 type ReactNativeHealthkitTypeNative = {
-    /** See https://developer.apple.com/documentation/healthkit/hkhealthstore/1614180-ishealthdataavailable */
+    /**
+     *  @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614180-ishealthdataavailable Apple Docs }
+     */
     isHealthDataAvailable(): Promise<boolean>;
     canAccessProtectedData(): Promise<boolean>;
     getBloodType(): Promise<HKBloodType>;
@@ -893,22 +1395,34 @@ type ReactNativeHealthkitTypeNative = {
     getBiologicalSex(): Promise<HKBiologicalSex>;
     getFitzpatrickSkinType(): Promise<HKFitzpatrickSkinType>;
     readonly getWheelchairUse: () => Promise<HKWheelchairUse>;
-    /** See https://developer.apple.com/documentation/healthkit/hkhealthstore/1614175-enablebackgrounddelivery */
+    /**
+    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614175-enablebackgrounddelivery Apple Docs }
+    */
     readonly enableBackgroundDelivery: (typeIdentifier: HKSampleTypeIdentifier, updateFrequency: HKUpdateFrequency) => Promise<boolean>;
-    /** https://developer.apple.com/documentation/healthkit/hkhealthstore/1614177-disablebackgrounddelivery */
+    /**
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614177-disablebackgrounddelivery Apple Docs }
+     */
     readonly disableBackgroundDelivery: (typeIdentifier: HKSampleTypeIdentifier) => Promise<boolean>;
-    /** See https://developer.apple.com/documentation/healthkit/hkhealthstore/1614158-disableallbackgrounddelivery */
+    /**
+    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614158-disableallbackgrounddelivery Apple Docs }
+    */
     readonly disableAllBackgroundDelivery: () => Promise<boolean>;
     readonly saveCorrelationSample: <TIdentifier extends HKCorrelationTypeIdentifier, TSamples extends readonly (HKCategorySampleRawForSaving | HKQuantitySampleRawForSaving)[]>(typeIdentifier: TIdentifier, samples: TSamples, start: string, end: string, metadata: MetadataMapperForCorrelationIdentifier<TIdentifier>) => Promise<boolean>;
     readonly saveWorkoutSample: (typeIdentifier: HKWorkoutActivityType, quantities: readonly HKQuantitySampleRawForSaving[], start: string, end: string, metadata: HKWorkoutMetadata) => Promise<boolean>;
     readonly queryCorrelationSamples: <TIdentifier extends HKCorrelationTypeIdentifier>(typeIdentifier: TIdentifier, from: string, to: string) => Promise<readonly HKCorrelationRaw<TIdentifier>[]>;
     subscribeToObserverQuery(identifier: HKSampleTypeIdentifier): Promise<QueryId>;
     unsubscribeQuery(queryId: QueryId): Promise<boolean>;
-    /** See https://developer.apple.com/documentation/healthkit/hkhealthstore/1614154-authorizationstatus */
+    /**
+    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614154-authorizationstatus Apple Docs }
+    */
     authorizationStatusFor(type: HealthkitReadAuthorization): Promise<HKAuthorizationStatus>;
-    /** See https://developer.apple.com/documentation/healthkit/hkhealthstore/2994346-getrequeststatusforauthorization */
+    /**
+    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/2994346-getrequeststatusforauthorization Apple Docs }
+     */
     getRequestStatusForAuthorization(write: WritePermissions, read: ReadPermissions): Promise<HKAuthorizationRequestStatus>;
-    /** See https://developer.apple.com/documentation/healthkit/hkhealthstore/1614152-requestauthorization */
+    /**
+    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614152-requestauthorization Apple Docs }
+     */
     requestAuthorization(write: WritePermissions, read: ReadPermissions): Promise<boolean>;
     readonly saveQuantitySample: <TType extends HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TType> = UnitForIdentifier<TType>>(identifier: TType, unit: TUnit, value: number, start: string, end: string, metadata: unknown) => Promise<boolean>;
     readonly deleteQuantitySample: <TIdentifier extends HKQuantityTypeIdentifier>(typeIdentifier: TIdentifier, uuid: string) => Promise<boolean>;

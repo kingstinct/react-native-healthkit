@@ -1,3 +1,4 @@
 import type { HKQuantityTypeIdentifier, UnitForIdentifier } from '../native-types';
-declare function getMostRecentQuantitySample<TIdentifier extends HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TIdentifier>>(identifier: TIdentifier, unit: TUnit): Promise<import("..").HKQuantitySample<TIdentifier, UnitForIdentifier<TIdentifier>> | null>;
+import type { HKQuantitySample } from '../types';
+declare function getMostRecentQuantitySample<TIdentifier extends HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TIdentifier>>(identifier: TIdentifier, unit: TUnit): Promise<HKQuantitySample<TIdentifier, TUnit> | null>;
 export default getMostRecentQuantitySample;
