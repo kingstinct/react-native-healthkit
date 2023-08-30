@@ -18,6 +18,12 @@ import type {
 
 export * from './native-types'
 
+/**
+ * Options for querying workouts.
+ * @template TEnergy The energy unit type.
+ * @template TDistance The distance unit type.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkworkout Apple Docs HKWorkout}
+ */
 export interface QueryWorkoutsOptions<
   TEnergy extends HKUnit,
   TDistance extends HKUnit
@@ -26,6 +32,11 @@ export interface QueryWorkoutsOptions<
   readonly distanceUnit?: TDistance;
 }
 
+/**
+ * Represents a category sample.
+ * @template T The category type identifier.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorysample Apple Docs HKCategorySample}
+ */
 export interface HKCategorySample<
   T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier
 > extends Omit<HKCategorySampleRaw<T>, 'endDate' | 'startDate'> {
@@ -33,6 +44,9 @@ export interface HKCategorySample<
   readonly endDate: Date;
 }
 
+/**
+ * Generic options for querying.
+ */
 export type GenericQueryOptions = {
   readonly from?: Date;
   readonly to?: Date;
@@ -41,6 +55,12 @@ export type GenericQueryOptions = {
   readonly anchor?: string
 };
 
+/**
+ * Represents a workout.
+ * @template TEnergy The energy unit type.
+ * @template TDistance The distance unit type.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkworkout Apple Docs HKWorkout}
+ */
 export interface HKWorkout<
   TEnergy extends EnergyUnit = EnergyUnit,
   TDistance extends LengthUnit = LengthUnit
@@ -49,11 +69,21 @@ export interface HKWorkout<
   readonly endDate: Date;
 }
 
+/**
+ * Represents a heartbeat series sample.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkheartbeatseriessample Apple Docs HKHeartbeatSeriesSample}
+ */
 export interface HKHeartbeatSeriesSample extends Omit<HKHeartbeatSeriesSampleRaw, 'endDate' | 'startDate'> {
   readonly startDate: Date;
   readonly endDate: Date;
 }
 
+/**
+ * Represents a quantity sample.
+ * @template TIdentifier The quantity type identifier.
+ * @template TUnit The unit for the identifier.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitysample Apple Docs HKQuantitySample}
+ */
 export interface HKQuantitySample<
   TIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
   TUnit extends UnitForIdentifier<TIdentifier> = UnitForIdentifier<TIdentifier>
@@ -69,6 +99,12 @@ export interface HKQuantitySample<
   readonly endDate: Date;
 }
 
+/**
+ * Represents a response from a statistics query.
+ * @template TIdentifier The quantity type identifier.
+ * @template TUnit The unit for the identifier.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkstatisticsquery Apple Docs HKStatisticsQuery}
+ */
 export interface QueryStatisticsResponse<TIdentifier extends HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TIdentifier> = UnitForIdentifier<TIdentifier>>
   extends Omit<
   QueryStatisticsResponseRaw<TIdentifier, TUnit>,
@@ -77,10 +113,23 @@ export interface QueryStatisticsResponse<TIdentifier extends HKQuantityTypeIdent
   readonly mostRecentQuantityDateInterval?: { readonly from: Date; readonly to: Date };
 }
 
-export type HKCategorySampleForSaving =Omit<HKCategorySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
+/**
+ * Represents a category sample for saving.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorysample Apple Docs HKCategorySample}
+ */
+export type HKCategorySampleForSaving = Omit<HKCategorySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
 
-export type HKQuantitySampleForSaving =Omit<HKQuantitySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
+/**
+ * Represents a quantity sample for saving.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitysample Apple Docs HKQuantitySample}
+ */
+export type HKQuantitySampleForSaving = Omit<HKQuantitySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
 
+/**
+ * Represents a correlation.
+ * @template TIdentifier The correlation type identifier.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcorrelation Apple Docs HKCorrelation}
+ */
 export interface HKCorrelation<TIdentifier extends HKCorrelationTypeIdentifier>
   extends Omit<
   HKCorrelationRaw<TIdentifier>,

@@ -1,0 +1,299 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #222;
+  padding: 0;
+  margin: 0;
+  font-family: sans-serif;
+  font-weight: 350;
+  font-size: 13px;
+  /* text-transform: uppercase; */
+  color: #000;
+}
+
+.instructions {
+  color: black;
+  text-align: left;
+}
+
+.instructions li {
+  margin-bottom: 30px;
+}
+
+.code-window-prism {
+  max-width: 768px;
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  opacity: 0.9;
+  user-select: all;
+  -webkit-user-select: all;
+}
+
+@media(min-width: 768px) {
+  .code-window-prism {
+    border-radius: 10px;
+  }
+}
+
+.code-window {
+  background-color: #0009;
+  border-radius: 5px;
+  border: 1px solid white;
+  backdrop-filter: blur(4px);
+
+  text-align: left;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-bottom: 10px;
+}
+
+.toggle-package-manager,
+.toggle-expo-rn {
+  border: 1px solid #fffa;
+  border-radius: 5px;
+  cursor: pointer;
+  user-select: auto;
+  -webkit-user-select: auto;
+  padding-left: 5px;
+}
+
+.toggle-expo-rn {
+  border: 1px solid #0008;
+  border-radius: 5px;
+  cursor: pointer;
+  user-select: auto;
+  -webkit-user-select: auto;
+  padding-left: 5px;
+}
+
+.toggle-package-manager {
+  width: 100px
+}
+
+.code-window {
+  position: relative;
+}
+
+.code-window pre {
+  color: white;
+  user-select: all;
+  -webkit-user-select: all;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+}
+
+.copy-code {
+  color: white;
+  border: 1px solid #fffa;
+  border-right: 0px;
+  border-bottom: 0px;
+  border-top-left-radius: 5px;
+  cursor: pointer;
+  padding-left: 5px;
+  display: inline;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  padding-top: 1px;
+  padding-left: 5px;
+  user-select: none;
+  -webkit-user-select: none;
+  display: none;
+}
+
+.code-window:hover .copy-code {
+  display: block
+}
+
+.contrast-safe-text {
+  backdrop-filter: blur(4px);
+  background-color: #fffa;
+  border-radius: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding: 6px;
+}
+
+.tabs {
+  display: flex;
+  flex: 1;
+  padding-top: 15px;
+  margin-top: 10px;
+  align-self: center;
+  color: 'black';
+  text-decoration: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-top: 1px solid #0001;
+  padding-left: 30px;
+  padding-right: 10px;
+}
+
+.tabs a:visited {
+  color: black;
+  text-decoration: none;
+}
+
+.tabs a:hover {
+  color: black;
+  text-decoration: underline;
+}
+
+.tabs a:link {
+  color: black;
+  text-decoration: underline;
+}
+
+header {
+  background-color: #fff;
+  padding: 0;
+  margin: 0;
+}
+
+.section {
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  letter-spacing: 1.5px;
+  overflow: hidden;
+  clip: rect(0, auto, auto, 0);
+}
+
+.section .fixed {
+  overflow: hidden;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  max-width: 720px;
+  width: 100%;
+  margin-top: 50px;
+}
+
+.section .white {
+  color: #fff;
+}
+
+h1 {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.section:nth-child(1) {
+  background-color: #224430;
+  /* background-image: url('../images/heart-data.webp'); */
+  background-image: url('../images/diet.webp');
+  background-position: center;
+  background-size: cover;
+  color: #000;
+  top: 0;
+  z-index: 1;
+}
+
+.section:nth-child(2) {
+  box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
+  background-color: #ccd;
+  background-image: url('../images/hollander.webp');
+  background-position: center;
+  background-size: cover;
+  color: #fff;
+  top: 100vh;
+  z-index: 2;
+}
+
+
+.section:nth-child(3) {
+  box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
+  background-color: #f44;
+  background-image: url('../images/heart-data.webp');
+  background-position: center;
+  background-size: cover;
+  color: #fff;
+  top: 200vh;
+  z-index: 3;
+}
+
+
+.section:nth-child(4) {
+  box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
+  background-color: #cce;
+  background-image: url('../images/tie-shoes.webp');
+  background-position: center;
+  background-size: cover;
+  color: #fff;
+  top: 300vh;
+  z-index: 4;
+}
+
+
+.section:nth-child(5) {
+  box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
+  background-color: #850ac2;
+  background-image: url('../images/running-sunset.webp');
+  background-position: center;
+  background-size: cover;
+  color: #fff;
+  top: 400vh;
+  z-index: 5;
+}
+
+
+.section:nth-child(6) {
+  box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
+  background-color: #0ac20a;
+  color: #fff;
+  top: 500vh;
+  z-index: 6;
+}
+
+
+.section:nth-child(7) {
+  box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
+  background-color: #c20a85;
+  color: #fff;
+  top: 600vh;
+  z-index: 7;
+}
+
+
+.section:nth-child(8) {
+  box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
+  background-color: #0ac285;
+  color: #fff;
+  top: 700vh;
+  z-index: 8;
+}
+
+
+.section:nth-child(9) {
+  box-shadow: inset 0 1px 80px rgba(0, 0, 0, 0.14);
+  background-color: #c20a0a;
+  color: #fff;
+  top: 800vh;
+  z-index: 9;
+}
+
+.section .fixed {
+  transform: translate(-50%, -50%);
+}
+
+.section:nth-child(10) {
+  background-color: #000;
+  color: #fff;
+  top: 900vh;
+  z-index: 10;
+}
+
+.section:nt .fixed {
+  transform: translate(-50%, -50%);
+}
+
+.oop {
+  position: relative;
+  z-index: auto;
+  height: 10px;
+  background: linear-gradient(141deg, #48ded4 0%, #a026bf 51%, #e82c75 75%);
+}

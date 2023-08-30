@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>@kingstinct/react-native-healthkit</title>
+  <meta name="description" content="Access HealthKit seamlessly and effortlessly with Expo and React Native">
+  <meta name="keywords" content="TypeScript, HealthKit, iOS, React Native">
+  <meta name="author" content="Kingstinct">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:title" content="@kingstinct/react-native-healthkit" />
+  <meta property="og:url" content="https://kingstinct.com/react-native-healthkit" />
+  <meta property="og:image" content="./images/heart-data.webp" />
+  <meta name="twitter:title" content="@kingstinct/react-native-healthkit">
+  <meta name="twitter:description" content="Access HealthKit seamlessly and effortlessly with Expo and React Native">
+  <meta name="twitter:image" content=" ./images/heart-data.webp">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="./images/healthkit.png">
+  <link rel="stylesheet" href="./styles/style.css">
+  <link rel="stylesheet" href="./styles/prism.css">
+
+    <!-- Matomo -->
+  <script type="text/javascript">
+    var _paq = window._paq = window._paq || [];
+    /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+      var u="//matomo.kingstinct.dev/";
+      _paq.push(['setTrackerUrl', u+'matomo.php']);
+      _paq.push(['setSiteId', '2']);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+    })();
+  </script>
+  <!-- End Matomo Code -->
+
+  <script async src="https://ackee.kingstinct.dev/tracker.js" data-ackee-server="https://ackee.kingstinct.dev" data-ackee-domain-id="d3adbe01-d0cd-42a5-8e6d-812c1380d14e"></script>
+
+  <script defer data-domain="kingstinct.com" src="http://plausible.kingstinct.dev/js/script.js"></script>
+
+  <script async defer data-website-id="1a60abb4-3f28-4ee1-998b-03d3f69c3bf7" src="https://umami.kingstinct.dev/umami.js"></script>
+</head>
+<body>
+
+
+  
+<!-- partial:index.partial.html -->
+<div class="section" id="home">
+  <!-- <div class="oop"></div> -->
+  <div class="fixed">
+    <h1 class="large" style="backdrop-filter: blur(4px); 
+    
+    background-color: #fffa; border-radius: 10px; padding: 10px;">Access HealthKit seamlessly and effortlessly with Expo and React Native</h1>
+    <div style="border-radius: 5px;">
+      <ul  class="contrast-safe-text" style="text-align: left; 
+        list-style: none; display: flex;     
+        padding-inline-start: 10px;
+      
+        flex-direction: column;
+        gap: 10px;">
+        <li>✅ All 100+ <b>Quantity Types</b></li>
+        <li>✅ All 63+ <b>Category Types</b></li>
+        <li>✅ All 75+ <b>Workout Types</b></li>
+        <li>✅ Save, query and subscribe to data</li>
+        <li>✅ TypeScript, Promise-based, Expo Plugin</li>
+        <li>✅ Convenient hooks</li>
+        <li>✅ <b>Future-proof</b> - mapping closely to the Native API</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="section" id="install">
+  <div class="fixed">
+    <h1 style="color: black;" style="user-select: none;">
+      1. Install <span class="toggle-expo-rn">with Expo</span> ⚙️
+    </h1>
+    <ol class="expo-only instructions">
+      <li><p>Install dependency</p><div class="code-window">
+        <pre><span class="toggle-package-manager">yarn</span> install @kingstinct/react-native-healthkit</pre>
+        <div class="copy-code">
+          Copy
+          </div>
+      </div></li>
+      <li><p>Add Config Plugin to your app.json/app.config.js</p>  <div class="code-window">
+      
+        <pre>{
+  "expo": {
+    "plugins": [
+      "@kingstinct/react-native-healthkit"
+    ]
+  }
+}</pre>
+      
+      <div class="copy-code">
+      Copy
+      </div>
+    </div></li>
+      <li>Build a new Dev Client</li>
+    </ol>
+
+    <ol class="rn-only instructions" style="display: none;"> 
+      <li><p>Install dependency</p><div class="code-window">
+        <pre><span class="toggle-package-manager">yarn</span> install @kingstinct/react-native-healthkit</pre>
+        <div class="copy-code">
+          Copy
+          </div>
+      </div></li>
+      <li><p>Run pod install</p><div class="code-window">
+        <pre>npx pod-install</pre>
+        <div class="copy-code">
+          Copy
+          </div>
+      </div></li>
+      <li>
+        Set NSHealthUpdateUsageDescription and NSHealthShareUsageDescription in your Info.plist
+      </li>
+      <li>Enable the HealthKit capability for the project in Xcode.</li>
+      <li>Since this package is using Swift you might also need to add a bridging header in your project if you haven't already, you can find more about that in the <a href="https://reactnative.dev/docs/native-modules-ios#exporting-swift" target="_blank">official React Native docs</a></li>
+    </ol>
+    
+
+   
+  </div>
+  
+</div>
+<div class="section" id="auth">
+  <div class="p fixed">
+    <pre class="code-window-prism"><code class="language-tsx">// --- 2. Authorize 🔒 ---
+
+import { 
+  Text, 
+  Button,
+  View
+} from 'react-native';
+import { 
+  HKQuantityTypeIdentifier, 
+  useHealthkitAuthorization 
+} from '@kingstinct/react-native-healthkit';
+
+export default () => {
+  const [
+    authorizationStatus, 
+    requestAuthorization
+  ] = useHealthkitAuthorization([
+    HKQuantityTypeIdentifier.bloodGlucose
+  ])
+
+  return &lt;View>
+    &lt;Text>Authorization Status: {authorizationStatus}&lt;/Text>
+    &lt;Button 
+      onPress={requestAuthorization} 
+      title="Request Authorization" 
+    />
+  &lt;/View>
+}</code></pre>
+  </div>
+</div>
+<div class="section" id="data">
+  <div class="p fixed">
+    
+      <pre class="code-window-prism"><code class="language-tsx">// --- 3. Launch 🚀 ---
+
+import { 
+  Text, 
+  View
+} from 'react-native';
+import { 
+  useMostRecentQuantitySample, 
+  HKQuantityTypeIdentifier,
+} from '@kingstinct/react-native-healthkit';
+
+export default () => {
+  const sample = useMostRecentQuantitySample(
+    HKQuantityTypeIdentifier.bloodGlucose
+  )
+
+  return &lt;View>
+    &lt;Text>Blood Glucose: {sample?.quantity}&lt;/Text>
+  &lt;/View>
+}</code></pre>
+  </div>
+</div>
+
+<div style="position: fixed; padding-top: 20px; padding-bottom: 20px; padding-right: 20px; right: 0px; left: 0px; z-index: 9999999999; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); background-color: #fff5;">
+  <div style="vertical-align: middle;">
+    <a href="#home" style="text-decoration: none;"><img alt="HealthKit Logo" src="./images/healthkit.webp" style="width:10vw;height:7vw; margin-left: 10px;vertical-align: middle;">
+    <div style="display:inline-block; vertical-align: middle;">
+      <span style="vertical-align: middle; display:inline-block; font-size: 4vw; color: black;">@kingstinct/react-native-healthkit</span>
+    </div>
+    </a>
+    <a href="https://github.com/kingstinct/react-native-healthkit" target="_blank">
+      <img alt="GitHub Logo" src="./images/github-mark-white.webp" style="width:6.5vw;height:6.5vw; float: right; filter:invert(100%); vertical-align: middle;">
+    </a>
+  </div>
+  <div class="tabs">
+    <a href="#install">1. Install ⚙️</a>
+    <a href="#auth">2. Authorize 🔒</a>
+    <a href="#data">3. Launch 🚀</a>
+  </div>
+</div>
+  <script>
+    function init(){
+      function toggleSelf(evt){
+          this.innerHTML = this.innerHTML === 'npm' ? 'yarn' : this.innerHTML === 'yarn' ? 'pnpm' : 'npm'
+        }
+
+      document.querySelectorAll('.toggle-package-manager').forEach(el => {
+        el.addEventListener('click', toggleSelf)
+      })
+
+      function toggleExpoRn(evt){
+        const toggleToRN = this.innerHTML === 'with Expo'
+        this.innerHTML = toggleToRN ? 'with React Native' : 'with Expo'
+        document.querySelectorAll('.rn-only').forEach(el => {
+          el.style.display = toggleToRN ? 'block' : 'none'
+        })
+        document.querySelectorAll('.expo-only').forEach(el => {
+          el.style.display = !toggleToRN ? 'block' : 'none'
+        })
+      }
+
+      document.querySelectorAll('.toggle-expo-rn').forEach(el => {
+        el.addEventListener('click', toggleExpoRn)
+        
+      })
+
+      document.querySelectorAll('.copy-code').forEach(el => {
+        el.addEventListener('click', function(evt) {
+          this.innerHTML = ''
+          let codeElement = this.parentElement
+          while(!codeElement.classList.contains('code-window') && codeElement.parentElement){
+            codeElement = codeElement.parentElement
+          }
+          let innerText = codeElement?.innerText
+          if(innerText){
+            this.innerHTML = '✅ Copied'
+            navigator.clipboard.writeText(innerText)
+          }
+          setTimeout(() => {
+            this.innerHTML = 'Copy'
+          }, 1000)
+        })
+      })
+    }
+    init()
+  </script>
+  <script src="scripts/prism.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/ackee-tracker-consent@1.2.0/dist/ackee-tracker-consent.min.js"></script>
+
+  <script>
+      AckeeTrackerOptIn.consent('https://ackee.kingstinct.dev', 'd3adbe01-d0cd-42a5-8e6d-812c1380d14e')
+  </script>
+</body>
+</html>

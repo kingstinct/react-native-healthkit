@@ -37,6 +37,7 @@ const mockModule: (NativeModule & typeof Native) = {
   saveWorkoutSample: jest.fn(),
   subscribeToObserverQuery: jest.fn(),
   unsubscribeQuery: jest.fn(),
+  // Todo [>8]: Remove to align with Apple function name (isProtectedDataAvailable)
   canAccessProtectedData: jest.fn(),
 }
 
