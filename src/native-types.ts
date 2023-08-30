@@ -1747,8 +1747,8 @@ export type HKWorkoutRaw<
   readonly endDate: string;
   readonly metadata?: HKWorkoutMetadata;
   readonly sourceRevision?: HKSourceRevision;
-  readonly events?: HKWorkoutEvent;
-  readonly activities?: HKWorkoutActivity;
+  readonly events?: readonly HKWorkoutEvent[];
+  readonly activities?: readonly HKWorkoutActivity[];
   readonly workoutPlanId?: string;
 };
 
