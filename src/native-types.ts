@@ -671,12 +671,32 @@ export enum HKQuantityTypeIdentifier {
    */
   heartRateRecoveryOneMinute = 'HKQuantityTypeIdentifierHeartRateRecoveryOneMinute',
 
+  /**
+   * Running Ground Contact Time
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunninggroundcontacttime Apple Docs HKQuantityTypeIdentifierRunningGroundContactTime}
+   * @since iOS 16
+   */
   runningGroundContactTime = 'HKQuantityTypeIdentifierRunningGroundContactTime',
 
+  /**
+   * Running Stride Length
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningstridelength Apple Docs HKQuantityTypeIdentifierRunningStrideLength}
+   * @since iOS 16
+   */
   runningStrideLength = 'HKQuantityTypeIdentifierRunningStrideLength',
 
+  /**
+   * Running Power
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningpower Apple Docs HKQuantityTypeIdentifierRunningPower}
+   * @since iOS 16
+   */
   runningPower = 'HKQuantityTypeIdentifierRunningPower',
 
+  /**
+   * Running Vertical Oscillation
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningverticaloscillation Apple Docs HKQuantityTypeIdentifierRunningVerticalOscillation}
+   * @since iOS 16
+   */
   runningVerticalOscillation = 'HKQuantityTypeIdentifierRunningVerticalOscillation',
 }
 
@@ -948,16 +968,6 @@ export interface HKWorkoutMetadata
   LengthUnit
   >;
   readonly HKIndoorWorkout?: HKIndoorWorkout;
-}
-
-export interface HKWorkoutEvent {
-  readonly type: string,
-  readonly startDate: string,
-  readonly endDate: string,
-}
-
-export interface HKWorkoutActivity {
-  readonly startDate: string,
 }
 
 /**
@@ -1690,6 +1700,30 @@ export type HKCategorySampleRawForSaving<
 HKCategorySampleRaw<TCategory>,
 'device' | 'endDate' | 'startDate' | 'uuid'
 >;
+
+export interface HKWorkoutEvent {
+  readonly type: HKWorkoutEventType,
+  readonly startDate: string,
+  readonly endDate: string,
+}
+
+export enum HKWorkoutEventType {
+  pause = 1,
+  resume = 2,
+  lap = 3,
+  marker = 4,
+  motionPaused = 5,
+  motionResumed = 6,
+  segment = 7,
+  pauseOrResumeRequest = 8,
+}
+
+export interface HKWorkoutActivity {
+  readonly startDate: string,
+  readonly endDate: string,
+  readonly uuid: string,
+  readonly duration: number,
+}
 
 export type HKWorkoutRaw<
   TEnergy extends EnergyUnit,

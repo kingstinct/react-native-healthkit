@@ -76,7 +76,7 @@ PODS:
   - hermes-engine (0.71.8):
     - hermes-engine/Pre-built (= 0.71.8)
   - hermes-engine/Pre-built (0.71.8)
-  - kingstinct-react-native-healthkit (7.0.4):
+  - kingstinct-react-native-healthkit (7.0.6):
     - React
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.1100)
@@ -609,7 +609,7 @@ SPEC CHECKSUMS:
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: 47986d26692ae75ee7a17ab049caee8864f855de
-  kingstinct-react-native-healthkit: 0d4e6a455e0524c157253018a5c6b6e91c7a4501
+  kingstinct-react-native-healthkit: f4205a19d97fd5fa2839a8361c91294cad298896
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
