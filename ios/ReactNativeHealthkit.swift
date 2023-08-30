@@ -635,21 +635,16 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         let q = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: limit, sortDescriptors: getSortDescriptors(ascending: ascending)) { (_: HKSampleQuery, sample: [HKSample]?, error: Error?) in
             guard let err = error else {
-                
                 guard let samples = sample else {
                     return resolve([])
                 }
                 let arr: NSMutableArray = []
-                //create counts for completed workouts so that we can resolve the promise when all workouts have been serialized
-                var completedWorkoutCount = 0
-                let totalWorkouts = samples.count
-                
+
                 for s in samples {
                     if let workout = s as? HKWorkout {
                         let endDate = self._dateFormatter.string(from: workout.endDate)
                         let startDate = self._dateFormatter.string(from: workout.startDate)
-                        
-                        
+
                         let dict: NSMutableDictionary = [
                             "uuid": workout.uuid.uuidString,
                             "device": serializeDevice(_device: workout.device) as Any,
@@ -728,10 +723,12 @@ class ReactNativeHealthkit: RCTEventEmitter {
                         arr.add(dict)
                     }
                 }
+
                 return resolve(arr)
             }
             reject(GENERIC_ERROR, err.localizedDescription, err)
         }
+
         store.execute(q)
     }
 
