@@ -1,6 +1,9 @@
 import HealthKit
 import CoreLocation
+
+#if canImport(WorkoutKit)
 import WorkoutKit
+#endif
 
 @objc(ReactNativeHealthkit)
 @available(iOS 10.0, *)
@@ -709,6 +712,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                             dict.setValue(serializeQuantity(unit: HKUnit.count(), quantity: workout.totalFlightsClimbed), forKey: "totalFlightsClimbed")
                         }
                         
+                        #if canImport(WorkoutKit)
                         if #available(iOS 17.0, *) {
                             do {
                                 let workoutplan = try await workout.workoutPlan
@@ -719,6 +723,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                                 // handle error
                             }
                         }
+                        #endif
                         
                         arr.add(dict)
                     }
