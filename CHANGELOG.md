@@ -1,3 +1,19 @@
+# [7.1.0](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.6...v7.1.0) (2023-09-01)
+
+
+### Bug Fixes
+
+* handle when enddate is nil ([6b675eb](https://github.com/kingstinct/react-native-healthkit/commit/6b675ebd1b4deaa4d4352f90ce05323141ba1d06))
+* subscribeToObserverQuery not resolving promise ([83296e1](https://github.com/kingstinct/react-native-healthkit/commit/83296e16a1515db3a82f3a6ee9e2e5c968e1da96))
+
+
+### Features
+
+* add canImport tags so its backwards compatible ([87688be](https://github.com/kingstinct/react-native-healthkit/commit/87688be53de6b60f5f4edef7807d4f63aeadc984))
+* add endDate, uuid and duration to HKWorkoutActivity ([d024ce0](https://github.com/kingstinct/react-native-healthkit/commit/d024ce0fc942e3b65cad0c3ac4b4c9c8516c8a49))
+* update HL types for activity summary ([e0fcfdd](https://github.com/kingstinct/react-native-healthkit/commit/e0fcfddcf41910e50dd9b35d0de26439bdfa7cb8))
+* update type for HKWorkoutEventType ([b168dea](https://github.com/kingstinct/react-native-healthkit/commit/b168dea75cb3e050eeb914cd2bc92b12f02b848f))
+
 ## [7.0.6](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.5...v7.0.6) (2023-08-21)
 
 
