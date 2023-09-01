@@ -508,6 +508,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
         store.execute(query)
 
         self._runningQueries.updateValue(query, forKey: queryId)
+
+        resolve(queryId)
     }
 
     @objc(unsubscribeQuery:resolve:reject:)
