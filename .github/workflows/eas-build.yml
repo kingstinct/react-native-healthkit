@@ -1,0 +1,26 @@
+# This is a basic workflow to help you get started with Actions
+
+name: EAS Build 
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: master
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  eas-ios:
+    # The type of runner that the job will run on
+    uses: Kingstinct/utils/.github/workflows/eas-build.yml@main
+    secrets:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+    with:
+      platform: ios
+      build_profile: development-sim
+      expo_organisation_or_user_slug: react-native-healthkit
+      working_directory: ./example-expo
+      always_run: true
+      no_wait: false
