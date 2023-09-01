@@ -33,6 +33,8 @@ import {
   TextInput,
 } from 'react-native-paper'
 
+import { generateWorkoutSamples } from './utils'
+
 import type {
   HealthkitReadAuthorization,
   HealthkitWriteAuthorization,
@@ -40,8 +42,6 @@ import type {
 } from '@kingstinct/react-native-healthkit'
 import type { ComponentProps } from 'react'
 import type { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
-
-import { generateWorkoutSamples } from './utils'
 
 dayjs.extend(relativeTime)
 
