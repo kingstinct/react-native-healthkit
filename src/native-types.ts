@@ -1711,17 +1711,17 @@ export type CLLocationRawForSaving = {
 export type HKQuantitySampleRawForSaving<
   TQuantityIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
   TUnit extends UnitForIdentifier<TQuantityIdentifier> = UnitForIdentifier<TQuantityIdentifier>
-> = Omit<
-HKQuantitySampleRaw<TQuantityIdentifier, TUnit>,
-'device' | 'uuid'
->;
+> = Omit<HKQuantitySampleRaw<TQuantityIdentifier, TUnit>, 'device' | 'endDate' | 'startDate' | 'uuid'> & {
+  readonly startDate?: string;
+  readonly endDate?: string;
+};
 
 export type HKCategorySampleRawForSaving<
   TCategory extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier
-> = Omit<
-HKCategorySampleRaw<TCategory>,
-'device' | 'uuid'
->;
+> = Omit<HKCategorySampleRaw<TCategory>, 'device' | 'endDate' | 'startDate' | 'uuid'> & {
+  readonly startDate?: string;
+  readonly endDate?: string;
+};
 
 export interface HKWorkoutEvent {
   readonly type: HKWorkoutEventType,
