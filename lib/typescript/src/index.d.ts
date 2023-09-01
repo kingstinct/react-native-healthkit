@@ -40,6 +40,7 @@ declare const _default: {
     saveCorrelationSample: typeof import("./utils/saveCorrelationSample").default;
     saveQuantitySample: typeof import("./utils/saveQuantitySample").default;
     saveWorkoutSample: typeof import("./utils/saveWorkoutSample").default;
+    saveWorkoutRoute: typeof import("./utils/saveWorkoutRoute").default;
     subscribeToChanges: (identifier: import("./native-types").HKSampleTypeIdentifier, callback: () => void) => Promise<() => Promise<boolean>>;
     useMostRecentCategorySample: typeof import("./hooks/useMostRecentCategorySample").default;
     useMostRecentQuantitySample: typeof import("./hooks/useMostRecentQuantitySample").default;

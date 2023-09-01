@@ -698,6 +698,13 @@ export enum HKQuantityTypeIdentifier {
    * @since iOS 16
    */
   runningVerticalOscillation = 'HKQuantityTypeIdentifierRunningVerticalOscillation',
+
+  /**
+   * Running Speed
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningspeed Apple Docs HKQuantityTypeIdentifierRunningSpeed}
+   * @since iOS 16
+   */
+  runningSpeed = 'HKQuantityTypeIdentifierRunningSpeed',
 }
 
 export type TypeToUnitMapping = {
@@ -1223,6 +1230,7 @@ export type UnitForIdentifier<T extends HKQuantityTypeIdentifier> =
             | HKQuantityTypeIdentifier.basalBodyTemperature
               ? TemperatureUnit
               : T extends
+              | HKQuantityTypeIdentifier.runningSpeed
               | HKQuantityTypeIdentifier.stairAscentSpeed
               | HKQuantityTypeIdentifier.stairDescentSpeed
               | HKQuantityTypeIdentifier.walkingSpeed
@@ -1686,19 +1694,30 @@ export type HKHeartbeatSeriesSampleRaw = {
   readonly sourceRevision?: HKSourceRevision;
 }
 
+export type CLLocationRawForSaving = {
+  readonly latitude: number;
+  readonly longitude: number;
+  readonly altitude: number;
+  readonly horizontalAccuracy: number;
+  readonly verticalAccuracy: number;
+  readonly course: number;
+  readonly speed: number;
+  readonly timestamp: string; // unix timestamp in milliseconds
+}
+
 export type HKQuantitySampleRawForSaving<
   TQuantityIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
   TUnit extends UnitForIdentifier<TQuantityIdentifier> = UnitForIdentifier<TQuantityIdentifier>
 > = Omit<
 HKQuantitySampleRaw<TQuantityIdentifier, TUnit>,
-'device' | 'endDate' | 'startDate' | 'uuid'
+'device' | 'uuid'
 >;
 
 export type HKCategorySampleRawForSaving<
   TCategory extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier
 > = Omit<
 HKCategorySampleRaw<TCategory>,
-'device' | 'endDate' | 'startDate' | 'uuid'
+'device' | 'uuid'
 >;
 
 export interface HKWorkoutEvent {
@@ -1910,7 +1929,12 @@ type ReactNativeHealthkitTypeNative = {
     quantities: readonly HKQuantitySampleRawForSaving[],
     start: string,
     end: string,
-    metadata: HKWorkoutMetadata
+    metadata: HKWorkoutMetadata,
+  ) => Promise<string | null>;
+
+  readonly saveWorkoutRoute: (
+    workoutUUID: string,
+    locations: readonly CLLocationRawForSaving[],
   ) => Promise<boolean>;
 
   readonly queryCorrelationSamples: <

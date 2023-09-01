@@ -117,13 +117,13 @@ export interface QueryStatisticsResponse<TIdentifier extends HKQuantityTypeIdent
  * Represents a category sample for saving.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorysample Apple Docs HKCategorySample}
  */
-export type HKCategorySampleForSaving = Omit<HKCategorySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
+export type HKCategorySampleForSaving = Omit<HKCategorySample, 'device' | 'uuid'>
 
 /**
  * Represents a quantity sample for saving.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitysample Apple Docs HKQuantitySample}
  */
-export type HKQuantitySampleForSaving = Omit<HKQuantitySample, 'device' | 'endDate' | 'startDate' | 'uuid'>
+export type HKQuantitySampleForSaving = Omit<HKQuantitySample, 'device' | 'uuid'>
 
 /**
  * Represents a correlation.
