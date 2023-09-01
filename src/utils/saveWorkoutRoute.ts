@@ -1,10 +1,10 @@
 import Native from '../native-types'
 
-import type { CLLocationRawForSaving } from '../types'
+import type { CLLocationForSaving } from '../types'
 
 async function saveWorkoutRoute(
   workoutUUID: string,
-  locations: readonly CLLocationRawForSaving[],
+  locations: readonly CLLocationForSaving[],
 ) {
   return Native.saveWorkoutRoute(
     workoutUUID,
