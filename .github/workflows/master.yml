@@ -80,3 +80,4 @@ jobs:
       expo_organisation_or_user_slug: react-native-healthkit
       working_directory: ./example-expo
       always_run: true
+      no_wait: false
