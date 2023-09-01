@@ -30,6 +30,7 @@ import requestAuthorization from './utils/requestAuthorization'
 import saveCategorySample from './utils/saveCategorySample'
 import saveCorrelationSample from './utils/saveCorrelationSample'
 import saveQuantitySample from './utils/saveQuantitySample'
+import saveWorkoutRoute from './utils/saveWorkoutRoute'
 import saveWorkoutSample from './utils/saveWorkoutSample'
 import subscribeToChanges from './utils/subscribeToChanges'
 
@@ -181,6 +182,7 @@ export default {
   saveCorrelationSample,
   saveQuantitySample,
   saveWorkoutSample,
+  saveWorkoutRoute,
 
   // subscriptions
   subscribeToChanges,

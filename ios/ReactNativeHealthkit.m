@@ -151,6 +151,12 @@ RCT_EXTERN_METHOD(saveWorkoutSample:(NSInteger)typeIdentifier
                   reject:(RCTPromiseRejectBlock)reject
 )
 
+RCT_EXTERN_METHOD(saveWorkoutRoute:(NSString)workoutUUID
+                  locations:(NSArray)locations
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
 RCT_EXTERN_METHOD(queryCorrelationSamples:(NSString)typeIdentifier
                   from:(NSDate)from
                   to:(NSDate)to
