@@ -317,22 +317,18 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
     @objc(saveWorkoutSample:quantities:start:end:metadata:resolve:reject:)
     func saveWorkoutSample(typeIdentifier: UInt, quantities: [[String: Any]], start: Date, end: Date, metadata: [String: Any], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
         guard let store = _store else {
-            reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
-            return
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
 
         guard let type = HKWorkoutActivityType.init(rawValue: typeIdentifier) else {
-            reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize HKWorkoutActivityType " + typeIdentifier.description, nil)
-            return
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize HKWorkoutActivityType " + typeIdentifier.description, nil)
         }
 
         // if start and end both exist,  ensure that start date is before end date
         if let startDate = start as Date?, let endDate = end as Date? {
             if startDate > endDate {
-                reject(GENERIC_ERROR, "Start date must be before end date", nil)
-                return
+                return reject(GENERIC_ERROR, "Start date must be before end date", nil)
             }
         }
         
@@ -392,7 +388,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 }
             }
         }
-        
+
         if workout == nil {
             workout = HKWorkout.init(activityType: type, start: start, end: end, workoutEvents: nil, totalEnergyBurned: totalEnergyBurned, totalDistance: totalDistance, metadata: metadata)
         }
@@ -419,7 +415,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
     }
 
-    // create a function which will take an array of location in string format and create an array of CLLocations
+    // function which will take an array of location in string format and create an array of CLLocations
     func _createCLLocations(from locations: [[String: Any]]) -> [CLLocation] {
         var clLocations: [CLLocation] = []
         for location in locations {
