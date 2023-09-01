@@ -9,16 +9,28 @@ import type { EmitterSubscription, NativeModule } from 'react-native'
 export const HKWorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier' as const
 
 /**
- * Represents an audiogram type identifier.
+ * Represents a type that identifies activity summary objects.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkactivitysummarytype Apple Docs HKActivitySummaryType}
  */
-export const HKAudiogramTypeIdentifier = 'HKAudiogramTypeIdentifier' as const
+export const HKActivitySummaryType = 'HKActivitySummaryType' as const
+
+/**
+ * Represents an audiogram type identifier.
+ * @see {@link https://developer.apple.com/documentation/healthkit/HKAudiogramSampleType Apple Docs HKAudiogramSampleType}
+ */
+export const HKAudiogramTypeIdentifier = 'HKAudiogramSampleType' as const
 
 /**
  * Represents a workout route type identifier.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutroutetypeidentifier Apple Docs HKWorkoutRouteTypeIdentifier}
  */
 export const HKWorkoutRouteTypeIdentifier = 'HKWorkoutRouteTypeIdentifier' as const
-export const HKDataTypeIdentifierHeartbeatSeries = 'HKDataTypeIdentifierHeartbeatSeries' as const
+
+/**
+ * Represents a series sample containing heartbeat data..
+ * @see {@link https://developer.apple.com/documentation/healthkit/HKDataTypeIdentifierHeartbeatSeries Apple Docs HKDataTypeIdentifierHeartbeatSeries}
+ */
+export declare const HKDataTypeIdentifierHeartbeatSeries: 'HKDataTypeIdentifierHeartbeatSeries'
 
 /**
  * Represents a quantity type identifier.
@@ -803,16 +815,7 @@ export enum HKCategoryTypeIdentifier {
 }
 
 export type HKSampleTypeIdentifier =
-  | HKCategoryTypeIdentifier
-  | HKCorrelationTypeIdentifier
-  | HKQuantityTypeIdentifier
-  | typeof HKAudiogramTypeIdentifier
-  | typeof HKDataTypeIdentifierHeartbeatSeries
-  | typeof HKWorkoutRouteTypeIdentifier
-  | typeof HKWorkoutTypeIdentifier
-  | `${HKCategoryTypeIdentifier}`
-  | `${HKCorrelationTypeIdentifier}`
-  | `${HKQuantityTypeIdentifier}`;
+  HKCategoryTypeIdentifier | HKCorrelationTypeIdentifier | HKQuantityTypeIdentifier | typeof HKActivitySummaryType | typeof HKAudiogramTypeIdentifier | typeof HKDataTypeIdentifierHeartbeatSeries | typeof HKWorkoutRouteTypeIdentifier | typeof HKWorkoutTypeIdentifier | `${HKCategoryTypeIdentifier}` | `${HKCorrelationTypeIdentifier}` | `${HKQuantityTypeIdentifier}`;
 
 export type HealthkitReadAuthorization =
   | HKCharacteristicTypeIdentifier

@@ -6,15 +6,25 @@ import type { EmitterSubscription } from 'react-native';
  */
 export declare const HKWorkoutTypeIdentifier: "HKWorkoutTypeIdentifier";
 /**
- * Represents an audiogram type identifier.
+ * Represents a type that identifies activity summary objects.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkactivitysummarytype Apple Docs HKActivitySummaryType}
  */
-export declare const HKAudiogramTypeIdentifier: "HKAudiogramTypeIdentifier";
+export declare const HKActivitySummaryType: "HKActivitySummaryType";
+/**
+ * Represents an audiogram type identifier.
+ * @see {@link https://developer.apple.com/documentation/healthkit/HKAudiogramSampleType Apple Docs HKAudiogramSampleType}
+ */
+export declare const HKAudiogramTypeIdentifier: "HKAudiogramSampleType";
 /**
  * Represents a workout route type identifier.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutroutetypeidentifier Apple Docs HKWorkoutRouteTypeIdentifier}
  */
 export declare const HKWorkoutRouteTypeIdentifier: "HKWorkoutRouteTypeIdentifier";
-export declare const HKDataTypeIdentifierHeartbeatSeries: "HKDataTypeIdentifierHeartbeatSeries";
+/**
+ * Represents a series sample containing heartbeat data..
+ * @see {@link https://developer.apple.com/documentation/healthkit/HKDataTypeIdentifierHeartbeatSeries Apple Docs HKDataTypeIdentifierHeartbeatSeries}
+ */
+export declare const HKDataTypeIdentifierHeartbeatSeries: 'HKDataTypeIdentifierHeartbeatSeries';
 /**
  * Represents a quantity type identifier.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier Apple Docs HKQuantityTypeIdentifier}
@@ -703,7 +713,7 @@ export declare enum HKCategoryTypeIdentifier {
     vomiting = "HKCategoryTypeIdentifierVomiting",
     wheezing = "HKCategoryTypeIdentifierWheezing"
 }
-export type HKSampleTypeIdentifier = HKCategoryTypeIdentifier | HKCorrelationTypeIdentifier | HKQuantityTypeIdentifier | typeof HKAudiogramTypeIdentifier | typeof HKDataTypeIdentifierHeartbeatSeries | typeof HKWorkoutRouteTypeIdentifier | typeof HKWorkoutTypeIdentifier | `${HKCategoryTypeIdentifier}` | `${HKCorrelationTypeIdentifier}` | `${HKQuantityTypeIdentifier}`;
+export type HKSampleTypeIdentifier = HKCategoryTypeIdentifier | HKCorrelationTypeIdentifier | HKQuantityTypeIdentifier | typeof HKActivitySummaryType | typeof HKAudiogramTypeIdentifier | typeof HKDataTypeIdentifierHeartbeatSeries | typeof HKWorkoutRouteTypeIdentifier | typeof HKWorkoutTypeIdentifier | `${HKCategoryTypeIdentifier}` | `${HKCorrelationTypeIdentifier}` | `${HKQuantityTypeIdentifier}`;
 export type HealthkitReadAuthorization = HKCharacteristicTypeIdentifier | HKSampleTypeIdentifier | `${HKCharacteristicTypeIdentifier}` | `${HKSampleTypeIdentifier}`;
 export type HealthkitWriteAuthorization = HKSampleTypeIdentifier;
 export declare enum HKCategoryValueAppleStandHour {

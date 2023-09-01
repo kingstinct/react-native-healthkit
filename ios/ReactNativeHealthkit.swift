@@ -1,6 +1,9 @@
 import HealthKit
 import CoreLocation
-//import WorkoutKit
+
+#if canImport(WorkoutKit)
+import WorkoutKit
+#endif
 
 @objc(ReactNativeHealthkit)
 @available(iOS 10.0, *)
@@ -778,7 +781,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                                         activityStartDate = self._dateFormatter.string(from: start)
                                     }
                                     if let end = activity.endDate as Date? {
-                                        activityEndDate = self._dateFormatter.string(from: end)
+                                        activityEndDate = self._dateFormatter.string(from: activity.endDate!)
                                     }
                                     let activityDict: [String: Any] = [
                                         "startDate": activityStartDate,
@@ -796,16 +799,18 @@ class ReactNativeHealthkit: RCTEventEmitter {
                             dict.setValue(serializeQuantity(unit: HKUnit.count(), quantity: workout.totalFlightsClimbed), forKey: "totalFlightsClimbed")
                         }
                         
-//                        if #available(iOS 17.0, *) {
-//                            do {
-//                                let workoutplan = try await workout.workoutPlan
-//                                if let workoutplanId = workoutplan?.id {
-//                                    dict["workoutPlanId"] = workoutplanId.uuidString
-//                                }
-//                            } catch {
-//                                // handle error
-//                            }
-//                        }
+                        #if canImport(WorkoutKit)
+                        if #available(iOS 17.0, *) {
+                            do {
+                                let workoutplan = try await workout.workoutPlan
+                                if let workoutplanId = workoutplan?.id {
+                                    dict["workoutPlanId"] = workoutplanId.uuidString
+                                }
+                            } catch {
+                                // handle error
+                            }
+                        }
+                        #endif
                         
                         arr.add(dict)
                     }
