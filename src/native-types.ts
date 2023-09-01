@@ -9,16 +9,28 @@ import type { EmitterSubscription, NativeModule } from 'react-native'
 export const HKWorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier' as const
 
 /**
- * Represents an audiogram type identifier.
+ * Represents a type that identifies activity summary objects.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkactivitysummarytype Apple Docs HKActivitySummaryType}
  */
-export const HKAudiogramTypeIdentifier = 'HKAudiogramTypeIdentifier' as const
+export const HKActivitySummaryType = 'HKActivitySummaryType' as const
+
+/**
+ * Represents an audiogram type identifier.
+ * @see {@link https://developer.apple.com/documentation/healthkit/HKAudiogramSampleType Apple Docs HKAudiogramSampleType}
+ */
+export const HKAudiogramTypeIdentifier = 'HKAudiogramSampleType' as const
 
 /**
  * Represents a workout route type identifier.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutroutetypeidentifier Apple Docs HKWorkoutRouteTypeIdentifier}
  */
 export const HKWorkoutRouteTypeIdentifier = 'HKWorkoutRouteTypeIdentifier' as const
-export const HKDataTypeIdentifierHeartbeatSeries = 'HKDataTypeIdentifierHeartbeatSeries' as const
+
+/**
+ * Represents a series sample containing heartbeat data..
+ * @see {@link https://developer.apple.com/documentation/healthkit/HKDataTypeIdentifierHeartbeatSeries Apple Docs HKDataTypeIdentifierHeartbeatSeries}
+ */
+export declare const HKDataTypeIdentifierHeartbeatSeries: 'HKDataTypeIdentifierHeartbeatSeries'
 
 /**
  * Represents a quantity type identifier.
@@ -670,6 +682,41 @@ export enum HKQuantityTypeIdentifier {
    * @since iOS 16
    */
   heartRateRecoveryOneMinute = 'HKQuantityTypeIdentifierHeartRateRecoveryOneMinute',
+
+  /**
+   * Running Ground Contact Time
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunninggroundcontacttime Apple Docs HKQuantityTypeIdentifierRunningGroundContactTime}
+   * @since iOS 16
+   */
+  runningGroundContactTime = 'HKQuantityTypeIdentifierRunningGroundContactTime',
+
+  /**
+   * Running Stride Length
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningstridelength Apple Docs HKQuantityTypeIdentifierRunningStrideLength}
+   * @since iOS 16
+   */
+  runningStrideLength = 'HKQuantityTypeIdentifierRunningStrideLength',
+
+  /**
+   * Running Power
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningpower Apple Docs HKQuantityTypeIdentifierRunningPower}
+   * @since iOS 16
+   */
+  runningPower = 'HKQuantityTypeIdentifierRunningPower',
+
+  /**
+   * Running Vertical Oscillation
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningverticaloscillation Apple Docs HKQuantityTypeIdentifierRunningVerticalOscillation}
+   * @since iOS 16
+   */
+  runningVerticalOscillation = 'HKQuantityTypeIdentifierRunningVerticalOscillation',
+
+  /**
+   * Running Speed
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrunningspeed Apple Docs HKQuantityTypeIdentifierRunningSpeed}
+   * @since iOS 16
+   */
+  runningSpeed = 'HKQuantityTypeIdentifierRunningSpeed',
 }
 
 export type TypeToUnitMapping = {
@@ -768,16 +815,7 @@ export enum HKCategoryTypeIdentifier {
 }
 
 export type HKSampleTypeIdentifier =
-  | HKCategoryTypeIdentifier
-  | HKCorrelationTypeIdentifier
-  | HKQuantityTypeIdentifier
-  | typeof HKAudiogramTypeIdentifier
-  | typeof HKDataTypeIdentifierHeartbeatSeries
-  | typeof HKWorkoutRouteTypeIdentifier
-  | typeof HKWorkoutTypeIdentifier
-  | `${HKCategoryTypeIdentifier}`
-  | `${HKCorrelationTypeIdentifier}`
-  | `${HKQuantityTypeIdentifier}`;
+  HKCategoryTypeIdentifier | HKCorrelationTypeIdentifier | HKQuantityTypeIdentifier | typeof HKActivitySummaryType | typeof HKAudiogramTypeIdentifier | typeof HKDataTypeIdentifierHeartbeatSeries | typeof HKWorkoutRouteTypeIdentifier | typeof HKWorkoutTypeIdentifier | `${HKCategoryTypeIdentifier}` | `${HKCorrelationTypeIdentifier}` | `${HKQuantityTypeIdentifier}`;
 
 export type HealthkitReadAuthorization =
   | HKCharacteristicTypeIdentifier
@@ -1673,6 +1711,30 @@ HKCategorySampleRaw<TCategory>,
 'device' | 'endDate' | 'startDate' | 'uuid'
 >;
 
+export interface HKWorkoutEvent {
+  readonly type: HKWorkoutEventType,
+  readonly startDate: string,
+  readonly endDate: string,
+}
+
+export enum HKWorkoutEventType {
+  pause = 1,
+  resume = 2,
+  lap = 3,
+  marker = 4,
+  motionPaused = 5,
+  motionResumed = 6,
+  segment = 7,
+  pauseOrResumeRequest = 8,
+}
+
+export interface HKWorkoutActivity {
+  readonly startDate: string,
+  readonly endDate: string,
+  readonly uuid: string,
+  readonly duration: number,
+}
+
 export type HKWorkoutRaw<
   TEnergy extends EnergyUnit,
   TDistance extends LengthUnit
@@ -1695,6 +1757,9 @@ export type HKWorkoutRaw<
   readonly endDate: string;
   readonly metadata?: HKWorkoutMetadata;
   readonly sourceRevision?: HKSourceRevision;
+  readonly events?: readonly HKWorkoutEvent[];
+  readonly activities?: readonly HKWorkoutActivity[];
+  readonly workoutPlanId?: string;
 };
 
 // Straight mapping to https://developer.apple.com/documentation/healthkit/hkcharacteristictypeidentifier
