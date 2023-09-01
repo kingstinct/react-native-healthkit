@@ -1157,20 +1157,20 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         let samples = try! await withCheckedThrowingContinuation {
             (continuation: CheckedContinuation<[HKSample], Error>) in
-                let query = HKSampleQuery(sampleType: HKObjectType.workoutType(), predicate: workoutPredicate, limit: 1, sortDescriptors: nil) { (query, results, error) in
+            let query = HKSampleQuery(sampleType: HKObjectType.workoutType(), predicate: workoutPredicate, limit: 1, sortDescriptors: nil) { (query, results, error) in
 
-                    if let hasError = error {
-                        continuation.resume(throwing: hasError)
-                        return
-                    }
-
-                    guard let samples = results else {
-                        fatalError("Should not fail")
-                    }
-
-                    continuation.resume(returning: samples)
+                if let hasError = error {
+                    continuation.resume(throwing: hasError)
+                    return
                 }
-                store.execute(query)
+
+                guard let samples = results else {
+                    fatalError("Should not fail")
+                }
+
+                continuation.resume(returning: samples)
+            }
+            store.execute(query)
         }
 
         guard let workouts = samples as? [HKWorkout] else {
