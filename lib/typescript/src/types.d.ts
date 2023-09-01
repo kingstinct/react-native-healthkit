@@ -1,4 +1,4 @@
-import type { EnergyUnit, HKCategorySampleRaw, HKCategoryTypeIdentifier, HKCorrelationRaw, HKCorrelationTypeIdentifier, HKDevice, HKHeartbeatSeriesSampleRaw, HKQuantityTypeIdentifier, HKSourceRevision, HKUnit, HKWorkoutRaw, LengthUnit, MetadataMapperForQuantityIdentifier, QueryStatisticsResponseRaw, UnitForIdentifier } from './native-types';
+import type { CLLocationRawForSaving, EnergyUnit, HKCategorySampleRaw, HKCategoryTypeIdentifier, HKCorrelationRaw, HKCorrelationTypeIdentifier, HKDevice, HKHeartbeatSeriesSampleRaw, HKQuantityTypeIdentifier, HKSourceRevision, HKUnit, HKWorkoutRaw, LengthUnit, MetadataMapperForQuantityIdentifier, QueryStatisticsResponseRaw, UnitForIdentifier } from './native-types';
 export * from './native-types';
 /**
  * Options for querying workouts.
@@ -80,12 +80,18 @@ export interface QueryStatisticsResponse<TIdentifier extends HKQuantityTypeIdent
  * Represents a category sample for saving.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorysample Apple Docs HKCategorySample}
  */
-export type HKCategorySampleForSaving = Omit<HKCategorySample, 'device' | 'endDate' | 'startDate' | 'uuid'>;
+export type HKCategorySampleForSaving = Omit<HKCategorySample, 'device' | 'endDate' | 'startDate' | 'uuid'> & {
+    readonly startDate?: Date;
+    readonly endDate?: Date;
+};
 /**
  * Represents a quantity sample for saving.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitysample Apple Docs HKQuantitySample}
  */
-export type HKQuantitySampleForSaving = Omit<HKQuantitySample, 'device' | 'endDate' | 'startDate' | 'uuid'>;
+export type HKQuantitySampleForSaving = Omit<HKQuantitySample, 'device' | 'endDate' | 'startDate' | 'uuid'> & {
+    readonly startDate?: Date;
+    readonly endDate?: Date;
+};
 /**
  * Represents a correlation.
  * @template TIdentifier The correlation type identifier.
@@ -96,3 +102,10 @@ export interface HKCorrelation<TIdentifier extends HKCorrelationTypeIdentifier> 
     readonly startDate: Date;
     readonly endDate: Date;
 }
+/**
+ * Represents a location sample for saving.
+ * @see {@link https://developer.apple.com/documentation/corelocation/cllocation Apple Docs CLLocation}
+ */
+export type CLLocationForSaving = Omit<CLLocationRawForSaving, 'timestamp'> & {
+    readonly timestamp: number;
+};

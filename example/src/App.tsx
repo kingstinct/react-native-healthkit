@@ -16,6 +16,7 @@ import deleteSamples from '@kingstinct/react-native-healthkit/utils/deleteSample
 import queryHeartbeatSeriesSamplesWithAnchor from '@kingstinct/react-native-healthkit/utils/queryHeartbeatSeriesSamplesWithAnchor'
 import queryQuantitySamplesWithAnchor from '@kingstinct/react-native-healthkit/utils/queryQuantitySamplesWithAnchor'
 import saveQuantitySample from '@kingstinct/react-native-healthkit/utils/saveQuantitySample'
+import saveWorkoutRoute from '@kingstinct/react-native-healthkit/utils/saveWorkoutRoute'
 import saveWorkoutSample from '@kingstinct/react-native-healthkit/utils/saveWorkoutSample'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -31,6 +32,8 @@ import {
   Text,
   TextInput,
 } from 'react-native-paper'
+
+import { generateWorkoutSamples } from './utils'
 
 import type {
   HealthkitReadAuthorization,
@@ -421,6 +424,35 @@ const SaveWorkout = () => {
   )
 }
 
+const SaveWorkoutRoute = () => {
+  const save = useCallback(async () => {
+    const { startTime, samples, locationSamples } = generateWorkoutSamples()
+
+    if (startTime && samples.length) {
+      try {
+        const workoutUUID = await saveWorkoutSample(
+          HKWorkoutActivityType.running,
+          samples,
+          new Date(startTime),
+        )
+
+        if (workoutUUID && locationSamples.length) {
+          await saveWorkoutRoute(workoutUUID, locationSamples)
+        }
+      } catch (error) {
+        console.error('Error Saving Activity', error)
+      }
+    }
+  }, [])
+
+  return (
+    <>
+      <Text>This will save an example Workout with Heart Rate, Pace and Location Data</Text>
+      <Button onPress={save}>Save</Button>
+    </>
+  )
+}
+
 const DeleteQuantity = () => {
   const typeToDelete = HKQuantityTypeIdentifier.stepCount
   const latestValue = useMostRecentQuantitySample(typeToDelete)
@@ -552,6 +584,10 @@ const saveableMassTypes: readonly HKQuantityTypeIdentifier[] = [
 const saveableWorkoutStuff: readonly HealthkitWriteAuthorization[] = [
   'HKQuantityTypeIdentifierDistanceWalkingRunning',
   'HKQuantityTypeIdentifierActiveEnergyBurned',
+  'HKWorkoutTypeIdentifier',
+  'HKWorkoutRouteTypeIdentifier',
+  HKQuantityTypeIdentifier.heartRate,
+  HKQuantityTypeIdentifier.runningSpeed,
 ]
 
 const readPermissions: readonly HealthkitReadAuthorization[] = [
@@ -695,7 +731,11 @@ const App = () => {
             <SaveWorkout />
           </List.Accordion>
 
-          <List.Accordion title='Delete Latest body mass Value' id='7'>
+          <List.Accordion title='Save Workout Route' id='7'>
+            <SaveWorkoutRoute />
+          </List.Accordion>
+
+          <List.Accordion title='Delete Latest body mass Value' id='8'>
             <DeleteSample />
           </List.Accordion>
         </List.AccordionGroup>

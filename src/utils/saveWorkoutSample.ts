@@ -18,7 +18,15 @@ async function saveWorkoutSample<TIdentifier extends HKWorkoutActivityType>(
 
   return Native.saveWorkoutSample(
     typeIdentifier,
-    quantities.map(((s) => ({ ...s, metadata: ensureMetadata(s.metadata) }))),
+    quantities.map((quantity) => {
+      const { startDate, endDate, ...rest } = quantity
+      const updatedQuantity = {
+        ...rest,
+        ...(startDate && { startDate: startDate.toISOString() }),
+        ...(endDate && { endDate: endDate.toISOString() }),
+      }
+      return { ...updatedQuantity, metadata: ensureMetadata(quantity.metadata) }
+    }),
     start,
     end,
     ensureMetadata(options?.metadata),

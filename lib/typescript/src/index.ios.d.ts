@@ -10,6 +10,7 @@ import queryWorkouts from './utils/queryWorkouts';
 import saveCategorySample from './utils/saveCategorySample';
 import saveCorrelationSample from './utils/saveCorrelationSample';
 import saveQuantitySample from './utils/saveQuantitySample';
+import saveWorkoutRoute from './utils/saveWorkoutRoute';
 import saveWorkoutSample from './utils/saveWorkoutSample';
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/about_the_healthkit_framework About the HealthKit Framework (Apple Docs)}
@@ -108,6 +109,7 @@ declare const _default: {
     saveCorrelationSample: typeof saveCorrelationSample;
     saveQuantitySample: typeof saveQuantitySample;
     saveWorkoutSample: typeof saveWorkoutSample;
+    saveWorkoutRoute: typeof saveWorkoutRoute;
     subscribeToChanges: (identifier: import("./native-types").HKSampleTypeIdentifier, callback: () => void) => Promise<() => Promise<boolean>>;
     /**
      * @returns the most recent sample for the given category type.
