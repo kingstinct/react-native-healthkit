@@ -716,13 +716,15 @@ class ReactNativeHealthkit: RCTEventEmitter {
                         
                         #if canImport(WorkoutKit)
                         if #available(iOS 17.0, *) {
-                            do {
-                                let workoutplan = try await workout.workoutPlan
-                                if let workoutplanId = workoutplan?.id {
-                                    dict["workoutPlanId"] = workoutplanId.uuidString
+                            Task {
+                                do {
+                                    let workoutplan = try await workout.workoutPlan
+                                    if let workoutplanId = workoutplan?.id {
+                                        dict["workoutPlanId"] = workoutplanId.uuidString
+                                    }
+                                } catch {
+                                    // handle error
                                 }
-                            } catch {
-                                // handle error
                             }
                         }
                         #endif
