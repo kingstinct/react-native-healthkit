@@ -1,3 +1,10 @@
+## [7.1.1](https://github.com/kingstinct/react-native-healthkit/compare/v7.1.0...v7.1.1) (2023-09-02)
+
+
+### Bug Fixes
+
+* xcode 15 build error for workoutKit logic ([16f3d4d](https://github.com/kingstinct/react-native-healthkit/commit/16f3d4dae1cd87d656879b60ed39434d236e3ba7))
+
 # [7.1.0](https://github.com/kingstinct/react-native-healthkit/compare/v7.0.6...v7.1.0) (2023-09-01)
 
 
