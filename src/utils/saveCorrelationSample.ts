@@ -24,7 +24,16 @@ async function saveCorrelationSample<
 
   return Native.saveCorrelationSample(
     typeIdentifier,
-    samples.map((s) => ({ ...s, metadata: ensureMetadata(s.metadata) })),
+    samples.map((sample) => {
+      const { startDate, endDate, ...rest } = sample
+      const updatedSample = {
+        ...rest,
+        ...(startDate && { startDate: new Date(startDate).toISOString() }),
+        ...(endDate && { endDate: new Date(endDate).toISOString() }),
+      }
+
+      return { ...updatedSample, metadata: ensureMetadata(sample.metadata) }
+    }),
     start,
     end,
     ensureMetadata(options?.metadata),
