@@ -1,3 +1,10 @@
+# [7.2.0](https://github.com/kingstinct/react-native-healthkit/compare/v7.1.1...v7.2.0) (2023-09-04)
+
+
+### Features
+
+* saveWorkoutRoute ([8760fb8](https://github.com/kingstinct/react-native-healthkit/commit/8760fb8753c5d1deda4677ccfe0a47050385ff63))
+
 ## [7.1.1](https://github.com/kingstinct/react-native-healthkit/compare/v7.1.0...v7.1.1) (2023-09-02)
 
 
