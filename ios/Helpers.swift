@@ -80,6 +80,12 @@ func sampleTypeFromString(typeIdentifier: String) -> HKSampleType? {
         }
     }
 
+    if #available(iOS 11.0, *) {
+        if typeIdentifier == HKWorkoutRouteTypeIdentifier {
+            return HKObjectType.seriesType(forIdentifier: typeIdentifier)
+        }
+    }
+
     return nil
 }
 
