@@ -1262,8 +1262,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
                     let workout = await self.getWorkoutByID(store: store, workoutUUID: uuid)
                     if let workout {
                         let workoutPlan = try await workout.workoutPlan
-                        if let workoutPlanId = workoutPlan?.id {
-                            return resolve(workoutPlan?.id)
+                        if (workoutPlan?.id) != nil {
+                            return resolve(workoutPlan?.id.uuidString)
                         } else {
                             return resolve(nil)
                         }
