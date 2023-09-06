@@ -329,13 +329,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 return reject(GENERIC_ERROR, "Start date must be before end date", nil)
             }
         }
-
-        // if start and end both exist,  ensure that start date is before end date
-        if let startDate = start as Date?, let endDate = end as Date? {
-            if startDate > endDate {
-                return reject(GENERIC_ERROR, "Start date must be before end date", nil)
-            }
-        }
         
         var initializedSamples = [HKSample]()
         var totalEnergyBurned: HKQuantity?

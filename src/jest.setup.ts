@@ -1,6 +1,6 @@
-import { NativeModule, NativeModules } from "react-native";
+import { NativeModule, NativeModules } from 'react-native'
 
-import type Native from "./native-types";
+import type Native from './native-types'
 
 const mockModule: NativeModule & typeof Native = {
   isHealthDataAvailable: jest.fn(),
@@ -41,6 +41,6 @@ const mockModule: NativeModule & typeof Native = {
   canAccessProtectedData: jest.fn(),
   saveWorkoutRoute: jest.fn(),
   getWorkoutPlanId: jest.fn(),
-};
+}
 
-NativeModules.ReactNativeHealthkit = mockModule;
+NativeModules.ReactNativeHealthkit = mockModule
