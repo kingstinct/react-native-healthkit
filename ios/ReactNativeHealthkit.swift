@@ -797,21 +797,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
                             dict.setValue(serializeQuantity(unit: HKUnit.count(), quantity: workout.totalFlightsClimbed), forKey: "totalFlightsClimbed")
                         }
 
-                        #if canImport(WorkoutKit)
-                        if #available(iOS 17.0, *) {
-                            Task {
-                                do {
-                                    let workoutplan = try await workout.workoutPlan
-                                    if let workoutplanId = workoutplan?.id {
-                                        dict["workoutPlanId"] = workoutplanId.uuidString
-                                    }
-                                } catch {
-                                    // handle error
-                                }
-                            }
-                        }
-                        #endif
-
                         arr.add(dict)
                     }
                 }
@@ -1261,6 +1246,40 @@ class ReactNativeHealthkit: RCTEventEmitter {
             allRoutes.append(routeInfos.merging(routeMetadata) { (current, _) in current })
         }
         return allRoutes
+    }
+
+    @available(iOS 17.0.0, *)
+    @objc(getWorkoutPlan:resolve:reject:)
+    func getWorkoutPlanId(workoutUUID: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+        }
+
+        #if canImport(WorkoutKit)
+        Task {
+            if let uuid = UUID(uuidString: workoutUUID) {
+                do {
+                    let workout = await self.getWorkoutByID(store: store, workoutUUID: uuid)
+                    if let workout {
+                        let workoutPlan = try await workout.workoutPlan
+                        if let <#identifier#> = workoutPlan?.id {
+                            return resolve(workoutPlan?.id)
+                        } else {
+                            return resolve(nil)
+                        }
+                    } else {
+                        return reject(GENERIC_ERROR, "No workout found", nil)
+                    }
+                } catch {
+                    return reject(GENERIC_ERROR, error.localizedDescription, error)
+                 }
+            } else {
+                return reject(GENERIC_ERROR, "Invalid UUID", nil)
+            }
+        }
+        #else
+        return resolve(nil)
+        #endif
     }
 
     func serializeLocation(location: CLLocation, previousLocation: CLLocation?) -> [String: Any] {

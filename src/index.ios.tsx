@@ -16,6 +16,7 @@ import getMostRecentWorkout from './utils/getMostRecentWorkout'
 import getPreferredUnit from './utils/getPreferredUnit'
 import getPreferredUnits from './utils/getPreferredUnits'
 import getRequestStatusForAuthorization from './utils/getRequestStatusForAuthorization'
+import getWorkoutPlanId from './utils/getWorkoutPlanId'
 import queryCategorySamples from './utils/queryCategorySamples'
 import queryCategorySamplesWithAnchor from './utils/queryCategorySamplesWithAnchor'
 import queryCorrelationSamples from './utils/queryCorrelationSamples'
@@ -150,6 +151,7 @@ export default {
   * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutroutequery HKWorkoutRouteQuery (Apple Docs)}
    */
   getWorkoutRoutes,
+  getWorkoutPlanId,
 
   getPreferredUnit,
   getPreferredUnits,

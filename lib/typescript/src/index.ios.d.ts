@@ -5,6 +5,7 @@ import useSubscribeToChanges from './hooks/useSubscribeToChanges';
 import { HKQuantityTypeIdentifier } from './native-types';
 import getMostRecentCategorySample from './utils/getMostRecentCategorySample';
 import getMostRecentQuantitySample from './utils/getMostRecentQuantitySample';
+import getWorkoutPlanId from './utils/getWorkoutPlanId';
 import queryStatisticsForQuantity from './utils/queryStatisticsForQuantity';
 import queryWorkouts from './utils/queryWorkouts';
 import saveCategorySample from './utils/saveCategorySample';
@@ -85,6 +86,7 @@ declare const _default: {
     * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutroutequery HKWorkoutRouteQuery (Apple Docs)}
      */
     getWorkoutRoutes: (workoutUUID: string) => Promise<readonly import("./native-types").WorkoutRoute[]>;
+    getWorkoutPlanId: typeof getWorkoutPlanId;
     getPreferredUnit: import("./utils/getPreferredUnit").GetPreferredUnitFn;
     getPreferredUnits: import("./utils/getPreferredUnits").GetPreferredUnitsFn;
     getRequestStatusForAuthorization: (read: readonly import("./native-types").HealthkitReadAuthorization[], write?: readonly import("./native-types").HKSampleTypeIdentifier[]) => Promise<import("./native-types").HKAuthorizationRequestStatus>;

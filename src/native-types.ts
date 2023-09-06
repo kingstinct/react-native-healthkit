@@ -2100,6 +2100,7 @@ type ReactNativeHealthkitTypeNative = {
   readonly getWorkoutRoutes: (
     workoutUUID: string
   ) => Promise<readonly WorkoutRoute[]>;
+  readonly getWorkoutPlanId: (workoutUUID: string) => Promise<string | null>;
 };
 
 const Native =

@@ -1,5 +1,5 @@
-import { NativeEventEmitter } from 'react-native';
-import type { EmitterSubscription } from 'react-native';
+import { NativeEventEmitter } from "react-native";
+import type { EmitterSubscription } from "react-native";
 /**
  * Represents a workout type identifier.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkworkouttypeidentifier Apple Docs HKWorkoutTypeIdentifier}
@@ -24,7 +24,7 @@ export declare const HKWorkoutRouteTypeIdentifier: "HKWorkoutRouteTypeIdentifier
  * Represents a series sample containing heartbeat data..
  * @see {@link https://developer.apple.com/documentation/healthkit/HKDataTypeIdentifierHeartbeatSeries Apple Docs HKDataTypeIdentifierHeartbeatSeries}
  */
-export declare const HKDataTypeIdentifierHeartbeatSeries: 'HKDataTypeIdentifierHeartbeatSeries';
+export declare const HKDataTypeIdentifierHeartbeatSeries: "HKDataTypeIdentifierHeartbeatSeries";
 /**
  * Represents a quantity type identifier.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier Apple Docs HKQuantityTypeIdentifier}
@@ -36,24 +36,24 @@ export declare enum HKQuantityTypeIdentifier {
      */
     bodyMassIndex = "HKQuantityTypeIdentifierBodyMassIndex",
     /**
-       * Body Fat Percentage
-       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbodyfatpercentage Apple Docs HKQuantityTypeIdentifierBodyFatPercentage}
-       */
+     * Body Fat Percentage
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbodyfatpercentage Apple Docs HKQuantityTypeIdentifierBodyFatPercentage}
+     */
     bodyFatPercentage = "HKQuantityTypeIdentifierBodyFatPercentage",
     /**
-       * Height
-       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierheight Apple Docs HKQuantityTypeIdentifierHeight}
-       */
+     * Height
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierheight Apple Docs HKQuantityTypeIdentifierHeight}
+     */
     height = "HKQuantityTypeIdentifierHeight",
     /**
-       * Body Mass
-       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbodymass Apple Docs HKQuantityTypeIdentifierBodyMass}
-       */
+     * Body Mass
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbodymass Apple Docs HKQuantityTypeIdentifierBodyMass}
+     */
     bodyMass = "HKQuantityTypeIdentifierBodyMass",
     /**
-       * Lean Body Mass
-       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierleanbodymass Apple Docs HKQuantityTypeIdentifierLeanBodyMass}
-       */
+     * Lean Body Mass
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierleanbodymass Apple Docs HKQuantityTypeIdentifierLeanBodyMass}
+     */
     leanBodyMass = "HKQuantityTypeIdentifierLeanBodyMass",
     /**
      * Waist Circumference
@@ -180,7 +180,7 @@ export declare enum HKQuantityTypeIdentifier {
      * Heart Rate Variability SDNN
      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierheartratevariabilitysdnn Apple Docs HKQuantityTypeIdentifierHeartRateVariabilitySDNN}
      * @since iOS 11.0
-    */
+     */
     heartRateVariabilitySDNN = "HKQuantityTypeIdentifierHeartRateVariabilitySDNN",
     /**
      * Oxygen Saturation
@@ -257,20 +257,20 @@ export declare enum HKQuantityTypeIdentifier {
      */
     headphoneAudioExposure = "HKQuantityTypeIdentifierHeadphoneAudioExposure",
     /**
-       * Dietary Fat Total
-       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfattotal Apple Docs HKQuantityTypeIdentifierDietaryFatTotal}
-       * @since iOS 8
-       */
+     * Dietary Fat Total
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfattotal Apple Docs HKQuantityTypeIdentifierDietaryFatTotal}
+     * @since iOS 8
+     */
     dietaryFatTotal = "HKQuantityTypeIdentifierDietaryFatTotal",
     /**
-       * Dietary Fat Polyunsaturated
-       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfatpolyunsaturated Apple Docs HKQuantityTypeIdentifierDietaryFatPolyunsaturated}
-       */
+     * Dietary Fat Polyunsaturated
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfatpolyunsaturated Apple Docs HKQuantityTypeIdentifierDietaryFatPolyunsaturated}
+     */
     dietaryFatPolyunsaturated = "HKQuantityTypeIdentifierDietaryFatPolyunsaturated",
     /**
-       * Dietary Fat Monounsaturated
-       * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfatmonounsaturated Apple Docs HKQuantityTypeIdentifierDietaryFatMonounsaturated}
-       */
+     * Dietary Fat Monounsaturated
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfatmonounsaturated Apple Docs HKQuantityTypeIdentifierDietaryFatMonounsaturated}
+     */
     dietaryFatMonounsaturated = "HKQuantityTypeIdentifierDietaryFatMonounsaturated",
     /**
      * Dietary Fat Saturated
@@ -278,24 +278,24 @@ export declare enum HKQuantityTypeIdentifier {
      */
     dietaryFatSaturated = "HKQuantityTypeIdentifierDietaryFatSaturated",
     /**
-      * Dietary Cholesterol
-      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarycholesterol Apple Docs HKQuantityTypeIdentifierDietaryCholesterol}
-      */
+     * Dietary Cholesterol
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarycholesterol Apple Docs HKQuantityTypeIdentifierDietaryCholesterol}
+     */
     dietaryCholesterol = "HKQuantityTypeIdentifierDietaryCholesterol",
     /**
-      * Dietary Sodium
-      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarysodium Apple Docs HKQuantityTypeIdentifierDietarySodium}
-      */
+     * Dietary Sodium
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarysodium Apple Docs HKQuantityTypeIdentifierDietarySodium}
+     */
     dietarySodium = "HKQuantityTypeIdentifierDietarySodium",
     /**
-      * Dietary Carbohydrates
-      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarycarbohydrates Apple Docs HKQuantityTypeIdentifierDietaryCarbohydrates}
-      */
+     * Dietary Carbohydrates
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarycarbohydrates Apple Docs HKQuantityTypeIdentifierDietaryCarbohydrates}
+     */
     dietaryCarbohydrates = "HKQuantityTypeIdentifierDietaryCarbohydrates",
     /**
-      * Dietary Fiber
-      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfiber Apple Docs HKQuantityTypeIdentifierDietaryFiber}
-      */
+     * Dietary Fiber
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfiber Apple Docs HKQuantityTypeIdentifierDietaryFiber}
+     */
     dietaryFiber = "HKQuantityTypeIdentifierDietaryFiber",
     /**
      * Dietary Sugar
@@ -353,49 +353,49 @@ export declare enum HKQuantityTypeIdentifier {
      */
     dietaryCalcium = "HKQuantityTypeIdentifierDietaryCalcium",
     /**
-      * Dietary Iron
-      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryiron Apple Docs HKQuantityTypeIdentifierDietaryIron}
-      */
+     * Dietary Iron
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryiron Apple Docs HKQuantityTypeIdentifierDietaryIron}
+     */
     dietaryIron = "HKQuantityTypeIdentifierDietaryIron",
     /**
-      * Dietary Thiamin
-      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarythiamin Apple Docs HKQuantityTypeIdentifierDietaryThiamin}
-      */
+     * Dietary Thiamin
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarythiamin Apple Docs HKQuantityTypeIdentifierDietaryThiamin}
+     */
     dietaryThiamin = "HKQuantityTypeIdentifierDietaryThiamin",
     /**
-      * Dietary Riboflavin
-      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryriboflavin Apple Docs HKQuantityTypeIdentifierDietaryRiboflavin}
-      */
+     * Dietary Riboflavin
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryriboflavin Apple Docs HKQuantityTypeIdentifierDietaryRiboflavin}
+     */
     dietaryRiboflavin = "HKQuantityTypeIdentifierDietaryRiboflavin",
     /**
-      * Dietary Niacin
-      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryniacin Apple Docs HKQuantityTypeIdentifierDietaryNiacin}
-      */
+     * Dietary Niacin
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryniacin Apple Docs HKQuantityTypeIdentifierDietaryNiacin}
+     */
     dietaryNiacin = "HKQuantityTypeIdentifierDietaryNiacin",
     /**
-      * Dietary Folate
-      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfolate Apple Docs HKQuantityTypeIdentifierDietaryFolate}
-      */
+     * Dietary Folate
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryfolate Apple Docs HKQuantityTypeIdentifierDietaryFolate}
+     */
     dietaryFolate = "HKQuantityTypeIdentifierDietaryFolate",
     /**
-      * Dietary Biotin
-      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarybiotin Apple Docs HKQuantityTypeIdentifierDietaryBiotin}
-      */
+     * Dietary Biotin
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarybiotin Apple Docs HKQuantityTypeIdentifierDietaryBiotin}
+     */
     dietaryBiotin = "HKQuantityTypeIdentifierDietaryBiotin",
     /**
-      * Dietary Pantothenic Acid
-      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarypantothenicacid Apple Docs HKQuantityTypeIdentifierDietaryPantothenicAcid}
-      */
+     * Dietary Pantothenic Acid
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietarypantothenicacid Apple Docs HKQuantityTypeIdentifierDietaryPantothenicAcid}
+     */
     dietaryPantothenicAcid = "HKQuantityTypeIdentifierDietaryPantothenicAcid",
     /**
-      * Dietary Phosphorus
-      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryphosphorus Apple Docs HKQuantityTypeIdentifierDietaryPhosphorus}
-      */
+     * Dietary Phosphorus
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryphosphorus Apple Docs HKQuantityTypeIdentifierDietaryPhosphorus}
+     */
     dietaryPhosphorus = "HKQuantityTypeIdentifierDietaryPhosphorus",
     /**
-      * Dietary Iodine
-      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryiodine Apple Docs HKQuantityTypeIdentifierDietaryIodine}
-      */
+     * Dietary Iodine
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierdietaryiodine Apple Docs HKQuantityTypeIdentifierDietaryIodine}
+     */
     dietaryIodine = "HKQuantityTypeIdentifierDietaryIodine",
     /**
      * Dietary Magnesium
@@ -1286,11 +1286,11 @@ export type CLLocationRawForSaving = {
     readonly speed: number;
     readonly timestamp: string;
 };
-export type HKQuantitySampleRawForSaving<TQuantityIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TQuantityIdentifier> = UnitForIdentifier<TQuantityIdentifier>> = Omit<HKQuantitySampleRaw<TQuantityIdentifier, TUnit>, 'device' | 'endDate' | 'startDate' | 'uuid'> & {
+export type HKQuantitySampleRawForSaving<TQuantityIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TQuantityIdentifier> = UnitForIdentifier<TQuantityIdentifier>> = Omit<HKQuantitySampleRaw<TQuantityIdentifier, TUnit>, "device" | "endDate" | "startDate" | "uuid"> & {
     readonly startDate?: string;
     readonly endDate?: string;
 };
-export type HKCategorySampleRawForSaving<TCategory extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier> = Omit<HKCategorySampleRaw<TCategory>, 'device' | 'endDate' | 'startDate' | 'uuid'> & {
+export type HKCategorySampleRawForSaving<TCategory extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier> = Omit<HKCategorySampleRaw<TCategory>, "device" | "endDate" | "startDate" | "uuid"> & {
     readonly startDate?: string;
     readonly endDate?: string;
 };
@@ -1392,8 +1392,8 @@ export type HKCorrelationRaw<TIdentifier extends HKCorrelationTypeIdentifier> = 
 };
 type QueryId = string;
 /**
-* @see {@link https://developer.apple.com/documentation/healthkit/hkupdatefrequency Apple Docs }
-*/
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkupdatefrequency Apple Docs }
+ */
 export declare enum HKUpdateFrequency {
     immediate = 1,
     hourly = 2,
@@ -1428,16 +1428,16 @@ type ReactNativeHealthkitTypeNative = {
     getFitzpatrickSkinType(): Promise<HKFitzpatrickSkinType>;
     readonly getWheelchairUse: () => Promise<HKWheelchairUse>;
     /**
-    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614175-enablebackgrounddelivery Apple Docs }
-    */
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614175-enablebackgrounddelivery Apple Docs }
+     */
     readonly enableBackgroundDelivery: (typeIdentifier: HKSampleTypeIdentifier, updateFrequency: HKUpdateFrequency) => Promise<boolean>;
     /**
      * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614177-disablebackgrounddelivery Apple Docs }
      */
     readonly disableBackgroundDelivery: (typeIdentifier: HKSampleTypeIdentifier) => Promise<boolean>;
     /**
-    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614158-disableallbackgrounddelivery Apple Docs }
-    */
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614158-disableallbackgrounddelivery Apple Docs }
+     */
     readonly disableAllBackgroundDelivery: () => Promise<boolean>;
     readonly saveCorrelationSample: <TIdentifier extends HKCorrelationTypeIdentifier, TSamples extends readonly (HKCategorySampleRawForSaving | HKQuantitySampleRawForSaving)[]>(typeIdentifier: TIdentifier, samples: TSamples, start: string, end: string, metadata: MetadataMapperForCorrelationIdentifier<TIdentifier>) => Promise<boolean>;
     readonly saveWorkoutSample: (typeIdentifier: HKWorkoutActivityType, quantities: readonly HKQuantitySampleRawForSaving[], start: string, end: string, metadata: HKWorkoutMetadata) => Promise<string | null>;
@@ -1446,15 +1446,15 @@ type ReactNativeHealthkitTypeNative = {
     subscribeToObserverQuery(identifier: HKSampleTypeIdentifier): Promise<QueryId>;
     unsubscribeQuery(queryId: QueryId): Promise<boolean>;
     /**
-    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614154-authorizationstatus Apple Docs }
-    */
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614154-authorizationstatus Apple Docs }
+     */
     authorizationStatusFor(type: HealthkitReadAuthorization): Promise<HKAuthorizationStatus>;
     /**
-    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/2994346-getrequeststatusforauthorization Apple Docs }
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/2994346-getrequeststatusforauthorization Apple Docs }
      */
     getRequestStatusForAuthorization(write: WritePermissions, read: ReadPermissions): Promise<HKAuthorizationRequestStatus>;
     /**
-    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614152-requestauthorization Apple Docs }
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614152-requestauthorization Apple Docs }
      */
     requestAuthorization(write: WritePermissions, read: ReadPermissions): Promise<boolean>;
     readonly saveQuantitySample: <TType extends HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TType> = UnitForIdentifier<TType>>(identifier: TType, unit: TUnit, value: number, start: string, end: string, metadata: unknown) => Promise<boolean>;
@@ -1472,13 +1472,14 @@ type ReactNativeHealthkitTypeNative = {
     readonly queryStatisticsForQuantity: <TIdentifier extends HKQuantityTypeIdentifier, TUnit extends UnitForIdentifier<TIdentifier>>(identifier: HKQuantityTypeIdentifier, unit: TUnit, from: string, to: string, options: readonly HKStatisticsOptions[]) => Promise<QueryStatisticsResponseRaw<TIdentifier, TUnit>>;
     readonly getPreferredUnits: (identifiers: readonly HKQuantityTypeIdentifier[]) => Promise<TypeToUnitMapping>;
     readonly getWorkoutRoutes: (workoutUUID: string) => Promise<readonly WorkoutRoute[]>;
+    readonly getWorkoutPlanId: (workoutUUID: string) => Promise<string | null>;
 };
 declare const Native: ReactNativeHealthkitTypeNative;
 type OnChangeCallback = ({ typeIdentifier, }: {
     readonly typeIdentifier: HKSampleTypeIdentifier;
 }) => void;
 interface HealthkitEventEmitter extends NativeEventEmitter {
-    readonly addListener: (eventType: 'onChange', callback: OnChangeCallback) => EmitterSubscription;
+    readonly addListener: (eventType: "onChange", callback: OnChangeCallback) => EmitterSubscription;
 }
 export declare const EventEmitter: HealthkitEventEmitter;
 export default Native;

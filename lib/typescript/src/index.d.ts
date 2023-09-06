@@ -20,6 +20,7 @@ declare const _default: {
     getMostRecentCategorySample: typeof import("./utils/getMostRecentCategorySample").default;
     getMostRecentWorkout: import("./utils/getMostRecentWorkout").GetMostRecentWorkoutFn;
     getWorkoutRoutes: (workoutUUID: string) => Promise<readonly import("./native-types").WorkoutRoute[]>;
+    getWorkoutPlanId: typeof import("./utils/getWorkoutPlanId").default;
     getPreferredUnit: import("./utils/getPreferredUnit").GetPreferredUnitFn;
     getPreferredUnits: import("./utils/getPreferredUnits").GetPreferredUnitsFn;
     getRequestStatusForAuthorization: (read: readonly import("./native-types").HealthkitReadAuthorization[], write?: readonly import("./native-types").HKSampleTypeIdentifier[]) => Promise<HKAuthorizationRequestStatus>;
