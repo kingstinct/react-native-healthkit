@@ -1249,7 +1249,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
 
     @available(iOS 17.0.0, *)
-    @objc(getWorkoutPlan:resolve:reject:)
+    @objc(getWorkoutPlanId:resolve:reject:)
     func getWorkoutPlanId(workoutUUID: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)

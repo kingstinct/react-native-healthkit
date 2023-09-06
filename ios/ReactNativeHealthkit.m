@@ -211,7 +211,7 @@ RCT_EXTERN_METHOD(getWorkoutRoutes:(NSString)workoutUUID
                   reject:(RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(getWorkoutRoutes:(NSString)workoutUUID
+RCT_EXTERN_METHOD(getWorkoutPlanId:(NSString)workoutUUID
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
 )
