@@ -1242,6 +1242,29 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
 
     @available(iOS 17.0.0, *)
+    func getWorkoutPlan(workout: HKWorkout) async -> [String: Any]? {
+        do {
+            let workoutPlan = try await workout.workoutPlan
+            
+            var dict = [String: Any]()
+            if (workoutPlan?.id) != nil {
+                dict["id"] = workoutPlan?.id.uuidString
+                
+            }
+            if (workoutPlan?.workout.activity) != nil {
+                dict["activityType"] = workoutPlan?.workout.activity.rawValue
+            }
+            
+            if dict.isEmpty {
+                return nil
+            }
+            return dict
+        } catch {
+            return nil
+        }
+    }
+
+    @available(iOS 17.0.0, *)
     @objc(getWorkoutPlanById:resolve:reject:)
     func getWorkoutPlanById(workoutUUID: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
@@ -1251,31 +1274,14 @@ class ReactNativeHealthkit: RCTEventEmitter {
         #if canImport(WorkoutKit)
         Task {
             if let uuid = UUID(uuidString: workoutUUID) {
-                do {
-                    let workout = await self.getWorkoutByID(store: store, workoutUUID: uuid)
-                    if let workout {
-                        let workoutPlan = try await workout.workoutPlan
-                        
-                        var dict = [String: Any]()
-                        if (workoutPlan?.id) != nil {
-                            dict["id"] = workoutPlan?.id.uuidString
-                            
-                        }
-                        if (workoutPlan?.workout.activity) != nil {
-                            dict["activityType"] = workoutPlan?.workout.activity.rawValue
-                        }
-                        
-                        if dict.isEmpty {
-                            return resolve(nil)
-                        }
-                        
-                        return resolve(dict)
-                    } else {
-                        return reject(GENERIC_ERROR, "No workout found", nil)
-                    }
-                } catch {
-                    return reject(GENERIC_ERROR, error.localizedDescription, error)
-                 }
+                let workout = await self.getWorkoutByID(store: store, workoutUUID: uuid)
+                if let workout {
+                    let workoutPlan = await self.getWorkoutPlan(workout: workout)
+                    
+                    return resolve(workoutPlan)
+                } else {
+                    return reject(GENERIC_ERROR, "No workout found", nil)
+                }
             } else {
                 return reject(GENERIC_ERROR, "Invalid UUID", nil)
             }
