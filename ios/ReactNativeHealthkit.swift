@@ -1242,8 +1242,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
 
     @available(iOS 17.0.0, *)
-    @objc(getWorkoutPlanId:resolve:reject:)
-    func getWorkoutPlanId(workoutUUID: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    @objc(getWorkoutPlanById:resolve:reject:)
+    func getWorkoutPlanById(workoutUUID: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
@@ -1255,11 +1255,21 @@ class ReactNativeHealthkit: RCTEventEmitter {
                     let workout = await self.getWorkoutByID(store: store, workoutUUID: uuid)
                     if let workout {
                         let workoutPlan = try await workout.workoutPlan
+                        
+                        var dict = [String: Any]()
                         if (workoutPlan?.id) != nil {
-                            return resolve(workoutPlan?.id.uuidString)
-                        } else {
+                            dict["id"] = workoutPlan?.id.uuidString
+                            
+                        }
+                        if (workoutPlan?.workout.activity) != nil {
+                            dict["activityType"] = workoutPlan?.workout.activity.rawValue
+                        }
+                        
+                        if dict.isEmpty {
                             return resolve(nil)
                         }
+                        
+                        return resolve(dict)
                     } else {
                         return reject(GENERIC_ERROR, "No workout found", nil)
                     }

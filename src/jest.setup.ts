@@ -40,7 +40,7 @@ const mockModule: NativeModule & typeof Native = {
   // Todo [>8]: Remove to align with Apple function name (isProtectedDataAvailable)
   canAccessProtectedData: jest.fn(),
   saveWorkoutRoute: jest.fn(),
-  getWorkoutPlanId: jest.fn(),
+  getWorkoutPlanById: jest.fn(),
 }
 
 NativeModules.ReactNativeHealthkit = mockModule

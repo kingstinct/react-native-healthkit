@@ -12,7 +12,7 @@ export const HKWorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier' as const
  * Represents a type that identifies activity summary objects.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkactivitysummarytype Apple Docs HKActivitySummaryType}
  */
-export const HKActivitySummaryType = 'HKActivitySummaryType' as const
+export const HKActivitySummaryTypeIdentifier = 'HKActivitySummaryTypeIdentifier' as const
 
 /**
  * Represents an audiogram type identifier.
@@ -818,7 +818,7 @@ export type HKSampleTypeIdentifier =
   | HKCategoryTypeIdentifier
   | HKCorrelationTypeIdentifier
   | HKQuantityTypeIdentifier
-  | typeof HKActivitySummaryType
+  | typeof HKActivitySummaryTypeIdentifier
   | typeof HKAudiogramTypeIdentifier
   | typeof HKDataTypeIdentifierHeartbeatSeries
   | typeof HKWorkoutRouteTypeIdentifier
@@ -2099,7 +2099,7 @@ type ReactNativeHealthkitTypeNative = {
   readonly getWorkoutRoutes: (
     workoutUUID: string
   ) => Promise<readonly WorkoutRoute[]>;
-  readonly getWorkoutPlanId: (workoutUUID: string) => Promise<string | null>;
+  readonly getWorkoutPlanById: (workoutUUID: string) => Promise<{readonly id: string, readonly activityType: HKWorkoutActivityType} | null>;
 };
 
 const Native = NativeModules.ReactNativeHealthkit as ReactNativeHealthkitTypeNative

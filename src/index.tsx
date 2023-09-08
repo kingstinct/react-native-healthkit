@@ -77,7 +77,7 @@ const Healthkit = {
   requestAuthorization: UnavailableFn(Promise.resolve(false)),
   deleteQuantitySample: UnavailableFn(Promise.resolve(false)),
   deleteSamples: UnavailableFn(Promise.resolve(false)),
-  getWorkoutPlanId: UnavailableFn(Promise.resolve(null)),
+  getWorkoutPlanById: UnavailableFn(Promise.resolve(null)),
   saveCategorySample: UnavailableFn(Promise.resolve(false)),
   saveCorrelationSample: UnavailableFn(Promise.resolve(false)),
   saveQuantitySample: UnavailableFn(Promise.resolve(false)),
