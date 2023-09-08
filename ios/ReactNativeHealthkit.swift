@@ -1243,6 +1243,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
     @available(iOS 17.0.0, *)
     func getWorkoutPlan(workout: HKWorkout) async -> [String: Any]? {
+        #if canImport(WorkoutKit)
         do {
             let workoutPlan = try await workout.workoutPlan
             
@@ -1262,6 +1263,9 @@ class ReactNativeHealthkit: RCTEventEmitter {
         } catch {
             return nil
         }
+        #else
+        return nil
+        #endif
     }
 
     @objc(getWorkoutPlanById:resolve:reject:)
