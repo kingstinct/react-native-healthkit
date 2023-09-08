@@ -1264,31 +1264,34 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
     }
 
-    @available(iOS 17.0.0, *)
     @objc(getWorkoutPlanById:resolve:reject:)
     func getWorkoutPlanById(workoutUUID: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
-        }
-
-        #if canImport(WorkoutKit)
-        Task {
-            if let uuid = UUID(uuidString: workoutUUID) {
-                let workout = await self.getWorkoutByID(store: store, workoutUUID: uuid)
-                if let workout {
-                    let workoutPlan = await self.getWorkoutPlan(workout: workout)
-                    
-                    return resolve(workoutPlan)
-                } else {
-                    return reject(GENERIC_ERROR, "No workout found", nil)
-                }
-            } else {
-                return reject(GENERIC_ERROR, "Invalid UUID", nil)
+        if #available(iOS 17.0, *) {
+            #if canImport(WorkoutKit)
+            guard let store = _store else {
+                return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
             }
+            
+            Task {
+                if let uuid = UUID(uuidString: workoutUUID) {
+                    let workout = await self.getWorkoutByID(store: store, workoutUUID: uuid)
+                    if let workout {
+                        let workoutPlan = await self.getWorkoutPlan(workout: workout)
+                        
+                        return resolve(workoutPlan)
+                    } else {
+                        return reject(GENERIC_ERROR, "No workout found", nil)
+                    }
+                } else {
+                    return reject(GENERIC_ERROR, "Invalid UUID", nil)
+                }
+            }
+            #else
+                return resolve(nil)
+            #endif
+        } else {
+            return resolve(nil)
         }
-        #else
-        return resolve(nil)
-        #endif
     }
 
     func serializeLocation(location: CLLocation, previousLocation: CLLocation?) -> [String: Any] {
