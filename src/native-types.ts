@@ -1853,6 +1853,38 @@ export type HKCorrelationRaw<TIdentifier extends HKCorrelationTypeIdentifier> =
     readonly endDate: string;
   };
 
+export type HKStatistics<
+  TIdentifier extends HKQuantityTypeIdentifier,
+  TUnit extends UnitForIdentifier<TIdentifier>
+> = {
+  readonly startDate: Date,
+  readonly endDate: Date,
+  readonly averageQuantity?: HKQuantity<TIdentifier, TUnit>;
+  readonly maximumQuantity?: HKQuantity<TIdentifier, TUnit>;
+  readonly minimumQuantity?: HKQuantity<TIdentifier, TUnit>;
+  readonly sumQuantity?: HKQuantity<TIdentifier, TUnit>;
+  readonly duration?: HKQuantity<HKQuantityTypeIdentifier, TimeUnit>;
+}
+
+export type HKActivitySummary<TEnergyUnit extends EnergyUnit, TTimeUnit extends TimeUnit> = {
+  readonly startDate: Date,
+  readonly activeEnergyBurned: HKQuantity<HKQuantityTypeIdentifier.activeEnergyBurned, TEnergyUnit>;
+  readonly activeEnergyBurnedGoal: HKQuantity<HKQuantityTypeIdentifier.activeEnergyBurned, TEnergyUnit>;
+  readonly appleMoveTime: HKQuantity<HKQuantityTypeIdentifier.appleMoveTime, TTimeUnit>;
+  readonly appleMoveTimeGoal: HKQuantity<HKQuantityTypeIdentifier.appleMoveTime, TTimeUnit>;
+  readonly appleExerciseTime: HKQuantity<HKQuantityTypeIdentifier.appleExerciseTime, TTimeUnit>;
+  readonly appleExerciseTimeGoal: HKQuantity<HKQuantityTypeIdentifier.appleExerciseTime, TTimeUnit>;
+  readonly exerciseTimeGoal: HKQuantity<HKQuantityTypeIdentifier.appleExerciseTime, TTimeUnit>;
+  readonly appleStandHours: HKQuantity<HKQuantityTypeIdentifier, HKUnits.Count>;
+  readonly standHoursGoal: HKQuantity<HKQuantityTypeIdentifier, HKUnits.Count>;
+  readonly appleStandHoursGoal: HKQuantity<HKQuantityTypeIdentifier, HKUnits.Count>;
+}
+
+export type DeletedWorkoutSampleRaw = {
+  readonly uuid: string;
+  readonly metadata: HKWorkoutMetadata;
+}
+
 type QueryId = string;
 
 /**
@@ -2077,6 +2109,40 @@ type ReactNativeHealthkitTypeNative = {
   readonly getWorkoutRoutes: (
     workoutUUID: string
   ) => Promise<readonly WorkoutRoute[]>;
+  readonly queryStatisticsCollectionForQuantity: <
+    TIdentifier extends HKQuantityTypeIdentifier,
+    TUnit extends UnitForIdentifier<TIdentifier>
+  >(
+    identifier: HKQuantityTypeIdentifier,
+    unit: TUnit,
+    from: string,
+    to: string,
+    options: readonly HKStatisticsOptions[]
+  ) => Promise<readonly HKStatistics<TIdentifier, TUnit>[]>;
+  readonly queryActivitySummaryForQuantity: <
+    TEnergyUnit extends EnergyUnit,
+    TTimeUnit extends TimeUnit
+  >(
+    energyUnit: TEnergyUnit,
+    timeUnit: TTimeUnit,
+    from: string,
+    to: string
+  ) => Promise<readonly HKActivitySummary<TEnergyUnit, TTimeUnit>[]>;
+  readonly queryWorkoutSamplesWithAnchor: <
+    TEnergy extends EnergyUnit,
+    TDistance extends LengthUnit
+  >(
+    energyUnit: TEnergy,
+    distanceUnit: TDistance,
+    from: string,
+    to: string,
+    limit: number,
+    anchor: string
+  ) => Promise<{
+    readonly samples: readonly HKWorkoutRaw<TEnergy, TDistance>[],
+    readonly deletedSamples: readonly DeletedWorkoutSampleRaw[],
+    readonly newAnchor: string
+  }>;
 };
 
 const Native = NativeModules.ReactNativeHealthkit as ReactNativeHealthkitTypeNative

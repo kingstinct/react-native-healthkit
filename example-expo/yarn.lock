@@ -1728,7 +1728,7 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@kingstinct/react-native-healthkit@./..":
+"react-native-healthkit@./..":
   version "6.1.0"
 
 "@nodelib/fs.scandir@2.1.5":

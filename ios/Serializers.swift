@@ -204,3 +204,188 @@ func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
 
   return encoded
 }
+
+func serializeStatistics(stats: HKStatistics, unit: HKUnit) -> [String: Any?] {
+    var dic = [String: Any?]()
+    dic.updateValue(_dateFormatter.string(from: stats.startDate), forKey: "startDate")
+    dic.updateValue(_dateFormatter.string(from: stats.endDate), forKey: "endDate")
+
+    if let averageQuantity = stats.averageQuantity() {
+        dic.updateValue(serializeQuantity(unit: unit, quantity: averageQuantity), forKey: "averageQuantity")
+    }
+    if let maximumQuantity = stats.maximumQuantity() {
+        dic.updateValue(serializeQuantity(unit: unit, quantity: maximumQuantity), forKey: "maximumQuantity")
+    }
+    if let minimumQuantity = stats.minimumQuantity() {
+        dic.updateValue(serializeQuantity(unit: unit, quantity: minimumQuantity), forKey: "minimumQuantity")
+    }
+    if let sumQuantity = stats.sumQuantity() {
+        dic.updateValue(serializeQuantity(unit: unit, quantity: sumQuantity), forKey: "sumQuantity")
+    }
+    if #available(iOS 12, *) {
+        if let mostRecent = stats.mostRecentQuantity() {
+            dic.updateValue(serializeQuantity(unit: unit, quantity: mostRecent), forKey: "mostRecentQuantity")
+        }
+
+        if let mostRecentDateInterval = stats.mostRecentQuantityDateInterval() {
+            dic.updateValue([
+                "start": _dateFormatter.string(from: mostRecentDateInterval.start),
+                "end": _dateFormatter.string(from: mostRecentDateInterval.end)
+            ], forKey: "mostRecentQuantityDateInterval")
+        }
+    }
+    if #available(iOS 13, *) {
+        let durationUnit = HKUnit.second()
+        if let duration = stats.duration() {
+            dic.updateValue(serializeQuantity(unit: durationUnit, quantity: duration), forKey: "duration")
+        }
+    }
+
+    return dic
+}
+
+func serializeActivitySummary(
+    summary: HKActivitySummary,
+    energyUnit: HKUnit,
+    timeUnit: HKUnit,
+    calendar: Calendar
+) -> [String: Any?] {
+    guard let startDate = summary.dateComponents(for: calendar).date else {
+        fatalError("Should not fail")
+    }
+    var dic = [String: Any?]()
+    dic.updateValue(_dateFormatter.string(from: startDate), forKey: "startDate")
+    dic.updateValue(
+        serializeQuantity(unit: energyUnit, quantity: summary.activeEnergyBurned),
+        forKey: "activeEnergyBurned"
+    )
+    dic.updateValue(
+        serializeQuantity(unit: energyUnit, quantity: summary.activeEnergyBurnedGoal),
+        forKey: "activeEnergyBurnedGoal"
+    )
+    if #available(iOS 14, *) {
+        dic.updateValue(
+            serializeQuantity(unit: timeUnit, quantity: summary.appleMoveTime),
+            forKey: "appleMoveTime"
+        )
+        dic.updateValue(
+            serializeQuantity(unit: timeUnit, quantity: summary.appleMoveTimeGoal),
+            forKey: "appleMoveTimeGoal"
+        )
+    }
+    dic.updateValue(
+        serializeQuantity(unit: timeUnit, quantity: summary.appleExerciseTime),
+        forKey: "appleExerciseTime"
+    )
+    dic.updateValue(
+        serializeQuantity(unit: timeUnit, quantity: summary.appleExerciseTimeGoal),
+        forKey: "appleExerciseTimeGoal"
+    )
+    if #available(iOS 16, *) {
+        dic.updateValue(
+            serializeQuantity(unit: timeUnit, quantity: summary.exerciseTimeGoal),
+            forKey: "exerciseTimeGoal"
+        )
+    }
+    dic.updateValue(
+        serializeQuantity(unit: HKUnit.count(), quantity: summary.appleStandHours),
+        forKey: "appleStandHours"
+    )
+    if #available(iOS 16, *) {
+        dic.updateValue(
+            serializeQuantity(unit: HKUnit.count(), quantity: summary.standHoursGoal),
+            forKey: "standHoursGoal"
+        )
+    }
+    dic.updateValue(
+        serializeQuantity(unit: HKUnit.count(), quantity: summary.appleStandHoursGoal),
+        forKey: "appleStandHoursGoal"
+    )
+    return dic
+}
+
+func serializeWorkout(workout: HKWorkout, energyUnit: HKUnit, distanceUnit: HKUnit) -> NSMutableDictionary {
+    let endDate = _dateFormatter.string(from: workout.endDate)
+    let startDate = _dateFormatter.string(from: workout.startDate)
+
+    let dict: NSMutableDictionary = [
+        "uuid": workout.uuid.uuidString,
+        "device": serializeDevice(_device: workout.device) as Any,
+        "duration": workout.duration,
+        "totalDistance": serializeQuantity(unit: distanceUnit, quantity: workout.totalDistance) as Any,
+        "totalEnergyBurned": serializeQuantity(unit: energyUnit, quantity: workout.totalEnergyBurned) as Any,
+        "totalSwimmingStrokeCount": serializeQuantity(unit: HKUnit.count(), quantity: workout.totalSwimmingStrokeCount) as Any,
+        "workoutActivityType": workout.workoutActivityType.rawValue,
+        "startDate": startDate,
+        "endDate": endDate,
+        "metadata": serializeMetadata(metadata: workout.metadata),
+        "sourceRevision": serializeSourceRevision(_sourceRevision: workout.sourceRevision) as Any
+    ]
+
+    // this is used for our laps functionality to get markers
+    // https://developer.apple.com/documentation/healthkit/hkworkoutevent
+    var eventArray: [[String: Any]] = []
+    if let events = workout.workoutEvents {
+        for event in events {
+            let eventStartDate = _dateFormatter.string(from: event.dateInterval.start)
+            let eventEndDate = _dateFormatter.string(from: event.dateInterval.end)
+            let eventDict: [String: Any] = [
+                "type": event.type.rawValue, // https://developer.apple.com/documentation/healthkit/hkworkouteventtype
+                "startDate": eventStartDate,
+                "endDate": eventEndDate
+            ]
+            eventArray.append(eventDict)
+        }
+    }
+    dict["events"] = eventArray
+
+    // also used for our laps functionality to get activities for custom workouts defined by the user
+    // https://developer.apple.com/documentation/healthkit/hkworkout/1615340-init
+    // it seems this might be depricated in the latest beta so this might need updating!
+    var activitiesArray: [[String: Any]] = []
+    if #available(iOS 16.0, *) {
+        let activities: [HKWorkoutActivity] = workout.workoutActivities
+
+        if !activities.isEmpty {
+            for activity in activities {
+                var activityStartDate = ""
+                var activityEndDate = ""
+                if let start = activity.startDate as Date? {
+                    activityStartDate = _dateFormatter.string(from: start)
+                }
+                if let end = activity.endDate as Date? {
+                    activityEndDate = _dateFormatter.string(from: end)
+                }
+                let activityDict: [String: Any] = [
+                    "startDate": activityStartDate,
+                    "endDate": activityEndDate,
+                    "uuid": activity.uuid.uuidString,
+                    "duration": activity.duration
+                ]
+                activitiesArray.append(activityDict)
+            }
+        }
+    }
+    dict["activities"] = activitiesArray
+
+    if #available(iOS 11, *) {
+        dict.setValue(serializeQuantity(unit: HKUnit.count(), quantity: workout.totalFlightsClimbed), forKey: "totalFlightsClimbed")
+    }
+
+    #if canImport(WorkoutKit)
+    if #available(iOS 17.0, *) {
+        Task {
+            do {
+                let workoutplan = try await workout.workoutPlan
+                if let workoutplanId = workoutplan?.id {
+                    dict["workoutPlanId"] = workoutplanId.uuidString
+                }
+            } catch {
+                reject(GENERIC_ERROR, error.localizedDescription, error)
+            }
+        }
+    }
+    #endif
+
+    return dict
+}

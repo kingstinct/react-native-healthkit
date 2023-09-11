@@ -219,5 +219,31 @@ RCT_EXTERN_METHOD(getWorkoutRoutes:(NSString)workoutUUID
 RCT_EXTERN_METHOD(canAccessProtectedData:(RCTPromiseResolveBlock)resolve
 withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(queryWorkoutSamplesWithAnchor:(NSString)energyUnitString
+                  distanceUnitString:(NSString)distanceUnitString
+                  from:(NSDate)from
+                  to:(NSDate)to
+                  limit:(NSInteger)limit
+                  anchor:(NSString)anchor
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(queryStatisticsCollectionForQuantity:(NSString)typeIdentifier
+                  unitString:(NSString)unitString
+                  from:(NSDate)from
+                  to:(NSDate)to
+                  options:(NSArray)options
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(queryActivitySummaryForQuantity:(NSString)energyUnitString
+                  timeUnitString:(NSString)timeUnitString
+                  from:(NSDate)from
+                  to:(NSDate)to
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
 
 @end

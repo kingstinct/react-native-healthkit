@@ -8,7 +8,7 @@ import type ReactNativeHealthkit from './index.ios'
 import type { QueryCategorySamplesFn } from './utils/queryCategorySamples'
 import type { QueryQuantitySamplesFn } from './utils/queryQuantitySamples'
 
-const notAvailableError = `[@kingstinct/react-native-healthkit] Platform "${
+const notAvailableError = `[react-native-healthkit] Platform "${
   Platform.OS
 }" not supported`
 
@@ -74,6 +74,13 @@ const Healthkit = {
   })),
   queryWorkouts: UnavailableFn(Promise.resolve([])),
   querySources: UnavailableFn(Promise.resolve([])),
+  queryStatisticsCollectionForQuantity: UnavailableFn(Promise.resolve([])),
+  queryActivitySummaryForQuantity: UnavailableFn(Promise.resolve([])),
+  queryWorkoutsWithAnchor: UnavailableFn(Promise.resolve({
+    samples: [],
+    deletedSamples: [],
+    newAnchor: '',
+  })),
   requestAuthorization: UnavailableFn(Promise.resolve(false)),
   deleteQuantitySample: UnavailableFn(Promise.resolve(false)),
   deleteSamples: UnavailableFn(Promise.resolve(false)),

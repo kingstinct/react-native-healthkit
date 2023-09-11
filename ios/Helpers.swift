@@ -156,3 +156,39 @@ func objectTypeFromString(typeIdentifier: String) -> HKObjectType? {
 
     return nil
 }
+
+func parseStatisticsOptions(options: NSArray) -> HKStatisticsOptions {
+    var opts = HKStatisticsOptions.init()
+
+    for o in options {
+        let str = o as! String
+        if str == "cumulativeSum" {
+            opts.insert(HKStatisticsOptions.cumulativeSum)
+        } else if str == "discreteAverage" {
+            opts.insert(HKStatisticsOptions.discreteAverage)
+        } else if str == "discreteMax" {
+            opts.insert(HKStatisticsOptions.discreteMax)
+        } else if str == "discreteMin" {
+            opts.insert(HKStatisticsOptions.discreteMin)
+        }
+        if #available(iOS 12, *) {
+                if str == "discreteMostRecent" {
+                    opts.insert(HKStatisticsOptions.discreteMostRecent)
+                }
+        }
+        if #available(iOS 13, *) {
+            if str == "duration" {
+                opts.insert(HKStatisticsOptions.duration)
+            }
+            if str == "mostRecent" {
+                opts.insert(HKStatisticsOptions.mostRecent)
+            }
+        }
+
+        if str == "separateBySource" {
+            opts.insert(HKStatisticsOptions.separateBySource)
+        }
+    }
+
+    return opts
+}

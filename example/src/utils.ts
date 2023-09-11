@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
-import { HKQuantityTypeIdentifier } from '@kingstinct/react-native-healthkit'
+import { HKQuantityTypeIdentifier } from 'react-native-healthkit'
 
-import type { HKQuantitySampleForSaving, CLLocationForSaving } from '@kingstinct/react-native-healthkit'
+import type { HKQuantitySampleForSaving, CLLocationForSaving } from 'react-native-healthkit'
 
 const distanceSamples = [
   {

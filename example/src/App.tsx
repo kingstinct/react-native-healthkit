@@ -1,29 +1,29 @@
 /* eslint-disable import/no-unresolved */
-import Healthkit, {
-  HKAuthorizationRequestStatus,
-  HKQuantityTypeIdentifier,
-  HKStatisticsOptions,
-  HKWorkoutActivityType,
-  HKCategoryTypeIdentifier,
-} from '@kingstinct/react-native-healthkit'
-import useHealthkitAuthorization from '@kingstinct/react-native-healthkit/hooks/useHealthkitAuthorization'
-import useMostRecentQuantitySample from '@kingstinct/react-native-healthkit/hooks/useMostRecentQuantitySample'
-import useMostRecentWorkout from '@kingstinct/react-native-healthkit/hooks/useMostRecentWorkout'
-import useSources from '@kingstinct/react-native-healthkit/hooks/useSources'
-import useStatisticsForQuantity from '@kingstinct/react-native-healthkit/hooks/useStatisticsForQuantity'
-import deleteQuantitySample from '@kingstinct/react-native-healthkit/utils/deleteQuantitySample'
-import deleteSamples from '@kingstinct/react-native-healthkit/utils/deleteSamples'
-import queryHeartbeatSeriesSamplesWithAnchor from '@kingstinct/react-native-healthkit/utils/queryHeartbeatSeriesSamplesWithAnchor'
-import queryQuantitySamplesWithAnchor from '@kingstinct/react-native-healthkit/utils/queryQuantitySamplesWithAnchor'
-import saveQuantitySample from '@kingstinct/react-native-healthkit/utils/saveQuantitySample'
-import saveWorkoutRoute from '@kingstinct/react-native-healthkit/utils/saveWorkoutRoute'
-import saveWorkoutSample from '@kingstinct/react-native-healthkit/utils/saveWorkoutSample'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import React, {
   useCallback, useEffect, useRef, useState,
 } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
+import Healthkit, {
+  HKAuthorizationRequestStatus,
+  HKQuantityTypeIdentifier,
+  HKStatisticsOptions,
+  HKWorkoutActivityType,
+  HKCategoryTypeIdentifier,
+} from 'react-native-healthkit'
+import useHealthkitAuthorization from 'react-native-healthkit/hooks/useHealthkitAuthorization'
+import useMostRecentQuantitySample from 'react-native-healthkit/hooks/useMostRecentQuantitySample'
+import useMostRecentWorkout from 'react-native-healthkit/hooks/useMostRecentWorkout'
+import useSources from 'react-native-healthkit/hooks/useSources'
+import useStatisticsForQuantity from 'react-native-healthkit/hooks/useStatisticsForQuantity'
+import deleteQuantitySample from 'react-native-healthkit/utils/deleteQuantitySample'
+import deleteSamples from 'react-native-healthkit/utils/deleteSamples'
+import queryHeartbeatSeriesSamplesWithAnchor from 'react-native-healthkit/utils/queryHeartbeatSeriesSamplesWithAnchor'
+import queryQuantitySamplesWithAnchor from 'react-native-healthkit/utils/queryQuantitySamplesWithAnchor'
+import saveQuantitySample from 'react-native-healthkit/utils/saveQuantitySample'
+import saveWorkoutRoute from 'react-native-healthkit/utils/saveWorkoutRoute'
+import saveWorkoutSample from 'react-native-healthkit/utils/saveWorkoutSample'
 import {
   Button,
   List,
@@ -35,12 +35,12 @@ import {
 
 import { generateWorkoutSamples } from './utils'
 
+import type { ComponentProps } from 'react'
 import type {
   HealthkitReadAuthorization,
   HealthkitWriteAuthorization,
   HKUnit,
-} from '@kingstinct/react-native-healthkit'
-import type { ComponentProps } from 'react'
+} from 'react-native-healthkit'
 import type { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 
 dayjs.extend(relativeTime)

@@ -2,8 +2,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@kingstinct/react-native-healthkit": [ "./src/index" ],
-      "@kingstinct/react-native-healthkit/*": [ "./src/*" ]
+      "react-native-healthkit": [ "./src/index" ],
+      "react-native-healthkit/*": [ "./src/*" ]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
