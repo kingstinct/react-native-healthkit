@@ -5,8 +5,8 @@
   },
   "baseUrl": ".",
   "paths": {
-    "@kingstinct/react-native-healthkit": [ "../src" ],
-    "@kingstinct/react-native-healthkit/*": [ "../src/*" ],
+    "react-native-healthkit": [ "../src" ],
+    "react-native-healthkit/*": [ "../src/*" ],
     "example": [ "../example" ],
     "example/*": [ "../example/*" ],
     "example/src/*": [ "../example/src/*" ]

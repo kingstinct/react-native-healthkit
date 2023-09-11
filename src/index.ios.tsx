@@ -16,6 +16,7 @@ import getMostRecentWorkout from './utils/getMostRecentWorkout'
 import getPreferredUnit from './utils/getPreferredUnit'
 import getPreferredUnits from './utils/getPreferredUnits'
 import getRequestStatusForAuthorization from './utils/getRequestStatusForAuthorization'
+import queryActivitySummaryForQuantity from './utils/queryActivitySummaryForQuantity'
 import queryCategorySamples from './utils/queryCategorySamples'
 import queryCategorySamplesWithAnchor from './utils/queryCategorySamplesWithAnchor'
 import queryCorrelationSamples from './utils/queryCorrelationSamples'
@@ -24,8 +25,10 @@ import queryHeartbeatSeriesSamplesWithAnchor from './utils/queryHeartbeatSeriesS
 import queryQuantitySamples from './utils/queryQuantitySamples'
 import queryQuantitySamplesWithAnchor from './utils/queryQuantitySamplesWithAnchor'
 import querySources from './utils/querySources'
+import queryStatisticsCollectionForQuantity from './utils/queryStatisticsCollectionForQuantity'
 import queryStatisticsForQuantity from './utils/queryStatisticsForQuantity'
 import queryWorkouts from './utils/queryWorkouts'
+import queryWorkoutsWithAnchor from './utils/queryWorkoutsWithAnchor'
 import requestAuthorization from './utils/requestAuthorization'
 import saveCategorySample from './utils/saveCategorySample'
 import saveCorrelationSample from './utils/saveCorrelationSample'
@@ -166,6 +169,9 @@ export default {
   queryStatisticsForQuantity,
   queryWorkouts,
   querySources,
+  queryStatisticsCollectionForQuantity,
+  queryActivitySummaryForQuantity,
+  queryWorkoutsWithAnchor,
 
   requestAuthorization,
 

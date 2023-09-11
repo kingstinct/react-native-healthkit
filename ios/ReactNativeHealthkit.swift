@@ -628,76 +628,19 @@ class ReactNativeHealthkit: RCTEventEmitter {
             return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
         }
 
+        let unit = HKUnit.init(from: unitString)
+
         let predicate = HKQuery.predicateForSamples(withStart: from, end: to, options: HKQueryOptions.strictEndDate)
 
-        var opts = HKStatisticsOptions.init()
+        var opts = parseStatisticsOptions(options: options)
 
-        for o in options {
-            let str = o as! String
-            if str == "cumulativeSum" {
-                opts.insert(HKStatisticsOptions.cumulativeSum)
-            } else if str == "discreteAverage" {
-                opts.insert(HKStatisticsOptions.discreteAverage)
-            } else if str == "discreteMax" {
-                opts.insert(HKStatisticsOptions.discreteMax)
-            } else if str == "discreteMin" {
-                opts.insert(HKStatisticsOptions.discreteMin)
+        let query = HKStatisticsQuery.init(quantityType: quantityType, quantitySamplePredicate: predicate, options: opts) { (_, stats: HKStatistics?, err: Error?) in
+            if let error = err {
+                reject(GENERIC_ERROR, error.localizedDescription, error)
             }
-            if #available(iOS 12, *) {
-                    if str == "discreteMostRecent" {
-                        opts.insert(HKStatisticsOptions.discreteMostRecent)
-                    }
-            }
-            if #available(iOS 13, *) {
-                if str == "duration" {
-                    opts.insert(HKStatisticsOptions.duration)
-                }
-                if str == "mostRecent" {
-                    opts.insert(HKStatisticsOptions.mostRecent)
-                }
-            }
-
-            if str == "separateBySource" {
-                opts.insert(HKStatisticsOptions.separateBySource)
-            }
-        }
-
-        let query = HKStatisticsQuery.init(quantityType: quantityType, quantitySamplePredicate: predicate, options: opts) { (_, stats: HKStatistics?, _: Error?) in
             if let gottenStats = stats {
-                var dic = [String: [String: Any]?]()
-                let unit = HKUnit.init(from: unitString)
-                if let averageQuantity = gottenStats.averageQuantity() {
-                    dic.updateValue(serializeQuantity(unit: unit, quantity: averageQuantity), forKey: "averageQuantity")
-                }
-                if let maximumQuantity = gottenStats.maximumQuantity() {
-                    dic.updateValue(serializeQuantity(unit: unit, quantity: maximumQuantity), forKey: "maximumQuantity")
-                }
-                if let minimumQuantity = gottenStats.minimumQuantity() {
-                    dic.updateValue(serializeQuantity(unit: unit, quantity: minimumQuantity), forKey: "minimumQuantity")
-                }
-                if let sumQuantity = gottenStats.sumQuantity() {
-                    dic.updateValue(serializeQuantity(unit: unit, quantity: sumQuantity), forKey: "sumQuantity")
-                }
-                if #available(iOS 12, *) {
-                    if let mostRecent = gottenStats.mostRecentQuantity() {
-                        dic.updateValue(serializeQuantity(unit: unit, quantity: mostRecent), forKey: "mostRecentQuantity")
-                    }
-
-                    if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
-                        dic.updateValue([
-                            "start": self._dateFormatter.string(from: mostRecentDateInterval.start),
-                            "end": self._dateFormatter.string(from: mostRecentDateInterval.end)
-                        ], forKey: "mostRecentQuantityDateInterval")
-                    }
-                }
-                if #available(iOS 13, *) {
-                    let durationUnit = HKUnit.second()
-                    if let duration = gottenStats.duration() {
-                        dic.updateValue(serializeQuantity(unit: durationUnit, quantity: duration), forKey: "duration")
-                    }
-                }
-
-                resolve(dic)
+                var serialized = serializeStatistics(stats: gottenStats, unit: unit)
+                resolve(serialized)
             }
         }
 
@@ -730,89 +673,12 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
                 for s in samples {
                     if let workout = s as? HKWorkout {
-                        let endDate = self._dateFormatter.string(from: workout.endDate)
-                        let startDate = self._dateFormatter.string(from: workout.startDate)
-
-                        let dict: NSMutableDictionary = [
-                            "uuid": workout.uuid.uuidString,
-                            "device": serializeDevice(_device: workout.device) as Any,
-                            "duration": workout.duration,
-                            "totalDistance": serializeQuantity(unit: distanceUnit, quantity: workout.totalDistance) as Any,
-                            "totalEnergyBurned": serializeQuantity(unit: energyUnit, quantity: workout.totalEnergyBurned) as Any,
-                            "totalSwimmingStrokeCount": serializeQuantity(unit: HKUnit.count(), quantity: workout.totalSwimmingStrokeCount) as Any,
-                            "workoutActivityType": workout.workoutActivityType.rawValue,
-                            "startDate": startDate,
-                            "endDate": endDate,
-                            "metadata": serializeMetadata(metadata: workout.metadata),
-                            "sourceRevision": serializeSourceRevision(_sourceRevision: workout.sourceRevision) as Any
-                        ]
-
-                        // this is used for our laps functionality to get markers
-                        // https://developer.apple.com/documentation/healthkit/hkworkoutevent
-                        var eventArray: [[String: Any]] = []
-                        if let events = workout.workoutEvents {
-                            for event in events {
-                                let eventStartDate = self._dateFormatter.string(from: event.dateInterval.start)
-                                let eventEndDate = self._dateFormatter.string(from: event.dateInterval.end)
-                                let eventDict: [String: Any] = [
-                                    "type": event.type.rawValue, // https://developer.apple.com/documentation/healthkit/hkworkouteventtype
-                                    "startDate": eventStartDate,
-                                    "endDate": eventEndDate
-                                ]
-                                eventArray.append(eventDict)
-                            }
-                        }
-                        dict["events"] = eventArray
-
-                        // also used for our laps functionality to get activities for custom workouts defined by the user
-                        // https://developer.apple.com/documentation/healthkit/hkworkout/1615340-init
-                        // it seems this might be depricated in the latest beta so this might need updating!
-                        var activitiesArray: [[String: Any]] = []
-                        if #available(iOS 16.0, *) {
-                            let activities: [HKWorkoutActivity] = workout.workoutActivities
-
-                            if !activities.isEmpty {
-                                for activity in activities {
-                                    var activityStartDate = ""
-                                    var activityEndDate = ""
-                                    if let start = activity.startDate as Date? {
-                                        activityStartDate = self._dateFormatter.string(from: start)
-                                    }
-                                    if let end = activity.endDate as Date? {
-                                        activityEndDate = self._dateFormatter.string(from: end)
-                                    }
-                                    let activityDict: [String: Any] = [
-                                        "startDate": activityStartDate,
-                                        "endDate": activityEndDate,
-                                        "uuid": activity.uuid.uuidString,
-                                        "duration": activity.duration
-                                    ]
-                                    activitiesArray.append(activityDict)
-                                }
-                            }
-                        }
-                        dict["activities"] = activitiesArray
-
-                        if #available(iOS 11, *) {
-                            dict.setValue(serializeQuantity(unit: HKUnit.count(), quantity: workout.totalFlightsClimbed), forKey: "totalFlightsClimbed")
-                        }
-
-                        #if canImport(WorkoutKit)
-                        if #available(iOS 17.0, *) {
-                            Task {
-                                do {
-                                    let workoutplan = try await workout.workoutPlan
-                                    if let workoutplanId = workoutplan?.id {
-                                        dict["workoutPlanId"] = workoutplanId.uuidString
-                                    }
-                                } catch {
-                                    // handle error
-                                }
-                            }
-                        }
-                        #endif
-
-                        arr.add(dict)
+                        let serialized = serializeWorkout(
+                            workout: workout,
+                            energyUnit: energyUnit,
+                            distanceUnit: distanceUnit
+                        )
+                        arr.add(serialized)
                     }
                 }
 
@@ -1513,4 +1379,204 @@ class ReactNativeHealthkit: RCTEventEmitter {
       }
   }
 
+    @objc(queryWorkoutSamplesWithAnchor:distanceUnitString:from:to:limit:anchor:resolve:reject:)
+    func queryWorkoutSamplesWithAnchor(
+        energyUnitString: String,
+        distanceUnitString: String,
+        from: Date,
+        to: Date,
+        limit: Int,
+        anchor: String,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+        }
+
+        let from = dateOrNilIfZero(date: from)
+        let to = dateOrNilIfZero(date: to)
+        let predicate = createPredicate(from: from, to: to)
+        let limit = limitOrNilIfZero(limit: limit)
+
+        let actualAnchor = deserializeHKQueryAnchor(anchor: anchor)
+
+        let energyUnit = HKUnit.init(from: energyUnitString)
+        let distanceUnit = HKUnit.init(from: distanceUnitString)
+
+        let q = HKAnchoredObjectQuery(
+            type: .workoutType(),
+            predicate: predicate,
+            anchor: actualAnchor,
+            limit: limit
+        ) { (
+            _: HKAnchoredObjectQuery,
+            maybeSaples: [HKSample]?,
+            deletedSamples: [HKDeletedObject]?,
+            newAnchor: HKQueryAnchor?,
+            maybeError: Error?
+        ) in
+            guard let err = maybeError else {
+                guard let samples = maybeSaples else {
+                    return resolve([])
+                }
+
+                var serializedSamples: NSMutableArray = []
+
+                for sample in samples {
+                    if let workout = sample as? HKWorkout {
+                        let serialized = serializeWorkout(
+                            workout: workout,
+                            energyUnit: energyUnit,
+                            distanceUnit: distanceUnit
+                        )
+                        serializedSamples.add(serialized)
+                    }
+                }
+
+                return resolve([
+                    "samples": serializedSamples,
+                    "deletedSamples": deletedSamples?.map({ sample in
+                    return serializeDeletedSample(sample: sample)
+                    }) as Any,
+                    "newAnchor": serializeAnchor(anchor: newAnchor) as Any
+                ])
+            }
+            reject(GENERIC_ERROR, err.localizedDescription, err)
+        }
+
+        store.execute(q)
+    }
+
+    @objc(queryStatisticsCollectionForQuantity:unitString:from:to:options:resolve:reject:)
+    func queryStatisticsCollectionForQuantity(
+        typeIdentifier: String,
+        unitString: String,
+        from: Date,
+        to: Date,
+        options: NSArray,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+        }
+
+        let calendar = Calendar.current
+        let interval = DateComponents(day: 1)
+        var components = DateComponents(calendar: calendar,
+                                        timeZone: calendar.timeZone,
+                                        hour: 0,
+                                        minute: 0,
+                                        second: 0)
+
+        guard let anchorDate = calendar.nextDate(after: Date(),
+                                                matching: components,
+                                                matchingPolicy: .nextTime,
+                                                repeatedTimePolicy: .first,
+                                                direction: .backward) else {
+            fatalError("*** unable to find the previous day. ***")
+        }
+
+        let predicate = HKQuery.predicateForSamples(withStart: from, end: to, options: [.strictStartDate])
+
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
+        guard let quantityType = HKSampleType.quantityType(forIdentifier: identifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
+        }
+
+        let opts: HKStatisticsOptions = parseStatisticsOptions(options: options)
+
+        let unit = HKUnit.init(from: unitString)
+
+        let q = HKStatisticsCollectionQuery.init(quantityType: quantityType,
+                                        quantitySamplePredicate: predicate,
+                                        options: opts,
+                                        anchorDate: anchorDate,
+                                        intervalComponents: interval)
+        q.initialResultsHandler = {
+            (_, results, maybeError) in
+
+            guard let err = maybeError else {
+                guard let statsCollection = results else {
+                    return resolve([])
+                }
+                let arr: NSMutableArray = []
+
+                for s in statsCollection.statistics() {
+                    if let stats = s as? HKStatistics {
+                        let serialized = serializeStatistics(stats: stats, unit: unit)
+                        arr.add(serialized)
+                    }
+                }
+
+                return resolve(arr)
+            }
+            reject(GENERIC_ERROR, err.localizedDescription, err)
+        }
+
+        store.execute(q)
+    }
+
+    @objc(queryActivitySummaryForQuantity:timeUnitString:from:to:resolve:reject:)
+    func queryActivitySummaryForQuantity(
+        energyUnitString: String,
+        timeUnitString: String,
+        from: Date,
+        to: Date,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+        }
+
+        let calendar = NSCalendar.current
+
+        let units: Set<Calendar.Component> = [.day, .month, .year, .era]
+
+        var startDateComponents = calendar.dateComponents(units, from: from)
+        startDateComponents.calendar = calendar
+
+        var endDateComponents = calendar.dateComponents(units, from: to)
+        endDateComponents.calendar = calendar
+
+        let summariesWithinRange = HKQuery.predicate(
+            forActivitySummariesBetweenStart: startDateComponents,
+            end: endDateComponents
+        )
+
+        let timeUnit = HKUnit.init(from: timeUnitString)
+        let energyUnit = HKUnit.init(from: energyUnitString)
+
+        let q: HKActivitySummaryQuery = HKActivitySummaryQuery(predicate: summariesWithinRange) {
+            (_, maybeSummaries, maybeError) in
+
+            if let err = maybeError {
+                return reject(GENERIC_ERROR, err.localizedDescription, err)
+            }
+
+            guard let summaries = maybeSummaries else {
+                return resolve([])
+            }
+
+            var arr: NSMutableArray = []
+
+            for s in summaries {
+                if let summary = s as? HKActivitySummary {
+                    let serialized = serializeActivitySummary(
+                        summary: summary,
+                        energyUnit: energyUnit,
+                        timeUnit: timeUnit,
+                        calendar: calendar
+                    )
+                    arr.add(serialized)
+                }
+            }
+
+            return resolve(arr)
+        }
+
+        store.execute(q)
+    }
 }
