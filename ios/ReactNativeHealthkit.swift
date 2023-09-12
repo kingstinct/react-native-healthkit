@@ -22,7 +22,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
         super.init()
     }
-    
+
     deinit {
         if let store = _store {
             for query in self._runningQueries {
@@ -313,8 +313,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
     }
 
-    @objc(saveWorkoutSample:quantities:start:end:metadata:resolve:reject:)
-    func saveWorkoutSample(typeIdentifier: UInt, quantities: [[String: Any]], start: Date, end: Date, metadata: [String: Any], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    @objc(saveWorkoutSample:quantities:start:end:totals:metadata:resolve:reject:)
+    func saveWorkoutSample(typeIdentifier: UInt, quantities: [[String: Any]], start: Date, end: Date, totals: [String: Any], metadata: [String: Any], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
@@ -329,7 +329,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 return reject(GENERIC_ERROR, "Start date must be before end date", nil)
             }
         }
-        
+
         var initializedSamples = [HKSample]()
         var totalEnergyBurned: HKQuantity?
         var totalDistance: HKQuantity?
@@ -371,6 +371,18 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 }
             }
         }
+
+        // if totals are provided override samples
+        let rawTotalDistance = totals["distance"] as? Double ?? 0.0
+        let rawTotalEnergy = totals["energyBurned"] as? Double ?? 0.0
+
+        if rawTotalDistance != 0.0 {
+            totalDistance = HKQuantity(unit: .meter(), doubleValue: rawTotalDistance)
+        }
+        if rawTotalEnergy != 0.0 {
+            totalEnergyBurned = HKQuantity(unit: .kilocalorie(), doubleValue: rawTotalEnergy)
+        }
+
         // creating workout
         var workout: HKWorkout?
 
@@ -398,6 +410,10 @@ class ReactNativeHealthkit: RCTEventEmitter {
             guard error == nil else {
                 reject(GENERIC_ERROR, error!.localizedDescription, error)
                 return
+            }
+
+            if initializedSamples.isEmpty {
+                return resolve(workout.uuid.uuidString)
             }
 
             store.add(initializedSamples, to: workout) { (_, error: Error?) in
@@ -1246,16 +1262,16 @@ class ReactNativeHealthkit: RCTEventEmitter {
         #if canImport(WorkoutKit)
         do {
             let workoutPlan = try await workout.workoutPlan
-            
+
             var dict = [String: Any]()
             if (workoutPlan?.id) != nil {
                 dict["id"] = workoutPlan?.id.uuidString
-                
+
             }
             if (workoutPlan?.workout.activity) != nil {
                 dict["activityType"] = workoutPlan?.workout.activity.rawValue
             }
-            
+
             if dict.isEmpty {
                 return nil
             }
@@ -1275,13 +1291,13 @@ class ReactNativeHealthkit: RCTEventEmitter {
             guard let store = _store else {
                 return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
             }
-            
+
             Task {
                 if let uuid = UUID(uuidString: workoutUUID) {
                     let workout = await self.getWorkoutByID(store: store, workoutUUID: uuid)
                     if let workout {
                         let workoutPlan = await self.getWorkoutPlan(workout: workout)
-                        
+
                         return resolve(workoutPlan)
                     } else {
                         return reject(GENERIC_ERROR, "No workout found", nil)

@@ -1952,6 +1952,10 @@ type ReactNativeHealthkitTypeNative = {
     quantities: readonly HKQuantitySampleRawForSaving[],
     start: string,
     end: string,
+    totals: {
+      readonly distance?: number;
+      readonly energyBurned?: number;
+    },
     metadata: HKWorkoutMetadata
   ) => Promise<string | null>;
 
