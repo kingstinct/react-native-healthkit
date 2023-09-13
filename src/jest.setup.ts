@@ -2,7 +2,7 @@ import { NativeModule, NativeModules } from 'react-native'
 
 import type Native from './native-types'
 
-const mockModule: (NativeModule & typeof Native) = {
+const mockModule: NativeModule & typeof Native = {
   isHealthDataAvailable: jest.fn(),
   addListener: jest.fn(),
   removeListeners: jest.fn(),
@@ -40,6 +40,7 @@ const mockModule: (NativeModule & typeof Native) = {
   // Todo [>8]: Remove to align with Apple function name (isProtectedDataAvailable)
   canAccessProtectedData: jest.fn(),
   saveWorkoutRoute: jest.fn(),
+  getWorkoutPlanById: jest.fn(),
 }
 
 NativeModules.ReactNativeHealthkit = mockModule

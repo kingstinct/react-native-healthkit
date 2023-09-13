@@ -146,6 +146,7 @@ RCT_EXTERN_METHOD(saveWorkoutSample:(NSInteger)typeIdentifier
                   quantities:(NSArray)quantities
                   start:(NSDate)start
                   end:(NSDate)end
+                  totals:(NSDictionary)totals
                   metadata:(NSDictionary)metadata
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
@@ -211,7 +212,7 @@ RCT_EXTERN_METHOD(getWorkoutRoutes:(NSString)workoutUUID
                   reject:(RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(getWorkoutRoutes:(NSString)workoutUUID
+RCT_EXTERN_METHOD(getWorkoutPlanById:(NSString)workoutUUID
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
 )

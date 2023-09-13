@@ -1,4 +1,5 @@
 import ensureMetadata from './ensureMetadata'
+import ensureTotals from './ensureTotals'
 import Native from '../native-types'
 
 import type { HKWorkoutActivityType, HKWorkoutMetadata } from '../native-types'
@@ -10,6 +11,10 @@ async function saveWorkoutSample<TIdentifier extends HKWorkoutActivityType>(
   _start: Date,
   options?: {
     readonly end?: Date;
+    readonly totals?: {
+      readonly distance?: number;
+      readonly energyBurned?: number;
+    }
     readonly metadata?: HKWorkoutMetadata;
   },
 ) {
@@ -29,6 +34,7 @@ async function saveWorkoutSample<TIdentifier extends HKWorkoutActivityType>(
     }),
     start,
     end,
+    ensureTotals(options?.totals),
     ensureMetadata(options?.metadata),
   )
 }
