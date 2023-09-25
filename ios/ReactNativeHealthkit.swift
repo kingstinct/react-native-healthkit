@@ -673,42 +673,45 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
 
         let query = HKStatisticsQuery.init(quantityType: quantityType, quantitySamplePredicate: predicate, options: opts) { (_, stats: HKStatistics?, _: Error?) in
-            if let gottenStats = stats {
-                var dic = [String: [String: Any]?]()
-                let unit = HKUnit.init(from: unitString)
-                if let averageQuantity = gottenStats.averageQuantity() {
-                    dic.updateValue(serializeQuantity(unit: unit, quantity: averageQuantity), forKey: "averageQuantity")
-                }
-                if let maximumQuantity = gottenStats.maximumQuantity() {
-                    dic.updateValue(serializeQuantity(unit: unit, quantity: maximumQuantity), forKey: "maximumQuantity")
-                }
-                if let minimumQuantity = gottenStats.minimumQuantity() {
-                    dic.updateValue(serializeQuantity(unit: unit, quantity: minimumQuantity), forKey: "minimumQuantity")
-                }
-                if let sumQuantity = gottenStats.sumQuantity() {
-                    dic.updateValue(serializeQuantity(unit: unit, quantity: sumQuantity), forKey: "sumQuantity")
-                }
-                if #available(iOS 12, *) {
-                    if let mostRecent = gottenStats.mostRecentQuantity() {
-                        dic.updateValue(serializeQuantity(unit: unit, quantity: mostRecent), forKey: "mostRecentQuantity")
-                    }
+            var dic = [String: [String: Any]?]()
 
-                    if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
-                        dic.updateValue([
-                            "start": self._dateFormatter.string(from: mostRecentDateInterval.start),
-                            "end": self._dateFormatter.string(from: mostRecentDateInterval.end)
-                        ], forKey: "mostRecentQuantityDateInterval")
-                    }
-                }
-                if #available(iOS 13, *) {
-                    let durationUnit = HKUnit.second()
-                    if let duration = gottenStats.duration() {
-                        dic.updateValue(serializeQuantity(unit: durationUnit, quantity: duration), forKey: "duration")
-                    }
-                }
-
-                resolve(dic)
+            guard let gottenStats = stats else {
+                return resolve(dic)
             }
+
+            let unit = HKUnit.init(from: unitString)
+            if let averageQuantity = gottenStats.averageQuantity() {
+                dic.updateValue(serializeQuantity(unit: unit, quantity: averageQuantity), forKey: "averageQuantity")
+            }
+            if let maximumQuantity = gottenStats.maximumQuantity() {
+                dic.updateValue(serializeQuantity(unit: unit, quantity: maximumQuantity), forKey: "maximumQuantity")
+            }
+            if let minimumQuantity = gottenStats.minimumQuantity() {
+                dic.updateValue(serializeQuantity(unit: unit, quantity: minimumQuantity), forKey: "minimumQuantity")
+            }
+            if let sumQuantity = gottenStats.sumQuantity() {
+                dic.updateValue(serializeQuantity(unit: unit, quantity: sumQuantity), forKey: "sumQuantity")
+            }
+            if #available(iOS 12, *) {
+                if let mostRecent = gottenStats.mostRecentQuantity() {
+                    dic.updateValue(serializeQuantity(unit: unit, quantity: mostRecent), forKey: "mostRecentQuantity")
+                }
+
+                if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
+                    dic.updateValue([
+                        "start": self._dateFormatter.string(from: mostRecentDateInterval.start),
+                        "end": self._dateFormatter.string(from: mostRecentDateInterval.end)
+                    ], forKey: "mostRecentQuantityDateInterval")
+                }
+            }
+            if #available(iOS 13, *) {
+                let durationUnit = HKUnit.second()
+                if let duration = gottenStats.duration() {
+                    dic.updateValue(serializeQuantity(unit: durationUnit, quantity: duration), forKey: "duration")
+                }
+            }
+
+            resolve(dic)
         }
 
         store.execute(query)
