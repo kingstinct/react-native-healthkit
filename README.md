@@ -64,12 +64,12 @@ During runtime check and request permissions with `requestAuthorization`. Failin
 
 Some hook examples:
 ```TypeScript
-import { HKQuantityTypeIdentifier, useHealthkitAuthorization } from '@kingstinct/react-native-healthkit';
+import HealthKit, { HKQuantityTypeIdentifier, useHealthkitAuthorization } from '@kingstinct/react-native-healthkit';
 
 const [authorizationStatus, requestAuthorization] = useHealthkitAuthorization([HKQuantityTypeIdentifier.bloodGlucose])
 
 // make sure that you've requested authorization before requesting data, otherwise your app will crash
-import { useMostRecentQuantitySample, HKQuantityTypeIdentifier, useMostRecentCategorySample } from '@kingstinct/react-native-healthkit';
+const { useMostRecentQuantitySample, HKQuantityTypeIdentifier, useMostRecentCategorySample } = HealthKit;
 
 const mostRecentBloodGlucoseSample = useMostRecentQuantitySample(HKQuantityTypeIdentifier.bloodGlucose)
 const lastBodyFatSample = useMostRecentQuantitySample(HKQuantityTypeIdentifier.bodyFatPercentage)
