@@ -69,7 +69,7 @@ import HealthKit, { HKQuantityTypeIdentifier, useHealthkitAuthorization } from '
 const [authorizationStatus, requestAuthorization] = useHealthkitAuthorization([HKQuantityTypeIdentifier.bloodGlucose])
 
 // make sure that you've requested authorization before requesting data, otherwise your app will crash
-const { useMostRecentQuantitySample, HKQuantityTypeIdentifier, useMostRecentCategorySample } = HealthKit;
+const { useMostRecentQuantitySample, useMostRecentCategorySample } = HealthKit;
 
 const mostRecentBloodGlucoseSample = useMostRecentQuantitySample(HKQuantityTypeIdentifier.bloodGlucose)
 const lastBodyFatSample = useMostRecentQuantitySample(HKQuantityTypeIdentifier.bodyFatPercentage)
