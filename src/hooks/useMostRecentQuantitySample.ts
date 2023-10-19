@@ -7,6 +7,9 @@ import subscribeToChanges from '../utils/subscribeToChanges'
 import type { HKQuantityTypeIdentifier, UnitForIdentifier } from '../native-types'
 import type { HKQuantitySample } from '../types'
 
+/**
+   * @returns the most recent sample for the given quantity type.
+   */
 function useMostRecentQuantitySample<
   TIdentifier extends HKQuantityTypeIdentifier,
   TUnit extends UnitForIdentifier<TIdentifier>

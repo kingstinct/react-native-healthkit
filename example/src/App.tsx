@@ -5,19 +5,19 @@ import Healthkit, {
   HKStatisticsOptions,
   HKWorkoutActivityType,
   HKCategoryTypeIdentifier,
+  useMostRecentQuantitySample,
+  useStatisticsForQuantity,
+  useSources,
+  useMostRecentWorkout,
+  useHealthkitAuthorization,
+  deleteQuantitySample,
+  deleteSamples,
+  queryHeartbeatSeriesSamplesWithAnchor,
+  queryQuantitySamplesWithAnchor,
+  saveQuantitySample,
+  saveWorkoutRoute,
+  saveWorkoutSample,
 } from '@kingstinct/react-native-healthkit'
-import useHealthkitAuthorization from '@kingstinct/react-native-healthkit/hooks/useHealthkitAuthorization'
-import useMostRecentQuantitySample from '@kingstinct/react-native-healthkit/hooks/useMostRecentQuantitySample'
-import useMostRecentWorkout from '@kingstinct/react-native-healthkit/hooks/useMostRecentWorkout'
-import useSources from '@kingstinct/react-native-healthkit/hooks/useSources'
-import useStatisticsForQuantity from '@kingstinct/react-native-healthkit/hooks/useStatisticsForQuantity'
-import deleteQuantitySample from '@kingstinct/react-native-healthkit/utils/deleteQuantitySample'
-import deleteSamples from '@kingstinct/react-native-healthkit/utils/deleteSamples'
-import queryHeartbeatSeriesSamplesWithAnchor from '@kingstinct/react-native-healthkit/utils/queryHeartbeatSeriesSamplesWithAnchor'
-import queryQuantitySamplesWithAnchor from '@kingstinct/react-native-healthkit/utils/queryQuantitySamplesWithAnchor'
-import saveQuantitySample from '@kingstinct/react-native-healthkit/utils/saveQuantitySample'
-import saveWorkoutRoute from '@kingstinct/react-native-healthkit/utils/saveWorkoutRoute'
-import saveWorkoutSample from '@kingstinct/react-native-healthkit/utils/saveWorkoutSample'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import React, {
@@ -629,7 +629,7 @@ const App = () => {
   const [canAccessProtectedData, setAccessProtectedData] = useState<boolean>(false)
 
   useEffect(() => {
-    Healthkit.canAccessProtectedData()
+    Healthkit.isProtectedDataAvailable()
       .then(setAccessProtectedData)
       .catch(() => setAccessProtectedData(false))
   }, [])
