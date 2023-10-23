@@ -4,7 +4,7 @@ import {
   HKAuthorizationRequestStatus, HKAuthorizationStatus, HKBiologicalSex, HKBloodType, HKFitzpatrickSkinType, HKUnits, HKWheelchairUse,
 } from './native-types'
 
-import type ReactNativeHealthkit from '.'
+import type ReactNativeHealthkit from './index.ios'
 import type { QueryCategorySamplesFn } from './utils/queryCategorySamples'
 import type { QueryQuantitySamplesFn } from './utils/queryQuantitySamples'
 
