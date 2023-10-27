@@ -627,19 +627,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
         return true
     }
 
-    @objc(queryStatisticsForQuantity:unitString:from:to:options:resolve:reject:)
-    func queryStatisticsForQuantity(typeIdentifier: String, unitString: String, from: Date, to: Date, options: NSArray, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        guard let store = _store else {
-            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
-        }
-
-        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
-        guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else {
-            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
-        }
-
-        let predicate = HKQuery.predicateForSamples(withStart: from, end: to, options: HKQueryOptions.strictEndDate)
-
+    fileprivate func convertOptionsToHKStatisticsOptions(_ options: NSArray) -> HKStatisticsOptions {
         var opts = HKStatisticsOptions.init()
 
         for o in options {
@@ -654,9 +642,9 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 opts.insert(HKStatisticsOptions.discreteMin)
             }
             if #available(iOS 12, *) {
-                    if str == "discreteMostRecent" {
-                        opts.insert(HKStatisticsOptions.discreteMostRecent)
-                    }
+                if str == "discreteMostRecent" {
+                    opts.insert(HKStatisticsOptions.discreteMostRecent)
+                }
             }
             if #available(iOS 13, *) {
                 if str == "duration" {
@@ -666,11 +654,28 @@ class ReactNativeHealthkit: RCTEventEmitter {
                     opts.insert(HKStatisticsOptions.mostRecent)
                 }
             }
-
+            
             if str == "separateBySource" {
                 opts.insert(HKStatisticsOptions.separateBySource)
             }
         }
+        return opts
+    }
+    
+    @objc(queryStatisticsForQuantity:unitString:from:to:options:resolve:reject:)
+    func queryStatisticsForQuantity(typeIdentifier: String, unitString: String, from: Date, to: Date, options: NSArray, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+        }
+
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
+        guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
+        }
+
+        let predicate = HKQuery.predicateForSamples(withStart: from, end: to, options: HKQueryOptions.strictEndDate)
+
+        let opts = convertOptionsToHKStatisticsOptions(options)
 
         let query = HKStatisticsQuery.init(quantityType: quantityType, quantitySamplePredicate: predicate, options: opts) { (_, stats: HKStatistics?, _: Error?) in
             var dic = [String: [String: Any]?]()
@@ -717,6 +722,95 @@ class ReactNativeHealthkit: RCTEventEmitter {
         store.execute(query)
     }
 
+    @objc(queryStatisticsCollectionForQuantity:unitString:options:anchorDate:interval:resolve:reject:)
+    func queryStatisticsCollectionForQuantity(typeIdentifier: String, unitString: String, options: NSArray, anchorDate: Date, interval: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        guard let store = _store else {
+            return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+        }
+
+        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
+        guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else {
+            return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
+        }
+
+        let opts = convertOptionsToHKStatisticsOptions(options)
+        
+        // Set the interval object based on JS Object
+        let componentKeys: [String: WritableKeyPath<DateComponents, Int?>] = [
+            "day": \.day,
+            "month": \.month,
+            "year": \.year,
+            "hour": \.hour,
+            "minute": \.minute
+        ]
+
+        var intervalComponents = DateComponents()
+        for (key, keyPath) in componentKeys {
+            if let value = interval[key] as? Int {
+                intervalComponents[keyPath: keyPath] = value
+            }
+        }
+        
+        
+        let query = HKStatisticsCollectionQuery(quantityType: quantityType, quantitySamplePredicate: nil, options: opts, anchorDate: anchorDate, intervalComponents: intervalComponents)
+        
+        query.initialResultsHandler = { query, statsCollection, error in
+            var results = [[String: [String: Any]?]]()
+            
+            guard let collection = statsCollection else {
+                return resolve(results)
+            }
+            
+            let statsArray = collection.statistics()
+            let unit = HKUnit.init(from: unitString)
+            for gottenStats in statsArray {
+                var dic = [String: [String: Any]?]()
+                
+                let startDate = self._dateFormatter.string(from: gottenStats.startDate)
+                let endDate = self._dateFormatter.string(from: gottenStats.endDate)
+                let quantityType = gottenStats.quantityType
+            
+                if let averageQuantity = gottenStats.averageQuantity() {
+                    dic.updateValue(serializeQuantity(unit: unit, quantity: averageQuantity), forKey: "averageQuantity")
+                }
+                if let maximumQuantity = gottenStats.maximumQuantity() {
+                    dic.updateValue(serializeQuantity(unit: unit, quantity: maximumQuantity), forKey: "maximumQuantity")
+                }
+                if let minimumQuantity = gottenStats.minimumQuantity() {
+                    dic.updateValue(serializeQuantity(unit: unit, quantity: minimumQuantity), forKey: "minimumQuantity")
+                }
+                if let sumQuantity = gottenStats.sumQuantity() {
+                    dic.updateValue(serializeStatistic(unit: unit, quantity: sumQuantity, stats: gottenStats), forKey: "sumQuantity")
+                }
+                if #available(iOS 12, *) {
+                    if let mostRecent = gottenStats.mostRecentQuantity() {
+                        dic.updateValue(serializeQuantity(unit: unit, quantity: mostRecent), forKey: "mostRecentQuantity")
+                    }
+
+                    if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
+                        dic.updateValue([
+                            "start": self._dateFormatter.string(from: mostRecentDateInterval.start),
+                            "end": self._dateFormatter.string(from: mostRecentDateInterval.end)
+                        ], forKey: "mostRecentQuantityDateInterval")
+                    }
+                }
+                if #available(iOS 13, *) {
+                    let durationUnit = HKUnit.second()
+                    if let duration = gottenStats.duration() {
+                        dic.updateValue(serializeQuantity(unit: durationUnit, quantity: duration), forKey: "duration")
+                    }
+                }
+                results.append(dic)
+            }
+            
+            resolve(results)
+            
+        }
+    
+        store.execute(query)
+    }
+
+    
     @objc(queryWorkoutSamples:distanceUnitString:from:to:limit:ascending:resolve:reject:)
     func queryWorkoutSamples(energyUnitString: String, distanceUnitString: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {

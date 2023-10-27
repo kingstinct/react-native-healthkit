@@ -21,6 +21,28 @@ func serializeQuantity(unit: HKUnit, quantity: HKQuantity?) -> [String: Any]? {
     ]
 }
 
+func serializeStatistic(unit: HKUnit, quantity: HKQuantity?, stats: HKStatistics?) -> [String: Any]? {
+    guard let q = quantity else {
+        return nil
+    }
+    
+    guard let stats = stats else {
+        return nil
+    }
+    
+    let endDate = _dateFormatter.string(from: stats.endDate)
+    let startDate = _dateFormatter.string(from: stats.startDate)
+    let quantityType = stats.quantityType.identifier
+    
+    return [
+        "unit": unit.unitString,
+        "quantity": q.doubleValue(for: unit),
+        "endDate": endDate,
+        "startDate": startDate,
+        "quantityType": quantityType
+    ]
+}
+
 func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) -> NSDictionary {
     let endDate = _dateFormatter.string(from: sample.endDate)
     let startDate = _dateFormatter.string(from: sample.startDate)
