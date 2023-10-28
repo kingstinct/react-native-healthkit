@@ -44,7 +44,15 @@
     "react-hooks"
   ],
   "repository": "https://github.com/kingstinct/react-native-healthkit",
-  "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
+  "funding": [
+    "https://github.com/sponsors/kingstinct",
+    "https://github.com/sponsors/robertherber"
+  ],
+  "author": {
+    "name": "Robert Herber",
+    "email": "robert@kingstinct.com",
+    "url": "https://github.com/robertherber"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/kingstinct/react-native-healthkit/issues"
