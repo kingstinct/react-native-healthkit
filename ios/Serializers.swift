@@ -381,7 +381,7 @@ func serializeWorkout(workout: HKWorkout, energyUnit: HKUnit, distanceUnit: HKUn
                     dict["workoutPlanId"] = workoutplanId.uuidString
                 }
             } catch {
-                reject(GENERIC_ERROR, error.localizedDescription, error)
+                // reject(GENERIC_ERROR, error.localizedDescription, error) // COMMENTED because it fails to compile in XCode v15.x
             }
         }
     }
