@@ -9,6 +9,9 @@ import subscribeToChanges from '../utils/subscribeToChanges'
 import type { EnergyUnit, LengthUnit } from '../native-types'
 import type { HKWorkout } from '../types'
 
+/**
+   * @returns the most recent workout sample.
+   */
 function useMostRecentWorkout<
   TEnergy extends EnergyUnit,
   TDistance extends LengthUnit

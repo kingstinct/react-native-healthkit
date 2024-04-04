@@ -1,6 +1,6 @@
 {
   "name": "react-native-healthkit",
-  "version": "7.2.0",
+  "version": "7.3.2",
   "description": "React Native bindings for HealthKit",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -44,7 +44,15 @@
     "react-hooks"
   ],
   "repository": "https://github.com/kingstinct/react-native-healthkit",
-  "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
+  "funding": [
+    "https://github.com/sponsors/kingstinct",
+    "https://github.com/sponsors/robertherber"
+  ],
+  "author": {
+    "name": "Robert Herber",
+    "email": "robert@kingstinct.com",
+    "url": "https://github.com/robertherber"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/kingstinct/react-native-healthkit/issues"

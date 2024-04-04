@@ -1,4 +1,23 @@
 /* eslint-disable import/no-unresolved */
+import Healthkit, {
+  HKAuthorizationRequestStatus,
+  HKQuantityTypeIdentifier,
+  HKStatisticsOptions,
+  HKWorkoutActivityType,
+  HKCategoryTypeIdentifier,
+  useMostRecentQuantitySample,
+  useStatisticsForQuantity,
+  useSources,
+  useMostRecentWorkout,
+  useHealthkitAuthorization,
+  deleteQuantitySample,
+  deleteSamples,
+  queryHeartbeatSeriesSamplesWithAnchor,
+  queryQuantitySamplesWithAnchor,
+  saveQuantitySample,
+  saveWorkoutRoute,
+  saveWorkoutSample,
+} from '@kingstinct/react-native-healthkit'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import React, {
@@ -629,7 +648,7 @@ const App = () => {
   const [canAccessProtectedData, setAccessProtectedData] = useState<boolean>(false)
 
   useEffect(() => {
-    Healthkit.canAccessProtectedData()
+    Healthkit.isProtectedDataAvailable()
       .then(setAccessProtectedData)
       .catch(() => setAccessProtectedData(false))
   }, [])

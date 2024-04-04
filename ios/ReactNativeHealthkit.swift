@@ -17,7 +17,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
         self._runningQueries = [String: HKQuery]()
         self._dateFormatter = ISO8601DateFormatter()
         self._dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
         if HKHealthStore.isHealthDataAvailable() {
             self._store = HKHealthStore.init()
         }
@@ -297,7 +296,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 if let type = HKSampleType.categoryType(forIdentifier: typeId) {
                     let value = sample["value"] as! Int
                     let metadata = sample["metadata"] as? [String: Any]
-
                     let categorySample = HKCategorySample.init(type: type, value: value, start: start, end: end, metadata: metadata)
                     initializedSamples.insert(categorySample)
                 }
@@ -315,8 +313,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
         }
     }
 
-    @objc(saveWorkoutSample:quantities:start:end:metadata:resolve:reject:)
-    func saveWorkoutSample(typeIdentifier: UInt, quantities: [[String: Any]], start: Date, end: Date, metadata: [String: Any], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    @objc(saveWorkoutSample:quantities:start:end:totals:metadata:resolve:reject:)
+    func saveWorkoutSample(typeIdentifier: UInt, quantities: [[String: Any]], start: Date, end: Date, totals: [String: Any], metadata: [String: Any], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
@@ -337,7 +335,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
         var totalDistance: HKQuantity?
         var totalSwimmingStrokeCount: HKQuantity?
         var totalFlightsClimbed: HKQuantity?
-
         // generating quantity samples
         for quantity in quantities {
             let typeId = HKQuantityTypeIdentifier.init(rawValue: quantity["quantityType"] as! String)
@@ -362,7 +359,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 if typeId == HKQuantityTypeIdentifier.flightsClimbed {
                     totalFlightsClimbed = quantity
                 }
-
                 if let quantityStart, let quantityEnd {
                     let quantityStartDate = self._dateFormatter.date(from: quantityStart) ?? start
                     let quantityEndDate = self._dateFormatter.date(from: quantityEnd) ?? end
@@ -374,6 +370,17 @@ class ReactNativeHealthkit: RCTEventEmitter {
                     initializedSamples.append(quantitySample)
                 }
             }
+        }
+
+        // if totals are provided override samples
+        let rawTotalDistance = totals["distance"] as? Double ?? 0.0
+        let rawTotalEnergy = totals["energyBurned"] as? Double ?? 0.0
+
+        if rawTotalDistance != 0.0 {
+            totalDistance = HKQuantity(unit: .meter(), doubleValue: rawTotalDistance)
+        }
+        if rawTotalEnergy != 0.0 {
+            totalEnergyBurned = HKQuantity(unit: .kilocalorie(), doubleValue: rawTotalEnergy)
         }
 
         // creating workout
@@ -403,6 +410,10 @@ class ReactNativeHealthkit: RCTEventEmitter {
             guard error == nil else {
                 reject(GENERIC_ERROR, error!.localizedDescription, error)
                 return
+            }
+
+            if initializedSamples.isEmpty {
+                return resolve(workout.uuid.uuidString)
             }
 
             store.add(initializedSamples, to: workout) { (_, error: Error?) in
@@ -454,7 +465,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
                         if clLocations.isEmpty {
                             return reject(GENERIC_ERROR, "No locations provided", nil)
                         }
-
                         // create route
                         let routeBuilder = HKWorkoutRouteBuilder(healthStore: store, device: nil)
                         try await routeBuilder.insertRouteData(clLocations)
@@ -644,12 +654,53 @@ class ReactNativeHealthkit: RCTEventEmitter {
             }
         }
 
+        let query = HKStatisticsQuery.init(quantityType: quantityType, quantitySamplePredicate: predicate, options: opts) { (_, stats: HKStatistics?, _: Error?) in
+            var dic = [String: [String: Any]?]()
+
+            guard let gottenStats = stats else {
+                return resolve(dic)
+            }
+
+            let unit = HKUnit.init(from: unitString)
+            if let averageQuantity = gottenStats.averageQuantity() {
+                dic.updateValue(serializeQuantity(unit: unit, quantity: averageQuantity), forKey: "averageQuantity")
+            }
+            if let maximumQuantity = gottenStats.maximumQuantity() {
+                dic.updateValue(serializeQuantity(unit: unit, quantity: maximumQuantity), forKey: "maximumQuantity")
+            }
+            if let minimumQuantity = gottenStats.minimumQuantity() {
+                dic.updateValue(serializeQuantity(unit: unit, quantity: minimumQuantity), forKey: "minimumQuantity")
+            }
+            if let sumQuantity = gottenStats.sumQuantity() {
+                dic.updateValue(serializeQuantity(unit: unit, quantity: sumQuantity), forKey: "sumQuantity")
+            }
+            if #available(iOS 12, *) {
+                if let mostRecent = gottenStats.mostRecentQuantity() {
+                    dic.updateValue(serializeQuantity(unit: unit, quantity: mostRecent), forKey: "mostRecentQuantity")
+                }
+
+                if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
+                    dic.updateValue([
+                        "start": self._dateFormatter.string(from: mostRecentDateInterval.start),
+                        "end": self._dateFormatter.string(from: mostRecentDateInterval.end)
+                    ], forKey: "mostRecentQuantityDateInterval")
+                }
+            }
+            if #available(iOS 13, *) {
+                let durationUnit = HKUnit.second()
+                if let duration = gottenStats.duration() {
+                    dic.updateValue(serializeQuantity(unit: durationUnit, quantity: duration), forKey: "duration")
+                }
+            }
+
+            resolve(dic)
+        }
+
         store.execute(query)
     }
 
     @objc(queryWorkoutSamples:distanceUnitString:from:to:limit:ascending:resolve:reject:)
     func queryWorkoutSamples(energyUnitString: String, distanceUnitString: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-
         guard let store = _store else {
             return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
         }
@@ -679,6 +730,76 @@ class ReactNativeHealthkit: RCTEventEmitter {
                             distanceUnit: distanceUnit
                         )
                         arr.add(serialized)
+/*
+                        let endDate = self._dateFormatter.string(from: workout.endDate)
+                        let startDate = self._dateFormatter.string(from: workout.startDate)
+
+                        let dict: NSMutableDictionary = [
+                            "uuid": workout.uuid.uuidString,
+                            "device": serializeDevice(_device: workout.device) as Any,
+                            "duration": workout.duration,
+                            "totalDistance": serializeQuantity(unit: distanceUnit, quantity: workout.totalDistance) as Any,
+                            "totalEnergyBurned": serializeQuantity(unit: energyUnit, quantity: workout.totalEnergyBurned) as Any,
+                            "totalSwimmingStrokeCount": serializeQuantity(unit: HKUnit.count(), quantity: workout.totalSwimmingStrokeCount) as Any,
+                            "workoutActivityType": workout.workoutActivityType.rawValue,
+                            "startDate": startDate,
+                            "endDate": endDate,
+                            "metadata": serializeMetadata(metadata: workout.metadata),
+                            "sourceRevision": serializeSourceRevision(_sourceRevision: workout.sourceRevision) as Any
+                        ]
+
+                        // this is used for our laps functionality to get markers
+                        // https://developer.apple.com/documentation/healthkit/hkworkoutevent
+                        var eventArray: [[String: Any]] = []
+                        if let events = workout.workoutEvents {
+                            for event in events {
+                                let eventStartDate = self._dateFormatter.string(from: event.dateInterval.start)
+                                let eventEndDate = self._dateFormatter.string(from: event.dateInterval.end)
+                                let eventDict: [String: Any] = [
+                                    "type": event.type.rawValue, // https://developer.apple.com/documentation/healthkit/hkworkouteventtype
+                                    "startDate": eventStartDate,
+                                    "endDate": eventEndDate
+                                ]
+                                eventArray.append(eventDict)
+                            }
+                        }
+                        dict["events"] = eventArray
+
+                        // also used for our laps functionality to get activities for custom workouts defined by the user
+                        // https://developer.apple.com/documentation/healthkit/hkworkout/1615340-init
+                        // it seems this might be depricated in the latest beta so this might need updating!
+                        var activitiesArray: [[String: Any]] = []
+                        if #available(iOS 16.0, *) {
+                            let activities: [HKWorkoutActivity] = workout.workoutActivities
+
+                            if !activities.isEmpty {
+                                for activity in activities {
+                                    var activityStartDate = ""
+                                    var activityEndDate = ""
+                                    if let start = activity.startDate as Date? {
+                                        activityStartDate = self._dateFormatter.string(from: start)
+                                    }
+                                    if let end = activity.endDate as Date? {
+                                        activityEndDate = self._dateFormatter.string(from: end)
+                                    }
+                                    let activityDict: [String: Any] = [
+                                        "startDate": activityStartDate,
+                                        "endDate": activityEndDate,
+                                        "uuid": activity.uuid.uuidString,
+                                        "duration": activity.duration
+                                    ]
+                                    activitiesArray.append(activityDict)
+                                }
+                            }
+                        }
+                        dict["activities"] = activitiesArray
+
+                        if #available(iOS 11, *) {
+                            dict.setValue(serializeQuantity(unit: HKUnit.count(), quantity: workout.totalFlightsClimbed), forKey: "totalFlightsClimbed")
+                        }
+
+                        arr.add(dict)
+*/
                     }
                 }
 
@@ -1127,6 +1248,63 @@ class ReactNativeHealthkit: RCTEventEmitter {
             allRoutes.append(routeInfos.merging(routeMetadata) { (current, _) in current })
         }
         return allRoutes
+    }
+
+    @available(iOS 17.0.0, *)
+    func getWorkoutPlan(workout: HKWorkout) async -> [String: Any]? {
+        #if canImport(WorkoutKit)
+        do {
+            let workoutPlan = try await workout.workoutPlan
+
+            var dict = [String: Any]()
+            if (workoutPlan?.id) != nil {
+                dict["id"] = workoutPlan?.id.uuidString
+
+            }
+            if (workoutPlan?.workout.activity) != nil {
+                dict["activityType"] = workoutPlan?.workout.activity.rawValue
+            }
+
+            if dict.isEmpty {
+                return nil
+            }
+            return dict
+        } catch {
+            return nil
+        }
+        #else
+        return nil
+        #endif
+    }
+
+    @objc(getWorkoutPlanById:resolve:reject:)
+    func getWorkoutPlanById(workoutUUID: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        if #available(iOS 17.0, *) {
+            #if canImport(WorkoutKit)
+            guard let store = _store else {
+                return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+            }
+
+            Task {
+                if let uuid = UUID(uuidString: workoutUUID) {
+                    let workout = await self.getWorkoutByID(store: store, workoutUUID: uuid)
+                    if let workout {
+                        let workoutPlan = await self.getWorkoutPlan(workout: workout)
+
+                        return resolve(workoutPlan)
+                    } else {
+                        return reject(GENERIC_ERROR, "No workout found", nil)
+                    }
+                } else {
+                    return reject(GENERIC_ERROR, "Invalid UUID", nil)
+                }
+            }
+            #else
+                return resolve(nil)
+            #endif
+        } else {
+            return resolve(nil)
+        }
     }
 
     func serializeLocation(location: CLLocation, previousLocation: CLLocation?) -> [String: Any] {

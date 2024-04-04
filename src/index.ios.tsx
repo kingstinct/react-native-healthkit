@@ -5,6 +5,8 @@ import useIsHealthDataAvailable from './hooks/useIsHealthDataAvailable'
 import useMostRecentCategorySample from './hooks/useMostRecentCategorySample'
 import useMostRecentQuantitySample from './hooks/useMostRecentQuantitySample'
 import useMostRecentWorkout from './hooks/useMostRecentWorkout'
+import useSources from './hooks/useSources'
+import useStatisticsForQuantity from './hooks/useStatisticsForQuantity'
 import useSubscribeToChanges from './hooks/useSubscribeToChanges'
 import Native, { HKQuantityTypeIdentifier } from './native-types'
 import deleteQuantitySample from './utils/deleteQuantitySample'
@@ -17,6 +19,7 @@ import getPreferredUnit from './utils/getPreferredUnit'
 import getPreferredUnits from './utils/getPreferredUnits'
 import getRequestStatusForAuthorization from './utils/getRequestStatusForAuthorization'
 import queryActivitySummaryForQuantity from './utils/queryActivitySummaryForQuantity'
+import getWorkoutPlanById from './utils/getWorkoutPlanById'
 import queryCategorySamples from './utils/queryCategorySamples'
 import queryCategorySamplesWithAnchor from './utils/queryCategorySamplesWithAnchor'
 import queryCorrelationSamples from './utils/queryCorrelationSamples'
@@ -153,6 +156,7 @@ export default {
   * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutroutequery HKWorkoutRouteQuery (Apple Docs)}
    */
   getWorkoutRoutes,
+  getWorkoutPlanById,
 
   getPreferredUnit,
   getPreferredUnits,
@@ -218,6 +222,61 @@ export default {
    * @see {@link https://developer.apple.com/documentation/healthkit/authorizing_access_to_health_data Apple Docs - Authorizing access to health data}
    */
   useHealthkitAuthorization,
+  useSources,
+  useStatisticsForQuantity,
+}
+
+const isProtectedDataAvailable = canAccessProtectedData
+
+export {
+  authorizationStatusFor,
+  availableQuantityTypes,
+  disableAllBackgroundDelivery,
+  disableBackgroundDelivery,
+  enableBackgroundDelivery,
+  getBiologicalSex,
+  getBloodType,
+  getDateOfBirth,
+  getFitzpatrickSkinType,
+  getMostRecentCategorySample,
+  getMostRecentQuantitySample,
+  getMostRecentWorkout,
+  getPreferredUnit,
+  getPreferredUnits,
+  getRequestStatusForAuthorization,
+  getWheelchairUse,
+  getWorkoutRoutes,
+  isHealthDataAvailable,
+  queryCategorySamples,
+  queryCategorySamplesWithAnchor,
+  queryCorrelationSamples,
+  queryHeartbeatSeriesSamples,
+  queryHeartbeatSeriesSamplesWithAnchor,
+  queryQuantitySamples,
+  queryQuantitySamplesWithAnchor,
+  queryStatisticsForQuantity,
+  queryWorkouts,
+  querySources,
+  requestAuthorization,
+  deleteQuantitySample,
+  deleteSamples,
+  getWorkoutPlanById,
+  saveCategorySample,
+  saveCorrelationSample,
+  saveQuantitySample,
+  saveWorkoutSample,
+  saveWorkoutRoute,
+  subscribeToChanges,
+  useMostRecentCategorySample,
+  useMostRecentQuantitySample,
+  useMostRecentWorkout,
+  useSubscribeToChanges,
+  useHealthkitAuthorization,
+  useIsHealthDataAvailable,
+  useSources,
+  useStatisticsForQuantity,
+  canAccessProtectedData,
+  isProtectedDataAvailable,
 }
 
 export * from './types'

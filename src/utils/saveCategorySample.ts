@@ -2,6 +2,10 @@ import Native from '../native-types'
 
 import type { HKCategoryTypeIdentifier, HKCategoryValueForIdentifier, MetadataMapperForCategoryIdentifier } from '../native-types'
 
+/**
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614168-savecategorysample save(_:withCompletion:) (Apple Docs)}
+   * @see {@link https://developer.apple.com/documentation/healthkit/saving_data_to_healthkit Saving data to HealthKit (Apple Docs)}
+   */
 async function saveCategorySample<T extends HKCategoryTypeIdentifier>(
   identifier: T,
   value: HKCategoryValueForIdentifier<T>,

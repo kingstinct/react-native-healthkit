@@ -1,8 +1,6 @@
-import { Platform } from 'react-native'
+import Healthkit from './index.ios'
 
-import {
-  HKAuthorizationRequestStatus, HKAuthorizationStatus, HKBiologicalSex, HKBloodType, HKFitzpatrickSkinType, HKUnits, HKWheelchairUse,
-} from './native-types'
+export * from './index.ios'
 
 import type ReactNativeHealthkit from './index.ios'
 import type { QueryCategorySamplesFn } from './utils/queryCategorySamples'

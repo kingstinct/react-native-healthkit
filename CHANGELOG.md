@@ -1,3 +1,33 @@
+## [7.3.2](https://github.com/kingstinct/react-native-healthkit/compare/v7.3.1...v7.3.2) (2023-10-23)
+
+
+### Bug Fixes
+
+* platform exports gone wrong ([95e9a84](https://github.com/kingstinct/react-native-healthkit/commit/95e9a84014e261cc21e62d8f9826ead656d48737))
+
+## [7.3.1](https://github.com/kingstinct/react-native-healthkit/compare/v7.3.0...v7.3.1) (2023-10-19)
+
+# [7.3.0](https://github.com/kingstinct/react-native-healthkit/compare/v7.2.0...v7.3.0) (2023-09-13)
+
+
+### Bug Fixes
+
+* handle when enddate is nil ([1146385](https://github.com/kingstinct/react-native-healthkit/commit/11463857c493091ac0b916d1ee7694f77c7dfe9a))
+* return uuid string ([9679e8a](https://github.com/kingstinct/react-native-healthkit/commit/9679e8a12507ba51a6ea4088d421ec9c4e56dfe8))
+* swift placeholder for workoutPlanId ([3389e17](https://github.com/kingstinct/react-native-healthkit/commit/3389e17d423926ea6b9b8513822a5510cf1370a8))
+
+
+### Features
+
+* add more types ([c100a64](https://github.com/kingstinct/react-native-healthkit/commit/c100a6419a766a1aa8126202acd7ad2b98576bb5))
+* allow totals in saveWorkoutSamples ([89c57db](https://github.com/kingstinct/react-native-healthkit/commit/89c57dbd5c8d312345f2fbf9c9e28db2d676a733))
+* create getWorkoutPlanId function ([ec3d7ef](https://github.com/kingstinct/react-native-healthkit/commit/ec3d7ef62aa6ab1a2fff2a8e34ffd13be5976a71))
+* handle when function is called by OS less than 17 ([81a5e01](https://github.com/kingstinct/react-native-healthkit/commit/81a5e01a5f8bbb55e9188c027e9330ad59b0b199))
+* move getWorkoutPlan into its own async function ([d72d3e5](https://github.com/kingstinct/react-native-healthkit/commit/d72d3e59f982d0cde5602488fb926e2a7109abcb))
+* rename function to getWorkoutPlanById and return id and activity type ([edfecf2](https://github.com/kingstinct/react-native-healthkit/commit/edfecf2b40f6b9f94e8d5fd2995b8ee0ea1b8d7b))
+* rename function to getWorkoutPlanById and return id and activity type ([ff252ac](https://github.com/kingstinct/react-native-healthkit/commit/ff252acbf85967952c40780298bdbbe352774b7b))
+* saveWorkoutRoute function ([e9eaee8](https://github.com/kingstinct/react-native-healthkit/commit/e9eaee83a556ff0112b19384bc945b4e9ccddade))
+
 # [7.2.0](https://github.com/kingstinct/react-native-healthkit/compare/v7.1.1...v7.2.0) (2023-09-04)
 
 

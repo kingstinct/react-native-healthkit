@@ -3,7 +3,7 @@
 [![Test Status](https://github.com/Kingstinct/react-native-healthkit/actions/workflows/test.yml/badge.svg)](https://github.com/Kingstinct/react-native-healthkit/actions/workflows/test.yml)
 [![Latest version on NPM](https://img.shields.io/npm/v/@kingstinct/react-native-healthkit)](https://www.npmjs.com/package/@kingstinct/react-native-healthkit)
 [![Downloads on NPM](https://img.shields.io/npm/dt/@kingstinct/react-native-healthkit)](https://www.npmjs.com/package/@kingstinct/react-native-healthkit)
-[![Discord](https://dcbadge.vercel.app/api/server/EHScS93v?style=flat)](https://discord.gg/EHScS93v)
+[![Discord](https://dcbadge.vercel.app/api/server/hrgnETpsJA?style=flat)](https://discord.gg/hrgnETpsJA)
 
 
 React Native bindings for HealthKit with full TypeScript and Promise support covering about any kind of data. Keeping TypeScript mappings as close as possible to HealthKit - both in regards to naming and serialization. This will make it easier to keep this library up-to-date with HealthKit as well as browsing [the official documentation](https://developer.apple.com/documentation/healthkit) (and if something - metadata properties for example - is not typed it will still be accessible).

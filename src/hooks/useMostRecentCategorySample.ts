@@ -6,6 +6,9 @@ import getMostRecentCategorySample from '../utils/getMostRecentCategorySample'
 import type { HKCategoryTypeIdentifier } from '../native-types'
 import type { HKCategorySample } from '../types'
 
+/**
+   * @returns the most recent sample for the given category type.
+   */
 function useMostRecentCategorySample<
   TCategory extends HKCategoryTypeIdentifier
 >(identifier: TCategory) {
