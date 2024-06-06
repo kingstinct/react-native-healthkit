@@ -107,6 +107,12 @@ func serializeUnknownQuantity(quantity: HKQuantity) -> [String: Any]? {
         }
     }
 
+    if #available(iOS 17.0, *) {
+        if quantity.is(compatibleWith: HKUnit.lux()) {
+            return serializeQuantity(unit: HKUnit.lux(), quantity: quantity)
+        }
+    }
+
     if quantity.is(compatibleWith: SpeedUnit) {
         return serializeQuantity(unit: SpeedUnit, quantity: quantity)
     }
