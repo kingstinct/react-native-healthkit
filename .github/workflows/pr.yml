@@ -27,13 +27,16 @@ jobs:
         with:
           ref: refs/pull/${{ github.event.number }}/merge
 
-      - uses: actions/setup-node@v3
+      - uses: cardinalby/export-env-action@v2
         with:
-          node-version-file: .nvmrc
-          cache: yarn
+          envFile: .env.github
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Install dependencies
-        run: yarn install
+        run: bun install
         working-directory: example-expo
 
       - name: Expo GitHub Action
@@ -67,7 +70,7 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Publish
-        run: echo "BUILD_ID=`CI=1 npx eas-cli@latest update --branch=pr-${{ github.event.number }} --auto -p=ios --json --non-interactive | jq -r -c '.[] | select(.platform | contains("ios")) | .id'`" >> $GITHUB_ENV
+        run: echo "BUILD_ID=`CI=1 bunx eas-cli@latest update --branch=pr-${{ github.event.number }} --auto -p=ios --json --non-interactive | jq -r -c '.[] | select(.platform | contains("ios")) | .id'`" >> $GITHUB_ENV
         working-directory: example-expo
 
       - uses: marocchino/sticky-pull-request-comment@v2

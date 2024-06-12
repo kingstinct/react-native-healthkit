@@ -626,12 +626,12 @@ const App = () => {
     ...saveableWorkoutStuff,
   ])
 
-  const [canAccessProtectedData, setAccessProtectedData] = useState<boolean>(false)
+  const [isProtectedDataAvailable, setProtectedDataAvailable] = useState<boolean>(false)
 
   useEffect(() => {
     Healthkit.isProtectedDataAvailable()
-      .then(setAccessProtectedData)
-      .catch(() => setAccessProtectedData(false))
+      .then(setProtectedDataAvailable)
+      .catch(() => setProtectedDataAvailable(false))
   }, [])
 
   const anchor = useRef<string>()
@@ -739,7 +739,7 @@ const App = () => {
             <DeleteSample />
           </List.Accordion>
         </List.AccordionGroup>
-        <Text>{`Can access protected data: ${canAccessProtectedData}`}</Text>
+        <Text>{`Can access protected data: ${isProtectedDataAvailable}`}</Text>
       </ScrollView>
     </Provider>
   )

@@ -44,8 +44,8 @@ class ReactNativeHealthkit: RCTEventEmitter {
         self._hasListeners = true
     }
 
-    @objc(canAccessProtectedData:withRejecter:)
-    func canAccessProtectedData(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
+    @objc(isProtectedDataAvailable:withRejecter:)
+    func isProtectedDataAvailable(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         resolve(UIApplication.shared.isProtectedDataAvailable)
     }
 

@@ -59,8 +59,7 @@ const availableQuantityTypes = (majorVersionIOS = currentMajorVersionIOS) => {
 
 const authorizationStatusFor = Native.authorizationStatusFor.bind(Native)
 const isHealthDataAvailable = Native.isHealthDataAvailable.bind(Native)
-// Todo [>8]: Rename to align with Apple function name (isProtectedDataAvailable)
-const canAccessProtectedData = Native.canAccessProtectedData.bind(Native)
+const isProtectedDataAvailable = Native.isProtectedDataAvailable.bind(Native)
 const disableBackgroundDelivery = Native.disableBackgroundDelivery.bind(Native)
 const disableAllBackgroundDelivery = Native.disableAllBackgroundDelivery.bind(Native)
 const enableBackgroundDelivery = Native.enableBackgroundDelivery.bind(Native)
@@ -98,16 +97,7 @@ export default {
    * @see {@link https://developer.apple.com/documentation/healthkit/protecting_user_privacy#3705074 Protecting User Privacy - Access encrypted data (Apple Docs)}
    * @returns {boolean} A Boolean value that indicates whether content protection is active.
    */
-  isProtectedDataAvailable: canAccessProtectedData,
-
-  // Todo [>8]: Remove to align with Apple function name (isProtectedDataAvailable)
-  /**
-   * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614181-isprotecteddataavailable isProtectedDataAvailable() (Apple Docs)}
-   * @see {@link https://developer.apple.com/documentation/healthkit/protecting_user_privacy#3705074 Protecting User Privacy - Access encrypted data (Apple Docs)}
-   * @deprecated Use {@link isProtectedDataAvailable} instead. Will be removed in next major version.
-   * @returns {boolean} A Boolean value that indicates whether content protection is active.
-   */
-  canAccessProtectedData,
+  isProtectedDataAvailable,
 
   /**
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614158-disableallbackgrounddelivery disableAllBackgroundDelivery(completion:) (Apple Docs)}
@@ -220,8 +210,6 @@ export default {
   useStatisticsForQuantity,
 }
 
-const isProtectedDataAvailable = canAccessProtectedData
-
 export {
   authorizationStatusFor,
   availableQuantityTypes,
@@ -269,7 +257,6 @@ export {
   useIsHealthDataAvailable,
   useSources,
   useStatisticsForQuantity,
-  canAccessProtectedData,
   isProtectedDataAvailable,
 }
 

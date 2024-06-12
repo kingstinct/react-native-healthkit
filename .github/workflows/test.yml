@@ -24,26 +24,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      - uses: cardinalby/export-env-action@v2
         with:
-          node-version-file: .nvmrc
-          cache: yarn
+          envFile: .env.github
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Install example deps
-        run: cd example && yarn && cd ..
+        run: cd example && bun install && cd ..
 
       - name: Install example-expo deps
-        run: cd example-expo && yarn && cd ..
+        run: cd example-expo && bun install && cd ..
 
       - name: Install deps
-        run: yarn
+        run: bun install
 
       - name: Lint
-        run: yarn lint
+        run: bun lint
 
       - name: Types
-        run: yarn typecheck
+        run: bun typecheck
 
       - name: Test
-        run: yarn test-only
+        run: bun test-only

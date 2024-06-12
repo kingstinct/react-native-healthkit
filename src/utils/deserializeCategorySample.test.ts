@@ -1,8 +1,11 @@
 import deserializeCategorySample from './deserializeCategorySample'
-import { HKCategorySampleRaw, HKCategoryTypeIdentifier } from '../types'
+
+import type { HKCategorySampleRaw } from '../types'
 
 describe('deserializeCategorySample', () => {
-  it('should deserialize category sample', () => {
+  it('should deserialize category sample', async () => {
+    const { HKCategoryTypeIdentifier } = await import('../native-types')
+
     const sample: HKCategorySampleRaw = {
       startDate: '2020-01-01T00:00:00.000Z',
       endDate: '2020-01-01T00:00:00.000Z',

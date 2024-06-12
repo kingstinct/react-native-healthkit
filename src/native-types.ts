@@ -1218,7 +1218,7 @@ export enum HKCategoryValueSleepAnalysis {
 }
 
 /**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalueappetitechanges
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalueappetitechanges Apple Docs}
  */
 export enum HKCategoryValueAppetiteChanges {
   decreased = 2,
@@ -1228,7 +1228,7 @@ export enum HKCategoryValueAppetiteChanges {
 }
 
 /**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluepresence
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluepresence Apple Docs}
  */
 export enum HKCategoryValuePresence {
   notPresent = 1,
@@ -1329,14 +1329,14 @@ export type UnitForIdentifier<T extends HKQuantityTypeIdentifier> =
             ? HKUnits.Percent
             : T extends
             | HKQuantityTypeIdentifier.basalBodyTemperature
-            | HKQuantityTypeIdentifier.basalBodyTemperature
+
               ? TemperatureUnit
               : T extends
               | HKQuantityTypeIdentifier.runningSpeed
               | HKQuantityTypeIdentifier.stairAscentSpeed
               | HKQuantityTypeIdentifier.stairDescentSpeed
               | HKQuantityTypeIdentifier.walkingSpeed
-              | HKQuantityTypeIdentifier.walkingSpeed
+
                 ? SpeedUnit<LengthUnit, TimeUnit>
                 : T extends
                 | HKQuantityTypeIdentifier.flightsClimbed
@@ -1362,7 +1362,7 @@ export type UnitForIdentifier<T extends HKQuantityTypeIdentifier> =
                   | HKQuantityTypeIdentifier.dietaryFiber
                   | HKQuantityTypeIdentifier.dietaryFolate
                   | HKQuantityTypeIdentifier.dietaryIodine
-                  | HKQuantityTypeIdentifier.dietaryIodine
+
                   | HKQuantityTypeIdentifier.dietaryIron
                   | HKQuantityTypeIdentifier.dietaryMagnesium
                   | HKQuantityTypeIdentifier.dietaryManganese
@@ -1414,7 +1414,7 @@ export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier> =
             ? HKCategoryValueNotApplicable
             : T extends
             | HKCategoryTypeIdentifier.abdominalCramps
-            | HKCategoryTypeIdentifier.abdominalCramps
+
             | HKCategoryTypeIdentifier.acne
             | HKCategoryTypeIdentifier.bladderIncontinence
             | HKCategoryTypeIdentifier.bloating
@@ -1722,7 +1722,7 @@ export type HKUnit =
   | VolumeUnit
   | `${BloodGlucoseUnit}`
   | `${EnergyUnit}`
-  | `${FrequencyUnit}`
+
   | `${HKUnits}`
   | `${LengthUnit}`
   | `${MassUnit}`
@@ -1997,8 +1997,7 @@ type ReactNativeHealthkitTypeNative = {
    *  @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614180-ishealthdataavailable Apple Docs }
    */
   isHealthDataAvailable(): Promise<boolean>;
-  // Todo [>8]: Rename to align with Apple function name (isProtectedDataAvailable) - remember to rename native code :)
-  canAccessProtectedData(): Promise<boolean>;
+  isProtectedDataAvailable(): Promise<boolean>;
   getBloodType(): Promise<HKBloodType>;
   getDateOfBirth(): Promise<string>;
   getBiologicalSex(): Promise<HKBiologicalSex>;

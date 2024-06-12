@@ -217,7 +217,7 @@ RCT_EXTERN_METHOD(getWorkoutPlanById:(NSString)workoutUUID
                   reject:(RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(canAccessProtectedData:(RCTPromiseResolveBlock)resolve
+RCT_EXTERN_METHOD(isProtectedDataAvailable:(RCTPromiseResolveBlock)resolve
 withRejecter:(RCTPromiseRejectBlock)reject)
 
 

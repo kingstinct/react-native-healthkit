@@ -91,7 +91,6 @@ const authorizationStatusFor = UnavailableFn(Promise.resolve(HKAuthorizationStat
       useSubscribeToChanges = UnavailableFn([null, () => null]),
       useHealthkitAuthorization = UnavailableFn([null, async () => Promise.resolve(HKAuthorizationRequestStatus.unknown)] as const),
       useIsHealthDataAvailable = () => false,
-      canAccessProtectedData = async () => Promise.resolve(false),
       isProtectedDataAvailable = async () => Promise.resolve(false)
 
 const Healthkit: typeof ReactNativeHealthkit = {
@@ -141,7 +140,6 @@ const Healthkit: typeof ReactNativeHealthkit = {
   useSubscribeToChanges,
   useHealthkitAuthorization,
   useIsHealthDataAvailable,
-  canAccessProtectedData,
   isProtectedDataAvailable,
 }
 
@@ -192,7 +190,6 @@ export {
   useSubscribeToChanges,
   useHealthkitAuthorization,
   useIsHealthDataAvailable,
-  canAccessProtectedData,
   isProtectedDataAvailable,
 }
 
