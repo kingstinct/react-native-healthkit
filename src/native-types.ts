@@ -916,6 +916,13 @@ export enum HKWorkoutActivityType {
   handCycling = 74,
   discSports = 75,
   fitnessGaming = 76,
+  cardioDance = 77,
+  socialDance = 78,
+  pickleball = 79,
+  cooldown = 80,
+  swimBikeRun = 82,
+  transition = 83,
+  underwaterDiving = 84,
   other = 3000,
 }
 
