@@ -5,9 +5,8 @@ name: PR - Publish Preview
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the main branch
 on:
-  pull_request_target:
   pull_request:
-  workflow_dispatch: 
+  workflow_dispatch:
 
 concurrency:
   group: preview-${{ github.ref }}
