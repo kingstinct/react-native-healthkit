@@ -7,7 +7,7 @@ import Native from '../native-types'
 * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614180-ishealthdataavailable Apple HealthKit isHealthDataAvailable}
 * @returns {boolean | null} true if HealthKit is available; otherwise, false. null while initializing.
 */
-const useIsHealthDataAvailable = () => {
+const useIsHealthDataAvailable = (): boolean | null => {
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null)
 
   useEffect(() => {
