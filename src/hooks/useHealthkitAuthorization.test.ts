@@ -1,11 +1,17 @@
 import { renderHook, act } from '@testing-library/react-native'
 
 import useHealthkitAuthorization from './useHealthkitAuthorization'
-import Native, { HKAuthorizationRequestStatus, HKCategoryTypeIdentifier } from '../native-types'
 import waitForNextUpdate from '../test-utils'
 
 describe('useHealthkitAuthorization', () => {
+  let NativeTypes: typeof import('../native-types')
+  beforeAll(async () => {
+    NativeTypes = await import('../native-types')
+  })
+
   test('should return shouldRequest', async () => {
+    const { HKAuthorizationRequestStatus, HKCategoryTypeIdentifier, default: Native } = NativeTypes
+
     jest.spyOn(Native, 'getRequestStatusForAuthorization').mockReturnValue(Promise.resolve(HKAuthorizationRequestStatus.shouldRequest))
 
     const { result } = renderHook(() => useHealthkitAuthorization([HKCategoryTypeIdentifier.abdominalCramps]))
@@ -16,6 +22,8 @@ describe('useHealthkitAuthorization', () => {
   })
 
   test('should request permissions', async () => {
+    const { HKAuthorizationRequestStatus, HKCategoryTypeIdentifier, default: Native } = NativeTypes
+
     const spy = jest.spyOn(Native, 'getRequestStatusForAuthorization').mockReturnValue(Promise.resolve(HKAuthorizationRequestStatus.shouldRequest))
     jest.spyOn(Native, 'requestAuthorization').mockReturnValue(Promise.resolve(true))
 
@@ -25,9 +33,10 @@ describe('useHealthkitAuthorization', () => {
 
     spy.mockReturnValue(Promise.resolve(HKAuthorizationRequestStatus.unnecessary))
 
-    let retVal: HKAuthorizationRequestStatus | undefined
+    let retVal: typeof HKAuthorizationRequestStatus | undefined
     await act(async () => {
-      retVal = await result.current[1]()
+      const r = await result.current[1]() as unknown as typeof HKAuthorizationRequestStatus
+      retVal = r
     })
 
     expect(result.current[0]).toBe(HKAuthorizationRequestStatus.unnecessary)
@@ -35,6 +44,8 @@ describe('useHealthkitAuthorization', () => {
   })
 
   test('should return unnecessary', async () => {
+    const { HKAuthorizationRequestStatus, HKCategoryTypeIdentifier, default: Native } = NativeTypes
+
     jest.spyOn(Native, 'getRequestStatusForAuthorization').mockReturnValue(Promise.resolve(HKAuthorizationRequestStatus.unnecessary))
 
     const { result } = renderHook(() => useHealthkitAuthorization([HKCategoryTypeIdentifier.abdominalCramps]))
@@ -45,6 +56,8 @@ describe('useHealthkitAuthorization', () => {
   })
 
   test('should return null before initalizing', async () => {
+    const { HKCategoryTypeIdentifier } = NativeTypes
+
     const { result } = renderHook(() => useHealthkitAuthorization([HKCategoryTypeIdentifier.abdominalCramps]))
 
     expect(result.current[0]).toBe(null)
