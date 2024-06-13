@@ -23,7 +23,9 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import React, {
   useCallback, useEffect, useRef, useState,
 } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import {
+  Alert, ScrollView, StyleSheet, View,
+} from 'react-native'
 import {
   Button,
   List,
@@ -180,18 +182,20 @@ const TodayListItem: React.FC<{
           [icon],
         )
 
+  const quantity = latestValue?.sumQuantity ?? latestValue?.averageQuantity
+
   return (
     <List.Item
       title={title}
       left={left}
       description={
-        latestValue
+        // eslint-disable-next-line no-nested-ternary
+        quantity
           ? `${
-            latestValue.sumQuantity?.unit === 'count'
-              ? latestValue.sumQuantity?.quantity
-              : latestValue.sumQuantity?.quantity.toFixed(2)
-          } (${latestValue.sumQuantity?.unit})`
-          : 'No data found'
+            quantity?.unit === 'count'
+              ? quantity?.quantity
+              : quantity?.quantity.toFixed(2)
+          } (${quantity?.unit})` : 'No data found'
       }
     />
   )
@@ -214,14 +218,22 @@ const SourceListItem: React.FC<{
     <List.Item
       title={title}
       left={left}
+      onPress={() => {
+        Alert.alert(
+          'Sources',
+          sources
+            ? JSON.stringify(sources, null, 2)
+            : 'No sources found',
+        )
+      }}
       description={
-        sources
+        sources && sources.length
           ? `${
             sources.length === 1
               ? `1 source for this data type`
               : `${sources.length} sources for this data type`
           }`
-          : 'No sources found'
+          : 'Loading..'
       }
     />
   )

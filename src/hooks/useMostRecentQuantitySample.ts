@@ -24,6 +24,9 @@ function useMostRecentQuantitySample<
     const init = async () => {
       const actualUnit = await ensureUnit(identifier, unit)
 
+      const value = await getMostRecentQuantitySample(identifier, actualUnit)
+      setLastSample(value)
+
       cancelSubscription = await subscribeToChanges(identifier, async () => {
         const value = await getMostRecentQuantitySample(identifier, actualUnit)
         setLastSample(value)
