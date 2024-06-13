@@ -36,9 +36,13 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
-      - name: Install dependencies
+      - name: Install dependencies (example-expo)
         run: bun install
         working-directory: example-expo
+      
+      - name: Install dependencies (example)
+        run: bun install
+        working-directory: example
 
       - name: Expo GitHub Action
         uses: expo/expo-github-action@v8
@@ -71,7 +75,7 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Publish
-        run: echo "BUILD_ID=`CI=1 bunx eas-cli@latest update --branch=pr-${{ github.event.number }} --auto -p=ios --json --non-interactive | jq -r -c '.[] | select(.platform | contains("ios")) | .id'`" >> $GITHUB_ENV
+        run: bunx eas-cli@latest update --branch=master --auto -p=ios --json --non-interactive
         working-directory: example-expo
 
       - uses: marocchino/sticky-pull-request-comment@v2
