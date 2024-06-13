@@ -1,9 +1,10 @@
 # [8.0.0](https://github.com/kingstinct/react-native-healthkit/compare/v7.3.2...v8.0.0) (2024-06-13)
 
+### Features
 
-### Bug Fixes
-
-* support new lux HKUnit for iOS 17 ([a546e28](https://github.com/kingstinct/react-native-healthkit/commit/a546e2815a818a5ae785134ae84c552a2d31e931))
+* support for iOS 18 types, migrate to bun, bump example-expo to expo 51 with bridgeless mode ([e08eecd](https://github.com/kingstinct/react-native-healthkit/commit/e08eecdaed87f295b6d5c1c0ead25a045eb3f817))
+* support new lux HKUnit for iOS 17 ([a546e28](https://github.com/kingstinct/react-native-healthkit/commit/a546e2815a818a5ae785134ae84c552a2d31e931)) by @jgfino
+* Update native-types.ts with latest activity types ([ba15194](https://github.com/kingstinct/react-native-healthkit/commit/ba15194e31420d01f9ecf2aad2fc43d15c7a7d65)) by @jstheoriginal
 
 ## [7.3.2](https://github.com/kingstinct/react-native-healthkit/compare/v7.3.1...v7.3.2) (2023-10-23)
 
