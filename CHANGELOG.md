@@ -1,3 +1,10 @@
+# [8.0.0](https://github.com/kingstinct/react-native-healthkit/compare/v7.3.2...v8.0.0) (2024-06-13)
+
+
+### Bug Fixes
+
+* support new lux HKUnit for iOS 17 ([a546e28](https://github.com/kingstinct/react-native-healthkit/commit/a546e2815a818a5ae785134ae84c552a2d31e931))
+
 ## [7.3.2](https://github.com/kingstinct/react-native-healthkit/compare/v7.3.1...v7.3.2) (2023-10-23)
 
 
