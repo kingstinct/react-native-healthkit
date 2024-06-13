@@ -1,12 +1,13 @@
 import { renderHook, act } from '@testing-library/react-native'
 
-import useHealthkitAuthorization from './useHealthkitAuthorization'
 import waitForNextUpdate from '../test-utils'
 
 describe('useHealthkitAuthorization', () => {
   let NativeTypes: typeof import('../native-types')
+  let useHealthkitAuthorization: typeof import('./useHealthkitAuthorization').default
   beforeAll(async () => {
     NativeTypes = await import('../native-types')
+    useHealthkitAuthorization = (await import('./useHealthkitAuthorization')).default
   })
 
   test('should return shouldRequest', async () => {
