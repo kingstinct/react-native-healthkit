@@ -20,7 +20,7 @@
     "app.plugin.js"
   ],
   "scripts": {
-    "test-only": "bun test --preload ./src/test-setup.ts",
+    "test-only": "bun test --preload ./src/test-setup.ts src",
     "test": "concurrently \"bun test-only\" \"bun typecheck\" \"bun lint\"",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\" --cache",

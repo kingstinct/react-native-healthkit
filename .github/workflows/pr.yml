@@ -6,6 +6,8 @@ name: PR - Publish Preview
 # events but only for the main branch
 on:
   pull_request_target:
+  pull_request:
+  workflow_dispatch: 
 
 concurrency:
   group: preview-${{ github.ref }}
