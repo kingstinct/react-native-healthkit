@@ -23,19 +23,26 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - uses: cardinalby/export-env-action@v2
         with:
-          node-version-file: .nvmrc
-          cache: yarn
+          envFile: .env.github
 
-      - name: Install dependencies
-        run: yarn install
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install dependencies (example-expo)
+        run: bun install
         working-directory: example-expo
+      
+      - name: Install dependencies (example)
+        run: bun install
+        working-directory: example
 
       - name: Expo GitHub Action
-        uses: expo/expo-github-action@v7
+        uses: expo/expo-github-action@v8
         with:
           # Your Expo username, for authentication.
           token: ${{ secrets.EXPO_TOKEN }}
@@ -46,7 +53,7 @@ jobs:
 
       - name: Find Metro cache
         id: metro-cache-dir-path
-        uses: actions/github-script@v4
+        uses: actions/github-script@v7
         with:
           result-encoding: string
           script: |
@@ -55,7 +62,7 @@ jobs:
             return path.join(os.tmpdir(), 'metro-cache');
 
       - name: Restore Metro cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ steps.metro-cache-dir-path.outputs.result }}
           key: ${{ runner.os }}-metro-cache-${{ matrix.app }}-${{ github.ref }}
@@ -65,5 +72,5 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Publish
-        run: echo "BUILD_ID=`CI=1 npx eas-cli@latest update --branch=master --auto -p=ios --json --non-interactive | jq -r -c '.[] | select(.platform | contains("ios")) | .id'`" >> $GITHUB_ENV
+        run: bunx eas-cli@latest update --branch=master --auto -p=ios --json --non-interactive
         working-directory: example-expo

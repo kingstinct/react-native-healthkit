@@ -6,14 +6,43 @@ name: Test
 on:
   push:
     branches: [ "**" ]
-  pull_request:
-    branches: [ "**" ]
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
   test:
+    # The type of runner that the job will run on
+    runs-on: macos-latest
+    timeout-minutes: 10
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: cardinalby/export-env-action@v2
+        with:
+          envFile: .env.github
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install example deps
+        run: cd example && bun install && cd ..
+
+      - name: Install example-expo deps
+        run: cd example-expo && bun install && cd ..
+
+      - name: Install deps
+        run: bun install
+
+      - name: Test
+        run: bun test-only
+
+  lint:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -22,28 +51,55 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      - uses: cardinalby/export-env-action@v2
         with:
-          node-version-file: .nvmrc
-          cache: yarn
+          envFile: .env.github
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Install example deps
-        run: cd example && yarn && cd ..
+        run: cd example && bun install && cd ..
 
       - name: Install example-expo deps
-        run: cd example-expo && yarn && cd ..
+        run: cd example-expo && bun install && cd ..
 
       - name: Install deps
-        run: yarn
+        run: bun install
 
       - name: Lint
-        run: yarn lint
+        run: bun lint
+
+  typecheck:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: cardinalby/export-env-action@v2
+        with:
+          envFile: .env.github
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install example deps
+        run: cd example && bun install && cd ..
+
+      - name: Install example-expo deps
+        run: cd example-expo && bun install && cd ..
+
+      - name: Install deps
+        run: bun install
 
       - name: Types
-        run: yarn typecheck
-
-      - name: Test
-        run: yarn test-only
+        run: bun typecheck

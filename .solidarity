@@ -1,19 +1,12 @@
 {
   "$schema": "http://json.schemastore.org/solidaritySchema",
   "requirements": {
-    "Node": [
+    "bun": [
       {
         "rule": "cli",
-        "binary": "node",
-        "semver": ">=16"
-      }
-    ],
-    "Yarn": [
-      {
-        "rule": "cli",
-        "binary": "yarn",
+        "binary": "bun",
         "version": "--version",
-        "semver": ">=1.22"
+        "semver": ">=1.1"
       }
     ],
     "Cocoapods": [
@@ -34,13 +27,13 @@
       {
         "rule": "cli",
         "binary": "xcodebuild",
-        "semver": "14.3",
+        "semver": ">=15",
         "platform": "darwin"
       },
       {
         "rule": "cli",
         "binary": "xcrun",
-        "semver": "64",
+        "semver": ">=68",
         "platform": "darwin"
       }
     ]

@@ -32,6 +32,17 @@
       "policy": "sdkVersion"
     },
     "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "newArchEnabled": true
+          },
+          "android": {
+            "newArchEnabled": true
+          }
+        }
+      ],
       [ "./app.plugin",
         {
           "NSHealthShareUsageDescription": "Overriden default message: This app uses HealthKit to store and sync your data"

@@ -717,6 +717,69 @@ export enum HKQuantityTypeIdentifier {
    * @since iOS 16
    */
   runningSpeed = 'HKQuantityTypeIdentifierRunningSpeed',
+
+  /**
+   * Cross Country Skiing Speed
+   * @see {@link https://developer.apple.com/documentation/healthkit/HKQuantityTypeIdentifierCrossCountrySkiingSpeed Apple Docs HKQuantityTypeIdentifierCrossCountrySkiingSpeed}
+   * @since iOS 18
+   */
+  crossCountrySkiingSpeed = 'HKQuantityTypeIdentifierCrossCountrySkiingSpeed',
+
+  /**
+   * Cross Country Skiing Distance
+   * @see {@link https://developer.apple.com/documentation/healthkit/HKQuantityTypeIdentifierDistanceCrossCountrySkiing Apple Docs HKQuantityTypeIdentifierCrossCountrySkiingDistance}
+   * @since iOS 18
+   */
+  distanceCrossCountrySkiing = 'HKQuantityTypeIdentifierDistanceCrossCountrySkiing',
+
+  /**
+   * Paddle Sports Distance
+   * @see {@link https://developer.apple.com/documentation/healthkit/HKQuantityTypeIdentifierDistancePaddleSports Apple Docs HKQuantityTypeIdentifierDistancePaddleSports}
+   * @since iOS 18
+   */
+  distancePaddleSports = 'HKQuantityTypeIdentifierDistancePaddleSports',
+
+  /**
+   * Rowing Distance
+   * @see {@link https://developer.apple.com/documentation/healthkit/HKQuantityTypeIdentifierDistanceRowing Apple Docs HKQuantityTypeIdentifierDistanceRowing}
+   * @since iOS 18
+   */
+  distanceRowing = 'HKQuantityTypeIdentifierDistanceRowing',
+
+  /**
+   * Skating Sports Distance
+   * @see {@link https://developer.apple.com/documentation/healthkit/HKQuantityTypeIdentifierDistanceSkatingSports Apple Docs HKQuantityTypeIdentifierDistanceSkatingSports}
+   * @since iOS 18
+   */
+  distanceSkatingSports = 'HKQuantityTypeIdentifierDistanceSkatingSports',
+
+  /**
+   * Estimated Workout Effort Score
+   * @see {@link https://developer.apple.com/documentation/healthkit/HKQuantityTypeIdentifierEstimatedWorkoutEffortScore Apple Docs HKQuantityTypeIdentifierEstimatedWorkoutEffortScore}
+   * @since iOS 18
+   */
+  estimatedWorkoutEffortScore = 'HKQuantityTypeIdentifierEstimatedWorkoutEffortScore',
+
+  /**
+   * Paddle Sports Speed
+   * @see {@link https://developer.apple.com/documentation/healthkit/HKQuantityTypeIdentifierPaddleSportsSpeed Apple Docs HKQuantityTypeIdentifierPaddleSportsSpeed}
+   * @since iOS 18
+   */
+  paddleSportsSpeed = 'HKQuantityTypeIdentifierPaddleSportsSpeed',
+
+  /**
+   * Rowing Speed
+   * @see {@link https://developer.apple.com/documentation/healthkit/HKQuantityTypeIdentifierRowingSpeed Apple Docs HKQuantityTypeIdentifierRowingSpeed}
+   * @since iOS 18
+   */
+  rowingSpeed = 'HKQuantityTypeIdentifierRowingSpeed',
+
+  /**
+   * Workout Effort Score
+   * @see {@link https://developer.apple.com/documentation/healthkit/HKQuantityTypeIdentifierWorkoutEffortScore Apple Docs HKQuantityTypeIdentifierWorkoutEffortScore}
+   * @since iOS 18
+   */
+  workoutEffortScore = 'HKQuantityTypeIdentifierWorkoutEffortScore',
 }
 
 export type TypeToUnitMapping = {
@@ -749,6 +812,10 @@ export enum HKCategoryTypeIdentifier {
   appleStandHour = 'HKCategoryTypeIdentifierAppleStandHour',
   cervicalMucusQuality = 'HKCategoryTypeIdentifierCervicalMucusQuality',
   ovulationTestResult = 'HKCategoryTypeIdentifierOvulationTestResult',
+  /**
+   * @deprecated In iOS 18 beta
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifiermenstrualflow Apple Docs }
+   */
   menstrualFlow = 'HKCategoryTypeIdentifierMenstrualFlow',
   intermenstrualBleeding = 'HKCategoryTypeIdentifierIntermenstrualBleeding',
   sexualActivity = 'HKCategoryTypeIdentifierSexualActivity',
@@ -812,6 +879,20 @@ export enum HKCategoryTypeIdentifier {
   vaginalDryness = 'HKCategoryTypeIdentifierVaginalDryness', // HKCategoryValueSeverity
   vomiting = 'HKCategoryTypeIdentifierVomiting', // HKCategoryValueSeverity
   wheezing = 'HKCategoryTypeIdentifierWheezing', // HKCategoryValueSeverity
+
+  /**
+   * Bleeding After Pregnancy
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifierbleedingafterpregnancy Apple Docs }
+   * @since iOS 18
+   */
+  bleedingAfterPregnancy = 'HKCategoryTypeIdentifierBleedingAfterPregnancy', // HKCategoryValueSeverity
+
+  /**
+   * Bleeding During Pregnancy
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifierbleedingduringpregnancy Apple Docs }
+   * @since iOS 18
+   */
+  bleedingDuringPregnancy = 'HKCategoryTypeIdentifierBleedingDuringPregnancy', // HKCategoryValueSeverity
 }
 
 export type HKSampleTypeIdentifier =
@@ -1104,6 +1185,7 @@ export enum HKCategoryValueCervicalMucusQuality {
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluemenstrualflow Apple Docs }
+ * @deprecated In iOS 18 beta
  */
 export enum HKCategoryValueMenstrualFlow {
   unspecified = 1,
@@ -1136,7 +1218,7 @@ export enum HKCategoryValueSleepAnalysis {
 }
 
 /**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalueappetitechanges
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalueappetitechanges Apple Docs}
  */
 export enum HKCategoryValueAppetiteChanges {
   decreased = 2,
@@ -1146,7 +1228,7 @@ export enum HKCategoryValueAppetiteChanges {
 }
 
 /**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluepresence
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluepresence Apple Docs}
  */
 export enum HKCategoryValuePresence {
   notPresent = 1,
@@ -1247,14 +1329,14 @@ export type UnitForIdentifier<T extends HKQuantityTypeIdentifier> =
             ? HKUnits.Percent
             : T extends
             | HKQuantityTypeIdentifier.basalBodyTemperature
-            | HKQuantityTypeIdentifier.basalBodyTemperature
+
               ? TemperatureUnit
               : T extends
               | HKQuantityTypeIdentifier.runningSpeed
               | HKQuantityTypeIdentifier.stairAscentSpeed
               | HKQuantityTypeIdentifier.stairDescentSpeed
               | HKQuantityTypeIdentifier.walkingSpeed
-              | HKQuantityTypeIdentifier.walkingSpeed
+
                 ? SpeedUnit<LengthUnit, TimeUnit>
                 : T extends
                 | HKQuantityTypeIdentifier.flightsClimbed
@@ -1280,7 +1362,7 @@ export type UnitForIdentifier<T extends HKQuantityTypeIdentifier> =
                   | HKQuantityTypeIdentifier.dietaryFiber
                   | HKQuantityTypeIdentifier.dietaryFolate
                   | HKQuantityTypeIdentifier.dietaryIodine
-                  | HKQuantityTypeIdentifier.dietaryIodine
+
                   | HKQuantityTypeIdentifier.dietaryIron
                   | HKQuantityTypeIdentifier.dietaryMagnesium
                   | HKQuantityTypeIdentifier.dietaryManganese
@@ -1332,7 +1414,7 @@ export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier> =
             ? HKCategoryValueNotApplicable
             : T extends
             | HKCategoryTypeIdentifier.abdominalCramps
-            | HKCategoryTypeIdentifier.abdominalCramps
+
             | HKCategoryTypeIdentifier.acne
             | HKCategoryTypeIdentifier.bladderIncontinence
             | HKCategoryTypeIdentifier.bloating
@@ -1640,7 +1722,7 @@ export type HKUnit =
   | VolumeUnit
   | `${BloodGlucoseUnit}`
   | `${EnergyUnit}`
-  | `${FrequencyUnit}`
+
   | `${HKUnits}`
   | `${LengthUnit}`
   | `${MassUnit}`
@@ -1915,8 +1997,7 @@ type ReactNativeHealthkitTypeNative = {
    *  @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614180-ishealthdataavailable Apple Docs }
    */
   isHealthDataAvailable(): Promise<boolean>;
-  // Todo [>8]: Rename to align with Apple function name (isProtectedDataAvailable) - remember to rename native code :)
-  canAccessProtectedData(): Promise<boolean>;
+  isProtectedDataAvailable(): Promise<boolean>;
   getBloodType(): Promise<HKBloodType>;
   getDateOfBirth(): Promise<string>;
   getBiologicalSex(): Promise<HKBiologicalSex>;
