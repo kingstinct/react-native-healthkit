@@ -1,3 +1,10 @@
+## [8.0.1](https://github.com/kingstinct/react-native-healthkit/compare/v8.0.0...v8.0.1) (2024-06-17)
+
+
+### Bug Fixes
+
+* building with xcode <16 ([3a2bf22](https://github.com/kingstinct/react-native-healthkit/commit/3a2bf22df13bf2383150d9c2e996871922e6e57e))
+
 # [8.0.0](https://github.com/kingstinct/react-native-healthkit/compare/v7.3.2...v8.0.0) (2024-06-13)
 
 ### Features
