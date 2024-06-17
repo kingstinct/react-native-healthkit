@@ -113,11 +113,13 @@ func serializeUnknownQuantity(quantity: HKQuantity) -> [String: Any]? {
         }
     }
 
+#if compiler(>=6)
     if #available(iOS 18.0, *) {
         if quantity.is(compatibleWith: HKUnit.appleEffortScore()) {
             return serializeQuantity(unit: HKUnit.appleEffortScore(), quantity: quantity)
         }
     }
+#endif
 
     if quantity.is(compatibleWith: SpeedUnit) {
         return serializeQuantity(unit: SpeedUnit, quantity: quantity)
