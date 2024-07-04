@@ -1,3 +1,10 @@
+# [8.1.0](https://github.com/kingstinct/react-native-healthkit/compare/v8.0.1...v8.1.0) (2024-07-04)
+
+
+### Features
+
+* add queryWorkoutSamplesWithAnchor ([edd2f4b](https://github.com/kingstinct/react-native-healthkit/commit/edd2f4b0d084addc872fdf562b84bcbf34016914))
+
 ## [8.0.1](https://github.com/kingstinct/react-native-healthkit/compare/v8.0.0...v8.0.1) (2024-06-17)
 
 
