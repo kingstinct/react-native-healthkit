@@ -1,4 +1,4 @@
-import deserializCategorySample from './deserializeCategorySample'
+import deserializeCategorySample from './deserializeCategorySample'
 import prepareOptions from './prepareOptions'
 import Native from '../native-types'
 
@@ -30,7 +30,7 @@ const queryCategorySamplesWithAnchor: QueryCategorySamplesWithAnchorFn = async (
   )
 
   return {
-    samples: raw.samples.map(deserializCategorySample),
+    samples: raw.samples.map(deserializeCategorySample),
     deletedSamples: raw.deletedSamples,
     newAnchor: raw.newAnchor,
   }

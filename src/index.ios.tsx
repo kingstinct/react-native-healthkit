@@ -28,7 +28,8 @@ import queryQuantitySamples from './utils/queryQuantitySamples'
 import queryQuantitySamplesWithAnchor from './utils/queryQuantitySamplesWithAnchor'
 import querySources from './utils/querySources'
 import queryStatisticsForQuantity from './utils/queryStatisticsForQuantity'
-import queryWorkouts from './utils/queryWorkouts'
+import queryWorkoutSamples from './utils/queryWorkouts'
+import queryWorkoutSamplesWithAnchor from './utils/queryWorkoutSamplesWithAnchor'
 import requestAuthorization from './utils/requestAuthorization'
 import saveCategorySample from './utils/saveCategorySample'
 import saveCorrelationSample from './utils/saveCorrelationSample'
@@ -158,7 +159,12 @@ export default {
   queryQuantitySamples,
   queryQuantitySamplesWithAnchor,
   queryStatisticsForQuantity,
-  queryWorkouts,
+  /**
+ * @deprecated Use queryWorkoutSamples instead
+ */
+  queryWorkouts: queryWorkoutSamples,
+  queryWorkoutSamples,
+  queryWorkoutSamplesWithAnchor,
   querySources,
 
   requestAuthorization,
@@ -210,6 +216,8 @@ export default {
   useStatisticsForQuantity,
 }
 
+const queryWorkouts = queryWorkoutSamples
+
 export {
   authorizationStatusFor,
   availableQuantityTypes,
@@ -237,7 +245,12 @@ export {
   queryQuantitySamples,
   queryQuantitySamplesWithAnchor,
   queryStatisticsForQuantity,
+  /**
+ * @deprecated Use queryWorkoutSamples instead
+ */
   queryWorkouts,
+  queryWorkoutSamples,
+  queryWorkoutSamplesWithAnchor,
   querySources,
   requestAuthorization,
   deleteQuantitySample,
