@@ -1923,6 +1923,11 @@ export type DeletedCategorySampleRaw<T extends HKCategoryTypeIdentifier> = {
   readonly metadata: MetadataMapperForCategoryIdentifier<T>;
 };
 
+export type DeletedWorkoutSampleRaw = {
+  readonly uuid: string;
+  readonly metadata: HKWorkoutMetadata;
+};
+
 export type DeletedHeartbeatSeriesSampleRaw = {
   readonly uuid: string;
   readonly metadata: HKHeartbeatSeriesSampleMetadata;
@@ -1993,6 +1998,15 @@ export type WorkoutRoute = {
   readonly HKMetadataKeySyncIdentifier?: string;
   readonly HKMetadataKeySyncVersion?: number;
 };
+
+type QueryWorkoutSamplesWithAnchorResponseRaw<
+  TEnergy extends EnergyUnit,
+  TDistance extends LengthUnit
+> = {
+  readonly samples: readonly HKWorkoutRaw<TEnergy, TDistance>[],
+  readonly deletedSamples: readonly DeletedWorkoutSampleRaw[],
+  readonly newAnchor: string
+}
 
 type ReactNativeHealthkitTypeNative = {
   /**
@@ -2152,7 +2166,7 @@ type ReactNativeHealthkitTypeNative = {
     to: string,
     limit: number,
     anchor: string
-  ) => Promise<readonly HKWorkoutRaw<TEnergy, TDistance>[]>;
+  ) => Promise<QueryWorkoutSamplesWithAnchorResponseRaw<TEnergy, TDistance>>;
   readonly queryQuantitySamplesWithAnchor: <
     TIdentifier extends HKQuantityTypeIdentifier,
     TUnit extends UnitForIdentifier<TIdentifier>
