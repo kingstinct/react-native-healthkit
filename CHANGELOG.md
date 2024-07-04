@@ -1,3 +1,10 @@
+## [8.1.1](https://github.com/kingstinct/react-native-healthkit/compare/v8.1.0...v8.1.1) (2024-07-04)
+
+
+### Bug Fixes
+
+* add exports all the way ([2bd1813](https://github.com/kingstinct/react-native-healthkit/commit/2bd18131dfcf8edf3e4795ea456f9bd59cab4b4c))
+
 # [8.1.0](https://github.com/kingstinct/react-native-healthkit/compare/v8.0.1...v8.1.0) (2024-07-04)
 
 
