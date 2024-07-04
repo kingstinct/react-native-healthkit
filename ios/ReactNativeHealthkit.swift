@@ -717,6 +717,76 @@ class ReactNativeHealthkit: RCTEventEmitter {
         store.execute(query)
     }
 
+  func mapWorkout(workout: HKWorkout, distanceUnit: HKUnit, energyUnit: HKUnit) -> NSMutableDictionary {
+    let endDate = self._dateFormatter.string(from: workout.endDate)
+    let startDate = self._dateFormatter.string(from: workout.startDate)
+
+    let dict: NSMutableDictionary = [
+        "uuid": workout.uuid.uuidString,
+        "device": serializeDevice(_device: workout.device) as Any,
+        "duration": workout.duration,
+        "totalDistance": serializeQuantity(unit: distanceUnit, quantity: workout.totalDistance) as Any,
+        "totalEnergyBurned": serializeQuantity(unit: energyUnit, quantity: workout.totalEnergyBurned) as Any,
+        "totalSwimmingStrokeCount": serializeQuantity(unit: HKUnit.count(), quantity: workout.totalSwimmingStrokeCount) as Any,
+        "workoutActivityType": workout.workoutActivityType.rawValue,
+        "startDate": startDate,
+        "endDate": endDate,
+        "metadata": serializeMetadata(metadata: workout.metadata),
+        "sourceRevision": serializeSourceRevision(_sourceRevision: workout.sourceRevision) as Any
+    ]
+
+    // this is used for our laps functionality to get markers
+    // https://developer.apple.com/documentation/healthkit/hkworkoutevent
+    var eventArray: [[String: Any]] = []
+    if let events = workout.workoutEvents {
+        for event in events {
+            let eventStartDate = self._dateFormatter.string(from: event.dateInterval.start)
+            let eventEndDate = self._dateFormatter.string(from: event.dateInterval.end)
+            let eventDict: [String: Any] = [
+                "type": event.type.rawValue, // https://developer.apple.com/documentation/healthkit/hkworkouteventtype
+                "startDate": eventStartDate,
+                "endDate": eventEndDate
+            ]
+            eventArray.append(eventDict)
+        }
+    }
+    dict["events"] = eventArray
+
+    // also used for our laps functionality to get activities for custom workouts defined by the user
+    // https://developer.apple.com/documentation/healthkit/hkworkout/1615340-init
+    // it seems this might be depricated in the latest beta so this might need updating!
+    var activitiesArray: [[String: Any]] = []
+    if #available(iOS 16.0, *) {
+        let activities: [HKWorkoutActivity] = workout.workoutActivities
+
+        if !activities.isEmpty {
+            for activity in activities {
+                var activityStartDate = ""
+                var activityEndDate = ""
+                if let start = activity.startDate as Date? {
+                    activityStartDate = self._dateFormatter.string(from: start)
+                }
+                if let end = activity.endDate as Date? {
+                    activityEndDate = self._dateFormatter.string(from: end)
+                }
+                let activityDict: [String: Any] = [
+                    "startDate": activityStartDate,
+                    "endDate": activityEndDate,
+                    "uuid": activity.uuid.uuidString,
+                    "duration": activity.duration
+                ]
+                activitiesArray.append(activityDict)
+            }
+        }
+    }
+    dict["activities"] = activitiesArray
+
+    if #available(iOS 11, *) {
+        dict.setValue(serializeQuantity(unit: HKUnit.count(), quantity: workout.totalFlightsClimbed), forKey: "totalFlightsClimbed")
+    }
+    return dict
+  }
+
     @objc(queryWorkoutSamples:distanceUnitString:from:to:limit:ascending:resolve:reject:)
     func queryWorkoutSamples(energyUnitString: String, distanceUnitString: String, from: Date, to: Date, limit: Int, ascending: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         guard let store = _store else {
@@ -741,76 +811,15 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 let arr: NSMutableArray = []
 
                 for s in samples {
-                    if let workout = s as? HKWorkout {
-                        let endDate = self._dateFormatter.string(from: workout.endDate)
-                        let startDate = self._dateFormatter.string(from: workout.startDate)
+                  if let workout = s as? HKWorkout {
+                    let dict = self.mapWorkout(
+                      workout: workout,
+                      distanceUnit: distanceUnit,
+                      energyUnit: energyUnit
+                    )
 
-                        let dict: NSMutableDictionary = [
-                            "uuid": workout.uuid.uuidString,
-                            "device": serializeDevice(_device: workout.device) as Any,
-                            "duration": workout.duration,
-                            "totalDistance": serializeQuantity(unit: distanceUnit, quantity: workout.totalDistance) as Any,
-                            "totalEnergyBurned": serializeQuantity(unit: energyUnit, quantity: workout.totalEnergyBurned) as Any,
-                            "totalSwimmingStrokeCount": serializeQuantity(unit: HKUnit.count(), quantity: workout.totalSwimmingStrokeCount) as Any,
-                            "workoutActivityType": workout.workoutActivityType.rawValue,
-                            "startDate": startDate,
-                            "endDate": endDate,
-                            "metadata": serializeMetadata(metadata: workout.metadata),
-                            "sourceRevision": serializeSourceRevision(_sourceRevision: workout.sourceRevision) as Any
-                        ]
-
-                        // this is used for our laps functionality to get markers
-                        // https://developer.apple.com/documentation/healthkit/hkworkoutevent
-                        var eventArray: [[String: Any]] = []
-                        if let events = workout.workoutEvents {
-                            for event in events {
-                                let eventStartDate = self._dateFormatter.string(from: event.dateInterval.start)
-                                let eventEndDate = self._dateFormatter.string(from: event.dateInterval.end)
-                                let eventDict: [String: Any] = [
-                                    "type": event.type.rawValue, // https://developer.apple.com/documentation/healthkit/hkworkouteventtype
-                                    "startDate": eventStartDate,
-                                    "endDate": eventEndDate
-                                ]
-                                eventArray.append(eventDict)
-                            }
-                        }
-                        dict["events"] = eventArray
-
-                        // also used for our laps functionality to get activities for custom workouts defined by the user
-                        // https://developer.apple.com/documentation/healthkit/hkworkout/1615340-init
-                        // it seems this might be depricated in the latest beta so this might need updating!
-                        var activitiesArray: [[String: Any]] = []
-                        if #available(iOS 16.0, *) {
-                            let activities: [HKWorkoutActivity] = workout.workoutActivities
-
-                            if !activities.isEmpty {
-                                for activity in activities {
-                                    var activityStartDate = ""
-                                    var activityEndDate = ""
-                                    if let start = activity.startDate as Date? {
-                                        activityStartDate = self._dateFormatter.string(from: start)
-                                    }
-                                    if let end = activity.endDate as Date? {
-                                        activityEndDate = self._dateFormatter.string(from: end)
-                                    }
-                                    let activityDict: [String: Any] = [
-                                        "startDate": activityStartDate,
-                                        "endDate": activityEndDate,
-                                        "uuid": activity.uuid.uuidString,
-                                        "duration": activity.duration
-                                    ]
-                                    activitiesArray.append(activityDict)
-                                }
-                            }
-                        }
-                        dict["activities"] = activitiesArray
-
-                        if #available(iOS 11, *) {
-                            dict.setValue(serializeQuantity(unit: HKUnit.count(), quantity: workout.totalFlightsClimbed), forKey: "totalFlightsClimbed")
-                        }
-
-                        arr.add(dict)
-                    }
+                    arr.add(dict)
+                  }
                 }
 
                 return resolve(arr)
@@ -820,6 +829,64 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
         store.execute(q)
     }
+
+  @objc(queryWorkoutSamplesWithAnchor:distanceUnitString:from:to:limit:anchor:resolve:reject:)
+  func queryWorkoutSamplesWithAnchor(energyUnitString: String, distanceUnitString: String, from: Date, to: Date, limit: Int, anchor: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    guard let store = _store else {
+        return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+    }
+
+    let from = dateOrNilIfZero(date: from)
+    let to = dateOrNilIfZero(date: to)
+
+    let predicate = createPredicate(from: from, to: to)
+
+    let limit = limitOrNilIfZero(limit: limit)
+
+    let energyUnit = HKUnit.init(from: energyUnitString)
+    let distanceUnit = HKUnit.init(from: distanceUnitString)
+
+    let actualAnchor = deserializeHKQueryAnchor(anchor: anchor)
+
+    let q = HKAnchoredObjectQuery(type: .workoutType(), predicate: predicate, anchor: actualAnchor, limit: limit) { (
+      _: HKAnchoredObjectQuery,
+      s: [HKSample]?,
+      deletedSamples: [HKDeletedObject]?,
+      newAnchor: HKQueryAnchor?,
+      error: Error?
+    ) in
+      guard let err = error else {
+        guard let samples = s else {
+            return resolve([])
+        }
+
+        let arr: NSMutableArray = []
+
+        for s in samples {
+          if let workout = s as? HKWorkout {
+            let dict = self.mapWorkout(
+              workout: workout,
+              distanceUnit: distanceUnit,
+              energyUnit: energyUnit
+            )
+
+            arr.add(dict)
+          }
+        }
+
+        return resolve([
+          "samples": arr as Any,
+          "deletedSamples": deletedSamples?.map({ sample in
+            return serializeDeletedSample(sample: sample)
+          }) as Any,
+          "newAnchor": serializeAnchor(anchor: newAnchor) as Any
+        ])
+      }
+      reject(GENERIC_ERROR, err.localizedDescription, err)
+    }
+
+    store.execute(q)
+  }
 
   @objc(queryQuantitySamples:unitString:from:to:limit:ascending:resolve:reject:)
   func queryQuantitySamples(

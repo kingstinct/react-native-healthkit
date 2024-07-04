@@ -1397,6 +1397,52 @@ export type UnitForIdentifier<T extends HKQuantityTypeIdentifier> =
                           ? CountPerTime<TimeUnit>
                           : HKUnit;
 
+export type HKCategoryTypeSeverityIdentifier = HKCategoryTypeIdentifier.abdominalCramps
+| HKCategoryTypeIdentifier.acne
+| HKCategoryTypeIdentifier.bladderIncontinence
+| HKCategoryTypeIdentifier.bloating
+| HKCategoryTypeIdentifier.breastPain
+| HKCategoryTypeIdentifier.chestTightnessOrPain
+| HKCategoryTypeIdentifier.chills
+| HKCategoryTypeIdentifier.constipation
+| HKCategoryTypeIdentifier.coughing
+| HKCategoryTypeIdentifier.diarrhea
+| HKCategoryTypeIdentifier.dizziness
+| HKCategoryTypeIdentifier.drySkin
+| HKCategoryTypeIdentifier.fainting
+| HKCategoryTypeIdentifier.fatigue
+| HKCategoryTypeIdentifier.fever
+| HKCategoryTypeIdentifier.generalizedBodyAche
+| HKCategoryTypeIdentifier.hairLoss
+| HKCategoryTypeIdentifier.headache
+| HKCategoryTypeIdentifier.heartburn
+| HKCategoryTypeIdentifier.hotFlashes
+| HKCategoryTypeIdentifier.lossOfSmell
+| HKCategoryTypeIdentifier.lossOfTaste
+| HKCategoryTypeIdentifier.lowerBackPain
+| HKCategoryTypeIdentifier.memoryLapse
+| HKCategoryTypeIdentifier.moodChanges
+| HKCategoryTypeIdentifier.nausea
+| HKCategoryTypeIdentifier.nightSweats
+| HKCategoryTypeIdentifier.pelvicPain
+| HKCategoryTypeIdentifier.rapidPoundingOrFlutteringHeartbeat
+| HKCategoryTypeIdentifier.runnyNose
+| HKCategoryTypeIdentifier.shortnessOfBreath
+| HKCategoryTypeIdentifier.sinusCongestion
+| HKCategoryTypeIdentifier.skippedHeartbeat
+| HKCategoryTypeIdentifier.soreThroat
+| HKCategoryTypeIdentifier.vaginalDryness
+| HKCategoryTypeIdentifier.vomiting
+| HKCategoryTypeIdentifier.wheezing
+
+export type HKCategoryTypePresenceIdentifier = HKCategoryTypeIdentifier.appetiteChanges
+| HKCategoryTypeIdentifier.sleepChanges
+
+export type HKCategoryTypeValueNotApplicableIdentifier = HKCategoryTypeIdentifier.highHeartRateEvent
+| HKCategoryTypeIdentifier.intermenstrualBleeding
+| HKCategoryTypeIdentifier.mindfulSession
+| HKCategoryTypeIdentifier.sexualActivity
+
 export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier> =
   T extends HKCategoryTypeIdentifier.cervicalMucusQuality
     ? HKCategoryValueCervicalMucusQuality
@@ -1406,55 +1452,11 @@ export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier> =
         ? HKCategoryValueOvulationTestResult
         : T extends HKCategoryTypeIdentifier.sleepAnalysis
           ? HKCategoryValueSleepAnalysis
-          : T extends
-          | HKCategoryTypeIdentifier.highHeartRateEvent
-          | HKCategoryTypeIdentifier.intermenstrualBleeding
-          | HKCategoryTypeIdentifier.mindfulSession
-          | HKCategoryTypeIdentifier.sexualActivity
+          : T extends HKCategoryTypeValueNotApplicableIdentifier
             ? HKCategoryValueNotApplicable
-            : T extends
-            | HKCategoryTypeIdentifier.abdominalCramps
-
-            | HKCategoryTypeIdentifier.acne
-            | HKCategoryTypeIdentifier.bladderIncontinence
-            | HKCategoryTypeIdentifier.bloating
-            | HKCategoryTypeIdentifier.breastPain
-            | HKCategoryTypeIdentifier.chestTightnessOrPain
-            | HKCategoryTypeIdentifier.chills
-            | HKCategoryTypeIdentifier.constipation
-            | HKCategoryTypeIdentifier.coughing
-            | HKCategoryTypeIdentifier.diarrhea
-            | HKCategoryTypeIdentifier.dizziness
-            | HKCategoryTypeIdentifier.drySkin
-            | HKCategoryTypeIdentifier.fainting
-            | HKCategoryTypeIdentifier.fatigue
-            | HKCategoryTypeIdentifier.fever
-            | HKCategoryTypeIdentifier.generalizedBodyAche
-            | HKCategoryTypeIdentifier.hairLoss
-            | HKCategoryTypeIdentifier.headache
-            | HKCategoryTypeIdentifier.heartburn
-            | HKCategoryTypeIdentifier.hotFlashes
-            | HKCategoryTypeIdentifier.lossOfSmell
-            | HKCategoryTypeIdentifier.lossOfTaste
-            | HKCategoryTypeIdentifier.lowerBackPain
-            | HKCategoryTypeIdentifier.memoryLapse
-            | HKCategoryTypeIdentifier.moodChanges
-            | HKCategoryTypeIdentifier.nausea
-            | HKCategoryTypeIdentifier.nightSweats
-            | HKCategoryTypeIdentifier.pelvicPain
-            | HKCategoryTypeIdentifier.rapidPoundingOrFlutteringHeartbeat
-            | HKCategoryTypeIdentifier.runnyNose
-            | HKCategoryTypeIdentifier.shortnessOfBreath
-            | HKCategoryTypeIdentifier.sinusCongestion
-            | HKCategoryTypeIdentifier.skippedHeartbeat
-            | HKCategoryTypeIdentifier.soreThroat
-            | HKCategoryTypeIdentifier.vaginalDryness
-            | HKCategoryTypeIdentifier.vomiting
-            | HKCategoryTypeIdentifier.wheezing
+            : T extends HKCategoryTypeSeverityIdentifier
               ? HKCategoryValueSeverity
-              : T extends
-              | HKCategoryTypeIdentifier.appetiteChanges
-              | HKCategoryTypeIdentifier.sleepChanges
+              : T extends HKCategoryTypePresenceIdentifier
                 ? HKCategoryValuePresence
                 : T extends HKCategoryTypeIdentifier.lowCardioFitnessEvent
                   ? HKCategoryValueLowCardioFitnessEvent
@@ -2140,6 +2142,17 @@ type ReactNativeHealthkitTypeNative = {
     limit: number,
     anchor: string
   ) => Promise<QueryCategorySamplesResponseRaw<T>>;
+  readonly queryWorkoutSamplesWithAnchor: <
+    TEnergy extends EnergyUnit,
+    TDistance extends LengthUnit
+  >(
+    energyUnit: TEnergy,
+    distanceUnit: TDistance,
+    from: string,
+    to: string,
+    limit: number,
+    anchor: string
+  ) => Promise<readonly HKWorkoutRaw<TEnergy, TDistance>[]>;
   readonly queryQuantitySamplesWithAnchor: <
     TIdentifier extends HKQuantityTypeIdentifier,
     TUnit extends UnitForIdentifier<TIdentifier>

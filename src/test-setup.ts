@@ -5,6 +5,7 @@ import type Native from './native-types'
 
 beforeAll(async () => {
   const mockModule: typeof Native = {
+    queryWorkoutSamplesWithAnchor: jest.fn(),
     isHealthDataAvailable: jest.fn(),
     isProtectedDataAvailable: jest.fn(),
     authorizationStatusFor: jest.fn(),
