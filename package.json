@@ -1,6 +1,6 @@
 {
   "name": "@kingstinct/react-native-healthkit",
-  "version": "8.0.1",
+  "version": "8.1.0",
   "description": "React Native bindings for HealthKit",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
