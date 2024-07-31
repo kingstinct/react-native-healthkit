@@ -1,3 +1,16 @@
+# [8.2.0](https://github.com/kingstinct/react-native-healthkit/compare/v8.0.1...v8.2.0) (2024-07-31)
+
+
+### Bug Fixes
+
+* add exports all the way ([26b9b0b](https://github.com/kingstinct/react-native-healthkit/commit/26b9b0bb0fe58c057482ad26c75d5a00200b1c49))
+* continutation edge cases ([43b1863](https://github.com/kingstinct/react-native-healthkit/commit/43b186368666fa163ce90cff6463cbbbf3c294ba))
+
+
+### Features
+
+* add queryWorkoutSamplesWithAnchor ([c991f5d](https://github.com/kingstinct/react-native-healthkit/commit/c991f5ddaf0e8a416089f663f7acfec543ffcb80))
+
 ## [8.1.1](https://github.com/kingstinct/react-native-healthkit/compare/v8.1.0...v8.1.1) (2024-07-04)
 
 
