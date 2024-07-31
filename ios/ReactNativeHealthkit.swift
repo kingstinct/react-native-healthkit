@@ -1227,7 +1227,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 }
 
                 guard let samples = results else {
-                    fatalError("Should not fail")
+                    fatalError("workout samples unexpectedly nil")
                 }
 
                 continuation.resume(returning: samples)
@@ -1263,7 +1263,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 }
 
                 guard let samples = samples else {
-                    fatalError("Should not fail")
+                    fatalError("workoutRoute samples unexpectedly nil")
                 }
 
                 continuation.resume(returning: samples)
@@ -1293,7 +1293,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 }
 
                 guard let currentLocationBatch = locationsOrNil else {
-                    fatalError("Should not fail")
+                    fatalError("routeLocations unexpectedly nil")
                 }
 
                 allLocations.append(contentsOf: currentLocationBatch)
@@ -1456,7 +1456,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                     return continuation.resume(throwing: err)
                 } else {
                   guard let samples = s else {
-                      fatalError("Should not fail")
+                      fatalError("heartbeatSeries unexpectedly nil")
                   }
 
                   continuation.resume(returning: HKAnchoredObjectQueryResult(samples: samples, deletedSamples: deletedSamples, newAnchor: newAnchor))
@@ -1585,7 +1585,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
                   continuation.resume(throwing: err)
               } else {
                   guard let actualSamples = sample else {
-                      fatalError("Should not fail")
+                      fatalError("heartbeatSeries samples unexpectedly nil")
                   }
                   continuation.resume(returning: actualSamples)
               }
