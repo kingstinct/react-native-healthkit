@@ -1453,14 +1453,14 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 error: Error?
             ) in
                 if let err = error {
-                    continuation.resume(throwing: err)
-                }
+                    return continuation.resume(throwing: err)
+                } else {
+                  guard let samples = s else {
+                      fatalError("Should not fail")
+                  }
 
-                guard let samples = s else {
-                    fatalError("Should not fail")
+                  continuation.resume(returning: HKAnchoredObjectQueryResult(samples: samples, deletedSamples: deletedSamples, newAnchor: newAnchor))
                 }
-
-                continuation.resume(returning: HKAnchoredObjectQueryResult(samples: samples, deletedSamples: deletedSamples, newAnchor: newAnchor))
             }
 
             store.execute(query)
@@ -1483,18 +1483,18 @@ class ReactNativeHealthkit: RCTEventEmitter {
                 error: Error?
             ) in
                 if let err = error {
-                    continuation.resume(throwing: err)
-                }
+                    return continuation.resume(throwing: err)
+                } else {
+                  let timeDict: [String: Any] = [
+                      "timeSinceSeriesStart": timeSinceSeriesStart,
+                      "precededByGap": precededByGap
+                  ]
 
-                let timeDict: [String: Any] = [
-                    "timeSinceSeriesStart": timeSinceSeriesStart,
-                    "precededByGap": precededByGap
-                ]
+                  allBeats.append(timeDict)
 
-                allBeats.append(timeDict)
-
-                if done {
-                    continuation.resume(returning: allBeats)
+                  if done {
+                      continuation.resume(returning: allBeats)
+                  }
                 }
             }
 
