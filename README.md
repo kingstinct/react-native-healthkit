@@ -94,6 +94,7 @@ Some imperative examples:
   /* Listen to data */
   await HealthKit.requestAuthorization([HKQuantityTypeIdentifier.heartRate]); // request read permission for heart rate
 
+  /* Make sure to request permissions before subscribing to changes */
   const unsubscribe = HealthKit.subscribeToChanges(HKQuantityTypeIdentifier.heartRate, () => {
     // refetch whichever queries you need
   });
