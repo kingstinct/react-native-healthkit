@@ -1545,10 +1545,10 @@ export enum HKUnitMetric {
 export enum HKUnits {
   DecibelHearingLevel = 'dBHL',
   DecibelSoundPressureLevel = 'dBASPL',
-
   Percent = '%',
   Count = 'count',
   InternationalUnit = 'IU',
+  AppleEffortScore = "appleEffortScore"
 }
 
 export type MeterUnit<Prefix extends HKMetricPrefix = HKMetricPrefix.None> =
