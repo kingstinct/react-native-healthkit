@@ -73,6 +73,17 @@ const authorizationStatusFor = UnavailableFn(Promise.resolve(HKAuthorizationStat
         mostRecentQuantityDateInterval: undefined,
         duration: undefined,
       })),
+      queryStatisticsCollectionForQuantity = UnavailableFn(Promise.resolve([
+        {
+          averageQuantity: undefined,
+          maximumQuantity: undefined,
+          minimumQuantity: undefined,
+          sumQuantity: undefined,
+          mostRecentQuantity: undefined,
+          mostRecentQuantityDateInterval: undefined,
+          duration: undefined,
+        },
+      ])),
       queryWorkouts = UnavailableFn(Promise.resolve([])),
       queryWorkoutSamples = UnavailableFn(Promise.resolve([])),
       queryWorkoutSamplesWithAnchor = UnavailableFn(Promise.resolve({
@@ -131,6 +142,7 @@ const Healthkit: typeof ReactNativeHealthkit = {
   queryQuantitySamplesWithAnchor,
   querySources,
   queryStatisticsForQuantity,
+  queryStatisticsCollectionForQuantity,
   queryWorkouts,
   queryWorkoutSamples,
   queryWorkoutSamplesWithAnchor,
@@ -183,6 +195,7 @@ export {
   queryQuantitySamplesWithAnchor,
   querySources,
   queryStatisticsForQuantity,
+  queryStatisticsCollectionForQuantity,
   queryWorkouts,
   queryWorkoutSamples,
   queryWorkoutSamplesWithAnchor,

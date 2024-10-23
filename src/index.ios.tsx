@@ -27,6 +27,7 @@ import queryHeartbeatSeriesSamplesWithAnchor from './utils/queryHeartbeatSeriesS
 import queryQuantitySamples from './utils/queryQuantitySamples'
 import queryQuantitySamplesWithAnchor from './utils/queryQuantitySamplesWithAnchor'
 import querySources from './utils/querySources'
+import queryStatisticsCollectionForQuantity from './utils/queryStatisticsCollectionForQuantity'
 import queryStatisticsForQuantity from './utils/queryStatisticsForQuantity'
 import queryWorkoutSamples from './utils/queryWorkouts'
 import queryWorkoutSamplesWithAnchor from './utils/queryWorkoutSamplesWithAnchor'
@@ -159,6 +160,7 @@ export default {
   queryQuantitySamples,
   queryQuantitySamplesWithAnchor,
   queryStatisticsForQuantity,
+  queryStatisticsCollectionForQuantity,
   /**
  * @deprecated Use queryWorkoutSamples instead
  */
@@ -245,6 +247,7 @@ export {
   queryQuantitySamples,
   queryQuantitySamplesWithAnchor,
   queryStatisticsForQuantity,
+  queryStatisticsCollectionForQuantity,
   /**
  * @deprecated Use queryWorkoutSamples instead
  */

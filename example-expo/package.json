@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@expo/match-media": "^0.3.0",
-    "@kingstinct/react-native-healthkit": "^8.0.0",
+    "@kingstinct/react-native-healthkit": "latest",
     "@react-navigation/native": "^6.0.12",
     "babel-plugin-module-resolver": "^5.0.2",
     "dayjs": "^1.11.11",
