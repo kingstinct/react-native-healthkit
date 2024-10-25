@@ -36,6 +36,7 @@ import saveCorrelationSample from './utils/saveCorrelationSample'
 import saveQuantitySample from './utils/saveQuantitySample'
 import saveWorkoutRoute from './utils/saveWorkoutRoute'
 import saveWorkoutSample from './utils/saveWorkoutSample'
+import startWatchApp from './utils/startWatchApp'
 import subscribeToChanges from './utils/subscribeToChanges'
 
 const currentMajorVersionIOS = Platform.OS === 'ios' ? parseInt(Platform.Version, 10) : 0
@@ -187,6 +188,8 @@ export default {
   // subscriptions
   subscribeToChanges,
 
+  startWatchApp,
+
   /**
    * @returns the most recent sample for the given category type.
    */
@@ -262,6 +265,7 @@ export {
   saveWorkoutSample,
   saveWorkoutRoute,
   subscribeToChanges,
+  startWatchApp,
   useMostRecentCategorySample,
   useMostRecentQuantitySample,
   useMostRecentWorkout,
