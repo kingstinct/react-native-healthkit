@@ -41,6 +41,7 @@ beforeAll(async () => {
     unsubscribeQuery: jest.fn(),
     saveWorkoutRoute: jest.fn(),
     getWorkoutPlanById: jest.fn(),
+    startWatchAppWithWorkoutConfiguration: jest.fn(),
   }
 
   await mock.module('react-native', () => ({
