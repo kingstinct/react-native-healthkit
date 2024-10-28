@@ -2008,6 +2008,23 @@ type QueryWorkoutSamplesWithAnchorResponseRaw<
   readonly newAnchor: string
 }
 
+/**
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutconfiguration Apple Docs }
+ */
+export type HKWorkoutConfiguration = {
+  readonly activityType: HKWorkoutActivityType;
+  readonly locationType?: HKWorkoutSessionLocationType;
+};
+
+/**
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutsessionlocationtype Apple Docs }
+ */
+export enum HKWorkoutSessionLocationType {
+  unknown = 1,
+  indoor = 2,
+  outdoor = 3
+}
+
 type ReactNativeHealthkitTypeNative = {
   /**
    *  @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614180-ishealthdataavailable Apple Docs }
@@ -2219,6 +2236,13 @@ type ReactNativeHealthkitTypeNative = {
     workoutUUID: string
   ) => Promise<readonly WorkoutRoute[]>;
   readonly getWorkoutPlanById: (workoutUUID: string) => Promise<{readonly id: string, readonly activityType: HKWorkoutActivityType} | null>;
+
+  /**
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1648358-startwatchapp Apple Docs }
+   */
+  readonly startWatchAppWithWorkoutConfiguration: (
+    workoutConfiguration: HKWorkoutConfiguration
+  ) => Promise<boolean>;
 };
 
 const Native = NativeModules.ReactNativeHealthkit as ReactNativeHealthkitTypeNative

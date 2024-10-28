@@ -156,3 +156,19 @@ func objectTypeFromString(typeIdentifier: String) -> HKObjectType? {
 
     return nil
 }
+
+func parseWorkoutConfiguration(_ dict: NSDictionary) -> HKWorkoutConfiguration {
+  let configuration = HKWorkoutConfiguration()
+
+  if let activityTypeRaw = dict[HKWorkoutActivityTypePropertyName] as? UInt,
+     let activityType = HKWorkoutActivityType(rawValue: activityTypeRaw) {
+    configuration.activityType = activityType
+  }
+
+  if let locationTypeRaw = dict[HKWorkoutSessionLocationTypePropertyName] as? Int,
+     let locationType = HKWorkoutSessionLocationType(rawValue: locationTypeRaw) {
+    configuration.locationType = locationType
+  }
+
+  return configuration
+}
