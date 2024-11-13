@@ -1548,7 +1548,7 @@ export enum HKUnits {
   Percent = '%',
   Count = 'count',
   InternationalUnit = 'IU',
-  AppleEffortScore = "appleEffortScore"
+  AppleEffortScore = 'appleEffortScore'
 }
 
 export type MeterUnit<Prefix extends HKMetricPrefix = HKMetricPrefix.None> =
