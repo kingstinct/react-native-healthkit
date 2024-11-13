@@ -37,7 +37,7 @@ jobs:
         run: cd example-expo && bun install && cd ..
 
       - name: Install deps
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Test
         run: bun test-only
@@ -68,7 +68,7 @@ jobs:
         run: cd example-expo && bun install && cd ..
 
       - name: Install deps
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Lint
         run: bun lint
@@ -99,7 +99,7 @@ jobs:
         run: cd example-expo && bun install && cd ..
 
       - name: Install deps
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Types
         run: bun typecheck

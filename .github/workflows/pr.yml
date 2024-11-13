@@ -37,11 +37,11 @@ jobs:
           bun-version: ${{ env.BUN_VERSION }}
 
       - name: Install dependencies (example-expo)
-        run: bun install
+        run: bun install --frozen-lockfile
         working-directory: example-expo
       
       - name: Install dependencies (example)
-        run: bun install
+        run: bun install --frozen-lockfile
         working-directory: example
 
       - name: Expo GitHub Action
