@@ -241,5 +241,9 @@ RCT_EXTERN_METHOD(getWorkoutPlanById:(NSString)workoutUUID
 RCT_EXTERN_METHOD(isProtectedDataAvailable:(RCTPromiseResolveBlock)resolve
 withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(startWatchAppWithWorkoutConfiguration:(NSDictionary)workoutConfiguration
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
 
 @end

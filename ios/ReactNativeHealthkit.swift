@@ -2082,4 +2082,27 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
   }
 
+  @available(iOS 17.0.0, *)
+  @objc(startWatchAppWithWorkoutConfiguration:resolve:reject:)
+  func startWatchAppWithWorkoutConfiguration(
+    _ workoutConfiguration: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    guard let store = _store else {
+      return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+    }
+
+    let configuration = parseWorkoutConfiguration(workoutConfiguration)
+
+    store.startWatchApp(with: configuration) { success, error in
+      if let error {
+        reject(INIT_ERROR, INIT_ERROR_MESSAGE, error)
+        return
+      }
+
+      resolve(success)
+    }
+  }
+
 }
