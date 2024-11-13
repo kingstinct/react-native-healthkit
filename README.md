@@ -91,13 +91,26 @@ Some imperative examples:
   console.log(quantity) // 17.5
   console.log(unit) // %
 
-  /* Listen to data */
   await HealthKit.requestAuthorization([HKQuantityTypeIdentifier.heartRate]); // request read permission for heart rate
 
-  /* Make sure to request permissions before subscribing to changes */
-  const unsubscribe = HealthKit.subscribeToChanges(HKQuantityTypeIdentifier.heartRate, () => {
-    // refetch whichever queries you need
-  });
+  /* Subscribe to data (Make sure to request permissions before subscribing to changes) */
+  const [hasRequestedAuthorization, setHasRequestedAuthorization] = useState(false);
+  
+  useEffect(() => {
+    HealthKit.requestAuthorization([HKQuantityTypeIdentifier.heartRate]).then(() => {
+      setHasRequestedAuthorization(true);
+    });
+  }, []);
+  
+  useEffect(() => {
+    if (hasRequestedAuthorization) {
+      const unsubscribe = HealthKit.subscribeToChanges(HKQuantityTypeIdentifier.heartRate, () => {
+        // refetch data as needed
+      });
+    }
+
+    return () => unsubscribe();
+  }, [hasRequestedAuthorization]);
 
   /* write data */
   await HealthKit.requestAuthorization([], [HKQuantityTypeIdentifier.insulinDelivery]); // request write permission for insulin delivery
