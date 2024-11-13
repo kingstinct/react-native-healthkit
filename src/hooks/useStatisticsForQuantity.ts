@@ -32,7 +32,7 @@ function useStatisticsForQuantity<TIdentifier extends HKQuantityTypeIdentifier, 
 
   useEffect(() => {
     void update()
-  }, [])
+  }, [update])
 
   useSubscribeToChanges(identifier, update)
 
