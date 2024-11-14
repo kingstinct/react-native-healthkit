@@ -218,3 +218,21 @@ func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
 
   return encoded
 }
+
+func serializeStatistic(unit: HKUnit, quantity: HKQuantity?, stats: HKStatistics?) -> [String: Any]? {
+    guard let q = quantity, let stats = stats else {
+        return nil
+    }
+
+    let endDate = _dateFormatter.string(from: stats.endDate)
+    let startDate = _dateFormatter.string(from: stats.startDate)
+    let quantityType = stats.quantityType.identifier
+
+    return [
+        "quantityType": quantityType,
+        "startDate": startDate,
+        "endDate": endDate,
+        "quantity": q.doubleValue(for: unit),
+        "unit": unit.unitString
+    ]
+}

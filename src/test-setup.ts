@@ -33,6 +33,7 @@ beforeAll(async () => {
     queryQuantitySamples: jest.fn(),
     querySources: jest.fn(),
     queryStatisticsForQuantity: jest.fn(),
+    queryStatisticsCollectionForQuantity: jest.fn(),
     queryWorkoutSamples: jest.fn(),
     saveCategorySample: jest.fn(),
     saveCorrelationSample: jest.fn(),

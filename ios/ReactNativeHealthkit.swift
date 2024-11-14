@@ -930,6 +930,85 @@ class ReactNativeHealthkit: RCTEventEmitter {
     store.execute(query)
   }
 
+  @objc(queryStatisticsCollectionForQuantity:unitString:options:anchorDate:interval:startDate:endDate:resolve:reject:)
+  func queryStatisticsCollectionForQuantity(
+      typeIdentifier: String,
+      unitString: String,
+      options: NSArray,
+      anchorDate: Date,
+      interval: NSDictionary,
+      startDate: Date,
+      endDate: Date,
+      resolve: @escaping RCTPromiseResolveBlock,
+      reject: @escaping RCTPromiseRejectBlock
+  ) {
+      guard let store = _store else {
+          return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+      }
+
+      guard let quantityType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier(rawValue: typeIdentifier)) else {
+          return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize quantity type for identifier: \(typeIdentifier)", nil)
+      }
+
+      let opts = hkStatisticsOptionsFromOptions(options)
+      let intervalComponents = componentsFromInterval(interval)
+
+      let query = HKStatisticsCollectionQuery(
+          quantityType: quantityType,
+          quantitySamplePredicate: nil, // We will use enumerateStatistics to filter with date
+          options: opts,
+          anchorDate: anchorDate,
+          intervalComponents: intervalComponents
+      )
+
+      query.initialResultsHandler = { _, statsCollection, error in
+          if let error = error {
+              return reject(QUERY_ERROR, error.localizedDescription, error)
+          }
+
+          var results = [[String: [String: Any]?]]()
+
+          guard let collection = statsCollection else {
+              return resolve(results)
+          }
+
+          let unit = HKUnit(from: unitString)
+
+          collection.enumerateStatistics(from: startDate, to: endDate) { stats, _ in
+              var dic = [String: [String: Any]?]()
+
+              let startDate = self._dateFormatter.string(from: stats.startDate)
+              let endDate = self._dateFormatter.string(from: stats.endDate)
+
+              dic["averageQuantity"] = serializeQuantityIfExists(unit: unit, quantity: stats.averageQuantity())
+              dic["maximumQuantity"] = serializeQuantityIfExists(unit: unit, quantity: stats.maximumQuantity())
+              dic["minimumQuantity"] = serializeQuantityIfExists(unit: unit, quantity: stats.minimumQuantity())
+              dic["sumQuantity"] = serializeStatisticIfExists(unit: unit, quantity: stats.sumQuantity(), stats: stats)
+
+              if #available(iOS 12, *) {
+                  dic["mostRecentQuantity"] = serializeQuantityIfExists(unit: unit, quantity: stats.mostRecentQuantity())
+                  if let mostRecentDateInterval = stats.mostRecentQuantityDateInterval() {
+                      dic["mostRecentQuantityDateInterval"] = [
+                          "start": self._dateFormatter.string(from: mostRecentDateInterval.start),
+                          "end": self._dateFormatter.string(from: mostRecentDateInterval.end)
+                      ]
+                  }
+              }
+
+              if #available(iOS 13, *) {
+                  let durationUnit = HKUnit.second()
+                  dic["duration"] = serializeQuantityIfExists(unit: durationUnit, quantity: stats.duration())
+              }
+
+              results.append(dic)
+          }
+
+          resolve(results)
+      }
+
+      store.execute(query)
+  }
+
   func mapWorkout(
     workout: HKWorkout,
     distanceUnit: HKUnit,

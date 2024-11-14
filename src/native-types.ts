@@ -1172,6 +1172,14 @@ export type QueryStatisticsResponseRaw<
   readonly duration?: HKQuantity<HKQuantityTypeIdentifier, TimeUnit>;
 };
 
+export interface IntervalComponents {
+  readonly minute?: number;
+  readonly hour?: number;
+  readonly day?: number;
+  readonly month?: number;
+  readonly year?: number;
+}
+
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluecervicalmucusquality Apple Docs }
  */
@@ -2229,6 +2237,18 @@ type ReactNativeHealthkitTypeNative = {
     to: string,
     options: readonly HKStatisticsOptions[]
   ) => Promise<QueryStatisticsResponseRaw<TIdentifier, TUnit>>;
+  readonly queryStatisticsCollectionForQuantity: <
+    TIdentifier extends HKQuantityTypeIdentifier,
+    TUnit extends UnitForIdentifier<TIdentifier>
+  >(
+    identifier: TIdentifier,
+    unit: TUnit,
+    options: readonly HKStatisticsOptions[],
+    anchorDate: string,
+    intervalComponents: IntervalComponents,
+    startDate: string,
+    endDate: string
+  ) => Promise<readonly QueryStatisticsResponseRaw<TIdentifier, TUnit>[]>;
   readonly getPreferredUnits: (
     identifiers: readonly HKQuantityTypeIdentifier[]
   ) => Promise<TypeToUnitMapping>;

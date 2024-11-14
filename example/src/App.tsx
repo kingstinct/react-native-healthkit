@@ -14,6 +14,7 @@ import Healthkit, {
   deleteSamples,
   queryHeartbeatSeriesSamplesWithAnchor,
   queryQuantitySamplesWithAnchor,
+  queryStatisticsCollectionForQuantity,
   saveQuantitySample,
   saveWorkoutRoute,
   saveWorkoutSample,
@@ -680,6 +681,24 @@ const App = () => {
         }}
         >
           Next 2 stepCount
+        </Button>
+        <Button onPress={async () => {
+          const now = new Date()
+          const startDate = dayjs(now).subtract(30, 'day').toDate()
+
+          const res = await queryStatisticsCollectionForQuantity(
+            HKQuantityTypeIdentifier.stepCount,
+            [HKStatisticsOptions.cumulativeSum],
+            now,
+            { day: 1 },
+            startDate,
+            now,
+          )
+
+          alert(JSON.stringify(res))
+        }}
+        >
+          Daily statistics for stepCount
         </Button>
         <Button onPress={async () => {
           const res = await queryHeartbeatSeriesSamplesWithAnchor({

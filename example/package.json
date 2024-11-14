@@ -10,7 +10,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@kingstinct/react-native-healthkit": "^7.3.2",
+    "@kingstinct/react-native-healthkit": "latest",
     "@react-navigation/native": "^6.0.12",
     "dayjs": "^1.11.5",
     "react": "18.2.0",

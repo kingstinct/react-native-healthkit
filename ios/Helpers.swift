@@ -157,6 +157,71 @@ func objectTypeFromString(typeIdentifier: String) -> HKObjectType? {
     return nil
 }
 
+func hkStatisticsOptionsFromOptions(_ options: NSArray) -> HKStatisticsOptions {
+    var opts = HKStatisticsOptions()
+
+    for o in options {
+        guard let str = o as? String else { continue }
+
+        switch str {
+        case "cumulativeSum":
+            opts.insert(.cumulativeSum)
+        case "discreteAverage":
+            opts.insert(.discreteAverage)
+        case "discreteMax":
+            opts.insert(.discreteMax)
+        case "discreteMin":
+            opts.insert(.discreteMin)
+        case "discreteMostRecent":
+            if #available(iOS 12, *) {
+                opts.insert(.discreteMostRecent)
+            }
+        case "duration":
+            if #available(iOS 13, *) {
+                opts.insert(.duration)
+            }
+        case "mostRecent":
+            if #available(iOS 13, *) {
+                opts.insert(.mostRecent)
+            }
+        case "separateBySource":
+            opts.insert(.separateBySource)
+        default:
+            continue
+        }
+    }
+
+    return opts
+}
+
+func componentsFromInterval(_ interval: NSDictionary) -> DateComponents {
+    let componentKeys: [String: WritableKeyPath<DateComponents, Int?>] = [
+        "minute": \.minute,
+        "hour": \.hour,
+        "day": \.day,
+        "month": \.month,
+        "year": \.year
+    ]
+
+    var intervalComponents = DateComponents()
+    for (key, keyPath) in componentKeys {
+        if let value = interval[key] as? Int {
+            intervalComponents[keyPath: keyPath] = value
+        }
+    }
+    return intervalComponents
+}
+
+func serializeQuantityIfExists(unit: HKUnit, quantity: HKQuantity?) -> [String: Any]? {
+    guard let quantity = quantity else { return nil }
+    return serializeQuantity(unit: unit, quantity: quantity)
+}
+
+func serializeStatisticIfExists(unit: HKUnit, quantity: HKQuantity?, stats: HKStatistics) -> [String: Any]? {
+    guard let quantity = quantity else { return nil }
+    return serializeStatistic(unit: unit, quantity: quantity, stats: stats)
+}
+
 func parseWorkoutConfiguration(_ dict: NSDictionary) -> HKWorkoutConfiguration {
   let configuration = HKWorkoutConfiguration()
 
