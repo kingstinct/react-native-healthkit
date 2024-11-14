@@ -695,7 +695,6 @@ const App = () => {
             now,
           )
 
-          console.log('queryStatisticsCollectionForQuantity', res)
           alert(JSON.stringify(res))
         }}
         >
