@@ -1,3 +1,19 @@
+# [8.3.0](https://github.com/kingstinct/react-native-healthkit/compare/v8.2.0...v8.3.0) (2024-11-29)
+
+
+### Bug Fixes
+
+* add missing property in tests ([532691d](https://github.com/kingstinct/react-native-healthkit/commit/532691d7072eb67e7f7ddc9ac0bdb13297d91b43))
+* fix infinite calls in useStatisticsForQuantity ([2d0b4df](https://github.com/kingstinct/react-native-healthkit/commit/2d0b4df37a897f4a884568366d32750df68ddb00))
+* linting error ([5a58db6](https://github.com/kingstinct/react-native-healthkit/commit/5a58db6ec38fcf83e85a5a01dcf53c5ec8087dee))
+* rename constants ([b29c6c7](https://github.com/kingstinct/react-native-healthkit/commit/b29c6c7d004da1bac91115d187f1659dac2b3445))
+
+
+### Features
+
+* add queryStatisticsCollectionForQuantity API ([#111](https://github.com/kingstinct/react-native-healthkit/issues/111)) ([5d70584](https://github.com/kingstinct/react-native-healthkit/commit/5d70584ea78a2f59dd4deb0ef81d8da1e5c21227))
+* add support to HKHealthStore startWatchApp method ([d90b298](https://github.com/kingstinct/react-native-healthkit/commit/d90b298aa0234e2a22819ca554041c50b1401337))
+
 # [8.2.0](https://github.com/kingstinct/react-native-healthkit/compare/v8.0.1...v8.2.0) (2024-07-31)
 
 
