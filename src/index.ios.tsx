@@ -27,6 +27,7 @@ import queryHeartbeatSeriesSamplesWithAnchor from './utils/queryHeartbeatSeriesS
 import queryQuantitySamples from './utils/queryQuantitySamples'
 import queryQuantitySamplesWithAnchor from './utils/queryQuantitySamplesWithAnchor'
 import querySources from './utils/querySources'
+import { queryStateOfMindSamples } from './utils/queryStateOfMindSamples'
 import queryStatisticsCollectionForQuantity from './utils/queryStatisticsCollectionForQuantity'
 import queryStatisticsForQuantity from './utils/queryStatisticsForQuantity'
 import queryWorkoutSamples from './utils/queryWorkouts'
@@ -219,6 +220,7 @@ export default {
   useHealthkitAuthorization,
   useSources,
   useStatisticsForQuantity,
+  queryStateOfMindSamples,
 }
 
 const queryWorkouts = queryWorkoutSamples
@@ -278,6 +280,7 @@ export {
   useSources,
   useStatisticsForQuantity,
   isProtectedDataAvailable,
+  queryStateOfMindSamples,
 }
 
 export * from './types'

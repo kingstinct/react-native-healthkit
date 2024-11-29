@@ -15,6 +15,7 @@ import Healthkit, {
   queryHeartbeatSeriesSamplesWithAnchor,
   queryQuantitySamplesWithAnchor,
   queryStatisticsCollectionForQuantity,
+  queryStateOfMindSamples,
   saveQuantitySample,
   saveWorkoutRoute,
   saveWorkoutSample,
@@ -621,6 +622,7 @@ const readPermissions: readonly HealthkitReadAuthorization[] = [
   HKQuantityTypeIdentifier.heartRate,
   HKQuantityTypeIdentifier.heartRateVariabilitySDNN,
   'HKDataTypeIdentifierHeartbeatSeries',
+  'HKStateOfMindTypeIdentifier',
   HKQuantityTypeIdentifier.swimmingStrokeCount,
   HKQuantityTypeIdentifier.bodyFatPercentage,
   HKQuantityTypeIdentifier.bodyMass,
@@ -681,6 +683,16 @@ const App = () => {
         }}
         >
           Next 2 stepCount
+        </Button>
+        <Button onPress={async () => {
+          const res = await queryStateOfMindSamples({
+            limit: 1,
+          })
+
+          alert(JSON.stringify(res))
+        }}
+        >
+          State of Mind
         </Button>
         <Button onPress={async () => {
           const now = new Date()
@@ -770,7 +782,7 @@ const App = () => {
             <DeleteSample />
           </List.Accordion>
         </List.AccordionGroup>
-        <Text>{`Can access protected data: ${isProtectedDataAvailable}`}</Text>
+        <Text>{`Can access protected data: ${isProtectedDataAvailable ? '✅' : '❌'}`}</Text>
       </ScrollView>
     </Provider>
   )

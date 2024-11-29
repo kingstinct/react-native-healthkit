@@ -23,6 +23,7 @@ let HKAudiogramTypeIdentifier = "HKAudiogramTypeIdentifier"
 let HKWorkoutTypeIdentifier = "HKWorkoutTypeIdentifier"
 let HKWorkoutRouteTypeIdentifier = "HKWorkoutRouteTypeIdentifier"
 let HKDataTypeIdentifierHeartbeatSeries = "HKDataTypeIdentifierHeartbeatSeries"
+let HKStateOfMindTypeIdentifier = "HKStateOfMindTypeIdentifier"
 
 let HKWorkoutActivityTypePropertyName = "activityType"
 let HKWorkoutSessionLocationTypePropertyName = "locationType"

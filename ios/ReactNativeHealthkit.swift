@@ -2105,4 +2105,86 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
   }
 
+  @available(iOS 18.0, *)
+  @objc(queryStateOfMindSamples:to:limit:ascending:resolve:reject:)
+  func queryStateOfMindSamples(
+    from: Date,
+    to: Date,
+    limit: Int,
+    ascending: Bool,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    guard let store = _store else {
+      return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+    }
+
+    Task {
+        let from = dateOrNilIfZero(date: from)
+        let to = dateOrNilIfZero(date: to)
+
+        let predicate = createPredicate(
+          from: from,
+          to: to
+        )
+
+        let limit = limitOrNilIfZero(
+          limit: limit
+        )
+
+        let type = HKStateOfMindType.stateOfMindType()
+
+        let query = HKSampleQuery(
+          sampleType: type,
+          predicate: predicate,
+          limit: limit,
+          sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)]
+        ) { (_, samples, error) in
+          if let error = error {
+            reject(GENERIC_ERROR, error.localizedDescription, error)
+            return
+          }
+
+          guard let samples = samples as? [HKStateOfMind] else {
+            resolve([])
+            return
+          }
+
+          let serializedSamples = samples.map { sample in
+            var associations: [Int] = []
+            if #available(iOS 18.0, *) {
+              associations = sample.associations.map({ association in
+                return association.rawValue
+              })
+            }
+
+            var labels: [Int] = []
+            if #available(iOS 18.0, *) {
+              labels = sample.labels.map({ label in
+                return label.rawValue
+              })
+            }
+
+              return [
+                "uuid": sample.uuid.uuidString,
+                "device": serializeDevice(_device: sample.device) as Any,
+                "startDate": self._dateFormatter.string(from: sample.startDate),
+                "endDate": self._dateFormatter.string(from: sample.endDate),
+                "valence": sample.valence,
+                "kind": sample.kind.rawValue,
+                "valenceClassification": sample.valenceClassification.rawValue,
+                "associations": associations,
+                "labels": labels,
+                "metadata": serializeMetadata(metadata: sample.metadata),
+                "sourceRevision": serializeSourceRevision(_sourceRevision: sample.sourceRevision) as Any
+              ]
+          }
+
+          resolve(serializedSamples)
+        }
+
+        store.execute(query)
+    }
+  }
+
 }
