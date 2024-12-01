@@ -133,11 +133,11 @@ Some imperative examples:
 ### HealthKit Anchors (breaking change in 6.0)
 In 6.0 you can use HealthKit anchors to get changes and deleted items which is very useful for syncing. This is a breaking change - but a very easy one to handle that TypeScript should help you with. Most queries now return an object containing samples which is what was returned as only an array before. In addition you also get deletedSamples and a newAnchor you can use for more advanced use cases, example:
 ```TypeScript
-  const { newAnchor, samples, deletedSamples } = await queryQuantitySamples(HKQuantityTypeIdentifier.stepCount, {
+  const { newAnchor, samples, deletedSamples } = await queryQuantitySamplesWithAnchor(HKQuantityTypeIdentifier.stepCount, {
     limit: 2,
   })
 
-  const nextResult = await queryQuantitySamples(HKQuantityTypeIdentifier.stepCount, {
+  const nextResult = await queryQuantitySamplesWithAnchor(HKQuantityTypeIdentifier.stepCount, {
     limit: 2,
     anchor: newAnchor,
   })
