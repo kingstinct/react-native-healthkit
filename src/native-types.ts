@@ -27,6 +27,12 @@ export const HKAudiogramTypeIdentifier = 'HKAudiogramSampleType' as const
 export const HKWorkoutRouteTypeIdentifier = 'HKWorkoutRouteTypeIdentifier' as const
 
 /**
+ * Represents a state of mind type identifier.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkstateofmindtype Apple Docs HKStateOfMindType}
+ */
+export const HKStateOfMindTypeIdentifier = 'HKStateOfMindTypeIdentifier' as const
+
+/**
  * Represents a series sample containing heartbeat data..
  * @see {@link https://developer.apple.com/documentation/healthkit/HKDataTypeIdentifierHeartbeatSeries Apple Docs HKDataTypeIdentifierHeartbeatSeries}
  */
@@ -899,6 +905,7 @@ export type HKSampleTypeIdentifier =
   | HKCategoryTypeIdentifier
   | HKCorrelationTypeIdentifier
   | HKQuantityTypeIdentifier
+  | typeof HKStateOfMindTypeIdentifier
   | typeof HKActivitySummaryTypeIdentifier
   | typeof HKAudiogramTypeIdentifier
   | typeof HKDataTypeIdentifierHeartbeatSeries
@@ -2263,7 +2270,53 @@ type ReactNativeHealthkitTypeNative = {
   readonly startWatchAppWithWorkoutConfiguration: (
     workoutConfiguration: HKWorkoutConfiguration
   ) => Promise<boolean>;
+
+  /**
+   * Query state of mind samples from HealthKit
+   * @param from Start date to query from
+   * @param to End date to query to
+   * @param limit Maximum number of samples to return
+   * @param ascending Sort order of samples
+   * @returns Promise resolving to array of state of mind samples
+   * @platform ios
+   * @requires iOS 17.0+
+   */
+  readonly queryStateOfMindSamples: (
+    from: string | null,
+    to: string | null,
+    limit: number,
+    ascending: boolean
+  ) => Promise<readonly HKStateOfMindSampleRaw[]>;
 };
+
+export enum HKStateOfMindValenceClassification {
+  veryUnpleasant = 1,
+  unpleasant = 2,
+  slightlyUnpleasant = 3,
+  neutral = 4,
+  slightlyPleasant = 5,
+  pleasant = 6,
+  veryPleasant = 7,
+}
+
+export type HKStateOfMindSampleRaw = {
+  readonly uuid: string;
+  readonly device?: HKDevice;
+  readonly startDate: string;
+  readonly endDate: string;
+  readonly metadata?: HKHeartbeatSeriesSampleMetadata;
+  readonly sourceRevision?: HKSourceRevision;
+  // State of mind sample properties
+  /**
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkstateofmind/4337998-valence Apple Docs }
+   * Value between -1 and 1
+   */
+  readonly valence: number;
+  readonly kind: HKStateOfMindKind;
+  readonly valenceClassification: HKStateOfMindValenceClassification;
+  readonly associations: readonly HKStateOfMindAssociation[];
+  readonly labels: readonly HKStateOfMindLabel[];
+}
 
 const Native = NativeModules.ReactNativeHealthkit as ReactNativeHealthkitTypeNative
 
@@ -2285,3 +2338,81 @@ export const EventEmitter = new NativeEventEmitter(
 ) as HealthkitEventEmitter
 
 export default Native
+
+/**
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkstateofmind/label Apple Docs}
+ */
+export enum HKStateOfMindLabel {
+  amazed = 1,
+  amused = 2,
+  angry = 3,
+  anxious = 4,
+  ashamed = 5,
+  brave = 6,
+  calm = 7,
+  content = 8,
+  disappointed = 9,
+  discouraged = 10,
+  disgusted = 11,
+  embarrassed = 12,
+  excited = 13,
+  frustrated = 14,
+  grateful = 15,
+  guilty = 16,
+  happy = 17,
+  hopeless = 18,
+  irritated = 19,
+  jealous = 20,
+  joyful = 21,
+  lonely = 22,
+  passionate = 23,
+  peaceful = 24,
+  proud = 25,
+  relieved = 26,
+  sad = 27,
+  scared = 28,
+  stressed = 29,
+  surprised = 30,
+  worried = 31,
+
+  annoyed = 32,
+  confident = 33,
+  drained = 34,
+  hopeful = 35,
+  indifferent = 36,
+  overwhelmed = 37,
+  satisfied = 38,
+}
+
+/**
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkstateofmind/kind Apple Docs}
+ */
+export enum HKStateOfMindKind {
+  dailyMood = 2,
+  momentaryEmotion = 1
+}
+
+/**
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkstateofmind/association Apple Docs}
+ * @since iOS 17.0+
+ */
+export enum HKStateOfMindAssociation {
+  community = 1,
+  currentEvents = 2,
+  dating = 3,
+  education = 4,
+  family = 5,
+  fitness = 6,
+  friends = 7,
+  health = 8,
+  hobbies = 9,
+  identity = 10,
+  money = 11,
+  partner = 12,
+  selfCare = 13,
+  spirituality = 14,
+  tasks = 15,
+  travel = 16,
+  work = 17,
+  weather = 18,
+}

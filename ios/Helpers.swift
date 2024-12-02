@@ -134,6 +134,12 @@ func objectTypeFromString(typeIdentifier: String) -> HKObjectType? {
         return HKObjectType.activitySummaryType()
     }
 
+    if #available(iOS 18, *) {
+      if typeIdentifier == HKStateOfMindTypeIdentifier {
+        return HKObjectType.stateOfMindType()
+      }
+    }
+
     if #available(iOS 13, *) {
         if typeIdentifier == HKAudiogramTypeIdentifier {
             return HKObjectType.audiogramSampleType()
