@@ -283,13 +283,13 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
 
     let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
+    let sampleUuid = UUID.init(uuidString: uuid)!
 
     guard let sampleType = HKObjectType.quantityType(forIdentifier: identifier) else {
       return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
     }
 
-    // https://developer.apple.com/documentation/healthkit/hkquery/1614783-predicateforobjectwithuuid
-    let samplePredicate: NSPredicate = NSPredicate(format: "%K == %@", HKPredicateKeyPathUUID, uuid)
+    let samplePredicate = HKQuery.predicateForObject(with: sampleUuid)
 
     store.deleteObjects(of: sampleType, predicate: samplePredicate) { (success: Bool, _: Int, error: Error?) in
       guard let err = error else {
