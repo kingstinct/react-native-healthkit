@@ -60,6 +60,7 @@ buck-out/
 .expo/
 web-build/
 dist/
+ios/
 
 app.plugin.js
 
