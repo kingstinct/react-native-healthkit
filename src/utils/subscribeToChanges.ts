@@ -8,7 +8,7 @@ const subscribeToChanges = async (
 ) => {
   const subscription = EventEmitter.addListener(
     'onChange',
-    ({ typeIdentifier }) => {
+    ({ typeIdentifier }: { readonly typeIdentifier: HKSampleTypeIdentifier }) => {
       if (typeIdentifier === identifier) {
         callback()
       }

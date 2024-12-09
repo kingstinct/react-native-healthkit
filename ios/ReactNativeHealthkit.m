@@ -235,4 +235,8 @@ RCT_EXTERN_METHOD(startWatchAppWithWorkoutConfiguration:(NSDictionary)workoutCon
                   reject:(RCTPromiseRejectBlock)reject
 )
 
+RCT_EXTERN_METHOD(workoutSessionMirroringStartHandler:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
 @end

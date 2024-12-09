@@ -8,10 +8,21 @@ import WorkoutKit
 @objc(ReactNativeHealthkit)
 @available(iOS 10.0, *)
 class ReactNativeHealthkit: RCTEventEmitter {
+  let decoder = JSONDecoder()
+
   var _store: HKHealthStore?
   var _runningQueries: [String: HKQuery]
   var _dateFormatter: ISO8601DateFormatter
   var _hasListeners = false
+
+  #if os(iOS)
+  @available(iOS 17.0, *)
+  var _workoutSession: HKWorkoutSession? {
+    get { return __session as? HKWorkoutSession }
+    set { __session = newValue }
+  }
+  private var __session: Any?
+  #endif
 
   override init() {
     self._runningQueries = [String: HKQuery]()
@@ -676,7 +687,12 @@ class ReactNativeHealthkit: RCTEventEmitter {
   }
 
   override func supportedEvents() -> [String]! {
-    return ["onChange"]
+    return [
+      "onChange",
+      "onRemoteWorkoutStateChange",
+      "onRemoteWorkoutError",
+      "onRemoteWorkoutDataReceived"
+    ]
   }
 
   @objc(enableBackgroundDelivery:updateFrequency:resolve:reject:)
@@ -2018,7 +2034,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
     store.startWatchApp(with: configuration) { success, error in
       if let error {
-        reject(INIT_ERROR, INIT_ERROR_MESSAGE, error)
+        reject(GENERIC_ERROR, error.localizedDescription, error)
         return
       }
 
@@ -2026,4 +2042,109 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
   }
 
+  @available(iOS 17.0.0, *)
+  @objc(workoutSessionMirroringStartHandler:reject:)
+  func workoutSessionMirroringStartHandler(
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    guard let store = _store else {
+      return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+    }
+
+    store.workoutSessionMirroringStartHandler = { [weak self] mirroringSession in
+      self?._workoutSession = mirroringSession
+      self?._workoutSession?.delegate = self
+    }
+
+    resolve(true)
+  }
+
+}
+
+// MARK: - HKWorkoutSessionDelegate
+
+extension ReactNativeHealthkit: HKWorkoutSessionDelegate {
+
+  @available(iOS 17.0.0, *)
+  func workoutSession(
+    _ workoutSession: HKWorkoutSession,
+    didChangeTo toState: HKWorkoutSessionState,
+    from fromState: HKWorkoutSessionState,
+    date: Date
+  ) {
+    Task { @MainActor [weak self] in
+      guard let self = self else { return }
+
+      if self.bridge != nil && self.bridge.isValid {
+        self.sendEvent(withName: "onRemoteWorkoutStateChange", body: [
+          "toState": toState.rawValue,
+          "fromState": fromState.rawValue,
+          "date": self._dateFormatter.string(from: date)
+        ])
+      }
+    }
+  }
+
+  @available(iOS 17.0.0, *)
+  func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: any Error) {
+    Task { @MainActor [weak self] in
+      guard let self = self else { return }
+
+      if self.bridge != nil && self.bridge.isValid {
+        self.sendEvent(
+          withName: "onRemoteWorkoutError",
+          body: ["error": error.localizedDescription]
+        )
+      }
+    }
+  }
+
+  @available(iOS 17.0.0, *)
+  func workoutSession(
+    _ workoutSession: HKWorkoutSession,
+    didReceiveDataFromRemoteWorkoutSession data: [Data]
+  ) {
+    Task { @MainActor [weak self] in
+      guard let self = self else { return }
+
+      do {
+        if self.bridge != nil && self.bridge.isValid {
+          let serializedData = try data.map { dataItem -> [String: String] in
+            let decoded = try self.decoder.decode(
+              RemoteSessionSharableData.self,
+              from: dataItem
+            )
+            return [
+              "name": decoded.name,
+              "type": decoded.type,
+              "value": decoded.value,
+              "unit": decoded.unit ?? ""
+            ]
+          }
+
+          self.sendEvent(
+            withName: "onRemoteWorkoutDataReceived",
+            body: ["data": serializedData]
+          )
+        }
+      } catch {
+        if self.bridge != nil && self.bridge.isValid {
+          self.sendEvent(
+            withName: "onRemoteWorkoutError",
+            body: ["error": error.localizedDescription]
+          )
+        }
+      }
+    }
+  }
+}
+
+// MARK: - RemoteSessionSharableData
+
+struct RemoteSessionSharableData: Decodable {
+  let name: String
+  let type: String
+  let value: String
+  let unit: String?
 }
