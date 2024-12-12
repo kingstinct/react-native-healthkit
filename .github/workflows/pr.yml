@@ -116,6 +116,14 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
+      - name: Install example deps
+        run: bun install --frozen-lockfile
+        working-directory: example
+
+      - name: Install example-expo deps
+        run: bun install --frozen-lockfile
+        working-directory: example-expo
+
       - run: bun install --frozen-lockfile
       
       - run: npx pkg-pr-new publish
