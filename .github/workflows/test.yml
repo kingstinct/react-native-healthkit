@@ -26,15 +26,17 @@ jobs:
         with:
           envFile: .env.github
 
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
       - name: Install example deps
-        run: cd example && bun install && cd ..
+        run: bun install --frozen-lockfile
+        working-directory: example
 
       - name: Install example-expo deps
-        run: cd example-expo && bun install && cd ..
+        run: bun install --frozen-lockfile
+        working-directory: example-expo
 
       - name: Install deps
         run: bun install --frozen-lockfile
@@ -57,7 +59,7 @@ jobs:
         with:
           envFile: .env.github
 
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
@@ -88,7 +90,7 @@ jobs:
         with:
           envFile: .env.github
 
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
