@@ -32,7 +32,7 @@ jobs:
         with:
           envFile: .env.github
 
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
@@ -103,3 +103,19 @@ jobs:
       package_manager: bun
       no_wait: false
       checkout_ref: refs/pull/${{ github.event.number }}/merge
+
+  package-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cardinalby/export-env-action@v2
+        with:
+          envFile: .env.github
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - run: bun install --frozen-lockfile
+      
+      - run: npx pkg-pr-new publish
