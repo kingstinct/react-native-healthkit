@@ -2337,18 +2337,12 @@ extension ReactNativeHealthkit: HKWorkoutSessionDelegate {
       guard let self = self else { return }
 
       do {
-        if self.bridge != nil && self.bridge.isValid {
-          let serializedData = try data.map { dataItem -> [String: String] in
-            let decoded = try self.decoder.decode(
-              RemoteSessionSharableData.self,
-              from: dataItem
-            )
-            return [
-              "name": decoded.name,
-              "type": decoded.type,
-              "value": decoded.value,
-              "unit": decoded.unit ?? ""
-            ]
+        if let bridge = self.bridge, bridge.isValid {
+          let serializedData = try data.compactMap { dataItem -> [String: Any]? in
+            guard let json = try? JSONSerialization.jsonObject(with: dataItem) as? [String: Any] else {
+              return nil
+            }
+            return json
           }
 
           self.sendEvent(
@@ -2366,13 +2360,4 @@ extension ReactNativeHealthkit: HKWorkoutSessionDelegate {
       }
     }
   }
-}
-
-// MARK: - RemoteSessionSharableData
-
-struct RemoteSessionSharableData: Decodable {
-  let name: String
-  let type: String
-  let value: String
-  let unit: String?
 }
