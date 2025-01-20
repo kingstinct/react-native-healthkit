@@ -1,3 +1,10 @@
+# [8.4.0](https://github.com/kingstinct/react-native-healthkit/compare/v8.3.0...v8.4.0) (2025-01-20)
+
+
+### Features
+
+* add state of mind query ([#120](https://github.com/kingstinct/react-native-healthkit/issues/120)) ([a9059d6](https://github.com/kingstinct/react-native-healthkit/commit/a9059d6e7c07198b97abaf985dc5be021efb220a))
+
 # [8.3.0](https://github.com/kingstinct/react-native-healthkit/compare/v8.2.0...v8.3.0) (2024-11-29)
 
 
