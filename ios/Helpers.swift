@@ -18,7 +18,8 @@ func limitOrNilIfZero(limit: Int) -> Int {
 
 func createPredicate(from: Date?, to: Date?) -> NSPredicate? {
     if from != nil || to != nil {
-        return HKQuery.predicateForSamples(withStart: from, end: to, options: [.strictEndDate, .strictStartDate])
+        return HKQuery.predicateForSamples(
+            withStart: from, end: to, options: [.strictEndDate, .strictStartDate])
     } else {
         return nil
     }
@@ -29,23 +30,23 @@ func getSortDescriptors(ascending: Bool) -> [NSSortDescriptor] {
 }
 
 func base64StringToHKQueryAnchor(base64String: String) -> HKQueryAnchor? {
-  // Step 1: Decode the base64 string to a Data object
-  guard let data = Data(base64Encoded: base64String) else {
-      print("Error: Invalid base64 string")
-      return nil
-  }
+    // Step 1: Decode the base64 string to a Data object
+    guard let data = Data(base64Encoded: base64String) else {
+        print("Error: Invalid base64 string")
+        return nil
+    }
 
-  // Step 2: Use NSKeyedUnarchiver to unarchive the data and create an HKQueryAnchor object
-  do {
-      let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
-      unarchiver.requiresSecureCoding = true
-      let anchor = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
+    // Step 2: Use NSKeyedUnarchiver to unarchive the data and create an HKQueryAnchor object
+    do {
+        let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
+        unarchiver.requiresSecureCoding = true
+        let anchor = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
 
-      return anchor as? HKQueryAnchor
-  } catch {
-      print("Error: Unable to unarchive HKQueryAnchor object: \(error)")
-      return nil
-  }
+        return anchor as? HKQueryAnchor
+    } catch {
+        print("Error: Unable to unarchive HKQueryAnchor object: \(error)")
+        return nil
+    }
 }
 
 func sampleTypeFromString(typeIdentifier: String) -> HKSampleType? {
@@ -102,7 +103,7 @@ func sampleTypesFromDictionary(typeIdentifiers: NSDictionary) -> Set<HKSampleTyp
         if item.value as! Bool {
             let sampleType = sampleTypeFromString(typeIdentifier: item.key as! String)
             if sampleType != nil {
-             share.insert(sampleType!)
+                share.insert(sampleType!)
             }
         }
     }
@@ -134,11 +135,13 @@ func objectTypeFromString(typeIdentifier: String) -> HKObjectType? {
         return HKObjectType.activitySummaryType()
     }
 
-    if #available(iOS 18, *) {
-      if typeIdentifier == HKStateOfMindTypeIdentifier {
-        return HKObjectType.stateOfMindType()
-      }
-    }
+    #if compiler(>=6)
+        if #available(iOS 18, *) {
+            if typeIdentifier == HKStateOfMindTypeIdentifier {
+                return HKObjectType.stateOfMindType()
+            }
+        }
+    #endif
 
     if #available(iOS 13, *) {
         if typeIdentifier == HKAudiogramTypeIdentifier {
@@ -223,23 +226,24 @@ func serializeQuantityIfExists(unit: HKUnit, quantity: HKQuantity?) -> [String: 
     return serializeQuantity(unit: unit, quantity: quantity)
 }
 
-func serializeStatisticIfExists(unit: HKUnit, quantity: HKQuantity?, stats: HKStatistics) -> [String: Any]? {
+func serializeStatisticIfExists(unit: HKUnit, quantity: HKQuantity?, stats: HKStatistics)
+    -> [String: Any]? {
     guard let quantity = quantity else { return nil }
     return serializeStatistic(unit: unit, quantity: quantity, stats: stats)
 }
 
 func parseWorkoutConfiguration(_ dict: NSDictionary) -> HKWorkoutConfiguration {
-  let configuration = HKWorkoutConfiguration()
+    let configuration = HKWorkoutConfiguration()
 
-  if let activityTypeRaw = dict[HKWorkoutActivityTypePropertyName] as? UInt,
-     let activityType = HKWorkoutActivityType(rawValue: activityTypeRaw) {
-    configuration.activityType = activityType
-  }
+    if let activityTypeRaw = dict[HKWorkoutActivityTypePropertyName] as? UInt,
+        let activityType = HKWorkoutActivityType(rawValue: activityTypeRaw) {
+        configuration.activityType = activityType
+    }
 
-  if let locationTypeRaw = dict[HKWorkoutSessionLocationTypePropertyName] as? Int,
-     let locationType = HKWorkoutSessionLocationType(rawValue: locationTypeRaw) {
-    configuration.locationType = locationType
-  }
+    if let locationTypeRaw = dict[HKWorkoutSessionLocationTypePropertyName] as? Int,
+        let locationType = HKWorkoutSessionLocationType(rawValue: locationTypeRaw) {
+        configuration.locationType = locationType
+    }
 
-  return configuration
+    return configuration
 }

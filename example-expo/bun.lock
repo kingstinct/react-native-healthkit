@@ -5,7 +5,7 @@
       "name": "healthkit-example-expo",
       "dependencies": {
         "@expo/match-media": "^0.3.0",
-        "@kingstinct/react-native-healthkit": "latest",
+        "@kingstinct/react-native-healthkit": "8.4.0",
         "@react-navigation/native": "^6.0.12",
         "babel-plugin-module-resolver": "^5.0.2",
         "dayjs": "^1.11.11",
@@ -370,7 +370,7 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.25", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ=="],
 
-    "@kingstinct/react-native-healthkit": ["@kingstinct/react-native-healthkit@8.2.0", "", { "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-RA2sDOts1EX2V+6sLFfyg8Xjpfcz4fXrTCfgjEuIUF4LVzSaE4QqO/buLmsB8XrMjAwsqmdJO1Wmfp9yHqTyFA=="],
+    "@kingstinct/react-native-healthkit": ["@kingstinct/react-native-healthkit@8.4.0", "", { "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-pMYW0VEZisoZn+pl++yb9sYDi25mEgPGhdMSoFxcD0WGPZ3F5ZcnfvLlDNG7vZnoLZOYhCfuWq+otrHFKm9HuQ=="],
 
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 
