@@ -1,3 +1,15 @@
+# [8.5.0](https://github.com/kingstinct/react-native-healthkit/compare/v8.3.0...v8.5.0) (2025-01-23)
+
+
+### Bug Fixes
+
+* feature flag things requiring XCode 16 ([9427461](https://github.com/kingstinct/react-native-healthkit/commit/94274610f829a52ddeaaefca5a7156d20550819b))
+
+
+### Features
+
+* add state of mind query ([#120](https://github.com/kingstinct/react-native-healthkit/issues/120)) ([a9059d6](https://github.com/kingstinct/react-native-healthkit/commit/a9059d6e7c07198b97abaf985dc5be021efb220a))
+
 # [8.4.0](https://github.com/kingstinct/react-native-healthkit/compare/v8.3.0...v8.4.0) (2025-01-20)
 
 
