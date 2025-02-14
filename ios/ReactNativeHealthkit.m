@@ -88,6 +88,16 @@ RCT_EXTERN_METHOD(saveCategorySample:(NSString)typeIdentifier
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
 )
+RCT_EXTERN_METHOD(saveStateOfMindSample:(NSDate)date
+                  kind:(NSInteger)kind
+                  valence:(double)valence
+                  labels:(NSArray)labels
+                  associations:(NSArray)associations
+                  metadata:(NSDictionary)metadata
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
 
 RCT_EXTERN_METHOD(queryWorkoutSamplesWithAnchor:(NSString)energyUnitString
                   distanceUnitString:(NSString)distanceUnitString

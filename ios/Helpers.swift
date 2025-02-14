@@ -71,6 +71,14 @@ func sampleTypeFromString(typeIdentifier: String) -> HKSampleType? {
         }
     }
 
+    #if compiler(>=6)
+        if #available(iOS 18, *) {
+            if typeIdentifier == HKStateOfMindTypeIdentifier {
+                return HKObjectType.stateOfMindType()
+            }
+        }
+    #endif
+
     if typeIdentifier == HKWorkoutTypeIdentifier {
         return HKSampleType.workoutType()
     }
@@ -247,3 +255,140 @@ func parseWorkoutConfiguration(_ dict: NSDictionary) -> HKWorkoutConfiguration {
 
     return configuration
 }
+
+#if compiler(>=6)
+@available(iOS 18.0, *)
+extension HKStateOfMind.Kind: @retroactive CaseIterable, @retroactive CustomStringConvertible {
+  public var description: String {
+    switch self {
+      case .dailyMood: "Daily mood"
+      case .momentaryEmotion: "Momentary Emotion"
+      @unknown default: "Unknown"
+    }
+  }
+
+  public static var allCases: [HKStateOfMind.Kind] {
+    [.dailyMood, .momentaryEmotion]
+  }
+
+  static func convertToStateOfMindKind(int: Int) -> HKStateOfMind.Kind {
+    // default to .dailyMood if we receive an int out of bounds
+    return HKStateOfMind.Kind(rawValue: int) ?? .dailyMood
+  }
+}
+#endif
+
+#if compiler(>=6)
+@available(iOS 18.0, *)
+extension HKStateOfMind.Label: @retroactive CaseIterable, @retroactive CustomStringConvertible {
+  public var description: String {
+    switch self {
+      case .amazed: "Amazed"
+      case .amused: "Amused"
+      case .angry: "Angry"
+      case .anxious: "Anxious"
+      case .ashamed: "Ashamed"
+      case .brave: "Brave"
+      case .calm: "Calm"
+      case .content: "Content"
+      case .disappointed: "Disappointed"
+      case .discouraged: "Discouraged"
+      case .disgusted: "Disgusted"
+      case .embarrassed: "Embarrassed"
+      case .excited: "Excited"
+      case .frustrated: "Frustrated"
+      case .grateful: "Grateful"
+      case .guilty: "Guilty"
+      case .happy: "Happy"
+      case .hopeless: "Hopeless"
+      case .irritated: "Irritated"
+      case .jealous: "Jealous"
+      case .joyful: "Joyful"
+      case .lonely: "Lonely"
+      case .passionate: "Passionate"
+      case .peaceful: "Peaceful"
+      case .proud: "Proud"
+      case .relieved: "Relieved"
+      case .sad: "Sad"
+      case .scared: "Scared"
+      case .stressed: "Stressed"
+      case .surprised: "Surprised"
+      case .worried: "Worried"
+      case .annoyed: "Annoyed"
+      case .confident: "Confident"
+      case .drained: "Drained"
+      case .hopeful: "Hopeful"
+      case .indifferent: "Indifferent"
+      case .overwhelmed: "Overwhelmed"
+      case .satisfied: "Satisfied"
+      @unknown default: "Unknown"
+    }
+  }
+
+  public static var allCases: [HKStateOfMind.Label] {
+    [
+      .amazed, .amused, .angry, .anxious, .ashamed,
+      .brave, .calm, .content, .disappointed, .discouraged,
+      .disgusted, .embarrassed, .excited, .frustrated, .grateful,
+      .guilty, .happy, .hopeless, .irritated, .jealous,
+      .joyful, .lonely, .passionate, .peaceful, .proud,
+      .relieved, .sad, .scared, .stressed, .surprised,
+      .worried, .annoyed, .confident, .drained, .hopeful,
+      .indifferent, .overwhelmed, .satisfied
+    ]
+  }
+
+  static func convertToStateOfMindLabels(intArray: [Int]) -> [HKStateOfMind.Label] {
+      return intArray.compactMap { index in
+        // if any int are out of bounds return nil instead of crashing
+        guard index >= 0 && index < HKStateOfMind.Label.allCases.count else { return nil }
+        return HKStateOfMind.Label(rawValue: index)
+      }
+  }
+}
+#endif
+
+#if compiler(>=6)
+@available(iOS 18.0, *)
+extension HKStateOfMind.Association: @retroactive CaseIterable, @retroactive CustomStringConvertible {
+  public var description: String {
+    switch self {
+      case .community: "Community"
+      case .currentEvents: "Current Events"
+      case .dating: "Dating"
+      case .education: "Education"
+      case .family: "Family"
+      case .fitness: "Fitness"
+      case .friends: "Friends"
+      case .health: "Health"
+      case .hobbies: "Hobbies"
+      case .identity: "Identity"
+      case .money: "Money"
+      case .partner: "Partner"
+      case .selfCare: "Self Care"
+      case .spirituality: "Spirituality"
+      case .tasks: "Tasks"
+      case .travel: "Travel"
+      case .work: "Work"
+      case .weather: "Weather"
+      @unknown default: "Unknown"
+    }
+  }
+
+  public static var allCases: [HKStateOfMind.Association] {
+    [
+      .community, .currentEvents, .dating, .education, .family,
+      .fitness, .friends, .health, .hobbies, .identity,
+      .money, .partner, .selfCare, .spirituality, .tasks,
+      .travel, .work, .weather
+    ]
+  }
+
+  static func convertToStateOfMindAssociations(intArray: [Int]) -> [HKStateOfMind.Association] {
+      return intArray.compactMap { index in
+        guard index >= 0 && index < HKStateOfMind.Label.allCases.count else { return nil }
+        return HKStateOfMind.Association(rawValue: index)
+      }
+  }
+}
+#endif
