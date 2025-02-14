@@ -3,7 +3,8 @@ import Native from '../native-types'
 import type { HKStateOfMindSampleRaw } from '../native-types'
 
 /**
- * @see {@link https://developer.apple.com/documentation/healthkit/saving_data_to_healthkit Saving data to HealthKit (Apple Docs)}
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkstateofmind Saving state of mind samples (Apple Docs)}
+ * @description Saves a state of mind sample to HealthKit, including kind, mood, valence, labels (optional), and associations (optional).
  */
 async function saveStateOfMindSample(
   options: Omit<
