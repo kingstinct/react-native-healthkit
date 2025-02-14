@@ -664,10 +664,13 @@ class ReactNativeHealthkit: RCTEventEmitter {
     #if compiler(>=6)
       if #available(iOS 18.0, *) {
 
+        // ensures valence does not exceed -1.0 and 1.0
+        let safeValence = max(-1.0, min(1.0, valence))
+
         let sample = HKStateOfMind(
            date: date,
            kind: HKStateOfMind.Kind.convertToStateOfMindKind(int: kind),
-           valence: valence,
+           valence: safeValence,
            labels: HKStateOfMind.Label.convertToStateOfMindLabels(intArray: labels),
            associations: HKStateOfMind.Association.convertToStateOfMindAssociations(intArray: associations),
            metadata: metadata as? [String: Any]
