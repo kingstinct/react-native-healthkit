@@ -35,6 +35,7 @@ beforeAll(async () => {
     queryStatisticsForQuantity: jest.fn(),
     queryStatisticsCollectionForQuantity: jest.fn(),
     queryWorkoutSamples: jest.fn(),
+    saveStateOfMindSample: jest.fn(),
     saveCategorySample: jest.fn(),
     saveCorrelationSample: jest.fn(),
     saveWorkoutSample: jest.fn(),
