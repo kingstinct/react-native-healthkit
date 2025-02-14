@@ -36,6 +36,7 @@ import requestAuthorization from './utils/requestAuthorization'
 import saveCategorySample from './utils/saveCategorySample'
 import saveCorrelationSample from './utils/saveCorrelationSample'
 import saveQuantitySample from './utils/saveQuantitySample'
+import saveStateOfMindSample from './utils/saveStateOfMindSample'
 import saveWorkoutRoute from './utils/saveWorkoutRoute'
 import saveWorkoutSample from './utils/saveWorkoutSample'
 import startWatchApp from './utils/startWatchApp'
@@ -188,6 +189,7 @@ export default {
   saveQuantitySample,
   saveWorkoutSample,
   saveWorkoutRoute,
+  saveStateOfMindSample,
 
   // subscriptions
   subscribeToChanges,
@@ -267,6 +269,7 @@ export {
   deleteSamples,
   getWorkoutPlanById,
   saveCategorySample,
+  saveStateOfMindSample,
   saveCorrelationSample,
   saveQuantitySample,
   saveWorkoutSample,

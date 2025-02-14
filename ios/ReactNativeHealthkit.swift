@@ -655,6 +655,49 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
   }
 
+  @objc(saveStateOfMindSample:kind:valence:labels:associations:metadata:resolve:reject:)
+  func saveStateOfMindSample(
+    _ date: Date,
+    kind: Int,
+    valence: Double, // non-integer number, ie 0.5
+    labels: [Int],
+    associations: [Int],
+    metadata: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    guard let store = _store else {
+      return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+    }
+
+    #if compiler(>=6)
+      if #available(iOS 18.0, *) {
+
+        let sample = HKStateOfMind(
+           date: date,
+           kind: HKStateOfMind.Kind.convertToStateOfMindKind(int: kind),
+           valence: valence,
+           labels: HKStateOfMind.Label.convertToStateOfMindLabels(intArray: labels),
+           associations: HKStateOfMind.Association.convertToStateOfMindAssociations(intArray: associations),
+           metadata: metadata as? [String: Any]
+        )
+
+        store.save(sample) { (success: Bool, error: Error?) in
+          guard let err = error else {
+            return resolve(success)
+          }
+          reject(GENERIC_ERROR, err.localizedDescription, error)
+        }
+
+      } else {
+        reject("STATE_OF_MIND_ERROR", "State of Mind features require iOS 18.0 or later", nil)
+      }
+    #else
+      reject(
+        "STATE_OF_MIND_ERROR", "State of Mind features require Xcode 16 or later to compile", nil)
+    #endif
+  }
+
   @objc(saveCategorySample:value:start:end:metadata:resolve:reject:)
   func saveCategorySample(
     typeIdentifier: String,

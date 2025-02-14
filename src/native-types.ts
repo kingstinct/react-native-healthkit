@@ -2272,6 +2272,14 @@ type ReactNativeHealthkitTypeNative = {
     end: string,
     metadata: unknown
   ) => Promise<boolean>;
+  readonly saveStateOfMindSample: (
+    startDate: HKStateOfMindSampleRaw['startDate'],
+    kind: HKStateOfMindSampleRaw['kind'],
+    valence: HKStateOfMindSampleRaw['valence'],
+    labels: HKStateOfMindSampleRaw['labels'],
+    associations: HKStateOfMindSampleRaw['associations'],
+    metadata: HKStateOfMindSampleRaw['metadata']
+  ) => Promise<boolean>;
   readonly queryStatisticsForQuantity: <
     TIdentifier extends HKQuantityTypeIdentifier,
     TUnit extends UnitForIdentifier<TIdentifier>
@@ -2347,7 +2355,7 @@ export type HKStateOfMindSampleRaw = {
   readonly device?: HKDevice;
   readonly startDate: string;
   readonly endDate: string;
-  readonly metadata?: HKHeartbeatSeriesSampleMetadata;
+  readonly metadata?: HKGenericMetadata;
   readonly sourceRevision?: HKSourceRevision;
   // State of mind sample properties
   /**
