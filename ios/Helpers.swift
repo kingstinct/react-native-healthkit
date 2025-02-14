@@ -386,7 +386,7 @@ extension HKStateOfMind.Association: @retroactive CaseIterable, @retroactive Cus
 
   static func convertToStateOfMindAssociations(intArray: [Int]) -> [HKStateOfMind.Association] {
       return intArray.compactMap { index in
-        guard index >= 0 && index < HKStateOfMind.Label.allCases.count else { return nil }
+        guard index >= 0 && index < HKStateOfMind.Association.allCases.count else { return nil }
         return HKStateOfMind.Association(rawValue: index)
       }
   }
