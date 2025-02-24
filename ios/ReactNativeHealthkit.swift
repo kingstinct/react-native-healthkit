@@ -8,8 +8,6 @@ import HealthKit
 @objc(ReactNativeHealthkit)
 @available(iOS 10.0, *)
 class ReactNativeHealthkit: RCTEventEmitter {
-  let decoder = JSONDecoder()
-
   var _store: HKHealthStore?
   var _runningQueries: [String: HKQuery]
   var _dateFormatter: ISO8601DateFormatter
