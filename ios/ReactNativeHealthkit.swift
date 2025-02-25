@@ -2331,29 +2331,37 @@ extension ReactNativeHealthkit: HKWorkoutSessionDelegate {
     _ workoutSession: HKWorkoutSession,
     didReceiveDataFromRemoteWorkoutSession data: [Data]
   ) {
-    Task { @MainActor [weak self] in
+    Task { [weak self] in
       guard let self = self else { return }
 
       do {
-        if let bridge = self.bridge, bridge.isValid {
-          let serializedData = try data.compactMap { dataItem -> [String: Any]? in
-            guard let json = try? JSONSerialization.jsonObject(with: dataItem) as? [String: Any] else {
-              return nil
-            }
-            return json
+        let serializedData = try data.compactMap { dataItem -> [String: Any]? in
+          guard let json = try? JSONSerialization.jsonObject(with: dataItem) as? [String: Any] else {
+            return nil
           }
+          return json
+        }
 
-          self.sendEvent(
-            withName: "onRemoteWorkoutDataReceived",
-            body: ["data": serializedData]
-          )
+        await MainActor.run { [weak self] in
+          guard let self = self else { return }
+
+          if let bridge = self.bridge, bridge.isValid {
+            self.sendEvent(
+              withName: "onRemoteWorkoutDataReceived",
+              body: ["data": serializedData]
+            )
+          }
         }
       } catch {
-        if self.bridge != nil && self.bridge.isValid {
-          self.sendEvent(
-            withName: "onRemoteWorkoutError",
-            body: ["error": error.localizedDescription]
-          )
+        await MainActor.run { [weak self] in
+          guard let self = self else { return }
+
+          if self.bridge != nil && self.bridge.isValid {
+            self.sendEvent(
+              withName: "onRemoteWorkoutError",
+              body: ["error": error.localizedDescription]
+            )
+          }
         }
       }
     }
