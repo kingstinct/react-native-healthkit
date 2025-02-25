@@ -246,15 +246,15 @@ RCT_EXTERN_METHOD(startWatchAppWithWorkoutConfiguration:(NSDictionary)workoutCon
                   reject:(RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(workoutSessionMirroringStartHandler:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject
-)
-
 RCT_EXTERN_METHOD(queryStateOfMindSamples:(NSDate)from
                   to:(NSDate)to 
                   limit:(NSInteger)limit
                   ascending:(BOOL)ascending
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(workoutSessionMirroringStartHandler:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
 
 @end
