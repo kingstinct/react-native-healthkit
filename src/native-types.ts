@@ -2040,6 +2040,9 @@ export enum HKWorkoutSessionLocationType {
   outdoor = 3
 }
 
+/**
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutsessionstate Apple Docs }
+ */
 export enum WorkoutSessionState {
   NotStarted = 1,
   Running = 2,
@@ -2047,6 +2050,20 @@ export enum WorkoutSessionState {
   Paused = 4,
   Prepared = 5,
   Stopped = 6,
+}
+
+/**
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkworkouteventtype Apple Docs }
+ */
+export enum WorkoutSessionEventType {
+  Pause = 1,
+  Resume = 2,
+  Lap = 3,
+  Marker = 4,
+  MotionPaused = 5,
+  MotionResumed = 6,
+  Segment = 7,
+  PauseOrResumeRequest = 8,
 }
 
 export interface WorkoutStateChangeEvent {
@@ -2066,6 +2083,10 @@ export type RemoteSessionSharableData = {
 
 export type WorkoutDataReceivedEvent = {
   readonly data: readonly RemoteSessionSharableData[];
+};
+
+export type WorkoutEventReceivedEvent = {
+  readonly type: WorkoutSessionEventType;
 };
 
 type ReactNativeHealthkitTypeNative = {
@@ -2361,11 +2382,12 @@ type OnChangeCallback = ({
 type OnRemoteWorkoutStateChangeCallback = (event: WorkoutStateChangeEvent) => void;
 type OnRemoteWorkoutErrorCallback = (event: WorkoutErrorEvent) => void;
 type OnRemoteWorkoutDataCallback = (event: WorkoutDataReceivedEvent) => void;
+type OnRemoteWorkoutEventReceivedCallback = (event: WorkoutEventReceivedEvent) => void;
 
 interface HealthkitEventEmitter extends NativeEventEmitter {
   readonly addListener: (
-    eventType: 'onChange' | 'onRemoteWorkoutStateChange' | 'onRemoteWorkoutError' | 'onRemoteWorkoutDataReceived',
-    callback: OnChangeCallback | OnRemoteWorkoutStateChangeCallback | OnRemoteWorkoutErrorCallback | OnRemoteWorkoutDataCallback
+    eventType: 'onChange' | 'onRemoteWorkoutStateChange' | 'onRemoteWorkoutError' | 'onRemoteWorkoutDataReceived' | 'onRemoteWorkoutEventReceived',
+    callback: OnChangeCallback | OnRemoteWorkoutStateChangeCallback | OnRemoteWorkoutErrorCallback | OnRemoteWorkoutDataCallback | OnRemoteWorkoutEventReceivedCallback
   ) => EmitterSubscription;
 }
 
