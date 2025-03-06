@@ -1851,6 +1851,9 @@ export interface HKWorkoutEvent {
   readonly endDate: string;
 }
 
+/**
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkworkouteventtype Apple Docs }
+ */
 export enum HKWorkoutEventType {
   pause = 1,
   resume = 2,
@@ -2052,20 +2055,6 @@ export enum WorkoutSessionState {
   Stopped = 6,
 }
 
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkworkouteventtype Apple Docs }
- */
-export enum WorkoutSessionEventType {
-  Pause = 1,
-  Resume = 2,
-  Lap = 3,
-  Marker = 4,
-  MotionPaused = 5,
-  MotionResumed = 6,
-  Segment = 7,
-  PauseOrResumeRequest = 8,
-}
-
 export interface WorkoutStateChangeEvent {
   readonly toState: WorkoutSessionState;
   readonly fromState: WorkoutSessionState;
@@ -2086,7 +2075,7 @@ export type WorkoutDataReceivedEvent = {
 };
 
 export type WorkoutEventReceivedEvent = {
-  readonly type: WorkoutSessionEventType;
+  readonly type: HKWorkoutEventType;
 };
 
 type ReactNativeHealthkitTypeNative = {
