@@ -1,65 +1,26 @@
 {
-	"name": "react-native-healthkit",
+	"name": "react-native-healthkit-mono",
 	"version": "0.0.1",
-	"description": "react-native-healthkit",
-	"main": "lib/index",
-	"module": "lib/index",
-	"types": "lib/index.d.ts",
-	"react-native": "src/index",
-	"source": "src/index",
-	"files": [
-		"src",
-		"react-native.config.js",
-		"lib",
-		"nitrogen",
-		"android/build.gradle",
-		"android/gradle.properties",
-		"android/CMakeLists.txt",
-		"android/src",
-		"ios/**/*.h",
-		"ios/**/*.m",
-		"ios/**/*.mm",
-		"ios/**/*.cpp",
-		"ios/**/*.swift",
-		"app.plugin.js",
-		"*.podspec",
-		"README.md"
-	],
+	"description": "react-native-healthkit-mono",
 	"scripts": {
-		"postinstall": "tsc || exit 0;",
 		"typecheck": "tsc --noEmit",
 		"lint": "bunx @biomejs/biome format --write",
-		"typescript": "tsc",
-		"specs": "typescript && nitro-codegen --logLevel=\"debug\""
+		"typescript": "tsc"
 	},
-	"keywords": ["react-native", "nitro"],
+	"keywords": ["react-native", "nitro", "healthkit"],
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/kingstinct/react-native-healthkit.git"
 	},
-	"author": "Marc Rousavy <me@mrousavy.com> (https://github.com/mrousavy)",
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+	"author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
 	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/kingstinct/react-native-healthkit/issues"
-	},
-	"homepage": "https://github.com/kingstinct/react-native-healthkit#readme",
-	"publishConfig": {
-		"registry": "https://registry.npmjs.org/",
-    "access": "public"
-	},
+    "private": true,
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
-		"@types/jest": "^29.5.12",
-		"@types/react": "^19.0.6",
-		"nitro-codegen": "*",
-		"react": "19.0.0",
-		"react-native": "0.78.0",
-		"react-native-nitro-modules": "*",
 		"typescript": "^5.5.4"
-	},
-	"peerDependencies": {
-		"react": "*",
-		"react-native": "*",
-		"react-native-nitro-modules": "*"
 	}
 }
