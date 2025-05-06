@@ -1,0 +1,13 @@
+{
+	"$schema": "https://nitro.margelo.com/nitro.schema.json",
+	"cxxNamespace": ["healthkit"],
+	"ios": {
+		"iosModuleName": "NitroHealthkit"
+	},
+	"android": {
+		"androidNamespace": ["healthkit"],
+		"androidCxxLibName": "NitroHealthkit"
+	},
+	"autolinking": {},
+	"ignorePaths": ["**/node_modules"]
+}
