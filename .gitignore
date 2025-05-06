@@ -80,5 +80,5 @@ lib/
 tsconfig.tsbuildinfo
 
 generated
-android
-ios
+apps/example/android
+apps/example/ios

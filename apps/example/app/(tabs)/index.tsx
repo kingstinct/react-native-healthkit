@@ -6,6 +6,10 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 
+import { MathModule } from "react-native-healthkit";
+
+const result = MathModule.add(5, 7)
+
 export default function HomeScreen() {
 	return (
 		<ParallaxScrollView
@@ -17,6 +21,7 @@ export default function HomeScreen() {
 				/>
 			}
 		>
+			<ThemedText>{ result }</ThemedText>
 			<ThemedView style={styles.titleContainer}>
 				<ThemedText type="title">Welcome!</ThemedText>
 				<HelloWave />

@@ -5,9 +5,13 @@
 		"iosModuleName": "ReactNativeHealthkit"
 	},
 	"android": {
-		"androidNamespace": ["healthkit"],
-		"androidCxxLibName": "ReactNativeHealthkit"
+		"androidCxxLibName": "ReactNativeHealthkit",
+		"androidNamespace": ["healthkit"]
 	},
-	"autolinking": {},
+	"autolinking": {
+		"ReactNativeHealthkit": {
+			"swift": "ReactNativeHealthkit"
+		}
+	},
 	"ignorePaths": ["**/node_modules"]
 }
