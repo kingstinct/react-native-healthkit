@@ -1,20 +1,17 @@
-import type { EmitterSubscription } from "react-native";
 import type { HybridObject } from "react-native-nitro-modules";
 import type { HKSampleTypeIdentifier } from "./Shared";
 
+interface EmitterSubscription {
+    remove: () => void;
+}
 
-
-type QueryId = string;
-
-
-type OnChangeCallback = ({
-    typeIdentifier,
-}: {
+type OnChangeCallbackArgs = {
     readonly typeIdentifier: HKSampleTypeIdentifier;
-}) => void;
+}
+
+type OnChangeCallback = (args: OnChangeCallbackArgs) => void;
 
 export interface Core extends HybridObject<{ ios: 'swift' }> {
-
     /**
        *  @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614180-ishealthdataavailable Apple Docs }
        */
@@ -22,12 +19,11 @@ export interface Core extends HybridObject<{ ios: 'swift' }> {
     isProtectedDataAvailable(): Promise<boolean>;
 
     readonly addListener: (
-        eventType: 'onChange',
         callback: OnChangeCallback
     ) => EmitterSubscription;
 
     subscribeToObserverQuery(
         identifier: HKSampleTypeIdentifier
-    ): Promise<QueryId>;
-    unsubscribeQuery(queryId: QueryId): Promise<boolean>;
+    ): Promise<string>;
+    unsubscribeQuery(queryId: string): Promise<boolean>;
 }

@@ -3,9 +3,10 @@ import type { HybridObject } from "react-native-nitro-modules";
 import type { HKGenericMetadata } from "./Shared";
 import type { HKCategorySampleRaw, HKCategorySampleRawForSaving } from "./CategoryType.nitro";
 import type { HKQuantitySampleRaw, HKQuantitySampleRawForSaving } from "./QuantityType.nitro";
+import type { HKCorrelationTypeIdentifier } from "../types/HKCorrelationTypeIdentifier";
 
 
-export type HKCorrelationRaw<TIdentifier extends HKCorrelationTypeIdentifier> =
+export type HKCorrelationRaw<TIdentifier extends HKCorrelationTypeIdentifier = HKCorrelationTypeIdentifier> =
   {
     readonly correlationType: HKCorrelationTypeIdentifier;
     readonly objects: readonly (HKCategorySampleRaw | HKQuantitySampleRaw)[];
@@ -17,41 +18,25 @@ export type HKCorrelationRaw<TIdentifier extends HKCorrelationTypeIdentifier> =
 
 export type MetadataMapperForCorrelationIdentifier<
 TCorrelationTypeIdentifier = HKCorrelationTypeIdentifier
-> = TCorrelationTypeIdentifier extends HKCorrelationTypeIdentifier.food
+> = TCorrelationTypeIdentifier extends 'HKCorrelationTypeIdentifierFood'
 ? HKGenericMetadata & {
   readonly HKFoodType?: string;
 }
 : HKGenericMetadata;
 
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcorrelationtypeidentifier Apple Docs }
- */
-export enum HKCorrelationTypeIdentifier {
-    bloodPressure = 'HKCorrelationTypeIdentifierBloodPressure',
-    food = 'HKCorrelationTypeIdentifierFood',
-  }
-
-  export interface Correlation extends HybridObject<{ ios: 'swift' }> {
-    readonly saveCorrelationSample: <
-    TIdentifier extends HKCorrelationTypeIdentifier,
-    TSamples extends readonly (
-      | HKCategorySampleRawForSaving
-      | HKQuantitySampleRawForSaving
-    )[]
-  >(
-    typeIdentifier: TIdentifier,
-    samples: TSamples,
+export interface Correlation extends HybridObject<{ ios: 'swift' }> {
+    readonly saveCorrelationSample: (
+    typeIdentifier: HKCorrelationTypeIdentifier,
+    samples: (HKCategorySampleRawForSaving | HKQuantitySampleRawForSaving)[],
     start: string,
     end: string,
-    metadata: MetadataMapperForCorrelationIdentifier<TIdentifier>
+    metadata: MetadataMapperForCorrelationIdentifier
   ) => Promise<boolean>;
 
 
-  readonly queryCorrelationSamples: <
-    TIdentifier extends HKCorrelationTypeIdentifier
-  >(
-    typeIdentifier: TIdentifier,
+  readonly queryCorrelationSamples: (
+    typeIdentifier: HKCorrelationTypeIdentifier,
     from: string,
     to: string
-  ) => Promise<readonly HKCorrelationRaw<TIdentifier>[]>;
+  ) => Promise<readonly HKCorrelationRaw[]>;
 }

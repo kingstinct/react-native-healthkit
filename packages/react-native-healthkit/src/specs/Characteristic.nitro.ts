@@ -1,17 +1,7 @@
 import type { HybridObject } from "react-native-nitro-modules";
 
-
-
 // Straight mapping to https://developer.apple.com/documentation/healthkit/hkcharacteristictypeidentifier
-export enum HKCharacteristicTypeIdentifier {
-    fitzpatrickSkinType = 'HKCharacteristicTypeIdentifierFitzpatrickSkinType',
-    biologicalSex = 'HKCharacteristicTypeIdentifierBiologicalSex',
-    bloodType = 'HKCharacteristicTypeIdentifierBloodType',
-    dateOfBirth = 'HKCharacteristicTypeIdentifierDateOfBirth',
-    wheelchairUse = 'HKCharacteristicTypeIdentifierWheelchairUse',
-    activityMoveMode = 'HKCharacteristicTypeIdentifierActivityMoveMode', // HKActivityMoveModeObject
-  }
-  
+export type HKCharacteristicTypeIdentifier = 'HKCharacteristicTypeIdentifierFitzpatrickSkinType' | 'HKCharacteristicTypeIdentifierBiologicalSex' | 'HKCharacteristicTypeIdentifierBloodType' | 'HKCharacteristicTypeIdentifierDateOfBirth' | 'HKCharacteristicTypeIdentifierWheelchairUse' | 'HKCharacteristicTypeIdentifierActivityMoveMode'
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkbloodtype Apple Docs }
@@ -65,5 +55,5 @@ export interface Characteristic extends HybridObject<{ ios: 'swift' }> {
   getDateOfBirth(): Promise<string>;
   getBiologicalSex(): Promise<HKBiologicalSex>;
   getFitzpatrickSkinType(): Promise<HKFitzpatrickSkinType>;
- getWheelchairUse: () => Promise<HKWheelchairUse>;
+  getWheelchairUse(): Promise<HKWheelchairUse>;
 }

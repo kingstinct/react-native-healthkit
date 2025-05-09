@@ -1,11 +1,8 @@
 import type { HybridObject } from "react-native-nitro-modules";
 import type { HKCharacteristicTypeIdentifier } from "./Characteristic.nitro";
-import type { HKCategoryTypeIdentifier } from "./CategoryType.nitro";
-import type { HKQuantityTypeIdentifier } from "./QuantityType.nitro";
 import type { HKSampleTypeIdentifier } from "./Shared";
-
-
-
+import type { HKQuantityTypeIdentifier } from "../types/HKQuantityTypeIdentifier";
+import type{ HKCategoryTypeIdentifier } from "../types/HKCategoryTypeIdentifier";
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkauthorizationrequeststatus Apple Docs }
@@ -20,10 +17,6 @@ export enum HKAuthorizationRequestStatus {
 export type HealthkitReadAuthorization =
   | HKCharacteristicTypeIdentifier
   | HKSampleTypeIdentifier
-  | `${HKCharacteristicTypeIdentifier}`
-  | `${HKSampleTypeIdentifier}`;
-  
-export type HealthkitWriteAuthorization = HKSampleTypeIdentifier;
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkauthorizationstatus Apple Docs }
@@ -34,20 +27,15 @@ export enum HKAuthorizationStatus {
     sharingAuthorized = 2,
 }
 
-
-export type WritePermissions = {
-    readonly [key in
-    | HKCategoryTypeIdentifier
-    | HKCharacteristicTypeIdentifier
-    | HKQuantityTypeIdentifier]: boolean;
-  };
+export interface WritePermissions extends Partial<Record<
+    HKCategoryTypeIdentifier | HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier,
+    boolean
+>> {}
   
-  export type ReadPermissions = {
-    readonly [key in
-    | HKCategoryTypeIdentifier
-    | HKCharacteristicTypeIdentifier
-    | HKQuantityTypeIdentifier]: boolean;
-  };
+export interface ReadPermissions extends Partial<Record<
+    HKCategoryTypeIdentifier | HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier,
+    boolean
+>> {}
 
 export interface Auth extends HybridObject<{ ios: 'swift' }> {
     /**

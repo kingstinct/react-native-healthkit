@@ -1,16 +1,11 @@
 import type { HybridObject } from "react-native-nitro-modules";
-import type { HKQuantityTypeIdentifier } from "./QuantityType.nitro";
+import type { HKQuantityTypeIdentifier } from "../types/HKQuantityTypeIdentifier";
 
 export interface Unit extends HybridObject<{ ios: 'swift' }> {
     readonly getPreferredUnits: (
         identifiers: readonly HKQuantityTypeIdentifier[]
-    ) => Promise<TypeToUnitMapping>;
+    ) => Promise<Record<HKQuantityTypeIdentifier, HKUnit>>;
 }
-
-export type TypeToUnitMapping = {
-    readonly [key in HKQuantityTypeIdentifier]: HKUnit;
-};
-
 
 // Unit types are a straight mapping from here https://developer.apple.com/documentation/healthkit/hkunit/1615733-init
 export enum HKMetricPrefix {
@@ -199,6 +194,7 @@ export enum UnitOfEnergy {
     Joules = 'J',
 }
 export type EnergyUnit = JouleUnit<HKMetricPrefix> | UnitOfEnergy;
+
 export enum BloodGlucoseUnit {
     GlucoseMmolPerL = 'mmol<180.15588000005408>/l',
     GlucoseMgPerDl = 'mg/dL',
@@ -208,6 +204,7 @@ export type SpeedUnit<
     TLength extends LengthUnit,
     TTime extends TimeUnit
 > = `${TLength}/${TTime}`;
+
 export type CountPerTime<TTime extends TimeUnit> = `count/${TTime}`;
 
 export type HKUnit =

@@ -1,13 +1,11 @@
 // TODO: Export specs that extend HybridObject<...> here
 
 import type { HybridObject } from "react-native-nitro-modules";
-import type { EnergyUnit, HKUnits, LengthUnit, HKUnit } from "./Unit.nitro";
-import type { HKQuantity, HKQuantitySampleRawForSaving, HKQuantityTypeIdentifier } from "./QuantityType.nitro";
+import type { HKQuantityRaw, HKQuantitySampleRawForSaving } from "./QuantityType.nitro";
 import type { HKDevice } from "./Source.nitro";
 import type { HKSourceRevision } from "./Source.nitro";
 import type { HKGenericMetadata } from "./Shared";
-
-
+import type { EnergyUnit, LengthUnit } from "./Unit.nitro";
 
 /**
  * Represents a workout type identifier.
@@ -148,11 +146,10 @@ enum HKIndoorWorkout {
     true = 1,
 }
 
-
 export interface HKWorkoutMetadata
     extends HKGenericMetadata /* <TTemperatureUnit extends HKUnit> */ {
     readonly HKWeatherCondition?: HKWeatherCondition;
-    readonly HKWeatherHumidity?: HKQuantity<
+    /*readonly HKWeatherHumidity?: HKQuantity<
         HKQuantityTypeIdentifier,
         HKUnits.Percent
     >;
@@ -161,11 +158,9 @@ export interface HKWorkoutMetadata
     readonly HKElevationAscended?: HKQuantity<
         HKQuantityTypeIdentifier,
         LengthUnit
-    >;
+    >;*/
     readonly HKIndoorWorkout?: HKIndoorWorkout;
 }
-
-
 
 export interface HKWorkoutEvent {
     readonly type: HKWorkoutEventType;
@@ -191,24 +186,15 @@ export interface HKWorkoutActivity {
     readonly duration: number;
 }
 
-export type HKWorkoutRaw<
-    TEnergy extends EnergyUnit,
-    TDistance extends LengthUnit
-> = {
+export interface HKWorkoutRaw {
     readonly uuid: string;
     readonly device?: HKDevice;
-    readonly workoutActivityType: HKWorkoutActivityType;
+    readonly workoutActivityType: number;
     readonly duration: number;
-    readonly totalDistance?: HKQuantity<HKQuantityTypeIdentifier, TDistance>;
-    readonly totalEnergyBurned?: HKQuantity<HKQuantityTypeIdentifier, TEnergy>;
-    readonly totalSwimmingStrokeCount?: HKQuantity<
-        HKQuantityTypeIdentifier,
-        HKUnits.Count
-    >;
-    readonly totalFlightsClimbed?: HKQuantity<
-        HKQuantityTypeIdentifier,
-        HKUnits.Count
-    >;
+    readonly totalDistance?: HKQuantityRaw;
+    readonly totalEnergyBurned?: HKQuantityRaw;
+    readonly totalSwimmingStrokeCount?: HKQuantityRaw;
+    readonly totalFlightsClimbed?: HKQuantityRaw;
     readonly startDate: string;
     readonly endDate: string;
     readonly metadata?: HKWorkoutMetadata;
@@ -220,7 +206,7 @@ export type HKWorkoutRaw<
 
 
 
-export type WorkoutLocation = {
+export interface WorkoutLocation {
     readonly longitude: number;
     readonly latitude: number;
     readonly altitude: number;
@@ -232,17 +218,14 @@ export type WorkoutLocation = {
     readonly distance: number | null;
 };
 
-export type WorkoutRoute = {
+export interface WorkoutRoute {
     readonly locations: readonly WorkoutLocation[];
     readonly HKMetadataKeySyncIdentifier?: string;
     readonly HKMetadataKeySyncVersion?: number;
 };
 
-type QueryWorkoutSamplesWithAnchorResponseRaw<
-    TEnergy extends EnergyUnit,
-    TDistance extends LengthUnit
-> = {
-    readonly samples: readonly HKWorkoutRaw<TEnergy, TDistance>[],
+interface QueryWorkoutSamplesWithAnchorResponseRaw {
+    readonly samples: readonly HKWorkoutRaw[],
     readonly deletedSamples: readonly DeletedWorkoutSampleRaw[],
     readonly newAnchor: string
 }
@@ -251,7 +234,7 @@ type QueryWorkoutSamplesWithAnchorResponseRaw<
  * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutconfiguration Apple Docs }
  */
 export type HKWorkoutConfiguration = {
-    readonly activityType: HKWorkoutActivityType;
+    readonly activityType: number;
     readonly locationType?: HKWorkoutSessionLocationType;
 };
 
@@ -265,13 +248,13 @@ export enum HKWorkoutSessionLocationType {
 }
 
 
-export type DeletedWorkoutSampleRaw = {
+export interface DeletedWorkoutSampleRaw {
     readonly uuid: string;
     readonly metadata: HKWorkoutMetadata;
 };
 
 
-export type CLLocationRawForSaving = {
+export interface CLLocationRawForSaving {
     readonly latitude: number;
     readonly longitude: number;
     readonly altitude: number;
@@ -282,13 +265,21 @@ export type CLLocationRawForSaving = {
     readonly timestamp: string; // unix timestamp in milliseconds
 };
 
+export interface WorkoutPlan {
+    readonly id: string;
+    readonly activityType: number;
+}
 
+export interface WorkoutTotals {
+    readonly distance?: number;
+    readonly energyBurned?: number;
+}
 
 export interface Workout extends HybridObject<{ ios: 'swift' }> {
     readonly getWorkoutRoutes: (
         workoutUUID: string
     ) => Promise<readonly WorkoutRoute[]>;
-    readonly getWorkoutPlanById: (workoutUUID: string) => Promise<{ readonly id: string, readonly activityType: HKWorkoutActivityType } | null>;
+    readonly getWorkoutPlanById: (workoutUUID: string) => Promise<WorkoutPlan | null>;
 
     /**
      * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1648358-startwatchapp Apple Docs }
@@ -299,14 +290,11 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
 
 
     readonly saveWorkoutSample: (
-        typeIdentifier: HKWorkoutActivityType,
+        typeIdentifier: number,
         quantities: readonly HKQuantitySampleRawForSaving[],
         start: string,
         end: string,
-        totals: {
-            readonly distance?: number;
-            readonly energyBurned?: number;
-        },
+        totals: WorkoutTotals,
         metadata: HKWorkoutMetadata
     ) => Promise<string | null>;
 
@@ -316,15 +304,12 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
     ) => Promise<boolean>;
 
 
-    readonly queryWorkoutSamplesWithAnchor: <
-        TEnergy extends EnergyUnit,
-        TDistance extends LengthUnit
-    >(
-        energyUnit: TEnergy,
-        distanceUnit: TDistance,
+    readonly queryWorkoutSamplesWithAnchor: (
+        energyUnit: EnergyUnit,
+        distanceUnit: LengthUnit,
         from: string,
         to: string,
         limit: number,
         anchor: string
-    ) => Promise<QueryWorkoutSamplesWithAnchorResponseRaw<TEnergy, TDistance>>;
+    ) => Promise<QueryWorkoutSamplesWithAnchorResponseRaw>;
 }

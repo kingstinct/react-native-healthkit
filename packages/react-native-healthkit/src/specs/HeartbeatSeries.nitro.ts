@@ -2,17 +2,16 @@ import type { HybridObject } from "react-native-nitro-modules";
 import type { HKDevice, HKSourceRevision } from "./Source.nitro";
 import type { HKGenericMetadata } from "./Shared";
 
-
-export type HKHeartbeatSeriesSampleMetadata = HKGenericMetadata & {
+export interface HKHeartbeatSeriesSampleMetadata extends HKGenericMetadata {
     readonly HKMetadataKeyAlgorithmVersion: string;
 };
 
-export type HKHeartbeatRaw = {
+export interface HKHeartbeatRaw {
     readonly timeSinceSeriesStart: number;
     readonly precededByGap: boolean;
 };
 
-export type HKHeartbeatSeriesSampleRaw = {
+export interface HKHeartbeatSeriesSampleRaw {
     readonly uuid: string;
     readonly device?: HKDevice;
     readonly startDate: string;
@@ -23,7 +22,7 @@ export type HKHeartbeatSeriesSampleRaw = {
 };
 
 
-export type QueryHeartbeatSeriesSamplesResponseRaw = {
+export interface QueryHeartbeatSeriesSamplesResponseRaw {
     readonly samples: readonly HKHeartbeatSeriesSampleRaw[];
     readonly deletedSamples: readonly DeletedHeartbeatSeriesSampleRaw[];
     readonly newAnchor: string;
@@ -36,7 +35,7 @@ export type QueryHeartbeatSeriesSamplesResponseRaw = {
  */
 export declare const HKDataTypeIdentifierHeartbeatSeries: 'HKDataTypeIdentifierHeartbeatSeries'
 
-export type DeletedHeartbeatSeriesSampleRaw = {
+export interface DeletedHeartbeatSeriesSampleRaw {
     readonly uuid: string;
     readonly metadata: HKHeartbeatSeriesSampleMetadata;
 };

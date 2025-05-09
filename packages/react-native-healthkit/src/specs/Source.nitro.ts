@@ -1,13 +1,10 @@
 import type { HybridObject } from "react-native-nitro-modules";
-import type { HKQuantityTypeIdentifier } from "./QuantityType.nitro";
-import type { HKCategoryTypeIdentifier } from "./CategoryType.nitro";
-
-
+import type{ HKSampleTypeIdentifier } from "./Shared";
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkobject/1615781-source Apple Docs }
  */
-export type HKSource = {
+export interface HKSource {
     readonly name: string;
     readonly bundleIdentifier: string;
 };
@@ -15,7 +12,7 @@ export type HKSource = {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkobject/1615483-sourcerevision Apple Docs }
  */
-export type HKSourceRevision = {
+export interface HKSourceRevision {
     readonly source: HKSource;
     readonly version: string;
     readonly operatingSystemVersion?: string;
@@ -26,7 +23,7 @@ export type HKSourceRevision = {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkdevice Apple Docs }
  */
-export type HKDevice = {
+export interface HKDevice {
     readonly name: string; // ex: "Apple Watch"
     readonly firmwareVersion: string | null;
     readonly hardwareVersion: string; // ex: "Watch6,2",
@@ -40,9 +37,7 @@ export type HKDevice = {
 
 
 export interface Source extends HybridObject<{ ios: 'swift' }> {
-    readonly querySources: <
-        TIdentifier extends HKCategoryTypeIdentifier | HKQuantityTypeIdentifier
-    >(
-        identifier: TIdentifier
+    readonly querySources: (
+        identifier: HKSampleTypeIdentifier
     ) => Promise<readonly HKSource[]>;
 }

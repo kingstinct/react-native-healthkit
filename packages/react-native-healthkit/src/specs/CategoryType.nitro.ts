@@ -1,106 +1,16 @@
 import type { HybridObject } from "react-native-nitro-modules";
 import type { HKDevice, HKSourceRevision } from "./Source.nitro";
 import type { HKGenericMetadata } from "./Shared";
-
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier Apple Docs }
- */
-export enum HKCategoryTypeIdentifier {
-    sleepAnalysis = 'HKCategoryTypeIdentifierSleepAnalysis',
-    appleStandHour = 'HKCategoryTypeIdentifierAppleStandHour',
-    cervicalMucusQuality = 'HKCategoryTypeIdentifierCervicalMucusQuality',
-    ovulationTestResult = 'HKCategoryTypeIdentifierOvulationTestResult',
-    /**
-     * @deprecated In iOS 18 beta
-     * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifiermenstrualflow Apple Docs }
-     */
-    menstrualFlow = 'HKCategoryTypeIdentifierMenstrualFlow',
-    intermenstrualBleeding = 'HKCategoryTypeIdentifierIntermenstrualBleeding',
-    sexualActivity = 'HKCategoryTypeIdentifierSexualActivity',
-    mindfulSession = 'HKCategoryTypeIdentifierMindfulSession',
-    highHeartRateEvent = 'HKCategoryTypeIdentifierHighHeartRateEvent',
-    lowHeartRateEvent = 'HKCategoryTypeIdentifierLowHeartRateEvent',
-    irregularHeartRhythmEvent = 'HKCategoryTypeIdentifierIrregularHeartRhythmEvent',
-    /**
-     * @deprecated Use environmentalAudioExposureEvent instead.
-     */
-    audioExposureEvent = 'HKCategoryTypeIdentifierAudioExposureEvent',
-    toothbrushingEvent = 'HKCategoryTypeIdentifierToothbrushingEvent',
-    lowCardioFitnessEvent = 'HKCategoryTypeIdentifierLowCardioFitnessEvent',
-    contraceptive = 'HKCategoryTypeIdentifierContraceptive',
-    lactation = 'HKCategoryTypeIdentifierLactation',
-    pregnancy = 'HKCategoryTypeIdentifierPregnancy',
-    pregnancyTestResult = 'HKCategoryTypeIdentifierPregnancyTestResult',
-    progesteroneTestResult = 'HKCategoryTypeIdentifierProgesteroneTestResult',
-    environmentalAudioExposureEvent = 'HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent',
-    headphoneAudioExposureEvent = 'HKCategoryTypeIdentifierHeadphoneAudioExposureEvent',
-    appleWalkingSteadinessEvent = 'HKCategoryTypeIdentifierAppleWalkingSteadinessEvent',
-    handwashingEvent = 'HKCategoryTypeIdentifierHandwashingEvent', // HKCategoryValue
-  
-    // Symptoms
-    abdominalCramps = 'HKCategoryTypeIdentifierAbdominalCramps', // HKCategoryValueSeverity
-    acne = 'HKCategoryTypeIdentifierAcne', // HKCategoryValueSeverity
-    appetiteChanges = 'HKCategoryTypeIdentifierAppetiteChanges', // HKCategoryValueAppetiteChanges
-    bladderIncontinence = 'HKCategoryTypeIdentifierBladderIncontinence', // HKCategoryValueSeverity
-    bloating = 'HKCategoryTypeIdentifierBloating', // HKCategoryValueSeverity
-    breastPain = 'HKCategoryTypeIdentifierBreastPain', // HKCategoryValueSeverity
-    chestTightnessOrPain = 'HKCategoryTypeIdentifierChestTightnessOrPain', // HKCategoryValueSeverity
-    chills = 'HKCategoryTypeIdentifierChills', // HKCategoryValueSeverity
-    constipation = 'HKCategoryTypeIdentifierConstipation', // HKCategoryValueSeverity
-    coughing = 'HKCategoryTypeIdentifierCoughing', // HKCategoryValueSeverity
-    diarrhea = 'HKCategoryTypeIdentifierDiarrhea', // HKCategoryValueSeverity
-    dizziness = 'HKCategoryTypeIdentifierDizziness', // HKCategoryValueSeverity
-    drySkin = 'HKCategoryTypeIdentifierDrySkin', // HKCategoryValueSeverity
-    fainting = 'HKCategoryTypeIdentifierFainting', // HKCategoryValueSeverity
-    fatigue = 'HKCategoryTypeIdentifierFatigue', // HKCategoryValueSeverity
-    fever = 'HKCategoryTypeIdentifierFever', // HKCategoryValueSeverity
-    generalizedBodyAche = 'HKCategoryTypeIdentifierGeneralizedBodyAche', // HKCategoryValueSeverity
-    hairLoss = 'HKCategoryTypeIdentifierHairLoss', // HKCategoryValueSeverity
-    headache = 'HKCategoryTypeIdentifierHeadache', // HKCategoryValueSeverity
-    heartburn = 'HKCategoryTypeIdentifierHeartburn', // HKCategoryValueSeverity
-    hotFlashes = 'HKCategoryTypeIdentifierHotFlashes', // HKCategoryValueSeverity
-    lossOfSmell = 'HKCategoryTypeIdentifierLossOfSmell', // HKCategoryValueSeverity
-    lossOfTaste = 'HKCategoryTypeIdentifierLossOfTaste', // HKCategoryValueSeverity
-    lowerBackPain = 'HKCategoryTypeIdentifierLowerBackPain', // HKCategoryValueSeverity
-    memoryLapse = 'HKCategoryTypeIdentifierMemoryLapse', // HKCategoryValueSeverity
-    moodChanges = 'HKCategoryTypeIdentifierMoodChanges', // HKCategoryValuePresence
-    nausea = 'HKCategoryTypeIdentifierNausea', // HKCategoryValueSeverity
-    nightSweats = 'HKCategoryTypeIdentifierNightSweats', // HKCategoryValueSeverity
-    pelvicPain = 'HKCategoryTypeIdentifierPelvicPain', // HKCategoryValueSeverity
-    rapidPoundingOrFlutteringHeartbeat = 'HKCategoryTypeIdentifierRapidPoundingOrFlutteringHeartbeat', // HKCategoryValueSeverity
-    runnyNose = 'HKCategoryTypeIdentifierRunnyNose', // HKCategoryValueSeverity
-    shortnessOfBreath = 'HKCategoryTypeIdentifierShortnessOfBreath', // HKCategoryValueSeverity
-    sinusCongestion = 'HKCategoryTypeIdentifierSinusCongestion', // HKCategoryValueSeverity
-    skippedHeartbeat = 'HKCategoryTypeIdentifierSkippedHeartbeat', // HKCategoryValueSeverity
-    sleepChanges = 'HKCategoryTypeIdentifierSleepChanges', // HKCategoryValuePresence
-    soreThroat = 'HKCategoryTypeIdentifierSoreThroat', // HKCategoryValueSeverity
-    vaginalDryness = 'HKCategoryTypeIdentifierVaginalDryness', // HKCategoryValueSeverity
-    vomiting = 'HKCategoryTypeIdentifierVomiting', // HKCategoryValueSeverity
-    wheezing = 'HKCategoryTypeIdentifierWheezing', // HKCategoryValueSeverity
-  
-    /**
-     * Bleeding After Pregnancy
-     * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifierbleedingafterpregnancy Apple Docs }
-     * @since iOS 18
-     */
-    bleedingAfterPregnancy = 'HKCategoryTypeIdentifierBleedingAfterPregnancy', // HKCategoryValueSeverity
-  
-    /**
-     * Bleeding During Pregnancy
-     * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifierbleedingduringpregnancy Apple Docs }
-     * @since iOS 18
-     */
-    bleedingDuringPregnancy = 'HKCategoryTypeIdentifierBleedingDuringPregnancy', // HKCategoryValueSeverity
-  }
+import type { HKCategoryTypeIdentifier } from "../types/HKCategoryTypeIdentifier";
 
 
-export type HKCategoryTypePresenceIdentifier = HKCategoryTypeIdentifier.appetiteChanges
-| HKCategoryTypeIdentifier.sleepChanges
+export type HKCategoryTypePresenceIdentifier = 'HKCategoryTypeIdentifierAppetiteChanges'
+| 'HKCategoryTypeIdentifierSleepChanges'
 
-export type HKCategoryTypeValueNotApplicableIdentifier = HKCategoryTypeIdentifier.highHeartRateEvent
-| HKCategoryTypeIdentifier.intermenstrualBleeding
-| HKCategoryTypeIdentifier.mindfulSession
-| HKCategoryTypeIdentifier.sexualActivity
+export type HKCategoryTypeValueNotApplicableIdentifier = 'HKCategoryTypeIdentifierHighHeartRateEvent'
+| 'HKCategoryTypeIdentifierIntermenstrualBleeding'
+| 'HKCategoryTypeIdentifierMindfulSession'
+| 'HKCategoryTypeIdentifierSexualActivity'
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluepregnancytestresult Apple Docs }
@@ -112,43 +22,43 @@ enum HKCategoryValuePregnancyTestResult {
 }
 
 
-  export type HKCategoryTypeSeverityIdentifier = HKCategoryTypeIdentifier.abdominalCramps
-  | HKCategoryTypeIdentifier.acne
-  | HKCategoryTypeIdentifier.bladderIncontinence
-  | HKCategoryTypeIdentifier.bloating
-  | HKCategoryTypeIdentifier.breastPain
-  | HKCategoryTypeIdentifier.chestTightnessOrPain
-  | HKCategoryTypeIdentifier.chills
-  | HKCategoryTypeIdentifier.constipation
-  | HKCategoryTypeIdentifier.coughing
-  | HKCategoryTypeIdentifier.diarrhea
-  | HKCategoryTypeIdentifier.dizziness
-  | HKCategoryTypeIdentifier.drySkin
-  | HKCategoryTypeIdentifier.fainting
-  | HKCategoryTypeIdentifier.fatigue
-  | HKCategoryTypeIdentifier.fever
-  | HKCategoryTypeIdentifier.generalizedBodyAche
-  | HKCategoryTypeIdentifier.hairLoss
-  | HKCategoryTypeIdentifier.headache
-  | HKCategoryTypeIdentifier.heartburn
-  | HKCategoryTypeIdentifier.hotFlashes
-  | HKCategoryTypeIdentifier.lossOfSmell
-  | HKCategoryTypeIdentifier.lossOfTaste
-  | HKCategoryTypeIdentifier.lowerBackPain
-  | HKCategoryTypeIdentifier.memoryLapse
-  | HKCategoryTypeIdentifier.moodChanges
-  | HKCategoryTypeIdentifier.nausea
-  | HKCategoryTypeIdentifier.nightSweats
-  | HKCategoryTypeIdentifier.pelvicPain
-  | HKCategoryTypeIdentifier.rapidPoundingOrFlutteringHeartbeat
-  | HKCategoryTypeIdentifier.runnyNose
-  | HKCategoryTypeIdentifier.shortnessOfBreath
-  | HKCategoryTypeIdentifier.sinusCongestion
-  | HKCategoryTypeIdentifier.skippedHeartbeat
-  | HKCategoryTypeIdentifier.soreThroat
-  | HKCategoryTypeIdentifier.vaginalDryness
-  | HKCategoryTypeIdentifier.vomiting
-  | HKCategoryTypeIdentifier.wheezing
+  export type HKCategoryTypeSeverityIdentifier = 'HKCategoryTypeIdentifierAbdominalCramps'
+  | 'HKCategoryTypeIdentifierAcne'
+  | 'HKCategoryTypeIdentifierBladderIncontinence'
+  | 'HKCategoryTypeIdentifierBloating'
+  | 'HKCategoryTypeIdentifierBreastPain'
+  | 'HKCategoryTypeIdentifierChestTightnessOrPain'
+  | 'HKCategoryTypeIdentifierChills'
+  | 'HKCategoryTypeIdentifierConstipation'
+  | 'HKCategoryTypeIdentifierCoughing'
+  | 'HKCategoryTypeIdentifierDiarrhea'
+  | 'HKCategoryTypeIdentifierDizziness'
+  | 'HKCategoryTypeIdentifierDrySkin'
+  | 'HKCategoryTypeIdentifierFainting'
+  | 'HKCategoryTypeIdentifierFatigue'
+  | 'HKCategoryTypeIdentifierFever'
+  | 'HKCategoryTypeIdentifierGeneralizedBodyAche'
+  | 'HKCategoryTypeIdentifierHairLoss'
+  | 'HKCategoryTypeIdentifierHeadache'
+  | 'HKCategoryTypeIdentifierHeartburn'
+  | 'HKCategoryTypeIdentifierHotFlashes'
+  | 'HKCategoryTypeIdentifierLossOfSmell'
+  | 'HKCategoryTypeIdentifierLossOfTaste'
+  | 'HKCategoryTypeIdentifierLowerBackPain'
+  | 'HKCategoryTypeIdentifierMemoryLapse'
+  | 'HKCategoryTypeIdentifierMoodChanges'
+  | 'HKCategoryTypeIdentifierNausea'
+  | 'HKCategoryTypeIdentifierNightSweats'
+  | 'HKCategoryTypeIdentifierPelvicPain'
+  | 'HKCategoryTypeIdentifierRapidPoundingOrFlutteringHeartbeat'
+  | 'HKCategoryTypeIdentifierRunnyNose'
+  | 'HKCategoryTypeIdentifierShortnessOfBreath'
+  | 'HKCategoryTypeIdentifierSinusCongestion'
+  | 'HKCategoryTypeIdentifierSkippedHeartbeat'
+  | 'HKCategoryTypeIdentifierSoreThroat'
+  | 'HKCategoryTypeIdentifierVaginalDryness'
+  | 'HKCategoryTypeIdentifierVomiting'
+  | 'HKCategoryTypeIdentifierWheezing'
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluecervicalmucusquality Apple Docs }
@@ -267,7 +177,7 @@ HKCategorySampleRaw<TCategory>,
 };
 
 export type QueryCategorySamplesResponseRaw<
-  T extends HKCategoryTypeIdentifier
+  T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier
 > = {
   readonly samples: readonly HKCategorySampleRaw<T>[];
   readonly deletedSamples: readonly DeletedCategorySampleRaw<T>[];
@@ -287,19 +197,19 @@ export type HKCategorySampleRaw<
   readonly sourceRevision?: HKSourceRevision;
 };
 
-export type DeletedCategorySampleRaw<T extends HKCategoryTypeIdentifier> = {
+export type DeletedCategorySampleRaw<T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier> = {
   readonly uuid: string;
   readonly metadata: MetadataMapperForCategoryIdentifier<T>;
 };
 
-export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier> =
-  T extends HKCategoryTypeIdentifier.cervicalMucusQuality
+export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier> =
+  T extends 'HKCategoryTypeIdentifierCervicalMucusQuality'
     ? HKCategoryValueCervicalMucusQuality
-    : T extends HKCategoryTypeIdentifier.menstrualFlow
+    : T extends 'HKCategoryTypeIdentifierMenstrualFlow'
       ? HKCategoryValueMenstrualFlow
-      : T extends HKCategoryTypeIdentifier.ovulationTestResult
+      : T extends 'HKCategoryTypeIdentifierOvulationTestResult'
         ? HKCategoryValueOvulationTestResult
-        : T extends HKCategoryTypeIdentifier.sleepAnalysis
+        : T extends 'HKCategoryTypeIdentifierSleepAnalysis'
           ? HKCategoryValueSleepAnalysis
           : T extends HKCategoryTypeValueNotApplicableIdentifier
             ? HKCategoryValueNotApplicable
@@ -307,45 +217,45 @@ export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier> =
               ? HKCategoryValueSeverity
               : T extends HKCategoryTypePresenceIdentifier
                 ? HKCategoryValuePresence
-                : T extends HKCategoryTypeIdentifier.lowCardioFitnessEvent
+                : T extends 'HKCategoryTypeIdentifierLowCardioFitnessEvent'
                   ? HKCategoryValueLowCardioFitnessEvent
-                  : T extends HKCategoryTypeIdentifier.pregnancyTestResult
+                  : T extends 'HKCategoryTypeIdentifierPregnancyTestResult'
                     ? HKCategoryValuePregnancyTestResult
-                    : T extends HKCategoryTypeIdentifier.pregnancyTestResult
+                    : T extends 'HKCategoryTypeIdentifierPregnancyTestResult'
                       ? HKCategoryValuePregnancyTestResult
-                      : T extends HKCategoryTypeIdentifier.appleStandHour
+                      : T extends 'HKCategoryTypeIdentifierAppleStandHour'
                         ? HKCategoryValueAppleStandHour
                         : number;
 
 
 export interface CategoryType extends HybridObject<{ ios: 'swift' }> {
 
-  readonly saveCategorySample: <T extends HKCategoryTypeIdentifier>(
-    identifier: T,
-    value: HKCategoryValueForIdentifier<T>,
+  readonly saveCategorySample: (
+    identifier: HKCategoryTypeIdentifier,
+    value: HKCategoryValueForIdentifier,
     start: string,
     end: string,
-    metadata: unknown
+    metadata: HKGenericMetadata
   ) => Promise<boolean>;
 
 
-  readonly queryCategorySamplesWithAnchor: <T extends HKCategoryTypeIdentifier>(
-    identifier: T,
+  readonly queryCategorySamplesWithAnchor: (
+    identifier: HKCategoryTypeIdentifier,
     from: string,
     to: string,
     limit: number,
     anchor: string
-  ) => Promise<QueryCategorySamplesResponseRaw<T>>;
+  ) => Promise<QueryCategorySamplesResponseRaw>;
 
 }
 
 export type MetadataMapperForCategoryIdentifier<
-  T extends HKCategoryTypeIdentifier
-> = T extends HKCategoryTypeIdentifier.sexualActivity
+  T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier
+> = T extends 'HKCategoryTypeIdentifierSexualActivity'
   ? HKGenericMetadata & {
     readonly HKSexualActivityProtectionUsed: boolean;
   }
-  : T extends HKCategoryTypeIdentifier.menstrualFlow
+  : T extends 'HKCategoryTypeIdentifierMenstrualFlow'
     ? HKGenericMetadata & {
       readonly HKMenstrualCycleStart: boolean;
     }
