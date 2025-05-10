@@ -29,7 +29,7 @@
 		"typecheck": "tsc --noEmit",
 		"lint": "bunx @biomejs/biome format --write",
 		"typescript": "tsc",
-		"specs": "tsc && nitro-codegen --logLevel=\"debug\""
+		"codegen": "tsc && nitro-codegen --logLevel=\"debug\""
 	},
 	"keywords": ["react-native", "nitro"],
 	"repository": {

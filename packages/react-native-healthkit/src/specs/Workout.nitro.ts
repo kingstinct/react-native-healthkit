@@ -1,26 +1,8 @@
-// TODO: Export specs that extend HybridObject<...> here
-
 import type { HybridObject } from "react-native-nitro-modules";
-import type { HKQuantityRaw, HKQuantitySampleRawForSaving } from "./QuantityType.nitro";
-import type { HKDevice } from "./Source.nitro";
-import type { HKSourceRevision } from "./Source.nitro";
-import type { HKGenericMetadata } from "./Shared";
-import type { EnergyUnit, LengthUnit } from "./Unit.nitro";
-
-/**
- * Represents a workout type identifier.
- * @see {@link https://developer.apple.com/documentation/healthkit/hkworkouttypeidentifier Apple Docs HKWorkoutTypeIdentifier}
- */
-export const HKWorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier' as const
-
-
-/**
- * Represents a workout route type identifier.
- * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutroutetypeidentifier Apple Docs HKWorkoutRouteTypeIdentifier}
- */
-export const HKWorkoutRouteTypeIdentifier = 'HKWorkoutRouteTypeIdentifier' as const
-
-
+import type { EnergyUnit, LengthUnit } from "../types/Units";
+import type { HKGenericMetadata, HKQuantity } from "./Shared";
+import type { HKQuantitySampleRawForSaving } from "../types/HKQuantitySampleRaw";
+import type { HKWorkoutRaw } from "../types/HKWorkoutRaw";
 export enum HKWorkoutActivityType {
     americanFootball = 1,
     archery = 2,
@@ -146,19 +128,12 @@ enum HKIndoorWorkout {
     true = 1,
 }
 
-export interface HKWorkoutMetadata
-    extends HKGenericMetadata /* <TTemperatureUnit extends HKUnit> */ {
+export interface HKWorkoutMetadata extends HKGenericMetadata {
     readonly HKWeatherCondition?: HKWeatherCondition;
-    /*readonly HKWeatherHumidity?: HKQuantity<
-        HKQuantityTypeIdentifier,
-        HKUnits.Percent
-    >;
-    // HKWeatherTemperature: HKQuantity<TTemperatureUnit>
-    readonly HKAverageMETs?: HKQuantity<HKQuantityTypeIdentifier, HKUnit>;
-    readonly HKElevationAscended?: HKQuantity<
-        HKQuantityTypeIdentifier,
-        LengthUnit
-    >;*/
+    readonly HKWeatherHumidity?: HKQuantity;
+    readonly HKWeatherTemperature: HKQuantity;
+    readonly HKAverageMETs?: HKQuantity;
+    readonly HKElevationAscended?: HKQuantity;
     readonly HKIndoorWorkout?: HKIndoorWorkout;
 }
 
@@ -185,26 +160,6 @@ export interface HKWorkoutActivity {
     readonly uuid: string;
     readonly duration: number;
 }
-
-export interface HKWorkoutRaw {
-    readonly uuid: string;
-    readonly device?: HKDevice;
-    readonly workoutActivityType: number;
-    readonly duration: number;
-    readonly totalDistance?: HKQuantityRaw;
-    readonly totalEnergyBurned?: HKQuantityRaw;
-    readonly totalSwimmingStrokeCount?: HKQuantityRaw;
-    readonly totalFlightsClimbed?: HKQuantityRaw;
-    readonly startDate: string;
-    readonly endDate: string;
-    readonly metadata?: HKWorkoutMetadata;
-    readonly sourceRevision?: HKSourceRevision;
-    readonly events?: readonly HKWorkoutEvent[];
-    readonly activities?: readonly HKWorkoutActivity[];
-    readonly workoutPlanId?: string;
-};
-
-
 
 export interface WorkoutLocation {
     readonly longitude: number;
@@ -233,7 +188,7 @@ interface QueryWorkoutSamplesWithAnchorResponseRaw {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutconfiguration Apple Docs }
  */
-export type HKWorkoutConfiguration = {
+export interface HKWorkoutConfiguration {
     readonly activityType: number;
     readonly locationType?: HKWorkoutSessionLocationType;
 };
@@ -247,10 +202,9 @@ export enum HKWorkoutSessionLocationType {
     outdoor = 3
 }
 
-
 export interface DeletedWorkoutSampleRaw {
     readonly uuid: string;
-    readonly metadata: HKWorkoutMetadata;
+    readonly metadata: HKGenericMetadata;
 };
 
 
@@ -279,7 +233,9 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
     readonly getWorkoutRoutes: (
         workoutUUID: string
     ) => Promise<readonly WorkoutRoute[]>;
-    readonly getWorkoutPlanById: (workoutUUID: string) => Promise<WorkoutPlan | null>;
+    readonly getWorkoutPlanById: (
+        workoutUUID: string
+    ) => Promise<WorkoutPlan | null>;
 
     /**
      * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1648358-startwatchapp Apple Docs }
@@ -295,14 +251,13 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
         start: string,
         end: string,
         totals: WorkoutTotals,
-        metadata: HKWorkoutMetadata
+        metadata: HKGenericMetadata
     ) => Promise<string | null>;
 
     readonly saveWorkoutRoute: (
         workoutUUID: string,
         locations: readonly CLLocationRawForSaving[]
     ) => Promise<boolean>;
-
 
     readonly queryWorkoutSamplesWithAnchor: (
         energyUnit: EnergyUnit,

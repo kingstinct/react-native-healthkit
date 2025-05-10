@@ -1,76 +1,36 @@
 import type { HybridObject } from "react-native-nitro-modules";
-import type { HKGenericMetadata } from "./Shared";
-import type { MassUnit } from "./Unit.nitro";
-import type { BloodGlucoseUnit, CountPerTime, HKUnit, HKUnits, LengthUnit, SpeedUnit, TemperatureUnit, TimeUnit, VolumeUnit } from "./Unit.nitro";
-import type { EnergyUnit } from "./Unit.nitro";
-import type { HKWorkoutRaw } from "./Workout.nitro";
-import type { HKCategorySampleRaw } from "./CategoryType.nitro";
-import type { HKDevice } from "./Source.nitro";
-import type { HKSourceRevision } from "./Source.nitro";
+import type { HKGenericMetadata, HKQuantity } from "./Shared";
+import type { HKWorkoutRaw } from "../types/HKWorkoutRaw";
+import type { BloodGlucoseUnit, CountPerTime, EnergyUnit, HKUnit, LengthUnit, MassUnit, SpeedUnit, TemperatureUnit, TimeUnit, VolumeUnit } from "../types/Units";
 import type { HKQuantityTypeIdentifier } from "../types/HKQuantityTypeIdentifier";
-import type { HKCategoryTypeIdentifier } from "../types/HKCategoryTypeIdentifier";
+import type { HKQuantitySampleRaw } from "../types/HKQuantitySampleRaw";
 
-export interface DeletedQuantitySampleRaw<T extends HKQuantityTypeIdentifier> {
+export interface DeletedQuantitySampleRaw {
   readonly uuid: string;
-  readonly metadata: MetadataMapperForQuantityIdentifier;
-};
-
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitysample Apple Docs }
- */
-export interface HKQuantitySampleRaw {
-  readonly uuid: string;
-  readonly device?: HKDevice;
-  readonly quantityType: string;
-  readonly startDate: string;
-  readonly endDate: string;
-  readonly quantity: number;
-  readonly unit: string;
   readonly metadata: HKGenericMetadata;
-  readonly sourceRevision?: HKSourceRevision;
 };
 
 
-export interface HKQuantitySampleRawForSaving extends Omit<
-  HKQuantitySampleRaw,
-  'device' | 'endDate' | 'startDate' | 'uuid'
-> {
-  readonly startDate?: string;
-  readonly endDate?: string;
+interface QuantityDateInterval {
+  readonly from: string;
+  readonly to: string;
 };
 
-export interface QueryStatisticsResponseRaw<
-  TIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
-  TUnit extends UnitForIdentifier<TIdentifier> = UnitForIdentifier<TIdentifier>
-> {
-  readonly averageQuantity?: HKQuantity<TIdentifier, TUnit>;
-  readonly maximumQuantity?: HKQuantity<TIdentifier, TUnit>;
-  readonly minimumQuantity?: HKQuantity<TIdentifier, TUnit>;
-  readonly sumQuantity?: HKQuantity<TIdentifier, TUnit>;
-  readonly mostRecentQuantity?: HKQuantity<TIdentifier, TUnit>;
-  readonly mostRecentQuantityDateInterval?: {
-    readonly from: string;
-    readonly to: string;
-  };
-  readonly duration?: HKQuantity<HKQuantityTypeIdentifier, TimeUnit>;
+export interface QueryStatisticsResponseRaw {
+  readonly averageQuantity?: HKQuantity;
+  readonly maximumQuantity?: HKQuantity;
+  readonly minimumQuantity?: HKQuantity;
+  readonly sumQuantity?: HKQuantity;
+  readonly mostRecentQuantity?: HKQuantity;
+  readonly mostRecentQuantityDateInterval?: QuantityDateInterval;
+  readonly duration?: HKQuantity;
 };
 
 
-export interface QueryQuantitySamplesResponseRaw<
-  T extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier
-> {
+export interface QueryQuantitySamplesResponseRaw {
   readonly samples: readonly HKQuantitySampleRaw[];
-  readonly deletedSamples: readonly DeletedQuantitySampleRaw<T>[];
+  readonly deletedSamples: readonly DeletedQuantitySampleRaw[];
   readonly newAnchor: string;
-};
-
-
-export interface HKQuantity<
-  TIdentifier extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier,
-  TUnit extends UnitForIdentifier<TIdentifier> = UnitForIdentifier<TIdentifier>
-> {
-  readonly unit: TUnit;
-  readonly quantity: number;
 };
 
 export interface HKQuantityRaw {
@@ -105,16 +65,15 @@ export interface IntervalComponents {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkstatisticsoptions Apple Docs }
  */
-export enum HKStatisticsOptions {
-  cumulativeSum = 'cumulativeSum',
-  discreteAverage = 'discreteAverage',
-  discreteMax = 'discreteMax',
-  discreteMin = 'discreteMin',
-  discreteMostRecent = 'discreteMostRecent',
-  duration = 'duration',
-  mostRecent = 'mostRecent',
-  separateBySource = 'separateBySource',
-}
+export type HKStatisticsOptions =
+  | 'cumulativeSum'
+  | 'discreteAverage'
+  | 'discreteMax'
+  | 'discreteMin'
+  | 'discreteMostRecent'
+  | 'duration'
+  | 'mostRecent'
+  | 'separateBySource'
 
 export type MetadataMapperForQuantityIdentifier<
   TQuantityTypeIdentifier = HKQuantityTypeIdentifier
@@ -159,7 +118,7 @@ export type UnitForIdentifier<T extends HKQuantityTypeIdentifier = HKQuantityTyp
           | 'HKQuantityTypeIdentifierOxygenSaturation'
           | 'HKQuantityTypeIdentifierWalkingAsymmetryPercentage'
           | 'HKQuantityTypeIdentifierWalkingDoubleSupportPercentage'
-            ? HKUnits.Percent
+            ? '%'
             : T extends
             | 'HKQuantityTypeIdentifierBasalBodyTemperature'
 
@@ -178,7 +137,7 @@ export type UnitForIdentifier<T extends HKQuantityTypeIdentifier = HKQuantityTyp
                 | 'HKQuantityTypeIdentifierPushCount'
                 | 'HKQuantityTypeIdentifierStepCount'
                 | 'HKQuantityTypeIdentifierSwimmingStrokeCount'
-                  ? HKUnits.Count
+                  ? 'count'
                   : T extends
                   | 'HKQuantityTypeIdentifierDietaryBiotin'
                   | 'HKQuantityTypeIdentifierDietaryCaffeine'
@@ -221,7 +180,7 @@ export type UnitForIdentifier<T extends HKQuantityTypeIdentifier = HKQuantityTyp
                     : T extends 'HKQuantityTypeIdentifierDietaryWater'
                       ? VolumeUnit
                       : T extends 'HKQuantityTypeIdentifierInsulinDelivery'
-                        ? HKUnits.InternationalUnit | `${HKUnits.InternationalUnit}`
+                        ? 'IU'
                         : T extends
                         | 'HKQuantityTypeIdentifierHeartRate'
                         | 'HKQuantityTypeIdentifierRestingHeartRate'
@@ -241,15 +200,18 @@ export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
     end: string,
     metadata: HKGenericMetadata
   ) => Promise<boolean>;
+
   readonly deleteQuantitySample: (
     identifier: HKQuantityTypeIdentifier,
     uuid: string
   ) => Promise<boolean>;
+  
   readonly deleteSamples: (
     identifier: HKQuantityTypeIdentifier,  
     start: string,
     end: string
   ) => Promise<boolean>;
+  
   readonly queryWorkoutSamples: (
     energyUnit: EnergyUnit,
     distanceUnit: LengthUnit,
@@ -258,16 +220,10 @@ export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
     limit: number,
     ascending: boolean
   ) => Promise<readonly HKWorkoutRaw[]>;
-  readonly queryCategorySamples: (
-    identifier: HKCategoryTypeIdentifier,
-    from: string,
-    to: string,
-    limit: number,
-    ascending: boolean
-  ) => Promise<readonly HKCategorySampleRaw[]>;
+  
   readonly queryQuantitySamples: (
     identifier: HKQuantityTypeIdentifier,
-    unit: UnitForIdentifier<HKQuantityTypeIdentifier>,
+    unit: HKUnit,
     from: string,
     to: string,
     limit: number,
@@ -276,34 +232,29 @@ export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
 
   readonly queryStatisticsForQuantity: (
     identifier: HKQuantityTypeIdentifier,
-    unit: UnitForIdentifier,
+    unit: HKUnit,
     from: string,
     to: string,
     options: readonly HKStatisticsOptions[],
   ) => Promise<QueryStatisticsResponseRaw>;
-  readonly queryStatisticsCollectionForQuantity: <
-    TIdentifier extends HKQuantityTypeIdentifier,
-    TUnit extends UnitForIdentifier<TIdentifier>
-  >(
-    identifier: TIdentifier,
-    unit: TUnit,
+
+  readonly queryStatisticsCollectionForQuantity: (
+    identifier: HKQuantityTypeIdentifier,
+    unit: HKUnit,
     options: readonly HKStatisticsOptions[],
     anchorDate: string,
     intervalComponents: IntervalComponents,
     startDate: string,
     endDate: string
-  ) => Promise<readonly QueryStatisticsResponseRaw<TIdentifier, TUnit>[]>;
+  ) => Promise<readonly QueryStatisticsResponseRaw[]>;
 
 
-  readonly queryQuantitySamplesWithAnchor: <
-    TIdentifier extends HKQuantityTypeIdentifier,
-    TUnit extends UnitForIdentifier<TIdentifier>
-  >(
-    identifier: TIdentifier,
-    unit: TUnit,
+  readonly queryQuantitySamplesWithAnchor: (
+    identifier: HKQuantityTypeIdentifier,
+    unit: HKUnit,
     from: string,
     to: string,
     limit: number,
     anchor: string
-  ) => Promise<QueryQuantitySamplesResponseRaw<TIdentifier>>;
+  ) => Promise<QueryQuantitySamplesResponseRaw>;
 }

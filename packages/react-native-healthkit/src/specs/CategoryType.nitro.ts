@@ -166,40 +166,35 @@ export enum HKCategoryValueAppleStandHour {
 }
 
 
-export type HKCategorySampleRawForSaving<
-  TCategory extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier
-> = Omit<
-HKCategorySampleRaw<TCategory>,
-'device' | 'endDate' | 'startDate' | 'uuid'
-> & {
+export interface HKCategorySampleRawForSaving {
   readonly startDate?: string;
   readonly endDate?: string;
-};
-
-export type QueryCategorySamplesResponseRaw<
-  T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier
-> = {
-  readonly samples: readonly HKCategorySampleRaw<T>[];
-  readonly deletedSamples: readonly DeletedCategorySampleRaw<T>[];
-  readonly newAnchor: string;
-};
-
-export type HKCategorySampleRaw<
-  T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier
-> = {
-  readonly uuid: string;
-  readonly device?: HKDevice;
-  readonly categoryType: T;
-  readonly startDate: string;
-  readonly endDate: string;
-  readonly value: HKCategoryValueForIdentifier<T>;
-  readonly metadata: MetadataMapperForCategoryIdentifier<T>;
+  readonly categoryType: HKCategoryTypeIdentifier;
+  readonly value: HKCategoryValueForIdentifier;
+  readonly metadata: HKGenericMetadata;
   readonly sourceRevision?: HKSourceRevision;
 };
 
-export type DeletedCategorySampleRaw<T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier> = {
+export interface QueryCategorySamplesResponseRaw {
+  readonly samples: readonly HKCategorySampleRaw[];
+  readonly deletedSamples: readonly DeletedCategorySampleRaw[];
+  readonly newAnchor: string;
+};
+
+export interface HKCategorySampleRaw {
   readonly uuid: string;
-  readonly metadata: MetadataMapperForCategoryIdentifier<T>;
+  readonly device?: HKDevice;
+  readonly categoryType: HKCategoryTypeIdentifier;
+  readonly startDate: string;
+  readonly endDate: string;
+  readonly value: HKCategoryValueForIdentifier;
+  readonly metadata: HKGenericMetadata;
+  readonly sourceRevision?: HKSourceRevision;
+};
+
+export interface DeletedCategorySampleRaw {
+  readonly uuid: string;
+  readonly metadata: HKGenericMetadata;
 };
 
 export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier> =
@@ -237,6 +232,14 @@ export interface CategoryType extends HybridObject<{ ios: 'swift' }> {
     end: string,
     metadata: HKGenericMetadata
   ) => Promise<boolean>;
+
+  readonly queryCategorySamples: (
+    identifier: HKCategoryTypeIdentifier,
+    from: string,
+    to: string,
+    limit: number,
+    ascending: boolean
+  ) => Promise<readonly HKCategorySampleRaw[]>;
 
 
   readonly queryCategorySamplesWithAnchor: (

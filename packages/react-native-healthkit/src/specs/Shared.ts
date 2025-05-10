@@ -1,14 +1,16 @@
-import type { HKQuantity } from "./QuantityType.nitro";
-import type { HKWorkoutTypeIdentifier } from "./Workout.nitro";
-import type { HKStateOfMindTypeIdentifier } from "./StateOfMind.nitro";
-import type { HKWorkoutRouteTypeIdentifier } from "./Workout.nitro";
-import type { HKDataTypeIdentifierHeartbeatSeries } from "./HeartbeatSeries.nitro";
+
 import type { HKQuantityTypeIdentifier } from "../types/HKQuantityTypeIdentifier";
 import type { HKCategoryTypeIdentifier } from "../types/HKCategoryTypeIdentifier";
 import type { HKCorrelationTypeIdentifier } from "../types/HKCorrelationTypeIdentifier";
+import type { HKWorkoutRouteTypeIdentifier, HKWorkoutTypeIdentifier, HKStateOfMindTypeIdentifier, HKDataTypeIdentifierHeartbeatSeries } from "./Constants";
+import type { HKUnit } from "../types/Units";
 
-export interface HKGenericMetadata {
-    readonly [key: string]: HKQuantity | boolean | number | string | undefined;
+export interface HKQuantity {
+    readonly unit: HKUnit;
+    readonly quantity: number;
+  };
+
+export interface HKGenericMetadata extends Record<string, HKQuantity | boolean | number | string | undefined> {
     readonly HKExternalUUID?: string;
     readonly HKTimeZone?: string;
     readonly HKWasUserEntered?: boolean;
@@ -23,9 +25,7 @@ export interface HKGenericMetadata {
     readonly HKWasTakenInLab?: boolean;
     readonly HKReferenceRangeLowerLimit?: number;
     readonly HKReferenceRangeUpperLimit?: number;
-  };
-  
-
+};
 
 export type HKSampleTypeIdentifier =
 | HKCategoryTypeIdentifier

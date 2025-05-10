@@ -2,18 +2,19 @@
 import type { HybridObject } from "react-native-nitro-modules";
 import type { HKGenericMetadata } from "./Shared";
 import type { HKCategorySampleRaw, HKCategorySampleRawForSaving } from "./CategoryType.nitro";
-import type { HKQuantitySampleRaw, HKQuantitySampleRawForSaving } from "./QuantityType.nitro";
 import type { HKCorrelationTypeIdentifier } from "../types/HKCorrelationTypeIdentifier";
+import type { HKQuantitySampleRaw, HKQuantitySampleRawForSaving } from "../types/HKQuantitySampleRaw";
 
 
-export type HKCorrelationRaw<TIdentifier extends HKCorrelationTypeIdentifier = HKCorrelationTypeIdentifier> =
-  {
+type HKCorrelationRawObject = HKCategorySampleRaw | HKQuantitySampleRaw;
+
+export interface HKCorrelationRaw {
     readonly correlationType: HKCorrelationTypeIdentifier;
-    readonly objects: readonly (HKCategorySampleRaw | HKQuantitySampleRaw)[];
-    readonly metadata: MetadataMapperForCorrelationIdentifier<TIdentifier>;
+    readonly objects: readonly HKCorrelationRawObject[];
+    readonly metadata: HKGenericMetadata;
     readonly startDate: string;
     readonly endDate: string;
-  };
+};
 
 
 export type MetadataMapperForCorrelationIdentifier<
@@ -24,13 +25,15 @@ TCorrelationTypeIdentifier = HKCorrelationTypeIdentifier
 }
 : HKGenericMetadata;
 
+export type SampleForSaving = HKCategorySampleRawForSaving | HKQuantitySampleRawForSaving;
+
 export interface Correlation extends HybridObject<{ ios: 'swift' }> {
     readonly saveCorrelationSample: (
     typeIdentifier: HKCorrelationTypeIdentifier,
-    samples: (HKCategorySampleRawForSaving | HKQuantitySampleRawForSaving)[],
+    samples: SampleForSaving[],
     start: string,
     end: string,
-    metadata: MetadataMapperForCorrelationIdentifier
+    metadata: HKGenericMetadata
   ) => Promise<boolean>;
 
 

@@ -28,13 +28,6 @@ export interface QueryHeartbeatSeriesSamplesResponseRaw {
     readonly newAnchor: string;
 };
 
-
-/**
- * Represents a series sample containing heartbeat data..
- * @see {@link https://developer.apple.com/documentation/healthkit/HKDataTypeIdentifierHeartbeatSeries Apple Docs HKDataTypeIdentifierHeartbeatSeries}
- */
-export declare const HKDataTypeIdentifierHeartbeatSeries: 'HKDataTypeIdentifierHeartbeatSeries'
-
 export interface DeletedHeartbeatSeriesSampleRaw {
     readonly uuid: string;
     readonly metadata: HKHeartbeatSeriesSampleMetadata;

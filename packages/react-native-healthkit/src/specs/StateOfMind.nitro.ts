@@ -5,12 +5,6 @@ import type { HKDevice } from "./Source.nitro";
 import type { HKSourceRevision } from "./Source.nitro";
 import type { HKGenericMetadata } from "./Shared";
 
-/**
- * Represents a state of mind type identifier.
- * @see {@link https://developer.apple.com/documentation/healthkit/hkstateofmindtype Apple Docs HKStateOfMindType}
- */
-export const HKStateOfMindTypeIdentifier = 'HKStateOfMindTypeIdentifier' as const
-
 
 export enum HKStateOfMindValenceClassification {
   veryUnpleasant = 1,
@@ -22,7 +16,7 @@ export enum HKStateOfMindValenceClassification {
   veryPleasant = 7,
 }
 
-export type HKStateOfMindSampleRaw = {
+export interface HKStateOfMindSampleRaw {
   readonly uuid: string;
   readonly device?: HKDevice;
   readonly startDate: string;
