@@ -1851,6 +1851,9 @@ export interface HKWorkoutEvent {
   readonly endDate: string;
 }
 
+/**
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkworkouteventtype Apple Docs }
+ */
 export enum HKWorkoutEventType {
   pause = 1,
   resume = 2,
@@ -2039,6 +2042,41 @@ export enum HKWorkoutSessionLocationType {
   indoor = 2,
   outdoor = 3
 }
+
+/**
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutsessionstate Apple Docs }
+ */
+export enum WorkoutSessionState {
+  NotStarted = 1,
+  Running = 2,
+  Ended = 3,
+  Paused = 4,
+  Prepared = 5,
+  Stopped = 6,
+}
+
+export interface WorkoutStateChangeEvent {
+  readonly toState: WorkoutSessionState;
+  readonly fromState: WorkoutSessionState;
+  readonly date: string;
+}
+
+export interface WorkoutErrorEvent {
+  readonly error: string;
+}
+
+export type RemoteSessionSharableData = {
+  readonly type: string;
+  readonly payload: Record<string, unknown>;
+}
+
+export type WorkoutDataReceivedEvent = {
+  readonly data: readonly RemoteSessionSharableData[];
+};
+
+export type WorkoutEventReceivedEvent = {
+  readonly type: HKWorkoutEventType;
+};
 
 type ReactNativeHealthkitTypeNative = {
   /**
@@ -2295,6 +2333,11 @@ type ReactNativeHealthkitTypeNative = {
     limit: number,
     ascending: boolean
   ) => Promise<readonly HKStateOfMindSampleRaw[]>;
+
+  /**
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/4172878-workoutsessionmirroringstarthand Apple Docs }
+   */
+  readonly workoutSessionMirroringStartHandler: () => Promise<boolean>;
 };
 
 export enum HKStateOfMindValenceClassification {
@@ -2333,11 +2376,15 @@ type OnChangeCallback = ({
 }: {
   readonly typeIdentifier: HKSampleTypeIdentifier;
 }) => void;
+type OnRemoteWorkoutStateChangeCallback = (event: WorkoutStateChangeEvent) => void;
+type OnRemoteWorkoutErrorCallback = (event: WorkoutErrorEvent) => void;
+type OnRemoteWorkoutDataCallback = (event: WorkoutDataReceivedEvent) => void;
+type OnRemoteWorkoutEventReceivedCallback = (event: WorkoutEventReceivedEvent) => void;
 
 interface HealthkitEventEmitter extends NativeEventEmitter {
   readonly addListener: (
-    eventType: 'onChange',
-    callback: OnChangeCallback
+    eventType: 'onChange' | 'onRemoteWorkoutStateChange' | 'onRemoteWorkoutError' | 'onRemoteWorkoutDataReceived' | 'onRemoteWorkoutEventReceived',
+    callback: OnChangeCallback | OnRemoteWorkoutStateChangeCallback | OnRemoteWorkoutErrorCallback | OnRemoteWorkoutDataCallback | OnRemoteWorkoutEventReceivedCallback
   ) => EmitterSubscription;
 }
 
