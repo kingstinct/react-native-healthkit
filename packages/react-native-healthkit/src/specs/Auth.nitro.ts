@@ -1,4 +1,5 @@
 import type { HybridObject } from "react-native-nitro-modules";
+import type { SampleTypeIdentifier } from "./Shared";
 /*import type { CharacteristicTypeIdentifier } from "./Characteristic.nitro";
 import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
 import type { CategoryTypeIdentifier } from "../types/CategoryTypeIdentifier";*/
@@ -36,20 +37,20 @@ export interface Auth extends HybridObject<{ ios: 'swift' }> {
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614154-authorizationstatus Apple Docs }
    */
     authorizationStatusFor(
-        type: string
-    ): Promise<number>;
+        type: SampleTypeIdentifier
+    ): AuthorizationStatus;
     /**
      * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/2994346-getrequeststatusforauthorization Apple Docs }
      */
     getRequestStatusForAuthorization(
-        write: Record<string, boolean>,
-        read: Record<string, boolean>
-    ): Promise<number>;
+        write: SampleTypeIdentifier[],
+        read: SampleTypeIdentifier[]
+    ): Promise<AuthorizationRequestStatus>;
     /**
      * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614152-requestauthorization Apple Docs }
      */
     requestAuthorization(
-        write: Record<string, boolean>,
-        read: Record<string, boolean>
+        write: SampleTypeIdentifier[],
+        read: SampleTypeIdentifier[]
     ): Promise<boolean>;
 }

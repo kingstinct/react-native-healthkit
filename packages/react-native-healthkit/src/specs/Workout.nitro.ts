@@ -228,7 +228,7 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
     getWorkoutRoutes(
         workoutUUID: string
     ): Promise<readonly WorkoutRoute[]>;
-    getWorkoutPlanById(
+    getWorkoutPlanByWorkoutId(
         workoutUUID: string
     ): Promise<WorkoutPlan | null>;
 
@@ -240,7 +240,7 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
     ): Promise<boolean>;
 
     saveWorkoutSample(
-        typeIdentifier: number,
+        workoutActivityType: WorkoutActivityType,
         quantities: readonly QuantitySampleForSaving[],
         startTimestamp: number | null,
         endTimestamp: number | null,

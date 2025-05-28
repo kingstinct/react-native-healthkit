@@ -18,24 +18,26 @@ var store = HKHealthStore.init()
     }
 }*/
 
-class Auth : HybridAuthSpec {    
+class Auth : HybridAuthSpec {
     func authorizationStatusFor(
-        type: String
-    ) -> Promise<Double> {
-        guard let objectType = objectTypeFromString(typeIdentifier: type) else {
-          
-          fatalError(TYPE_IDENTIFIER_ERROR);
-          // return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
+        type: SampleTypeIdentifier
+    ) throws -> AuthorizationStatus {
+        guard let objectType = objectTypeFromString(typeIdentifier: type.stringValue) else {
+            throw RuntimeError.error(withMessage: "Failed to initialize type with identifier \(type)")
         }
           
         let authStatus = store.authorizationStatus(for: objectType)
           
-        return Promise.resolved(withResult: Double(authStatus.rawValue))
+        if let authStatus = AuthorizationStatus(rawValue: Int32(authStatus.rawValue)){
+            return authStatus
+        }
+        
+        throw RuntimeError.error(withMessage: "Failed to recognize AuthorizationStatus with value \(authStatus.rawValue)")
       }
     
-    func getRequestStatusForAuthorization(write: Dictionary<String, Bool>, read: Dictionary<String, Bool>) throws -> Promise<Double> {
-        let share = sampleTypesFromDictionary(typeIdentifiers: write)
-        let toRead = objectTypesFromDictionary(typeIdentifiers: read)
+    func getRequestStatusForAuthorization(write: [SampleTypeIdentifier], read: [SampleTypeIdentifier]) throws -> Promise<AuthorizationRequestStatus> {
+        let share = sampleTypesFromArray(typeIdentifiers: write)
+        let toRead = objectTypesFromArray(typeIdentifiers: read)
         
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
@@ -43,16 +45,21 @@ class Auth : HybridAuthSpec {
                     if let error = error {
                         continuation.resume(throwing: error)
                     } else {
-                        continuation.resume(returning: Double(status.rawValue))
+                        if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
+                            continuation.resume(returning: authStatus)
+                        } else {
+                            continuation.resume(throwing: RuntimeError.error(withMessage: "Unrecognized authStatus returned: \(status.rawValue)"))
+                        }
+                        
                     }
                 }
             }
         }
     }
     
-    func requestAuthorization(write: Dictionary<String, Bool>, read: Dictionary<String, Bool>) throws -> Promise<Bool> {
-        let share = sampleTypesFromDictionary(typeIdentifiers: write)
-        let toRead = objectTypesFromDictionary(typeIdentifiers: read)
+    func requestAuthorization(write: [SampleTypeIdentifier], read: [SampleTypeIdentifier]) throws -> Promise<Bool> {
+        let share = sampleTypesFromArray(typeIdentifiers: write)
+        let toRead = objectTypesFromArray(typeIdentifiers: read)
         
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in

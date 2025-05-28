@@ -11,8 +11,8 @@ const result = 12
 
 export default function HomeScreen() {
 	const hello = async () => {
-		const hey = await AuthObject.authorizationStatusFor('HKWorkoutTypeIdentifier')
-		console.log('authObject', hey)
+		const hey = AuthObject.authorizationStatusFor('HKWorkoutTypeIdentifier')
+		console.log('authorizationStatusFor', hey)
 	}
 	hello()
 
@@ -35,15 +35,22 @@ export default function HomeScreen() {
 
 	const queryWorkoutSamples = async () => {
 		const hey = await WorkoutObject.queryWorkoutSamplesWithAnchor('kcal', 'm', 0, 0, 10)
-		console.log('queryWorkoutSamples', JSON.stringify(hey, null, 2))
+		// console.log('queryWorkoutSamples', JSON.stringify(hey, null, 2))
+		const firstWorkout = hey.samples[0]
+		const routes = await WorkoutObject.getWorkoutRoutes(firstWorkout.uuid).catch(err => {
+			console.log('getWorkoutRoutes error', err)
+		})
+		console.log(JSON.stringify(routes, null, 2))
 	}
 
 	const requestAuth = async () => {
-		const hey = await AuthObject.requestAuthorization({
-			HKWorkoutTypeIdentifier: true,
-		}, {	
-			HKWorkoutTypeIdentifier: true
-		})
+		const hey = await AuthObject.requestAuthorization([
+			'HKWorkoutTypeIdentifier',
+			'HKWorkoutRouteTypeIdentifier',
+		], [
+			'HKWorkoutTypeIdentifier',
+			'HKWorkoutRouteTypeIdentifier',
+		])
 
 		console.log('requestAuth', hey)
 	}

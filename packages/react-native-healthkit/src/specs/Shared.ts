@@ -2,7 +2,7 @@
 import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
 import type { CategoryTypeIdentifier } from "../types/CategoryTypeIdentifier";
 import type { CorrelationTypeIdentifier } from "../types/CorrelationTypeIdentifier";
-import type { WorkoutRouteTypeIdentifier, HKWorkoutTypeIdentifier, StateOfMindTypeIdentifier, DataTypeIdentifierHeartbeatSeries } from "../types/Constants";
+import type { HKWorkoutTypeIdentifier, HKStateOfMindTypeIdentifier, HKDataTypeIdentifierHeartbeatSeries, HKWorkoutRouteTypeIdentifier } from "../types/Constants";
 import type { Unit } from "../types/Units";
 import type { QuantityRaw } from "./QuantityType.nitro";
 import type { AnyMap } from "react-native-nitro-modules";
@@ -39,11 +39,11 @@ export type SampleTypeIdentifier =
     | CategoryTypeIdentifier
     | CorrelationTypeIdentifier
     | QuantityTypeIdentifier
-    | typeof StateOfMindTypeIdentifier
+    | typeof HKStateOfMindTypeIdentifier
     | typeof ActivitySummaryTypeIdentifier
     | typeof AudiogramTypeIdentifier
-    | typeof DataTypeIdentifierHeartbeatSeries
-    | typeof WorkoutRouteTypeIdentifier
+    | typeof HKDataTypeIdentifierHeartbeatSeries
+    | typeof HKWorkoutRouteTypeIdentifier
     | typeof HKWorkoutTypeIdentifier
 
 /**

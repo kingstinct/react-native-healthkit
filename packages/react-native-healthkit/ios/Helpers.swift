@@ -93,11 +93,11 @@ func sampleTypeFromString(typeIdentifier: String) -> HKSampleType? {
     return nil
 }
 
-func objectTypesFromDictionary(typeIdentifiers: Dictionary<String, Bool>) -> Set<HKObjectType> {
+func objectTypesFromDictionary(typeIdentifiers: Dictionary<SampleTypeIdentifier, Bool>) -> Set<HKObjectType> {
     var share = Set<HKObjectType>()
     for item in typeIdentifiers {
         if item.value as Bool {
-            let objectType = objectTypeFromString(typeIdentifier: item.key)
+            let objectType = objectTypeFromString(typeIdentifier: item.key.stringValue)
             if objectType != nil {
                 share.insert(objectType!)
             }
@@ -106,15 +106,38 @@ func objectTypesFromDictionary(typeIdentifiers: Dictionary<String, Bool>) -> Set
     return share
 }
 
-func sampleTypesFromDictionary(typeIdentifiers: Dictionary<String, Bool>) -> Set<HKSampleType> {
+func objectTypesFromArray(typeIdentifiers: [SampleTypeIdentifier]) -> Set<HKObjectType> {
+    var share = Set<HKObjectType>()
+    for item in typeIdentifiers {
+        let typeIdentifier = item.stringValue
+        if let objectType = objectTypeFromString(typeIdentifier: typeIdentifier) {
+            share.insert(objectType)
+        }
+    }
+    return share
+}
+
+func sampleTypesFromDictionary(typeIdentifiers: Dictionary<SampleTypeIdentifier, Bool>) -> Set<HKSampleType> {
     var share = Set<HKSampleType>()
     for item in typeIdentifiers {
-        if item.value as! Bool {
-            let sampleType = sampleTypeFromString(typeIdentifier: item.key as! String)
+        if item.value as Bool {
+            let sampleType = sampleTypeFromString(typeIdentifier: item.key.stringValue)
             if sampleType != nil {
                 share.insert(sampleType!)
             }
         }
+    }
+    return share
+}
+
+func sampleTypesFromArray(typeIdentifiers: [SampleTypeIdentifier]) -> Set<HKSampleType> {
+    var share = Set<HKSampleType>()
+    for item in typeIdentifiers {
+        let typeIdentifier = item.stringValue
+        if let sampleType = sampleTypeFromString(typeIdentifier: typeIdentifier) {
+            share.insert(sampleType)
+        }
+        
     }
     return share
 }
