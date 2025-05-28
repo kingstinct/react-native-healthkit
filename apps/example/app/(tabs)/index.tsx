@@ -16,6 +16,23 @@ export default function HomeScreen() {
 	}
 	hello()
 
+	const saveWorkoutRoute = async () => {
+		const hey = await WorkoutObject.saveWorkoutRoute('123', [
+			{
+				latitude: 37.774929,
+				longitude: -122.419416,
+				altitude: 100,
+				horizontalAccuracy: 10,
+				verticalAccuracy: 10,
+				course: 100,
+				speed: 100,
+				timestamp: Date.now(),
+			}
+		]).catch(err => {
+			console.log('saveWorkoutRoute error', err)
+		})
+	}
+
 	const queryWorkoutSamples = async () => {
 		const hey = await WorkoutObject.queryWorkoutSamplesWithAnchor('kcal', 'm', 0, 0, 10)
 		console.log('queryWorkoutSamples', JSON.stringify(hey, null, 2))
@@ -24,7 +41,7 @@ export default function HomeScreen() {
 	const requestAuth = async () => {
 		const hey = await AuthObject.requestAuthorization({
 			HKWorkoutTypeIdentifier: true,
-		}, {
+		}, {	
 			HKWorkoutTypeIdentifier: true
 		})
 
@@ -42,6 +59,7 @@ export default function HomeScreen() {
 			}
 		>
 			<Button onPress={requestAuth} title="Request Auth" />
+			<Button onPress={saveWorkoutRoute} title="Save Workout Samples" />
 			<Button onPress={queryWorkoutSamples} title="Query Workout Samples" />
 			<ThemedText>{ result }</ThemedText>
 			<ThemedView style={styles.titleContainer}>
