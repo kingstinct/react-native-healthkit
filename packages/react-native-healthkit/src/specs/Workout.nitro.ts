@@ -242,8 +242,8 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
     saveWorkoutSample(
         typeIdentifier: number,
         quantities: readonly QuantitySampleForSaving[],
-        startTimestamp: number,
-        endTimestamp: number,
+        startTimestamp: number | null,
+        endTimestamp: number | null,
         totals: WorkoutTotals,
         metadata: AnyMap
     ): Promise<string | null>;
@@ -256,8 +256,8 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
     queryWorkoutSamplesWithAnchor(
         energyUnit: string,
         distanceUnit: string,
-        fromTimestamp: number,
-        toTimestamp: number,
+        fromTimestamp: number | null,
+        toTimestamp: number | null,
         limit: number,
         anchor?: string
     ): Promise<QueryWorkoutSamplesWithAnchorResponse>;

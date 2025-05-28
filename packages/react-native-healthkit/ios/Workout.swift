@@ -301,7 +301,10 @@ func mapWorkout(
         workoutActivityType: WorkoutActivityType.init(
             rawValue: Int32(workout.workoutActivityType.rawValue)
         )!,
-        duration: workout.duration,
+        duration: serializeQuantityTyped(
+            unit: .second(),
+            quantity: HKQuantity(unit: .second(), doubleValue: workout.duration)
+        )!,
         totalDistance: totalDistance,
         // todo
         totalEnergyBurned: nil,
@@ -316,6 +319,22 @@ func mapWorkout(
     )
     
     return workout
+}
+
+func getPreferredUnits(
+    quantityTypes: Set<HKQuantityType>
+) -> Promise<[HKQuantityType: HKUnit]> {
+    return Promise.async {
+        try await withCheckedThrowingContinuation { continuation in
+            store.preferredUnits(for: quantityTypes) {
+                (typePerUnits: [HKQuantityType: HKUnit], _: Error?) in
+                
+                continuation.resume(returning: typePerUnits)
+            }
+        }
+    }
+
+  
 }
 
 func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
@@ -409,9 +428,6 @@ class Workout : HybridWorkoutSpec {
         
         let limit = limitOrNilIfZero(limit: limit)
         
-        let energyUnit = HKUnit.init(from: energyUnit)
-        let distanceUnit = HKUnit.init(from: distanceUnit)
-        
         var actualAnchor: HKQueryAnchor? = nil
         if let anchor = anchor {
             actualAnchor = deserializeHKQueryAnchor(anchor: anchor)
@@ -434,13 +450,20 @@ class Workout : HybridWorkoutSpec {
                     ) in
                     guard let err = error else {
                         guard let samples = s, let newAnchor = newAnchor else {
-                            return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response"))
+                            return continuation.resume(
+                                throwing: RuntimeError.error(
+                                    withMessage: "Empty response"
+                                )
+                            )
                         }
                         
+                        let energyUnit = HKUnit.init(from: energyUnit)
+                        let distanceUnit = HKUnit.init(from: distanceUnit)
+                        
                         let arr = samples.compactMap { s in
-                            if let w = s as? HKWorkout {
+                            if let workout = s as? HKWorkout {
                                 return mapWorkout(
-                                    workout: w,
+                                    workout: workout,
                                     distanceUnit: distanceUnit,
                                     energyUnit: energyUnit
                                 )
@@ -458,6 +481,7 @@ class Workout : HybridWorkoutSpec {
                             newAnchor: serializeAnchor(anchor: newAnchor)
                         )
                         return continuation.resume(returning: returnValue)
+                        
                     }
                     continuation.resume(throwing: err)
                 }
@@ -468,7 +492,6 @@ class Workout : HybridWorkoutSpec {
     }
     
     func getWorkoutPlanById(workoutUUID: String) -> Promise<WorkoutPlan?> {
-
         return Promise.async {
             if let uuid = UUID(uuidString: workoutUUID) {
                 let workout = await getWorkoutByID(

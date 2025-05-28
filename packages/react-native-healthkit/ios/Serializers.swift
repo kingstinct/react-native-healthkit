@@ -15,11 +15,21 @@ func serializeQuantity(unit: HKUnit, quantity: HKQuantity?) -> Dictionary<String
     guard let q = quantity else {
         return nil
     }
-    
     return [
         "quantity": AnyValue.number( q.doubleValue(for: unit)),
         "unit": AnyValue.string( unit.unitString)
     ]
+}
+
+func serializeQuantityTyped(unit: HKUnit, quantity: HKQuantity?) -> QuantityRaw? {
+    guard let q = quantity else {
+        return nil
+    }
+    
+    return QuantityRaw(
+        unit: unit.unitString,
+        quantity: q.doubleValue(for: unit)
+    )
 }
 
 func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) -> NSDictionary {

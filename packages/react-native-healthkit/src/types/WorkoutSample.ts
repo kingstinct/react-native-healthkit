@@ -9,7 +9,7 @@ export interface WorkoutSample {
     readonly uuid: string;
     readonly device?: Device;
     readonly workoutActivityType: WorkoutActivityType;
-    readonly duration: number;
+    readonly duration: QuantityRaw;
     readonly totalDistance?: QuantityRaw;
     readonly totalEnergyBurned?: QuantityRaw;
     readonly totalSwimmingStrokeCount?: QuantityRaw;
