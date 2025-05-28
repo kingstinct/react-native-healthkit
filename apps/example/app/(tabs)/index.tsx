@@ -5,19 +5,31 @@ import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { AuthObject, WorkoutObject } from "react-native-healthkit";
+import { Auth, Core, Workouts } from "react-native-healthkit";
 
 const result = 12
 
 export default function HomeScreen() {
 	const hello = async () => {
-		const hey = AuthObject.authorizationStatusFor('HKWorkoutTypeIdentifier')
+		const hey = Auth.authorizationStatusFor('HKWorkoutTypeIdentifier')
 		console.log('authorizationStatusFor', hey)
+		
+		const hey2 = Core.isHealthDataAvailable()
+		console.log('isHealthDataAvailable', hey2)
+
+		const hey3 = Core.getPreferredUnits([
+			'HKQuantityTypeIdentifierStepCount',
+			'HKQuantityTypeIdentifierDistanceWalkingRunning',
+		])
+		console.log('getPreferredUnits', hey3)
+
+		const hey4 = Core.isProtectedDataAvailable()
+		console.log('isProtectedDataAvailable', hey4)
 	}
 	hello()
 
 	const saveWorkoutRoute = async () => {
-		const hey = await WorkoutObject.saveWorkoutRoute('123', [
+		const hey = await Workouts.saveWorkoutRoute('123', [
 			{
 				latitude: 37.774929,
 				longitude: -122.419416,
@@ -34,17 +46,17 @@ export default function HomeScreen() {
 	}
 
 	const queryWorkoutSamples = async () => {
-		const hey = await WorkoutObject.queryWorkoutSamplesWithAnchor('kcal', 'm', 0, 0, 10)
+		const hey = await Workouts.queryWorkoutSamplesWithAnchor('kcal', 'm', 0, 0, 10)
 		// console.log('queryWorkoutSamples', JSON.stringify(hey, null, 2))
 		const firstWorkout = hey.samples[0]
-		const routes = await WorkoutObject.getWorkoutRoutes(firstWorkout.uuid).catch(err => {
+		const routes = await Workouts.getWorkoutRoutes(firstWorkout.uuid).catch(err => {
 			console.log('getWorkoutRoutes error', err)
 		})
 		console.log(JSON.stringify(routes, null, 2))
 	}
 
 	const requestAuth = async () => {
-		const hey = await AuthObject.requestAuthorization([
+		const hey = await Auth.requestAuthorization([
 			'HKWorkoutTypeIdentifier',
 			'HKWorkoutRouteTypeIdentifier',
 		], [

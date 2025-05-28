@@ -14,6 +14,9 @@
 		},
 		"Workout": {
 			"swift": "Workout"
+		},
+		"Core": {
+			"swift": "Core"
 		}
 	},
 	"ignorePaths": ["**/node_modules"]

@@ -22,16 +22,6 @@ export enum AuthorizationStatus {
     sharingAuthorized = 2,
 }
 
-/*export type WritePermissions = Record<
-    CategoryTypeIdentifier | CharacteristicTypeIdentifier | QuantityTypeIdentifier,
-    boolean
->;
-  
-export type ReadPermissions = Record<
-    CategoryTypeIdentifier | CharacteristicTypeIdentifier | QuantityTypeIdentifier,
-    boolean
->;*/
-
 export interface Auth extends HybridObject<{ ios: 'swift' }> {
     /**
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614154-authorizationstatus Apple Docs }
