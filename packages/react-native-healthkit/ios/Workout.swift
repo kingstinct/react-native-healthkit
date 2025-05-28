@@ -153,7 +153,7 @@ func getSerializedWorkoutLocations(
         let routeMetadata =
         serializeMetadata(
             metadata: route.metadata
-        ) as! [String: Any]
+        )
         
         let routeCLLocations = await getRouteLocations(
             store: store,
@@ -170,14 +170,12 @@ func getSerializedWorkoutLocations(
         // let routeInfos: WorkoutRoute = ["locations": routeLocations]
         
         allRoutes.append(
-WorkoutRoute(
-            locations: routeLocations,
-            HKMetadataKeySyncIdentifier: routeMetadata["HKMetadataKeySyncIdentifier"] as? String,
-            HKMetadataKeySyncVersion: routeMetadata["HKMetadataKeySyncVersion"] as? Double
-)
+            WorkoutRoute(
+                locations: routeLocations,
+                HKMetadataKeySyncIdentifier: routeMetadata.getString(key: "HKMetadataKeySyncIdentifier"),
+                HKMetadataKeySyncVersion: routeMetadata.getDouble(key: "HKMetadataKeySyncVersion")
+            )
         )
-
-        // allRoutes.append(routeInfos.merging(routeMetadata) { (current, _) in current })
     }
     return allRoutes
 }
@@ -306,7 +304,7 @@ func mapWorkout(
     
     var workoutPlanId: String?
     if #available(iOS 17, *) {
-        // todo
+        // todo (but should this really be done here when it contains an async call??)
         // workoutPlanId = workout.workoutPlan?.id.uuidString
     }
     
@@ -332,6 +330,33 @@ func mapWorkout(
     )
     
     return workout
+}
+
+func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
+    return locations.compactMap { location in
+        let latitude = location.latitude
+          let longitude = location.longitude
+          let altitude = location.altitude
+          let horizontalAccuracy = location.horizontalAccuracy
+          let verticalAccuracy = location.verticalAccuracy
+          let course = location.course
+          let speed = location.speed
+          let timestamp = location.timestamp
+
+        let clLocation = CLLocation(
+          coordinate: CLLocationCoordinate2D(
+            latitude: latitude,
+            longitude: longitude
+          ), altitude: altitude,
+          horizontalAccuracy: horizontalAccuracy,
+          verticalAccuracy: verticalAccuracy,
+          course: course,
+          speed: speed,
+          timestamp: Date(timeIntervalSinceNow: timestamp)
+        )
+        
+        return clLocation
+    }
 }
 
 struct EmptyResponseError: Error, LocalizedError {
@@ -372,7 +397,32 @@ class Workout : HybridWorkoutSpec {
     }
     
     func saveWorkoutRoute(workoutUUID: String, locations: [LocationForSaving]) -> Promise<Bool> {
-        return Promise.resolved(withResult: false as Bool)
+        return Promise.async {
+            try await withCheckedThrowingContinuation { continuation in
+                Task {
+                    if let uuid = UUID(uuidString: workoutUUID) {
+                      do {
+                        let workout = await getWorkoutByID(store: store, workoutUUID: uuid)
+                        if let workout {
+                          // create CLLocations and return if locations are empty
+                          let clLocations = mapLocations(from: locations)
+                          let routeBuilder = HKWorkoutRouteBuilder(healthStore: store, device: nil)
+                          try await routeBuilder.insertRouteData(clLocations)
+                          try await routeBuilder.finishRoute(with: workout, metadata: nil)
+
+                          return continuation.resume(returning: true)
+                        } else {
+                          fatalError("No workout found")
+                        }
+                      } catch {
+                        return continuation.resume(throwing: error)
+                      }
+                    } else {
+                      fatalError("No workout found")
+                    }
+                }
+            }
+        }
     }
     
     func queryWorkoutSamplesWithAnchor(energyUnit: String, distanceUnit: String, fromTimestamp: Double, toTimestamp: Double, limit: Double, anchor: String?) throws -> Promise<QueryWorkoutSamplesWithAnchorResponse> {

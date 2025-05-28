@@ -13,8 +13,6 @@ export default function HomeScreen() {
 	const hello = async () => {
 		const hey = await AuthObject.authorizationStatusFor('HKWorkoutTypeIdentifier')
 		console.log('authObject', hey)
-
-		WorkoutObject.queryWorkoutSamplesWithAnchor
 	}
 	hello()
 
