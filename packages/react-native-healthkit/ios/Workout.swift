@@ -181,30 +181,23 @@ func getSerializedWorkoutLocations(
 }
 
 @available(iOS 17.0.0, *)
-func getWorkoutPlan(workout: HKWorkout) async -> WorkoutPlan? {
+func getWorkoutPlan(workout: HKWorkout) async throws -> WorkoutPlan? {
 #if canImport(WorkoutKit)
-    do {
-        
-        
-        let workoutPlan = try await workout.workoutPlan
-        if let id = workoutPlan?.id.uuidString {
-            if let activityType = workoutPlan?.workout.activity {
-                let workoutPlan = WorkoutPlan(
-                    id: id,
-                    activityType: WorkoutActivityType.init(
-                        rawValue: Int32(activityType.rawValue)
-                    )!
-                )
-                
-                return workoutPlan
-            }
+    let workoutPlan = try await workout.workoutPlan
+    if let id = workoutPlan?.id.uuidString {
+        if let activityType = workoutPlan?.workout.activity {
+            let workoutPlan = WorkoutPlan(
+                id: id,
+                activityType: WorkoutActivityType.init(
+                    rawValue: Int32(activityType.rawValue)
+                )!
+            )
+            
+            return workoutPlan
         }
-        
-        return nil
     }
-    catch{
-        return nil
-    }
+    
+    return nil
 #else
     return nil
 #endif
@@ -302,12 +295,6 @@ func mapWorkout(
         }
     }
     
-    var workoutPlanId: String?
-    if #available(iOS 17, *) {
-        // todo (but should this really be done here when it contains an async call??)
-        // workoutPlanId = workout.workoutPlan?.id.uuidString
-    }
-    
     let workout = WorkoutSample.init(
         uuid: workout.uuid.uuidString,
         device: device,
@@ -325,8 +312,7 @@ func mapWorkout(
         metadata: serializeMetadata(metadata: workout.metadata),
         sourceRevision: nil,
         events: workoutEvents,
-        activities: activitiesArray,
-        workoutPlanId: workoutPlanId
+        activities: activitiesArray
     )
     
     return workout
@@ -491,10 +477,10 @@ class Workout : HybridWorkoutSpec {
                 )
                 if let workout {
                     if #available(iOS 17.0.0, *) {
-                        let workoutPlan = await getWorkoutPlan(workout: workout)
+                        let workoutPlan = try await getWorkoutPlan(workout: workout)
                         return workoutPlan
                     } else {
-                        throw RuntimeError.error(withMessage: "Workout Plans not supported before iOS 17")
+                        throw RuntimeError.error(withMessage: "Workout Plans requires iOS 17+")
                     }
                 } else {
                     throw RuntimeError.error(withMessage: "No workout found")

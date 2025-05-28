@@ -20,5 +20,4 @@ export interface WorkoutSample {
     readonly sourceRevision?: SourceRevision;
     readonly events?: readonly WorkoutEvent[];
     readonly activities?: readonly WorkoutActivity[];
-    readonly workoutPlanId?: string;
 };
