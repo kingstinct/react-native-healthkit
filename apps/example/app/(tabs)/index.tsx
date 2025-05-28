@@ -20,7 +20,7 @@ export default function HomeScreen() {
 
 	const queryWorkoutSamples = async () => {
 		const hey = await WorkoutObject.queryWorkoutSamplesWithAnchor('kcal', 'm', 0, 0, 10)
-		console.log('queryWorkoutSamples', hey)
+		console.log('queryWorkoutSamples', JSON.stringify(hey, null, 2))
 	}
 
 	const requestAuth = async () => {

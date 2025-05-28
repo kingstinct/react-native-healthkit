@@ -1,7 +1,7 @@
 import type { AnyMap, HybridObject } from "react-native-nitro-modules";
 import type { DeletedSample, GenericMetadata } from "./Shared";
-import type { QuantitySampleRawForSaving } from "../types/QuantitySampleRaw";
-import type { WorkoutRaw } from "../types/WorkoutRaw";
+import type { QuantitySampleForSaving } from "../types/QuantitySampleRaw";
+import type { WorkoutSample } from "../types/WorkoutSample";
 import type { QuantityRaw } from "./QuantityType.nitro";
 
 export enum WorkoutActivityType {
@@ -180,8 +180,8 @@ export interface WorkoutRoute {
     readonly HKMetadataKeySyncVersion?: number;
 };
 
-interface QueryWorkoutSamplesWithAnchorResponseRaw {
-    readonly samples: readonly WorkoutRaw[],
+interface QueryWorkoutSamplesWithAnchorResponse {
+    readonly samples: readonly WorkoutSample[],
     readonly deletedSamples: readonly DeletedSample[],
     readonly newAnchor: string
 }
@@ -190,7 +190,7 @@ interface QueryWorkoutSamplesWithAnchorResponseRaw {
  * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutconfiguration Apple Docs }
  */
 export interface WorkoutConfiguration {
-    readonly activityType: number;
+    readonly activityType: WorkoutActivityType;
     readonly locationType?: WorkoutSessionLocationType;
 };
 
@@ -203,7 +203,7 @@ export enum WorkoutSessionLocationType {
     outdoor = 3
 }
 
-export interface CLLocationRawForSaving {
+export interface LocationForSaving {
     readonly latitude: number;
     readonly longitude: number;
     readonly altitude: number;
@@ -211,12 +211,12 @@ export interface CLLocationRawForSaving {
     readonly verticalAccuracy: number;
     readonly course: number;
     readonly speed: number;
-    readonly timestamp: string; // unix timestamp in milliseconds
+    readonly timestamp: number; // unix timestamp in milliseconds
 };
 
 export interface WorkoutPlan {
     readonly id: string;
-    readonly activityType: number;
+    readonly activityType: WorkoutActivityType;
 }
 
 export interface WorkoutTotals {
@@ -241,7 +241,7 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
 
     saveWorkoutSample(
         typeIdentifier: number,
-        quantities: readonly QuantitySampleRawForSaving[],
+        quantities: readonly QuantitySampleForSaving[],
         startTimestamp: number,
         endTimestamp: number,
         totals: WorkoutTotals,
@@ -250,7 +250,7 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
 
     saveWorkoutRoute(
         workoutUUID: string,
-        locations: readonly CLLocationRawForSaving[]
+        locations: readonly LocationForSaving[]
     ): Promise<boolean>;
 
     queryWorkoutSamplesWithAnchor(
@@ -260,5 +260,5 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
         toTimestamp: number,
         limit: number,
         anchor?: string
-    ): Promise<QueryWorkoutSamplesWithAnchorResponseRaw>;
+    ): Promise<QueryWorkoutSamplesWithAnchorResponse>;
 }

@@ -242,9 +242,9 @@ func serializeStatisticIfExists(unit: HKUnit, quantity: HKQuantity?, stats: HKSt
 }
 
 func parseWorkoutConfiguration(_ config: WorkoutConfiguration) -> HKWorkoutConfiguration {
-    var configuration = HKWorkoutConfiguration()
+    let configuration = HKWorkoutConfiguration()
 
-    if let activityType = HKWorkoutActivityType(rawValue: UInt(config.activityType)) {
+    if let activityType = HKWorkoutActivityType(rawValue: UInt(config.activityType.rawValue)) {
       configuration.activityType = activityType
     }
 

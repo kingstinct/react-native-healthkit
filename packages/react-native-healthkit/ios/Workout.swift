@@ -9,189 +9,196 @@ import WorkoutKit
 func getWorkoutByID(
     store: HKHealthStore,
     workoutUUID: UUID
-  ) async -> HKWorkout? {
+) async -> HKWorkout? {
     let workoutPredicate = HKQuery.predicateForObject(with: workoutUUID)
 
     let samples = try! await withCheckedThrowingContinuation {
-      (continuation: CheckedContinuation<[HKSample], Error>) in
-      let query = HKSampleQuery(
-        sampleType: HKObjectType.workoutType(),
-        predicate: workoutPredicate,
-        limit: 1,
-        sortDescriptors: nil
-      ) { (_, results, error) in
+        (continuation: CheckedContinuation<[HKSample], Error>) in
+        let query = HKSampleQuery(
+            sampleType: HKObjectType.workoutType(),
+            predicate: workoutPredicate,
+            limit: 1,
+            sortDescriptors: nil
+        ) { (_, results, error) in
 
-        if let hasError = error {
-          continuation.resume(throwing: hasError)
-          return
+            if let hasError = error {
+                continuation.resume(throwing: hasError)
+                return
+            }
+
+            guard let samples = results else {
+                fatalError("workout samples unexpectedly nil")
+            }
+
+            continuation.resume(returning: samples)
         }
-
-        guard let samples = results else {
-          fatalError("workout samples unexpectedly nil")
-        }
-
-        continuation.resume(returning: samples)
-      }
-      store.execute(query)
+        store.execute(query)
     }
 
     guard let workouts = samples as? [HKWorkout] else {
-      return nil
+        return nil
     }
 
     return workouts.first ?? nil
-  }
+}
 
 func getWorkoutRoutes(
     store: HKHealthStore,
     workoutUUID: UUID
-  ) async -> [HKWorkoutRoute]? {
+) async -> [HKWorkoutRoute]? {
     guard let workout = await getWorkoutByID(store: store, workoutUUID: workoutUUID) else {
-      return nil
+        return nil
     }
 
     let workoutPredicate = HKQuery.predicateForObjects(from: workout)
     let samples = try! await withCheckedThrowingContinuation {
-      (continuation: CheckedContinuation<[HKSample], Error>) in
-      let query = HKAnchoredObjectQuery(
-        type: HKSeriesType.workoutRoute(),
-        predicate: workoutPredicate,
-        anchor: nil,
-        limit: HKObjectQueryNoLimit
-      ) {
-        (_, samples, _, _, error) in
+        (continuation: CheckedContinuation<[HKSample], Error>) in
+        let query = HKAnchoredObjectQuery(
+            type: HKSeriesType.workoutRoute(),
+            predicate: workoutPredicate,
+            anchor: nil,
+            limit: HKObjectQueryNoLimit
+        ) {
+            (_, samples, _, _, error) in
 
-        if let hasError = error {
-          continuation.resume(throwing: hasError)
-          return
+            if let hasError = error {
+                continuation.resume(throwing: hasError)
+                return
+            }
+
+            guard let samples = samples else {
+                fatalError("workoutRoute samples unexpectedly nil")
+            }
+
+            continuation.resume(returning: samples)
         }
-
-        guard let samples = samples else {
-          fatalError("workoutRoute samples unexpectedly nil")
-        }
-
-        continuation.resume(returning: samples)
-      }
-      store.execute(query)
+        store.execute(query)
     }
 
     guard let routes = samples as? [HKWorkoutRoute] else {
-      return nil
+        return nil
     }
 
     return routes
-  }
+}
 
 func getRouteLocations(
     store: HKHealthStore,
     route: HKWorkoutRoute
-  ) async -> [CLLocation] {
+) async -> [CLLocation] {
     let locations = try! await withCheckedThrowingContinuation {
-      (continuation: CheckedContinuation<[CLLocation], Error>) in
-      var allLocations: [CLLocation] = []
+        (continuation: CheckedContinuation<[CLLocation], Error>) in
+        var allLocations: [CLLocation] = []
 
-      let query = HKWorkoutRouteQuery(route: route) {
-        (_, locationsOrNil, done, errorOrNil) in
+        let query = HKWorkoutRouteQuery(route: route) {
+            (_, locationsOrNil, done, errorOrNil) in
 
-        if let error = errorOrNil {
-          continuation.resume(throwing: error)
-          return
+            if let error = errorOrNil {
+                continuation.resume(throwing: error)
+                return
+            }
+
+            guard let currentLocationBatch = locationsOrNil else {
+                fatalError("routeLocations unexpectedly nil")
+            }
+
+            allLocations.append(contentsOf: currentLocationBatch)
+
+            if done {
+                continuation.resume(returning: allLocations)
+            }
         }
 
-        guard let currentLocationBatch = locationsOrNil else {
-          fatalError("routeLocations unexpectedly nil")
-        }
-
-        allLocations.append(contentsOf: currentLocationBatch)
-
-        if done {
-          continuation.resume(returning: allLocations)
-        }
-      }
-
-      store.execute(query)
+        store.execute(query)
     }
 
     return locations
-  }
+}
 
 
 func serializeLocation(location: CLLocation, previousLocation: CLLocation?) -> WorkoutLocation {
-  var distance: CLLocationDistance?
-  if let previousLocation = previousLocation {
-    distance = location.distance(from: previousLocation)
-  } else {
-    distance = nil
-  }
-  return WorkoutLocation(
-    longitude: location.coordinate.longitude,
-    latitude: location.coordinate.latitude,
-    altitude: location.altitude,
-    speed: location.speed,
-    timestamp: location.timestamp.timeIntervalSince1970,
-    horizontalAccuracy: location.horizontalAccuracy,
-    speedAccuracy: location.speedAccuracy,
-    verticalAccuracy: location.verticalAccuracy,
-    distance: distance
-  )
+    var distance: CLLocationDistance?
+    if let previousLocation = previousLocation {
+        distance = location.distance(from: previousLocation)
+    } else {
+        distance = nil
+    }
+    return WorkoutLocation(
+        longitude: location.coordinate.longitude,
+        latitude: location.coordinate.latitude,
+        altitude: location.altitude,
+        speed: location.speed,
+        timestamp: location.timestamp.timeIntervalSince1970,
+        horizontalAccuracy: location.horizontalAccuracy,
+        speedAccuracy: location.speedAccuracy,
+        verticalAccuracy: location.verticalAccuracy,
+        distance: distance
+    )
 }
 
 func getSerializedWorkoutLocations(
     store: HKHealthStore,
     workoutUUID: UUID
-  ) async -> [WorkoutRoute] {
+) async -> [WorkoutRoute] {
     let routes = await getWorkoutRoutes(
-      store: store,
-      workoutUUID: workoutUUID
+        store: store,
+        workoutUUID: workoutUUID
     )
 
     var allRoutes: [WorkoutRoute] = []
     guard let _routes = routes else {
-      return []
+        return []
     }
     for route in _routes {
-      let routeMetadata =
+        let routeMetadata =
         serializeMetadata(
-          metadata: route.metadata
+            metadata: route.metadata
         ) as! [String: Any]
         
-      let routeCLLocations = await getRouteLocations(
-        store: store,
-        route: route
-      )
-        
-      let routeLocations = routeCLLocations.enumerated().map {
-        (i, loc) in
-        serializeLocation(
-          location: loc,
-          previousLocation: i == 0 ? nil : routeCLLocations[i - 1]
+        let routeCLLocations = await getRouteLocations(
+            store: store,
+            route: route
         )
-      }
-      // let routeInfos: WorkoutRoute = ["locations": routeLocations]
         
-        allRoutes.append(WorkoutRoute(
+        let routeLocations = routeCLLocations.enumerated().map {
+            (i, loc) in
+            serializeLocation(
+                location: loc,
+                previousLocation: i == 0 ? nil : routeCLLocations[i - 1]
+            )
+        }
+        // let routeInfos: WorkoutRoute = ["locations": routeLocations]
+        
+        allRoutes.append(
+WorkoutRoute(
             locations: routeLocations,
             HKMetadataKeySyncIdentifier: routeMetadata["HKMetadataKeySyncIdentifier"] as? String,
             HKMetadataKeySyncVersion: routeMetadata["HKMetadataKeySyncVersion"] as? Double
-        ))
+)
+        )
 
-      // allRoutes.append(routeInfos.merging(routeMetadata) { (current, _) in current })
+        // allRoutes.append(routeInfos.merging(routeMetadata) { (current, _) in current })
     }
     return allRoutes
-  }
+}
 
 @available(iOS 17.0.0, *)
 func getWorkoutPlan(workout: HKWorkout) async -> WorkoutPlan? {
-    #if canImport(WorkoutKit)
+#if canImport(WorkoutKit)
     do {
         
     
-    let workoutPlan = try await workout.workoutPlan
+        let workoutPlan = try await workout.workoutPlan
         if let id = workoutPlan?.id.uuidString {
             if let activityType = workoutPlan?.workout.activity {
-                var dict = WorkoutPlan(id: id, activityType: Double(activityType.rawValue))
+                let workoutPlan = WorkoutPlan(
+                    id: id,
+                    activityType: WorkoutActivityType.init(
+                        rawValue: Int32(activityType.rawValue)
+                    )!
+                )
                 
-                return dict
+                return workoutPlan
             }
         }
     
@@ -200,16 +207,16 @@ func getWorkoutPlan(workout: HKWorkout) async -> WorkoutPlan? {
     catch{
         return nil
     }
-    #else
-      return nil
-    #endif
-  }
+#else
+    return nil
+#endif
+}
 
 func mapWorkout(
-  workout: HKWorkout,
-  distanceUnit: HKUnit,
-  energyUnit: HKUnit
-) -> WorkoutRaw {
+    workout: HKWorkout,
+    distanceUnit: HKUnit,
+    energyUnit: HKUnit
+) -> WorkoutSample {
     var device: Device? = nil
     if let hkDevice = workout.device {
         device = Device(
@@ -225,7 +232,11 @@ func mapWorkout(
     }
     var totalDistance: QuantityRaw? = nil
     if let hkTotalDistance = workout.totalDistance {
-        totalDistance = QuantityRaw(unit: distanceUnit.unitString, quantity: hkTotalDistance.doubleValue(for: distanceUnit)
+        totalDistance = QuantityRaw(
+            unit: distanceUnit.unitString,
+            quantity: hkTotalDistance.doubleValue(
+                for: distanceUnit
+            )
         )
     }
     
@@ -251,7 +262,9 @@ func mapWorkout(
     var workoutEvents: [WorkoutEvent] = []
     if let hkWorkoutEvents = workout.workoutEvents {
         workoutEvents = hkWorkoutEvents.compactMap { event in
-            if let type = WorkoutEventType.init(rawValue: Int32(event.type.rawValue)) {
+            if let type = WorkoutEventType.init(
+                rawValue: Int32(event.type.rawValue)
+            ) {
                 return WorkoutEvent(
                     type: type,
                     startTimestamp: event.dateInterval.start.timeIntervalSince1970,
@@ -297,7 +310,7 @@ func mapWorkout(
         // workoutPlanId = workout.workoutPlan?.id.uuidString
     }
     
-    let workout = WorkoutRaw.init(
+    let workout = WorkoutSample.init(
         uuid: workout.uuid.uuidString,
         device: device,
         workoutActivityType: WorkoutActivityType.init(
@@ -311,7 +324,7 @@ func mapWorkout(
         totalFlightsClimbed: totalFlightsClimbed,
         startTimestamp: workout.startDate.timeIntervalSince1970,
         endTimestamp: workout.endDate.timeIntervalSince1970,
-        metadata: GenericMetadata(),
+        metadata: serializeMetadata(metadata: workout.metadata),
         sourceRevision: nil,
         events: workoutEvents,
         activities: activitiesArray,
@@ -354,122 +367,134 @@ class Workout : HybridWorkoutSpec {
         }
     }
     
-    func saveWorkoutSample(typeIdentifier: Double, quantities: [QuantitySampleRawForSaving], startTimestamp: Double, endTimestamp: Double, totals: WorkoutTotals, metadata: AnyMapHolder) throws -> Promise<String?> {
+    func saveWorkoutSample(typeIdentifier: Double, quantities: [QuantitySampleForSaving], startTimestamp: Double, endTimestamp: Double, totals: WorkoutTotals, metadata: AnyMapHolder) throws -> Promise<String?> {
         return Promise.resolved(withResult: nil)
     }
     
-    func saveWorkoutRoute(workoutUUID: String, locations: [CLLocationRawForSaving]) -> Promise<Bool> {
+    func saveWorkoutRoute(workoutUUID: String, locations: [LocationForSaving]) -> Promise<Bool> {
         return Promise.resolved(withResult: false as Bool)
     }
     
-    func queryWorkoutSamplesWithAnchor(energyUnit: String, distanceUnit: String, fromTimestamp: Double, toTimestamp: Double, limit: Double, anchor: String?) throws -> Promise<QueryWorkoutSamplesWithAnchorResponseRaw> {
-            let from = dateOrNilIfZero(fromTimestamp)
-            let to = dateOrNilIfZero(toTimestamp)
+    func queryWorkoutSamplesWithAnchor(energyUnit: String, distanceUnit: String, fromTimestamp: Double, toTimestamp: Double, limit: Double, anchor: String?) throws -> Promise<QueryWorkoutSamplesWithAnchorResponse> {
+        let from = dateOrNilIfZero(fromTimestamp)
+        let to = dateOrNilIfZero(toTimestamp)
 
-            let predicate = createPredicate(
-                from: from,
-                to: to
-            )
+        let predicate = createPredicate(
+            from: from,
+            to: to
+        )
 
-            let limit = limitOrNilIfZero(limit: limit)
+        let limit = limitOrNilIfZero(limit: limit)
 
-            let energyUnit = HKUnit.init(from: energyUnit)
-            let distanceUnit = HKUnit.init(from: distanceUnit)
+        let energyUnit = HKUnit.init(from: energyUnit)
+        let distanceUnit = HKUnit.init(from: distanceUnit)
 
-            var actualAnchor: HKQueryAnchor? = nil
-            if let anchor = anchor {
-                actualAnchor = deserializeHKQueryAnchor(anchor: anchor)
-            }
+        var actualAnchor: HKQueryAnchor? = nil
+        if let anchor = anchor {
+            actualAnchor = deserializeHKQueryAnchor(anchor: anchor)
+        }
         
-            return Promise.async {
-                return try await withCheckedThrowingContinuation { continuation in
-                    let q = HKAnchoredObjectQuery(
-                      type: .workoutType(), predicate: predicate, anchor: actualAnchor, limit: limit
-                    ) {
-                      (
+        return Promise.async {
+            return try await withCheckedThrowingContinuation { continuation in
+                let q = HKAnchoredObjectQuery(
+                    type: 
+                            .workoutType(),
+                    predicate: predicate,
+                    anchor: actualAnchor,
+                    limit: limit
+                ) {
+                    (
                         _: HKAnchoredObjectQuery,
                         s: [HKSample]?,
                         deletedSamples: [HKDeletedObject]?,
                         newAnchor: HKQueryAnchor?,
                         error: Error?
-                      ) in
-                      guard let err = error else {
+                    ) in
+                    guard let err = error else {
                         guard let samples = s else {
-                          return continuation.resume(throwing: EmptyResponseError())
+                            return continuation
+                                .resume(throwing: EmptyResponseError())
                         }
                           
-                      guard let newAnchor = newAnchor else {
-                        return continuation.resume(throwing: EmptyResponseError())
-                      }
+                        guard let newAnchor = newAnchor else {
+                            return continuation
+                                .resume(throwing: EmptyResponseError())
+                        }
 
                         
-                          let arr = samples.compactMap { s in
-                              if let w = s as? HKWorkout {
-                                  return mapWorkout(
+                        let arr = samples.compactMap { s in
+                            if let w = s as? HKWorkout {
+                                return mapWorkout(
                                     workout: w,
                                     distanceUnit: distanceUnit,
                                     energyUnit: energyUnit
-                                  )
-                              }
-                              return nil
-                          }
+                                )
+                            }
+                            return nil
+                        }
                           
-                          let deletedSamples = deletedSamples?.map({ sample in
-                              return serializeDeletedSample(sample: sample)
-                            }) ?? []
+                        let deletedSamples = deletedSamples?.map({ sample in
+                            return serializeDeletedSample(sample: sample)
+                        }) ?? []
                           
-                          let returnValue = QueryWorkoutSamplesWithAnchorResponseRaw(
+                        let returnValue = QueryWorkoutSamplesWithAnchorResponse(
                             samples: arr,
                             deletedSamples: deletedSamples,
                             newAnchor: serializeAnchor(anchor: newAnchor)
                         )
                         return continuation.resume(returning: returnValue)
-                      }
-                      continuation.resume(throwing: err)
-                      // reject(GENERIC_ERROR, err.localizedDescription, err)
                     }
-
-                    store.execute(q)
+                    continuation.resume(throwing: err)
+                    // reject(GENERIC_ERROR, err.localizedDescription, err)
                 }
+
+                store.execute(q)
             }
+        }
     }
     
     func getWorkoutPlanById(workoutUUID: String) -> Promise<WorkoutPlan?> {
-      #if canImport(WorkoutKit)
+#if canImport(WorkoutKit)
         return Promise.async {
-          if let uuid = UUID(uuidString: workoutUUID) {
-            let workout = await getWorkoutByID(store: store, workoutUUID: uuid)
-            if let workout {
-                if #available(iOS 17.0.0, *) {
-                    let workoutPlan = await getWorkoutPlan(workout: workout)
-                    return workoutPlan
+            if let uuid = UUID(uuidString: workoutUUID) {
+                let workout = await getWorkoutByID(
+                    store: store,
+                    workoutUUID: uuid
+                )
+                if let workout {
+                    if #available(iOS 17.0.0, *) {
+                        let workoutPlan = await getWorkoutPlan(workout: workout)
+                        return workoutPlan
+                    } else {
+                        return nil
+                    }
                 } else {
-                    return nil
+                    fatalError("No workout found")
+                    // return reject(GENERIC_ERROR, "No workout found", nil)
                 }
             } else {
-              fatalError("No workout found")
-              // return reject(GENERIC_ERROR, "No workout found", nil)
+                fatalError("Invalid UUID")
+                // return reject(GENERIC_ERROR, "Invalid UUID", nil)
             }
-          } else {
-            fatalError("Invalid UUID")
-            // return reject(GENERIC_ERROR, "Invalid UUID", nil)
-          }
         }
-      #else
+#else
         return Promise.resolved(withResult: nil)
-      #endif
+#endif
     }
     
     
     func getWorkoutRoutes(workoutUUID: String) -> Promise<[WorkoutRoute]> {
         guard let _workoutUUID = UUID(uuidString: workoutUUID) else {
             fatalError("INVALID_UUID_ERROR")
-//          return reject("INVALID_UUID_ERROR", "Invalid UUID received", nil)
+            //          return reject("INVALID_UUID_ERROR", "Invalid UUID received", nil)
         }
 
         return Promise.async {
           
-            let locations = await getSerializedWorkoutLocations(store: store, workoutUUID: _workoutUUID)
+            let locations = await getSerializedWorkoutLocations(
+                store: store,
+                workoutUUID: _workoutUUID
+            )
             return locations
           
         }

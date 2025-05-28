@@ -1,6 +1,6 @@
 import type { HybridObject } from "react-native-nitro-modules";
 import type { DeletedSample, GenericMetadata } from "./Shared";
-import type { WorkoutRaw } from "../types/WorkoutRaw";
+import type { WorkoutSample } from "../types/WorkoutSample";
 import type { BloodGlucoseUnit, CountPerTime, EnergyUnit, Unit, LengthUnit, MassUnit, SpeedUnit, TemperatureUnit, TimeUnit, VolumeUnit } from "../types/Units";
 import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
 import type { QuantitySampleRaw } from "../types/QuantitySampleRaw";
@@ -213,7 +213,7 @@ export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
     toTimestamp: number,
     limit: number,
     ascending: boolean
-  ): Promise<readonly WorkoutRaw[]>;
+  ): Promise<readonly WorkoutSample[]>;
   
   queryQuantitySamples(
     identifier: QuantityTypeIdentifier,
