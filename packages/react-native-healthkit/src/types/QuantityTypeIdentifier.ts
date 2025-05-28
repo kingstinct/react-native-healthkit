@@ -2,7 +2,7 @@
  * Represents a quantity type identifier.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier Apple Docs HKQuantityTypeIdentifier}
  */
-export type HKQuantityTypeIdentifier =
+export type QuantityTypeIdentifier =
     /**
      * Body Mass Index
      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbodymassindex Apple Docs HKQuantityTypeIdentifierBodyMassIndex}

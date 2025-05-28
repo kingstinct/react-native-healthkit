@@ -5,7 +5,8 @@
 	"scripts": {
 		"typecheck": "tsc --noEmit",
 		"lint": "bunx @biomejs/biome format --write",
-		"typescript": "tsc"
+		"typescript": "tsc",
+		"codegen": "cd packages/react-native-healthkit && bun run nitro-codegen && cd ../../apps/example/ios && pod install"
 	},
 	"keywords": ["react-native", "nitro", "healthkit"],
 	"repository": {

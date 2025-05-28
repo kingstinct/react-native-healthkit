@@ -7,17 +7,18 @@
 
 import Foundation
 import HealthKit
+import NitroModules
 
 let _dateFormatter = ISO8601DateFormatter()
 
-func serializeQuantity(unit: HKUnit, quantity: HKQuantity?) -> [String: Any]? {
+func serializeQuantity(unit: HKUnit, quantity: HKQuantity?) -> Dictionary<String, AnyValue>? {
     guard let q = quantity else {
         return nil
     }
-
+    
     return [
-        "quantity": q.doubleValue(for: unit),
-        "unit": unit.unitString
+        "quantity": AnyValue.number( q.doubleValue(for: unit)),
+        "unit": AnyValue.string( unit.unitString)
     ]
 }
 
@@ -40,11 +41,11 @@ func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) -> NSDictio
     ]
 }
 
-func serializeDeletedSample(sample: HKDeletedObject) -> NSDictionary {
-  return [
-      "uuid": sample.uuid.uuidString,
-      "metadata": serializeMetadata(metadata: sample.metadata)
-  ]
+func serializeDeletedSample(sample: HKDeletedObject) -> DeletedSample {
+  return DeletedSample(
+    uuid: sample.uuid.uuidString,
+    metadata: serializeMetadata(metadata: sample.metadata)
+  )
 }
 
 func serializeCategorySample(sample: HKCategorySample) -> NSDictionary {
@@ -71,7 +72,7 @@ func serializeSource(source: HKSource) -> NSDictionary {
     ]
 }
 
-func serializeUnknownQuantity(quantity: HKQuantity) -> [String: Any]? {
+func serializeUnknownQuantity(quantity: HKQuantity) -> Dictionary<String, AnyValue>? {
     if quantity.is(compatibleWith: HKUnit.percent()) {
         return serializeQuantity(unit: HKUnit.percent(), quantity: quantity)
     }
@@ -132,23 +133,23 @@ func serializeUnknownQuantity(quantity: HKQuantity) -> [String: Any]? {
     return nil
 }
 
-func serializeMetadata(metadata: [String: Any]?) -> NSDictionary {
-    let serialized: NSMutableDictionary = [:]
+func serializeMetadata(metadata: [String: Any]?) -> AnyMapHolder {
+    let serialized = AnyMapHolder()
     if let m = metadata {
         for item in m {
             if let bool = item.value as? Bool {
-                serialized.setValue(bool, forKey: item.key)
+                serialized.setBoolean(key: item.key, value: bool)
             }
             if let str = item.value as? String {
-                serialized.setValue(str, forKey: item.key)
+                serialized.setString(key: item.key, value: str)
             }
 
             if let double = item.value as? Double {
-                serialized.setValue(double, forKey: item.key)
+                serialized.setDouble(key: item.key, value: double)
             }
             if let quantity = item.value as? HKQuantity {
                 if let s = serializeUnknownQuantity(quantity: quantity) {
-                    serialized.setValue(s, forKey: item.key)
+                    serialized.setObject(key: item.key, value: s)
                 }
             }
         }
@@ -208,12 +209,8 @@ func deserializeHKQueryAnchor(anchor: String) -> HKQueryAnchor? {
     return anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor)
 }
 
-func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
-  guard let anch = anchor else {
-    return nil
-  }
-
-  let data = NSKeyedArchiver.archivedData(withRootObject: anch)
+func serializeAnchor(anchor: HKQueryAnchor) -> String {
+  let data = NSKeyedArchiver.archivedData(withRootObject: anchor)
   let encoded = data.base64EncodedString()
 
   return encoded

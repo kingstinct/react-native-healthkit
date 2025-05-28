@@ -9,8 +9,11 @@
 		"androidNamespace": ["healthkit"]
 	},
 	"autolinking": {
-		"ReactNativeHealthkit": {
-			"swift": "ReactNativeHealthkit"
+		"Auth": {
+			"swift": "Auth"
+		},
+		"Workout": {
+			"swift": "Workout"
 		}
 	},
 	"ignorePaths": ["**/node_modules"]

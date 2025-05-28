@@ -7,13 +7,22 @@
 
 import Foundation
 import HealthKit
+import NitroModules
 
-func dateOrNilIfZero(date: Date) -> Date? {
-    return date.timeIntervalSince1970 > 0 ? date : nil
+func dateOrNilIfZero(_ timestamp: Double?) -> Date? {
+    if let timestamp = timestamp {
+        if(timestamp == 0){
+           return nil
+        }
+        return Date.init(timeIntervalSince1970: timestamp)
+    }
+    return nil
+    
+    
 }
 
-func limitOrNilIfZero(limit: Int) -> Int {
-    return limit == 0 ? HKObjectQueryNoLimit : limit
+func limitOrNilIfZero(limit: Double) -> Int {
+    return limit == 0 ? HKObjectQueryNoLimit : Int(limit)
 }
 
 func createPredicate(from: Date?, to: Date?) -> NSPredicate? {
@@ -84,11 +93,11 @@ func sampleTypeFromString(typeIdentifier: String) -> HKSampleType? {
     return nil
 }
 
-func objectTypesFromDictionary(typeIdentifiers: NSDictionary) -> Set<HKObjectType> {
+func objectTypesFromDictionary(typeIdentifiers: Dictionary<String, Bool>) -> Set<HKObjectType> {
     var share = Set<HKObjectType>()
     for item in typeIdentifiers {
-        if item.value as! Bool {
-            let objectType = objectTypeFromString(typeIdentifier: item.key as! String)
+        if item.value as Bool {
+            let objectType = objectTypeFromString(typeIdentifier: item.key)
             if objectType != nil {
                 share.insert(objectType!)
             }
@@ -97,7 +106,7 @@ func objectTypesFromDictionary(typeIdentifiers: NSDictionary) -> Set<HKObjectTyp
     return share
 }
 
-func sampleTypesFromDictionary(typeIdentifiers: NSDictionary) -> Set<HKSampleType> {
+func sampleTypesFromDictionary(typeIdentifiers: Dictionary<String, Bool>) -> Set<HKSampleType> {
     var share = Set<HKSampleType>()
     for item in typeIdentifiers {
         if item.value as! Bool {
@@ -232,16 +241,15 @@ func serializeStatisticIfExists(unit: HKUnit, quantity: HKQuantity?, stats: HKSt
     return serializeStatistic(unit: unit, quantity: quantity, stats: stats)
 }
 
-func parseWorkoutConfiguration(_ dict: NSDictionary) -> HKWorkoutConfiguration {
-    let configuration = HKWorkoutConfiguration()
+func parseWorkoutConfiguration(_ config: WorkoutConfiguration) -> HKWorkoutConfiguration {
+    var configuration = HKWorkoutConfiguration()
 
-    if let activityTypeRaw = dict[HKWorkoutActivityTypePropertyName] as? UInt,
-        let activityType = HKWorkoutActivityType(rawValue: activityTypeRaw) {
-        configuration.activityType = activityType
+    if let activityType = HKWorkoutActivityType(rawValue: UInt(config.activityType)) {
+      configuration.activityType = activityType
     }
 
-    if let locationTypeRaw = dict[HKWorkoutSessionLocationTypePropertyName] as? Int,
-        let locationType = HKWorkoutSessionLocationType(rawValue: locationTypeRaw) {
+    if let locationTypeRaw = config.locationType,
+       let locationType = HKWorkoutSessionLocationType(rawValue: Int(locationTypeRaw.rawValue)) {
         configuration.locationType = locationType
     }
 

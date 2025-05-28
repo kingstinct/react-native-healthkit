@@ -1,6 +1,6 @@
 
 // Unit types are a straight mapping from here https://developer.apple.com/documentation/healthkit/hkunit/1615733-init
-export type HKMetricPrefix =
+export type MetricPrefix =
     | ''
     | 'p'
     | 'n'
@@ -16,7 +16,7 @@ export type HKMetricPrefix =
     | 'T'
     | 'f'
 
-export type HKUnitMetric =
+export type UnitMetric =
     | 'g'
     | 'J'
     | 'K'
@@ -28,7 +28,7 @@ export type HKUnitMetric =
     | 'Hz'
     | 'V'
 
-export type HKUnits =
+export type Units =
     | 'dBHL'
     | 'dBASPL'
     | '%'
@@ -36,33 +36,33 @@ export type HKUnits =
     | 'IU'
     | 'appleEffortScore'
 
-export type MeterUnit<Prefix extends HKMetricPrefix> =
+export type MeterUnit<Prefix extends MetricPrefix> =
     `${Prefix}m`;
-export type LiterUnit<Prefix extends HKMetricPrefix> =
+export type LiterUnit<Prefix extends MetricPrefix> =
     `${Prefix}l`;
-export type GramUnit<Prefix extends HKMetricPrefix> =
+export type GramUnit<Prefix extends MetricPrefix> =
     `${Prefix}g`;
-export type PascalUnit<Prefix extends HKMetricPrefix> =
+export type PascalUnit<Prefix extends MetricPrefix> =
     `${Prefix}Pa`;
-export type SecondUnit<Prefix extends HKMetricPrefix> =
+export type SecondUnit<Prefix extends MetricPrefix> =
     `${Prefix}s`;
-export type JouleUnit<Prefix extends HKMetricPrefix> =
+export type JouleUnit<Prefix extends MetricPrefix> =
     `${Prefix}J`;
-export type HertzUnit<Prefix extends HKMetricPrefix> =
+export type HertzUnit<Prefix extends MetricPrefix> =
     `${Prefix}Hz`;
-export type VoltUnit<Prefix extends HKMetricPrefix> =
+export type VoltUnit<Prefix extends MetricPrefix> =
     `${Prefix}V`;
-export type SiemenUnit<Prefix extends HKMetricPrefix> =
+export type SiemenUnit<Prefix extends MetricPrefix> =
     `${Prefix}S`;
 
 // not 100% sure about these
 export type MoleUnit<MolarMass extends number> = `mol<${MolarMass}>`;
 export type MoleUnitWith<
     MolarMass extends number,
-    Prefix extends HKMetricPrefix
+    Prefix extends MetricPrefix
 > = `${Prefix}mol<${MolarMass}>`;
 
-export type FrequencyUnit = HertzUnit<HKMetricPrefix>;
+export type FrequencyUnit = HertzUnit<MetricPrefix>;
 
 /**
  * More SI prefixes also available as literals, just type the string
@@ -79,7 +79,7 @@ export type UnitOfLength =
     | 'yd'
     | 'mi'
 
-export type LengthUnit = MeterUnit<HKMetricPrefix> | UnitOfLength;
+export type LengthUnit = MeterUnit<MetricPrefix> | UnitOfLength;
 
 /**
  * More SI prefixes also available as literals, just type the string
@@ -98,7 +98,7 @@ export type UnitOfVolume =
      */
     | 'l'
 
-export type VolumeUnit = LiterUnit<HKMetricPrefix> | UnitOfVolume;
+export type VolumeUnit = LiterUnit<MetricPrefix> | UnitOfVolume;
 
 /**
  * More SI prefixes also available as literals, just type the string
@@ -118,7 +118,7 @@ export type UnitOfMass =
  * More SI prefixes also available as literals, just type the string
  * @example 'mg', 'kg'
  */
-export type MassUnit = GramUnit<HKMetricPrefix> | UnitOfMass;
+export type MassUnit = GramUnit<MetricPrefix> | UnitOfMass;
 
 /**
  * More SI prefixes also available as literals, just type the string
@@ -140,7 +140,7 @@ export type UnitOfPressure =
  * More SI prefixes also available as literals, just type the string
  * @example 'kPa', 'hPa'
  */
-export type PressureUnit = PascalUnit<HKMetricPrefix> | UnitOfPressure;
+export type PressureUnit = PascalUnit<MetricPrefix> | UnitOfPressure;
 
 /**
  * More SI prefixes also available as literals, just type the string
@@ -160,7 +160,7 @@ export type UnitOfTime =
  * More SI prefixes also available as literals, just type the string
  * @example 'ms'
  */
-export type TimeUnit = SecondUnit<HKMetricPrefix> | UnitOfTime;
+export type TimeUnit = SecondUnit<MetricPrefix> | UnitOfTime;
 export type TemperatureUnit = 'degC' | 'degF' | 'K';
 
 /**
@@ -169,7 +169,7 @@ export type TemperatureUnit = 'degC' | 'degF' | 'K';
  */
 export type UnitOfEnergy = 'kcal' | 'Cal' | 'cal' | 'J';
 
-export type EnergyUnit = JouleUnit<HKMetricPrefix> | UnitOfEnergy;
+export type EnergyUnit = JouleUnit<MetricPrefix> | UnitOfEnergy;
 
 export type BloodGlucoseUnit = 'mmol<180.15588000005408>/l' | 'mg/dL';
 
@@ -180,12 +180,12 @@ export type SpeedUnit<
 
 export type CountPerTime<TTime extends TimeUnit> = `count/${TTime}`;
 
-export type HKUnit =
+export type Unit =
     | BloodGlucoseUnit
     | CountPerTime<TimeUnit>
     | EnergyUnit
     | FrequencyUnit
-    | HKUnits
+    | Units
     | LengthUnit
     | MassUnit
     | PressureUnit

@@ -1,4 +1,4 @@
-import CoreLocation
+/*import CoreLocation
 import HealthKit
 
 #if canImport(WorkoutKit)
@@ -104,7 +104,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
     var quantityTypes = Set<HKQuantityType>()
     for identifierString in forIdentifiers {
-      let identifier = HKQuantityTypeIdentifier.init(rawValue: identifierString as! String)
+      let identifier = QuantityTypeIdentifier.init(rawValue: identifierString as! String)
       let type = HKSampleType.quantityType(forIdentifier: identifier)
       if type != nil {
         quantityTypes.insert(type!)
@@ -236,7 +236,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
       return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
     }
 
-    let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
+    let identifier = QuantityTypeIdentifier.init(rawValue: typeIdentifier)
 
     guard let type = HKObjectType.quantityType(forIdentifier: identifier) else {
       return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
@@ -270,7 +270,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
       return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
     }
 
-    let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
+    let identifier = QuantityTypeIdentifier.init(rawValue: typeIdentifier)
     let sampleUuid = UUID.init(uuidString: uuid)!
 
     guard let sampleType = HKObjectType.quantityType(forIdentifier: identifier) else {
@@ -299,7 +299,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
       return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
     }
 
-    let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
+    let identifier = QuantityTypeIdentifier.init(rawValue: typeIdentifier)
 
     guard let sampleType = HKObjectType.quantityType(forIdentifier: identifier) else {
       return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
@@ -333,7 +333,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
       return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
     }
 
-    let identifier = HKCorrelationTypeIdentifier.init(rawValue: typeIdentifier)
+    let identifier = CorrelationTypeIdentifier.init(rawValue: typeIdentifier)
 
     guard let type = HKObjectType.correlationType(forIdentifier: identifier) else {
       return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
@@ -342,7 +342,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     var initializedSamples = Set<HKSample>()
     for sample in samples {
       if sample.keys.contains("quantityType") {
-        let typeId = HKQuantityTypeIdentifier.init(rawValue: sample["quantityType"] as! String)
+        let typeId = QuantityTypeIdentifier.init(rawValue: sample["quantityType"] as! String)
         if let type = HKSampleType.quantityType(forIdentifier: typeId) {
           let unitStr = sample["unit"] as! String
           let quantityVal = sample["quantity"] as! Double
@@ -360,7 +360,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
           initializedSamples.insert(quantitySample)
         }
       } else if sample.keys.contains("categoryType") {
-        let typeId = HKCategoryTypeIdentifier.init(rawValue: sample["categoryType"] as! String)
+        let typeId = CategoryTypeIdentifier.init(rawValue: sample["categoryType"] as! String)
         if let type = HKSampleType.categoryType(forIdentifier: typeId) {
           let value = sample["value"] as! Int
           let metadata = sample["metadata"] as? [String: Any]
@@ -427,7 +427,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     var totalFlightsClimbed: HKQuantity?
     // generating quantity samples
     for quantity in quantities {
-      let typeId = HKQuantityTypeIdentifier.init(rawValue: quantity["quantityType"] as! String)
+      let typeId = QuantityTypeIdentifier.init(rawValue: quantity["quantityType"] as! String)
       if let type = HKSampleType.quantityType(forIdentifier: typeId) {
         let unitStr = quantity["unit"] as! String
         let quantityVal = quantity["quantity"] as! Double
@@ -443,10 +443,10 @@ class ReactNativeHealthkit: RCTEventEmitter {
         if quantity.is(compatibleWith: HKUnit.meter()) {
           totalDistance = quantity
         }
-        if typeId == HKQuantityTypeIdentifier.swimmingStrokeCount {
+        if typeId == QuantityTypeIdentifier.swimmingStrokeCount {
           totalSwimmingStrokeCount = quantity
         }
-        if typeId == HKQuantityTypeIdentifier.flightsClimbed {
+        if typeId == QuantityTypeIdentifier.flightsClimbed {
           totalFlightsClimbed = quantity
         }
         if let quantityStart, let quantityEnd {
@@ -641,7 +641,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
       return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
     }
 
-    let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier)
+    let identifier = CategoryTypeIdentifier.init(rawValue: typeIdentifier)
 
     guard let type = HKObjectType.categoryType(forIdentifier: identifier) else {
       return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
@@ -826,7 +826,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
       return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
     }
 
-    let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
+    let identifier = QuantityTypeIdentifier.init(rawValue: typeIdentifier)
     guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else {
       return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
     }
@@ -942,7 +942,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
 
     guard
       let quantityType = HKObjectType.quantityType(
-        forIdentifier: HKQuantityTypeIdentifier(rawValue: typeIdentifier))
+        forIdentifier: QuantityTypeIdentifier(rawValue: typeIdentifier))
     else {
       return reject(
         TYPE_IDENTIFIER_ERROR,
@@ -1232,7 +1232,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
       return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
     }
 
-    let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
+    let identifier = QuantityTypeIdentifier.init(rawValue: typeIdentifier)
     guard let sampleType = HKSampleType.quantityType(forIdentifier: identifier) else {
       return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
     }
@@ -1282,7 +1282,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
       return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
     }
 
-    let identifier = HKCorrelationTypeIdentifier.init(rawValue: typeIdentifier)
+    let identifier = CorrelationTypeIdentifier.init(rawValue: typeIdentifier)
     guard let sampleType = HKSampleType.correlationType(forIdentifier: identifier) else {
       return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
     }
@@ -1364,7 +1364,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
       return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
     }
 
-    let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier)
+    let identifier = CategoryTypeIdentifier.init(rawValue: typeIdentifier)
     guard let sampleType = HKSampleType.categoryType(forIdentifier: identifier) else {
       return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
     }
@@ -1414,7 +1414,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
       return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
     }
 
-    let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
+    let identifier = QuantityTypeIdentifier.init(rawValue: typeIdentifier)
     guard let sampleType = HKSampleType.quantityType(forIdentifier: identifier) else {
       return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
     }
@@ -1478,7 +1478,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
       return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
     }
 
-    let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier)
+    let identifier = CategoryTypeIdentifier.init(rawValue: typeIdentifier)
     guard let sampleType = HKSampleType.categoryType(forIdentifier: identifier) else {
       return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize " + typeIdentifier, nil)
     }
@@ -2213,3 +2213,4 @@ class ReactNativeHealthkit: RCTEventEmitter {
     #endif
   }
 }
+*/

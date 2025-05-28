@@ -3,7 +3,9 @@
 	"compilerOptions": {
 		"strict": true,
 		"paths": {
-			"@/*": ["./*"]
+			"@/*": ["./*"],
+			"react-native-healthkit": ["../../packages/react-native-healthkit/src/index.ts"],
+			"react-native-healthkit/*": ["../../packages/react-native-healthkit/src/*"]
 		}
 	},
 	"include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]

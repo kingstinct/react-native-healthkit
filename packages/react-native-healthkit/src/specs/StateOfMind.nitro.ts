@@ -1,12 +1,12 @@
 // TODO: Export specs that extend HybridObject<...> here
 
 import type { HybridObject } from "react-native-nitro-modules";
-import type { HKDevice } from "./Source.nitro";
-import type { HKSourceRevision } from "./Source.nitro";
-import type { HKGenericMetadata } from "./Shared";
+import type { Device } from "./Source.nitro";
+import type { SourceRevision } from "./Source.nitro";
+import type { GenericMetadata } from "./Shared";
 
 
-export enum HKStateOfMindValenceClassification {
+export enum StateOfMindValenceClassification {
   veryUnpleasant = 1,
   unpleasant = 2,
   slightlyUnpleasant = 3,
@@ -16,29 +16,29 @@ export enum HKStateOfMindValenceClassification {
   veryPleasant = 7,
 }
 
-export interface HKStateOfMindSampleRaw {
+export interface StateOfMindSampleRaw {
   readonly uuid: string;
-  readonly device?: HKDevice;
-  readonly startDate: string;
-  readonly endDate: string;
-  readonly metadata?: HKGenericMetadata;
-  readonly sourceRevision?: HKSourceRevision;
+  readonly device?: Device;
+  readonly startTimestamp: number;
+  readonly endTimestamp: number;
+  readonly metadata?: GenericMetadata;
+  readonly sourceRevision?: SourceRevision;
   // State of mind sample properties
   /**
    * @see {@link https://developer.apple.com/documentation/healthkit/hkstateofmind/4337998-valence Apple Docs }
    * Value between -1 and 1
    */
   readonly valence: number;
-  readonly kind: HKStateOfMindKind;
-  readonly valenceClassification: HKStateOfMindValenceClassification;
-  readonly associations: readonly HKStateOfMindAssociation[];
-  readonly labels: readonly HKStateOfMindLabel[];
+  readonly kind: StateOfMindKind;
+  readonly valenceClassification: StateOfMindValenceClassification;
+  readonly associations: readonly StateOfMindAssociation[];
+  readonly labels: readonly StateOfMindLabel[];
 }
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkstateofmind/label Apple Docs}
  */
-export enum HKStateOfMindLabel {
+export enum StateOfMindLabel {
   amazed = 1,
   amused = 2,
   angry = 3,
@@ -83,7 +83,7 @@ export enum HKStateOfMindLabel {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkstateofmind/kind Apple Docs}
  */
-export enum HKStateOfMindKind {
+export enum StateOfMindKind {
   dailyMood = 2,
   momentaryEmotion = 1
 }
@@ -92,7 +92,7 @@ export enum HKStateOfMindKind {
  * @see {@link https://developer.apple.com/documentation/healthkit/hkstateofmind/association Apple Docs}
  * @since iOS 17.0+
  */
-export enum HKStateOfMindAssociation {
+export enum StateOfMindAssociation {
   community = 1,
   currentEvents = 2,
   dating = 3,
@@ -114,10 +114,10 @@ export enum HKStateOfMindAssociation {
 }
 
 export interface StateOfMind extends HybridObject<{ ios: 'swift' }> {
-    readonly querySamples: (
-        from: string | null,
-        to: string | null,
+    querySamples(
+        fromTimestamp: number | null,
+        toTimestamp: number | null,
         limit: number,
         ascending: boolean
-      ) => Promise<readonly HKStateOfMindSampleRaw[]>;
+      ): Promise<readonly StateOfMindSampleRaw[]>;
 }

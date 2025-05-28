@@ -1,69 +1,68 @@
 import type { HybridObject } from "react-native-nitro-modules";
-import type { HKDevice, HKSourceRevision } from "./Source.nitro";
-import type { HKGenericMetadata } from "./Shared";
-import type { HKCategoryTypeIdentifier } from "../types/HKCategoryTypeIdentifier";
+import type { Device, SourceRevision } from "./Source.nitro";
+import type { DeletedSample, GenericMetadata } from "./Shared";
+import type { CategoryTypeIdentifier } from "../types/CategoryTypeIdentifier";
 
 
-export type HKCategoryTypePresenceIdentifier = 'HKCategoryTypeIdentifierAppetiteChanges'
-| 'HKCategoryTypeIdentifierSleepChanges'
+export type CategoryTypePresenceIdentifier = 'CategoryTypeIdentifierAppetiteChanges'
+| 'CategoryTypeIdentifierSleepChanges'
 
-export type HKCategoryTypeValueNotApplicableIdentifier = 'HKCategoryTypeIdentifierHighHeartRateEvent'
-| 'HKCategoryTypeIdentifierIntermenstrualBleeding'
-| 'HKCategoryTypeIdentifierMindfulSession'
-| 'HKCategoryTypeIdentifierSexualActivity'
+export type CategoryTypeValueNotApplicableIdentifier = 'CategoryTypeIdentifierHighHeartRateEvent'
+| 'CategoryTypeIdentifierIntermenstrualBleeding'
+| 'CategoryTypeIdentifierMindfulSession'
+| 'CategoryTypeIdentifierSexualActivity'
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluepregnancytestresult Apple Docs }
  */
-enum HKCategoryValuePregnancyTestResult {
+enum CategoryValuePregnancyTestResult {
   positive = 2,
   negative = 1,
   indeterminate = 3,
 }
 
-
-  export type HKCategoryTypeSeverityIdentifier = 'HKCategoryTypeIdentifierAbdominalCramps'
-  | 'HKCategoryTypeIdentifierAcne'
-  | 'HKCategoryTypeIdentifierBladderIncontinence'
-  | 'HKCategoryTypeIdentifierBloating'
-  | 'HKCategoryTypeIdentifierBreastPain'
-  | 'HKCategoryTypeIdentifierChestTightnessOrPain'
-  | 'HKCategoryTypeIdentifierChills'
-  | 'HKCategoryTypeIdentifierConstipation'
-  | 'HKCategoryTypeIdentifierCoughing'
-  | 'HKCategoryTypeIdentifierDiarrhea'
-  | 'HKCategoryTypeIdentifierDizziness'
-  | 'HKCategoryTypeIdentifierDrySkin'
-  | 'HKCategoryTypeIdentifierFainting'
-  | 'HKCategoryTypeIdentifierFatigue'
-  | 'HKCategoryTypeIdentifierFever'
-  | 'HKCategoryTypeIdentifierGeneralizedBodyAche'
-  | 'HKCategoryTypeIdentifierHairLoss'
-  | 'HKCategoryTypeIdentifierHeadache'
-  | 'HKCategoryTypeIdentifierHeartburn'
-  | 'HKCategoryTypeIdentifierHotFlashes'
-  | 'HKCategoryTypeIdentifierLossOfSmell'
-  | 'HKCategoryTypeIdentifierLossOfTaste'
-  | 'HKCategoryTypeIdentifierLowerBackPain'
-  | 'HKCategoryTypeIdentifierMemoryLapse'
-  | 'HKCategoryTypeIdentifierMoodChanges'
-  | 'HKCategoryTypeIdentifierNausea'
-  | 'HKCategoryTypeIdentifierNightSweats'
-  | 'HKCategoryTypeIdentifierPelvicPain'
-  | 'HKCategoryTypeIdentifierRapidPoundingOrFlutteringHeartbeat'
-  | 'HKCategoryTypeIdentifierRunnyNose'
-  | 'HKCategoryTypeIdentifierShortnessOfBreath'
-  | 'HKCategoryTypeIdentifierSinusCongestion'
-  | 'HKCategoryTypeIdentifierSkippedHeartbeat'
-  | 'HKCategoryTypeIdentifierSoreThroat'
-  | 'HKCategoryTypeIdentifierVaginalDryness'
-  | 'HKCategoryTypeIdentifierVomiting'
-  | 'HKCategoryTypeIdentifierWheezing'
+export type CategoryTypeSeverityIdentifier = 'CategoryTypeIdentifierAbdominalCramps'
+  | 'CategoryTypeIdentifierAcne'
+  | 'CategoryTypeIdentifierBladderIncontinence'
+  | 'CategoryTypeIdentifierBloating'
+  | 'CategoryTypeIdentifierBreastPain'
+  | 'CategoryTypeIdentifierChestTightnessOrPain'
+  | 'CategoryTypeIdentifierChills'
+  | 'CategoryTypeIdentifierConstipation'
+  | 'CategoryTypeIdentifierCoughing'
+  | 'CategoryTypeIdentifierDiarrhea'
+  | 'CategoryTypeIdentifierDizziness'
+  | 'CategoryTypeIdentifierDrySkin'
+  | 'CategoryTypeIdentifierFainting'
+  | 'CategoryTypeIdentifierFatigue'
+  | 'CategoryTypeIdentifierFever'
+  | 'CategoryTypeIdentifierGeneralizedBodyAche'
+  | 'CategoryTypeIdentifierHairLoss'
+  | 'CategoryTypeIdentifierHeadache'
+  | 'CategoryTypeIdentifierHeartburn'
+  | 'CategoryTypeIdentifierHotFlashes'
+  | 'CategoryTypeIdentifierLossOfSmell'
+  | 'CategoryTypeIdentifierLossOfTaste'
+  | 'CategoryTypeIdentifierLowerBackPain'
+  | 'CategoryTypeIdentifierMemoryLapse'
+  | 'CategoryTypeIdentifierMoodChanges'
+  | 'CategoryTypeIdentifierNausea'
+  | 'CategoryTypeIdentifierNightSweats'
+  | 'CategoryTypeIdentifierPelvicPain'
+  | 'CategoryTypeIdentifierRapidPoundingOrFlutteringHeartbeat'
+  | 'CategoryTypeIdentifierRunnyNose'
+  | 'CategoryTypeIdentifierShortnessOfBreath'
+  | 'CategoryTypeIdentifierSinusCongestion'
+  | 'CategoryTypeIdentifierSkippedHeartbeat'
+  | 'CategoryTypeIdentifierSoreThroat'
+  | 'CategoryTypeIdentifierVaginalDryness'
+  | 'CategoryTypeIdentifierVomiting'
+  | 'CategoryTypeIdentifierWheezing'
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluecervicalmucusquality Apple Docs }
  */
-export enum HKCategoryValueCervicalMucusQuality {
+export enum CategoryValueCervicalMucusQuality {
   dry = 1,
   sticky = 2,
   creamy = 3,
@@ -74,7 +73,7 @@ export enum HKCategoryValueCervicalMucusQuality {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluemenstrualflow Apple Docs }
  */
-export enum HKCategoryValueMenstrualFlow {
+export enum CategoryValueMenstrualFlow {
   unspecified = 1,
   none = 5,
   light = 2,
@@ -85,7 +84,7 @@ export enum HKCategoryValueMenstrualFlow {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalueovulationtestresult Apple Docs }
  */
-export enum HKCategoryValueOvulationTestResult {
+export enum CategoryValueOvulationTestResult {
   negative = 1,
   luteinizingHormoneSurge = 2,
   indeterminate = 3,
@@ -95,7 +94,7 @@ export enum HKCategoryValueOvulationTestResult {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluesleepanalysis Apple Docs }
  */
-export enum HKCategoryValueSleepAnalysis {
+export enum CategoryValueSleepAnalysis {
   inBed = 0,
   asleepUnspecified = 1,
   awake = 2,
@@ -107,7 +106,7 @@ export enum HKCategoryValueSleepAnalysis {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalueappetitechanges Apple Docs}
  */
-export enum HKCategoryValueAppetiteChanges {
+export enum CategoryValueAppetiteChanges {
   decreased = 2,
   increased = 3,
   noChange = 1,
@@ -117,7 +116,7 @@ export enum HKCategoryValueAppetiteChanges {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluepresence Apple Docs}
  */
-export enum HKCategoryValuePresence {
+export enum CategoryValuePresence {
   notPresent = 1,
   present = 0,
 }
@@ -125,7 +124,7 @@ export enum HKCategoryValuePresence {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalueseverity Apple Docs }
  */
-export enum HKCategoryValueSeverity {
+export enum CategoryValueSeverity {
   notPresent = 1,
   mild = 2,
   moderate = 3,
@@ -136,130 +135,125 @@ export enum HKCategoryValueSeverity {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalue/notapplicable Apple Docs }
  */
-export enum HKCategoryValueNotApplicable {
+export enum CategoryValueNotApplicable {
   notApplicable = 0,
 }
 
 
-export enum HKCategoryValueLowCardioFitnessEvent {
+export enum CategoryValueLowCardioFitnessEvent {
   lowFitness = 1,
 }
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalue Apple Docs }
  */
-export type HKCategoryValue =
-  | HKCategoryValueAppetiteChanges
-  | HKCategoryValueCervicalMucusQuality
-  | HKCategoryValueLowCardioFitnessEvent
-  | HKCategoryValueMenstrualFlow
-  | HKCategoryValueOvulationTestResult
-  | HKCategoryValuePresence
-  | HKCategoryValueSeverity
-  | HKCategoryValueSleepAnalysis
+export type CategoryValue =
+  | CategoryValueAppetiteChanges
+  | CategoryValueCervicalMucusQuality
+  | CategoryValueLowCardioFitnessEvent
+  | CategoryValueMenstrualFlow
+  | CategoryValueOvulationTestResult
+  | CategoryValuePresence
+  | CategoryValueSeverity
+  | CategoryValueSleepAnalysis
   | number;
 
 
-export enum HKCategoryValueAppleStandHour {
+export enum CategoryValueAppleStandHour {
   stood = 0,
   idle = 1,
 }
 
 
-export interface HKCategorySampleRawForSaving {
-  readonly startDate?: string;
-  readonly endDate?: string;
-  readonly categoryType: HKCategoryTypeIdentifier;
-  readonly value: HKCategoryValueForIdentifier;
-  readonly metadata: HKGenericMetadata;
-  readonly sourceRevision?: HKSourceRevision;
+export interface CategorySampleRawForSaving {
+  readonly startTimestamp?: number;
+  readonly endTimestamp?: number;
+  readonly categoryType: CategoryTypeIdentifier;
+  readonly value: CategoryValueForIdentifier;
+  readonly metadata: GenericMetadata;
+  readonly sourceRevision?: SourceRevision;
 };
 
 export interface QueryCategorySamplesResponseRaw {
-  readonly samples: readonly HKCategorySampleRaw[];
-  readonly deletedSamples: readonly DeletedCategorySampleRaw[];
+  readonly samples: readonly CategorySampleRaw[];
+  readonly deletedSamples: readonly DeletedSample[];
   readonly newAnchor: string;
 };
 
-export interface HKCategorySampleRaw {
+export interface CategorySampleRaw {
   readonly uuid: string;
-  readonly device?: HKDevice;
-  readonly categoryType: HKCategoryTypeIdentifier;
-  readonly startDate: string;
-  readonly endDate: string;
-  readonly value: HKCategoryValueForIdentifier;
-  readonly metadata: HKGenericMetadata;
-  readonly sourceRevision?: HKSourceRevision;
+  readonly device?: Device;
+  readonly categoryType: CategoryTypeIdentifier;
+  readonly startTimestamp: number;
+  readonly endTimestamp: number;
+  readonly value: CategoryValueForIdentifier;
+  readonly metadata: GenericMetadata;
+  readonly sourceRevision?: SourceRevision;
 };
 
-export interface DeletedCategorySampleRaw {
-  readonly uuid: string;
-  readonly metadata: HKGenericMetadata;
-};
-
-export type HKCategoryValueForIdentifier<T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier> =
-  T extends 'HKCategoryTypeIdentifierCervicalMucusQuality'
-    ? HKCategoryValueCervicalMucusQuality
-    : T extends 'HKCategoryTypeIdentifierMenstrualFlow'
-      ? HKCategoryValueMenstrualFlow
-      : T extends 'HKCategoryTypeIdentifierOvulationTestResult'
-        ? HKCategoryValueOvulationTestResult
-        : T extends 'HKCategoryTypeIdentifierSleepAnalysis'
-          ? HKCategoryValueSleepAnalysis
-          : T extends HKCategoryTypeValueNotApplicableIdentifier
-            ? HKCategoryValueNotApplicable
-            : T extends HKCategoryTypeSeverityIdentifier
-              ? HKCategoryValueSeverity
-              : T extends HKCategoryTypePresenceIdentifier
-                ? HKCategoryValuePresence
-                : T extends 'HKCategoryTypeIdentifierLowCardioFitnessEvent'
-                  ? HKCategoryValueLowCardioFitnessEvent
-                  : T extends 'HKCategoryTypeIdentifierPregnancyTestResult'
-                    ? HKCategoryValuePregnancyTestResult
-                    : T extends 'HKCategoryTypeIdentifierPregnancyTestResult'
-                      ? HKCategoryValuePregnancyTestResult
-                      : T extends 'HKCategoryTypeIdentifierAppleStandHour'
-                        ? HKCategoryValueAppleStandHour
+export type CategoryValueForIdentifier<T extends CategoryTypeIdentifier = CategoryTypeIdentifier> =
+  T extends 'CategoryTypeIdentifierCervicalMucusQuality'
+    ? CategoryValueCervicalMucusQuality
+    : T extends 'CategoryTypeIdentifierMenstrualFlow'
+      ? CategoryValueMenstrualFlow
+      : T extends 'CategoryTypeIdentifierOvulationTestResult'
+        ? CategoryValueOvulationTestResult
+        : T extends 'CategoryTypeIdentifierSleepAnalysis'
+          ? CategoryValueSleepAnalysis
+          : T extends CategoryTypeValueNotApplicableIdentifier
+            ? CategoryValueNotApplicable
+            : T extends CategoryTypeSeverityIdentifier
+              ? CategoryValueSeverity
+              : T extends CategoryTypePresenceIdentifier
+                ? CategoryValuePresence
+                : T extends 'CategoryTypeIdentifierLowCardioFitnessEvent'
+                  ? CategoryValueLowCardioFitnessEvent
+                  : T extends 'CategoryTypeIdentifierPregnancyTestResult'
+                    ? CategoryValuePregnancyTestResult
+                    : T extends 'CategoryTypeIdentifierPregnancyTestResult'
+                      ? CategoryValuePregnancyTestResult
+                      : T extends 'CategoryTypeIdentifierAppleStandHour'
+                        ? CategoryValueAppleStandHour
                         : number;
 
 
 export interface CategoryType extends HybridObject<{ ios: 'swift' }> {
 
-  readonly saveCategorySample: (
-    identifier: HKCategoryTypeIdentifier,
-    value: HKCategoryValueForIdentifier,
-    start: string,
-    end: string,
-    metadata: HKGenericMetadata
-  ) => Promise<boolean>;
+  saveCategorySample(
+    identifier: CategoryTypeIdentifier,
+    value: CategoryValueForIdentifier,
+    startTimestamp: number,
+    endTimestamp: number,
+    metadata: GenericMetadata
+  ): Promise<boolean>;
 
-  readonly queryCategorySamples: (
-    identifier: HKCategoryTypeIdentifier,
-    from: string,
-    to: string,
+  queryCategorySamples(
+    identifier: CategoryTypeIdentifier,
+    fromTimestamp: number,
+    toTimestamp: number,
     limit: number,
     ascending: boolean
-  ) => Promise<readonly HKCategorySampleRaw[]>;
+  ): Promise<readonly CategorySampleRaw[]>;
 
 
-  readonly queryCategorySamplesWithAnchor: (
-    identifier: HKCategoryTypeIdentifier,
-    from: string,
-    to: string,
+  queryCategorySamplesWithAnchor(
+    identifier: CategoryTypeIdentifier,
+    fromTimestamp: number,
+    toTimestamp: number,
     limit: number,
     anchor: string
-  ) => Promise<QueryCategorySamplesResponseRaw>;
+  ): Promise<QueryCategorySamplesResponseRaw>;
 
 }
 
 export type MetadataMapperForCategoryIdentifier<
-  T extends HKCategoryTypeIdentifier = HKCategoryTypeIdentifier
-> = T extends 'HKCategoryTypeIdentifierSexualActivity'
-  ? HKGenericMetadata & {
+  T extends CategoryTypeIdentifier = CategoryTypeIdentifier
+> = T extends 'CategoryTypeIdentifierSexualActivity'
+  ? GenericMetadata & {
     readonly HKSexualActivityProtectionUsed: boolean;
   }
-  : T extends 'HKCategoryTypeIdentifierMenstrualFlow'
-    ? HKGenericMetadata & {
+  : T extends 'CategoryTypeIdentifierMenstrualFlow'
+    ? GenericMetadata & {
       readonly HKMenstrualCycleStart: boolean;
     }
-    : HKGenericMetadata;
+    : GenericMetadata;

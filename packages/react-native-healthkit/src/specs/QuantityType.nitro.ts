@@ -1,39 +1,33 @@
 import type { HybridObject } from "react-native-nitro-modules";
-import type { HKGenericMetadata, HKQuantity } from "./Shared";
-import type { HKWorkoutRaw } from "../types/HKWorkoutRaw";
-import type { BloodGlucoseUnit, CountPerTime, EnergyUnit, HKUnit, LengthUnit, MassUnit, SpeedUnit, TemperatureUnit, TimeUnit, VolumeUnit } from "../types/Units";
-import type { HKQuantityTypeIdentifier } from "../types/HKQuantityTypeIdentifier";
-import type { HKQuantitySampleRaw } from "../types/HKQuantitySampleRaw";
-
-export interface DeletedQuantitySampleRaw {
-  readonly uuid: string;
-  readonly metadata: HKGenericMetadata;
-};
-
+import type { DeletedSample, GenericMetadata } from "./Shared";
+import type { WorkoutRaw } from "../types/WorkoutRaw";
+import type { BloodGlucoseUnit, CountPerTime, EnergyUnit, Unit, LengthUnit, MassUnit, SpeedUnit, TemperatureUnit, TimeUnit, VolumeUnit } from "../types/Units";
+import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
+import type { QuantitySampleRaw } from "../types/QuantitySampleRaw";
 
 interface QuantityDateInterval {
-  readonly from: string;
-  readonly to: string;
+  readonly fromTimestamp: number;
+  readonly toTimestamp: number;
 };
 
 export interface QueryStatisticsResponseRaw {
-  readonly averageQuantity?: HKQuantity;
-  readonly maximumQuantity?: HKQuantity;
-  readonly minimumQuantity?: HKQuantity;
-  readonly sumQuantity?: HKQuantity;
-  readonly mostRecentQuantity?: HKQuantity;
+  readonly averageQuantity?: QuantityRaw;
+  readonly maximumQuantity?: QuantityRaw;
+  readonly minimumQuantity?: QuantityRaw;
+  readonly sumQuantity?: QuantityRaw;
+  readonly mostRecentQuantity?: QuantityRaw;
   readonly mostRecentQuantityDateInterval?: QuantityDateInterval;
-  readonly duration?: HKQuantity;
+  readonly duration?: QuantityRaw;
 };
 
 
 export interface QueryQuantitySamplesResponseRaw {
-  readonly samples: readonly HKQuantitySampleRaw[];
-  readonly deletedSamples: readonly DeletedQuantitySampleRaw[];
+  readonly samples: readonly QuantitySampleRaw[];
+  readonly deletedSamples: readonly DeletedSample[];
   readonly newAnchor: string;
 };
 
-export interface HKQuantityRaw {
+export interface QuantityRaw {
   readonly unit: string;
   readonly quantity: number;
 };
@@ -42,12 +36,12 @@ export interface HKQuantityRaw {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkinsulindeliveryreason Apple Docs }
  */
-export enum HKInsulinDeliveryReason {
+export enum InsulinDeliveryReason {
   basal = 1,
   bolus = 2,
 }
 
-export enum HKHeartRateMotionContext {
+export enum HeartRateMotionContext {
   active = 2,
   notSet = 0,
   sedentary = 1,
@@ -65,7 +59,7 @@ export interface IntervalComponents {
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkstatisticsoptions Apple Docs }
  */
-export type HKStatisticsOptions =
+export type StatisticsOptions =
   | 'cumulativeSum'
   | 'discreteAverage'
   | 'discreteMax'
@@ -76,185 +70,185 @@ export type HKStatisticsOptions =
   | 'separateBySource'
 
 export type MetadataMapperForQuantityIdentifier<
-  TQuantityTypeIdentifier = HKQuantityTypeIdentifier
-> = TQuantityTypeIdentifier extends 'HKQuantityTypeIdentifierInsulinDelivery'
-  ? HKGenericMetadata & {
-    readonly HKInsulinDeliveryReason: HKInsulinDeliveryReason;
+  TQuantityTypeIdentifier = QuantityTypeIdentifier
+> = TQuantityTypeIdentifier extends 'QuantityTypeIdentifierInsulinDelivery'
+  ? GenericMetadata & {
+    readonly HKInsulinDeliveryReason: InsulinDeliveryReason;
   }
-  : TQuantityTypeIdentifier extends 'HKQuantityTypeIdentifierBloodGlucose'
-    ? HKGenericMetadata & {
+  : TQuantityTypeIdentifier extends 'QuantityTypeIdentifierBloodGlucose'
+    ? GenericMetadata & {
       readonly HKBloodGlucoseMealTime?: number;
     }
-    : TQuantityTypeIdentifier extends 'HKQuantityTypeIdentifierHeartRate'
-      ? HKGenericMetadata & {
-        readonly HKHeartRateMotionContext?: HKHeartRateMotionContext;
+    : TQuantityTypeIdentifier extends 'QuantityTypeIdentifierHeartRate'
+      ? GenericMetadata & {
+        readonly HKHeartRateMotionContext?: HeartRateMotionContext;
       }
-      : HKGenericMetadata;
+      : GenericMetadata;
 
-export type UnitForIdentifier<T extends HKQuantityTypeIdentifier = HKQuantityTypeIdentifier> =
-  T extends 'HKQuantityTypeIdentifierBloodGlucose'
+export type UnitForIdentifier<T extends QuantityTypeIdentifier = QuantityTypeIdentifier> =
+  T extends 'QuantityTypeIdentifierBloodGlucose'
     ? BloodGlucoseUnit
     : T extends
-    | 'HKQuantityTypeIdentifierAppleExerciseTime'
-    | 'HKQuantityTypeIdentifierAppleMoveTime'
-    | 'HKQuantityTypeIdentifierAppleStandTime'
+    | 'QuantityTypeIdentifierAppleExerciseTime'
+    | 'QuantityTypeIdentifierAppleMoveTime'
+    | 'QuantityTypeIdentifierAppleStandTime'
       ? TimeUnit
       : T extends
-      | 'HKQuantityTypeIdentifierActiveEnergyBurned'
-      | 'HKQuantityTypeIdentifierBasalEnergyBurned'
-      | 'HKQuantityTypeIdentifierDietaryEnergyConsumed'
+      | 'QuantityTypeIdentifierActiveEnergyBurned'
+      | 'QuantityTypeIdentifierBasalEnergyBurned'
+      | 'QuantityTypeIdentifierDietaryEnergyConsumed'
         ? EnergyUnit
         : T extends
-        | 'HKQuantityTypeIdentifierDistanceCycling'
-        | 'HKQuantityTypeIdentifierDistanceDownhillSnowSports'
-        | 'HKQuantityTypeIdentifierDistanceSwimming'
-        | 'HKQuantityTypeIdentifierDistanceWalkingRunning'
-        | 'HKQuantityTypeIdentifierDistanceWheelchair'
-        | 'HKQuantityTypeIdentifierSixMinuteWalkTestDistance'
-        | 'HKQuantityTypeIdentifierWaistCircumference'
+        | 'QuantityTypeIdentifierDistanceCycling'
+        | 'QuantityTypeIdentifierDistanceDownhillSnowSports'
+        | 'QuantityTypeIdentifierDistanceSwimming'
+        | 'QuantityTypeIdentifierDistanceWalkingRunning'
+        | 'QuantityTypeIdentifierDistanceWheelchair'
+        | 'QuantityTypeIdentifierSixMinuteWalkTestDistance'
+        | 'QuantityTypeIdentifierWaistCircumference'
           ? LengthUnit
           : T extends
-          | 'HKQuantityTypeIdentifierBodyFatPercentage'
-          | 'HKQuantityTypeIdentifierOxygenSaturation'
-          | 'HKQuantityTypeIdentifierWalkingAsymmetryPercentage'
-          | 'HKQuantityTypeIdentifierWalkingDoubleSupportPercentage'
+          | 'QuantityTypeIdentifierBodyFatPercentage'
+          | 'QuantityTypeIdentifierOxygenSaturation'
+          | 'QuantityTypeIdentifierWalkingAsymmetryPercentage'
+          | 'QuantityTypeIdentifierWalkingDoubleSupportPercentage'
             ? '%'
             : T extends
-            | 'HKQuantityTypeIdentifierBasalBodyTemperature'
+            | 'QuantityTypeIdentifierBasalBodyTemperature'
 
               ? TemperatureUnit
               : T extends
-              | 'HKQuantityTypeIdentifierRunningSpeed'
-              | 'HKQuantityTypeIdentifierStairAscentSpeed'
-              | 'HKQuantityTypeIdentifierStairDescentSpeed'
-              | 'HKQuantityTypeIdentifierWalkingSpeed'
+              | 'QuantityTypeIdentifierRunningSpeed'
+              | 'QuantityTypeIdentifierStairAscentSpeed'
+              | 'QuantityTypeIdentifierStairDescentSpeed'
+              | 'QuantityTypeIdentifierWalkingSpeed'
 
                 ? SpeedUnit<LengthUnit, TimeUnit>
                 : T extends
-                | 'HKQuantityTypeIdentifierFlightsClimbed'
-                | 'HKQuantityTypeIdentifierNumberOfAlcoholicBeverages'
-                | 'HKQuantityTypeIdentifierNumberOfTimesFallen'
-                | 'HKQuantityTypeIdentifierPushCount'
-                | 'HKQuantityTypeIdentifierStepCount'
-                | 'HKQuantityTypeIdentifierSwimmingStrokeCount'
+                | 'QuantityTypeIdentifierFlightsClimbed'
+                | 'QuantityTypeIdentifierNumberOfAlcoholicBeverages'
+                | 'QuantityTypeIdentifierNumberOfTimesFallen'
+                | 'QuantityTypeIdentifierPushCount'
+                | 'QuantityTypeIdentifierStepCount'
+                | 'QuantityTypeIdentifierSwimmingStrokeCount'
                   ? 'count'
                   : T extends
-                  | 'HKQuantityTypeIdentifierDietaryBiotin'
-                  | 'HKQuantityTypeIdentifierDietaryCaffeine'
-                  | 'HKQuantityTypeIdentifierDietaryCalcium'
-                  | 'HKQuantityTypeIdentifierDietaryCarbohydrates'
-                  | 'HKQuantityTypeIdentifierDietaryChloride'
-                  | 'HKQuantityTypeIdentifierDietaryCholesterol'
-                  | 'HKQuantityTypeIdentifierDietaryChromium'
-                  | 'HKQuantityTypeIdentifierDietaryCopper'
-                  | 'HKQuantityTypeIdentifierDietaryFatMonounsaturated'
-                  | 'HKQuantityTypeIdentifierDietaryFatPolyunsaturated'
-                  | 'HKQuantityTypeIdentifierDietaryFatSaturated'
-                  | 'HKQuantityTypeIdentifierDietaryFatTotal'
-                  | 'HKQuantityTypeIdentifierDietaryFiber'
-                  | 'HKQuantityTypeIdentifierDietaryFolate'
-                  | 'HKQuantityTypeIdentifierDietaryIodine'
-                  | 'HKQuantityTypeIdentifierDietaryIron'
-                  | 'HKQuantityTypeIdentifierDietaryMagnesium'
-                  | 'HKQuantityTypeIdentifierDietaryManganese'
-                  | 'HKQuantityTypeIdentifierDietaryMolybdenum'
-                  | 'HKQuantityTypeIdentifierDietaryNiacin'
-                  | 'HKQuantityTypeIdentifierDietaryPantothenicAcid'
-                  | 'HKQuantityTypeIdentifierDietaryPhosphorus'
-                  | 'HKQuantityTypeIdentifierDietaryPotassium'
-                  | 'HKQuantityTypeIdentifierDietaryProtein'
-                  | 'HKQuantityTypeIdentifierDietaryRiboflavin'
-                  | 'HKQuantityTypeIdentifierDietarySelenium'
-                  | 'HKQuantityTypeIdentifierDietarySodium'
-                  | 'HKQuantityTypeIdentifierDietarySugar'
-                  | 'HKQuantityTypeIdentifierDietaryThiamin'
-                  | 'HKQuantityTypeIdentifierDietaryVitaminA'
-                  | 'HKQuantityTypeIdentifierDietaryVitaminB6'
-                  | 'HKQuantityTypeIdentifierDietaryVitaminB12'
-                  | 'HKQuantityTypeIdentifierDietaryVitaminC'
-                  | 'HKQuantityTypeIdentifierDietaryVitaminD'
-                  | 'HKQuantityTypeIdentifierDietaryVitaminE'
-                  | 'HKQuantityTypeIdentifierDietaryVitaminK'
-                  | 'HKQuantityTypeIdentifierDietaryZinc'
+                  | 'QuantityTypeIdentifierDietaryBiotin'
+                  | 'QuantityTypeIdentifierDietaryCaffeine'
+                  | 'QuantityTypeIdentifierDietaryCalcium'
+                  | 'QuantityTypeIdentifierDietaryCarbohydrates'
+                  | 'QuantityTypeIdentifierDietaryChloride'
+                  | 'QuantityTypeIdentifierDietaryCholesterol'
+                  | 'QuantityTypeIdentifierDietaryChromium'
+                  | 'QuantityTypeIdentifierDietaryCopper'
+                  | 'QuantityTypeIdentifierDietaryFatMonounsaturated'
+                  | 'QuantityTypeIdentifierDietaryFatPolyunsaturated'
+                  | 'QuantityTypeIdentifierDietaryFatSaturated'
+                  | 'QuantityTypeIdentifierDietaryFatTotal'
+                  | 'QuantityTypeIdentifierDietaryFiber'
+                  | 'QuantityTypeIdentifierDietaryFolate'
+                  | 'QuantityTypeIdentifierDietaryIodine'
+                  | 'QuantityTypeIdentifierDietaryIron'
+                  | 'QuantityTypeIdentifierDietaryMagnesium'
+                  | 'QuantityTypeIdentifierDietaryManganese'
+                  | 'QuantityTypeIdentifierDietaryMolybdenum'
+                  | 'QuantityTypeIdentifierDietaryNiacin'
+                  | 'QuantityTypeIdentifierDietaryPantothenicAcid'
+                  | 'QuantityTypeIdentifierDietaryPhosphorus'
+                  | 'QuantityTypeIdentifierDietaryPotassium'
+                  | 'QuantityTypeIdentifierDietaryProtein'
+                  | 'QuantityTypeIdentifierDietaryRiboflavin'
+                  | 'QuantityTypeIdentifierDietarySelenium'
+                  | 'QuantityTypeIdentifierDietarySodium'
+                  | 'QuantityTypeIdentifierDietarySugar'
+                  | 'QuantityTypeIdentifierDietaryThiamin'
+                  | 'QuantityTypeIdentifierDietaryVitaminA'
+                  | 'QuantityTypeIdentifierDietaryVitaminB6'
+                  | 'QuantityTypeIdentifierDietaryVitaminB12'
+                  | 'QuantityTypeIdentifierDietaryVitaminC'
+                  | 'QuantityTypeIdentifierDietaryVitaminD'
+                  | 'QuantityTypeIdentifierDietaryVitaminE'
+                  | 'QuantityTypeIdentifierDietaryVitaminK'
+                  | 'QuantityTypeIdentifierDietaryZinc'
                     ? MassUnit
-                    : T extends 'HKQuantityTypeIdentifierDietaryWater'
+                    : T extends 'QuantityTypeIdentifierDietaryWater'
                       ? VolumeUnit
-                      : T extends 'HKQuantityTypeIdentifierInsulinDelivery'
+                      : T extends 'QuantityTypeIdentifierInsulinDelivery'
                         ? 'IU'
                         : T extends
-                        | 'HKQuantityTypeIdentifierHeartRate'
-                        | 'HKQuantityTypeIdentifierRestingHeartRate'
-                        | 'HKQuantityTypeIdentifierWalkingHeartRateAverage'
+                        | 'QuantityTypeIdentifierHeartRate'
+                        | 'QuantityTypeIdentifierRestingHeartRate'
+                        | 'QuantityTypeIdentifierWalkingHeartRateAverage'
                           ? CountPerTime<TimeUnit>
-                          : HKUnit;
+                          : Unit;
 
 
 
 export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
 
-  readonly saveQuantitySample: (
-    identifier: HKQuantityTypeIdentifier,
-    unit: HKUnit,
+  saveQuantitySample(
+    identifier: QuantityTypeIdentifier,
+    unit: string,
     value: number,
-    start: string,
-    end: string,
-    metadata: HKGenericMetadata
-  ) => Promise<boolean>;
+    startTimestamp: number,
+    endTimestamp: number,
+    metadata: GenericMetadata
+  ): Promise<boolean>;
 
-  readonly deleteQuantitySample: (
-    identifier: HKQuantityTypeIdentifier,
+  deleteQuantitySample(
+    identifier: QuantityTypeIdentifier,
     uuid: string
-  ) => Promise<boolean>;
+  ): Promise<boolean>;
   
-  readonly deleteSamples: (
-    identifier: HKQuantityTypeIdentifier,  
-    start: string,
-    end: string
-  ) => Promise<boolean>;
+  deleteSamples(
+    identifier: QuantityTypeIdentifier,  
+    startTimestamp: number,
+    endTimestamp: number
+  ): Promise<boolean>;
   
-  readonly queryWorkoutSamples: (
-    energyUnit: EnergyUnit,
-    distanceUnit: LengthUnit,
-    from: string,
-    to: string,
+  queryWorkoutSamples(
+    energyUnit: string,
+    distanceUnit: string,
+    fromTimestamp: number,
+    toTimestamp: number,
     limit: number,
     ascending: boolean
-  ) => Promise<readonly HKWorkoutRaw[]>;
+  ): Promise<readonly WorkoutRaw[]>;
   
-  readonly queryQuantitySamples: (
-    identifier: HKQuantityTypeIdentifier,
-    unit: HKUnit,
-    from: string,
-    to: string,
+  queryQuantitySamples(
+    identifier: QuantityTypeIdentifier,
+    unit: string,
+    fromTimestamp: number,
+    toTimestamp: number,
     limit: number,
     ascending: boolean
-  ) => Promise<readonly HKQuantitySampleRaw[]>;
+  ): Promise<readonly QuantitySampleRaw[]>;
 
-  readonly queryStatisticsForQuantity: (
-    identifier: HKQuantityTypeIdentifier,
-    unit: HKUnit,
-    from: string,
-    to: string,
-    options: readonly HKStatisticsOptions[],
-  ) => Promise<QueryStatisticsResponseRaw>;
+  queryStatisticsForQuantity(
+    identifier: QuantityTypeIdentifier,
+    unit: string,
+    fromTimestamp: number,
+    toTimestamp: number,
+    options: readonly StatisticsOptions[],
+  ): Promise<QueryStatisticsResponseRaw>;
 
-  readonly queryStatisticsCollectionForQuantity: (
-    identifier: HKQuantityTypeIdentifier,
-    unit: HKUnit,
-    options: readonly HKStatisticsOptions[],
+  queryStatisticsCollectionForQuantity(
+    identifier: QuantityTypeIdentifier,
+    unit: string,
+    options: readonly StatisticsOptions[],
     anchorDate: string,
     intervalComponents: IntervalComponents,
-    startDate: string,
-    endDate: string
-  ) => Promise<readonly QueryStatisticsResponseRaw[]>;
+    startTimestamp: number,
+    endTimestamp: number
+  ): Promise<readonly QueryStatisticsResponseRaw[]>;
 
 
-  readonly queryQuantitySamplesWithAnchor: (
-    identifier: HKQuantityTypeIdentifier,
-    unit: HKUnit,
-    from: string,
-    to: string,
+  queryQuantitySamplesWithAnchor(
+    identifier: QuantityTypeIdentifier,
+    unit: string,
+    fromTimestamp: number,
+    toTimestamp: number,
     limit: number,
     anchor: string
-  ) => Promise<QueryQuantitySamplesResponseRaw>;
+  ): Promise<QueryQuantitySamplesResponseRaw>;
 }

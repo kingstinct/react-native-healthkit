@@ -1,14 +1,38 @@
 import { Image } from "expo-image";
-import { Platform, StyleSheet } from "react-native";
+import { Button, Platform, StyleSheet } from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { AuthObject, WorkoutObject } from "react-native-healthkit";
 
 const result = 12
 
 export default function HomeScreen() {
+	const hello = async () => {
+		const hey = await AuthObject.authorizationStatusFor('HKWorkoutTypeIdentifier')
+		console.log('authObject', hey)
+
+		WorkoutObject.queryWorkoutSamplesWithAnchor
+	}
+	hello()
+
+	const queryWorkoutSamples = async () => {
+		const hey = await WorkoutObject.queryWorkoutSamplesWithAnchor('kcal', 'm', 0, 0, 10)
+		console.log('queryWorkoutSamples', hey)
+	}
+
+	const requestAuth = async () => {
+		const hey = await AuthObject.requestAuthorization({
+			HKWorkoutTypeIdentifier: true,
+		}, {
+			HKWorkoutTypeIdentifier: true
+		})
+
+		console.log('requestAuth', hey)
+	}
+
 	return (
 		<ParallaxScrollView
 			headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -19,6 +43,8 @@ export default function HomeScreen() {
 				/>
 			}
 		>
+			<Button onPress={requestAuth} title="Request Auth" />
+			<Button onPress={queryWorkoutSamples} title="Query Workout Samples" />
 			<ThemedText>{ result }</ThemedText>
 			<ThemedView style={styles.titleContainer}>
 				<ThemedText type="title">Welcome!</ThemedText>

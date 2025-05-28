@@ -64,47 +64,47 @@ During runtime check and request permissions with `requestAuthorization`. Failin
 
 Some hook examples:
 ```TypeScript
-import { HKQuantityTypeIdentifier, useHealthkitAuthorization } from '@kingstinct/react-native-healthkit';
+import { QuantityTypeIdentifier, useHealthkitAuthorization } from '@kingstinct/react-native-healthkit';
 
-const [authorizationStatus, requestAuthorization] = useHealthkitAuthorization([HKQuantityTypeIdentifier.bloodGlucose])
+const [authorizationStatus, requestAuthorization] = useHealthkitAuthorization([QuantityTypeIdentifier.bloodGlucose])
 
 // make sure that you've requested authorization before requesting data, otherwise your app will crash
-import { useMostRecentQuantitySample, HKQuantityTypeIdentifier, useMostRecentCategorySample } from '@kingstinct/react-native-healthkit';
+import { useMostRecentQuantitySample, QuantityTypeIdentifier, useMostRecentCategorySample } from '@kingstinct/react-native-healthkit';
 
-const mostRecentBloodGlucoseSample = useMostRecentQuantitySample(HKQuantityTypeIdentifier.bloodGlucose)
-const lastBodyFatSample = useMostRecentQuantitySample(HKQuantityTypeIdentifier.bodyFatPercentage)
-const lastMindfulSession = useMostRecentCategorySample(HKCategoryTypeIdentifier.mindfulSession)
+const mostRecentBloodGlucoseSample = useMostRecentQuantitySample(QuantityTypeIdentifier.bloodGlucose)
+const lastBodyFatSample = useMostRecentQuantitySample(QuantityTypeIdentifier.bodyFatPercentage)
+const lastMindfulSession = useMostRecentCategorySample(CategoryTypeIdentifier.mindfulSession)
 const lastWorkout = useMostRecentWorkout()
 ```
 
 Some imperative examples:
 ```TypeScript
-  import HealthKit, { HKUnit, HKQuantityTypeIdentifier, HKInsulinDeliveryReason, HKCategoryTypeIdentifier } from '@kingstinct/react-native-healthkit';
+  import HealthKit, { HKUnit, QuantityTypeIdentifier, HKInsulinDeliveryReason, CategoryTypeIdentifier } from '@kingstinct/react-native-healthkit';
 
   const isAvailable = await HealthKit.isHealthDataAvailable();
 
   /* Read latest sample of any data */
-  await HealthKit.requestAuthorization([HKQuantityTypeIdentifier.bodyFatPercentage]); // request read permission for bodyFatPercentage
+  await HealthKit.requestAuthorization([QuantityTypeIdentifier.bodyFatPercentage]); // request read permission for bodyFatPercentage
 
-  const { quantity, unit, startDate, endDate } = await HealthKit.getMostRecentQuantitySample(HKQuantityTypeIdentifier.bodyFatPercentage); // read latest sample
+  const { quantity, unit, startDate, endDate } = await HealthKit.getMostRecentQuantitySample(QuantityTypeIdentifier.bodyFatPercentage); // read latest sample
   
   console.log(quantity) // 17.5
   console.log(unit) // %
 
-  await HealthKit.requestAuthorization([HKQuantityTypeIdentifier.heartRate]); // request read permission for heart rate
+  await HealthKit.requestAuthorization([QuantityTypeIdentifier.heartRate]); // request read permission for heart rate
 
   /* Subscribe to data (Make sure to request permissions before subscribing to changes) */
   const [hasRequestedAuthorization, setHasRequestedAuthorization] = useState(false);
   
   useEffect(() => {
-    HealthKit.requestAuthorization([HKQuantityTypeIdentifier.heartRate]).then(() => {
+    HealthKit.requestAuthorization([QuantityTypeIdentifier.heartRate]).then(() => {
       setHasRequestedAuthorization(true);
     });
   }, []);
   
   useEffect(() => {
     if (hasRequestedAuthorization) {
-      const unsubscribe = HealthKit.subscribeToChanges(HKQuantityTypeIdentifier.heartRate, () => {
+      const unsubscribe = HealthKit.subscribeToChanges(QuantityTypeIdentifier.heartRate, () => {
         // refetch data as needed
       });
     }
@@ -113,10 +113,10 @@ Some imperative examples:
   }, [hasRequestedAuthorization]);
 
   /* write data */
-  await HealthKit.requestAuthorization([], [HKQuantityTypeIdentifier.insulinDelivery]); // request write permission for insulin delivery
+  await HealthKit.requestAuthorization([], [QuantityTypeIdentifier.insulinDelivery]); // request write permission for insulin delivery
 
   ReactNativeHealthkit.saveQuantitySample(
-      HKQuantityTypeIdentifier.insulinDelivery,
+      QuantityTypeIdentifier.insulinDelivery,
       HKUnit.InternationalUnit,
       5.5,
       {
@@ -140,11 +140,11 @@ In 6.0 you can use HealthKit anchors to get changes and deleted items which is v
 Example:
 
 ```TypeScript
-  const { newAnchor, samples, deletedSamples } = await queryQuantitySamplesWithAnchor(HKQuantityTypeIdentifier.stepCount, {
+  const { newAnchor, samples, deletedSamples } = await queryQuantitySamplesWithAnchor(QuantityTypeIdentifier.stepCount, {
     limit: 2,
   })
 
-  const nextResult = await queryQuantitySamplesWithAnchor(HKQuantityTypeIdentifier.stepCount, {
+  const nextResult = await queryQuantitySamplesWithAnchor(QuantityTypeIdentifier.stepCount, {
     limit: 2,
     anchor: newAnchor,
   })

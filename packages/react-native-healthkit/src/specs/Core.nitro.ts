@@ -1,15 +1,13 @@
 import type { HybridObject } from "react-native-nitro-modules";
-import type { HKSampleTypeIdentifier } from "./Shared";
+import type { SampleTypeIdentifier } from "./Shared";
 
-interface EmitterSubscription {
+export interface EmitterSubscription {
     remove: () => void;
 }
 
-type OnChangeCallbackArgs = {
-    readonly typeIdentifier: HKSampleTypeIdentifier;
+export interface OnChangeCallbackArgs {
+    readonly typeIdentifier: SampleTypeIdentifier;
 }
-
-type OnChangeCallback = (args: OnChangeCallbackArgs) => void;
 
 export interface Core extends HybridObject<{ ios: 'swift' }> {
     /**
@@ -18,12 +16,12 @@ export interface Core extends HybridObject<{ ios: 'swift' }> {
     isHealthDataAvailable(): Promise<boolean>;
     isProtectedDataAvailable(): Promise<boolean>;
 
-    readonly addListener: (
-        callback: OnChangeCallback
-    ) => EmitterSubscription;
+    addListener(
+        callback: (args: OnChangeCallbackArgs) => void
+    ): EmitterSubscription;
 
     subscribeToObserverQuery(
-        identifier: HKSampleTypeIdentifier
+        identifier: string
     ): Promise<string>;
     unsubscribeQuery(queryId: string): Promise<boolean>;
 }

@@ -2,7 +2,7 @@
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier Apple Docs }
  */
-export type HKCategoryTypeIdentifier =
+export type CategoryTypeIdentifier =
     'HKCategoryTypeIdentifierSleepAnalysis' |
     'HKCategoryTypeIdentifierAppleStandHour' |
     'HKCategoryTypeIdentifierCervicalMucusQuality' |

@@ -1,9 +1,10 @@
-import type { HybridObject } from "react-native-nitro-modules";
-import type { EnergyUnit, LengthUnit } from "../types/Units";
-import type { HKGenericMetadata, HKQuantity } from "./Shared";
-import type { HKQuantitySampleRawForSaving } from "../types/HKQuantitySampleRaw";
-import type { HKWorkoutRaw } from "../types/HKWorkoutRaw";
-export enum HKWorkoutActivityType {
+import type { AnyMap, HybridObject } from "react-native-nitro-modules";
+import type { DeletedSample, GenericMetadata } from "./Shared";
+import type { QuantitySampleRawForSaving } from "../types/QuantitySampleRaw";
+import type { WorkoutRaw } from "../types/WorkoutRaw";
+import type { QuantityRaw } from "./QuantityType.nitro";
+
+export enum WorkoutActivityType {
     americanFootball = 1,
     archery = 2,
     australianFootball = 3,
@@ -92,7 +93,7 @@ export enum HKWorkoutActivityType {
 
 
 // documented at https://developer.apple.com/documentation/healthkit/hkweathercondition
-export enum HKWeatherCondition {
+export enum WeatherCondition {
     none = 0,
     clear = 1,
     fair = 2,
@@ -123,27 +124,27 @@ export enum HKWeatherCondition {
     tornado = 27,
 }
 
-enum HKIndoorWorkout {
+enum IndoorWorkout {
     false = 0,
     true = 1,
 }
 
-export interface HKWorkoutMetadata extends HKGenericMetadata {
-    readonly HKWeatherCondition?: HKWeatherCondition;
-    readonly HKWeatherHumidity?: HKQuantity;
-    readonly HKWeatherTemperature: HKQuantity;
-    readonly HKAverageMETs?: HKQuantity;
-    readonly HKElevationAscended?: HKQuantity;
-    readonly HKIndoorWorkout?: HKIndoorWorkout;
+export interface WorkoutMetadata extends GenericMetadata {
+    readonly HKWeatherCondition?: number;
+    readonly HKWeatherHumidity?: QuantityRaw;
+    readonly HKWeatherTemperature: QuantityRaw;
+    readonly HKAverageMETs?: QuantityRaw;
+    readonly HKElevationAscended?: QuantityRaw;
+    readonly HKIndoorWorkout?: IndoorWorkout;
 }
 
-export interface HKWorkoutEvent {
-    readonly type: HKWorkoutEventType;
-    readonly startDate: string;
-    readonly endDate: string;
+export interface WorkoutEvent {
+    readonly type: WorkoutEventType;
+    readonly startTimestamp: number;
+    readonly endTimestamp: number;
 }
 
-export enum HKWorkoutEventType {
+export enum WorkoutEventType {
     pause = 1,
     resume = 2,
     lap = 3,
@@ -154,9 +155,9 @@ export enum HKWorkoutEventType {
     pauseOrResumeRequest = 8,
 }
 
-export interface HKWorkoutActivity {
-    readonly startDate: string;
-    readonly endDate: string;
+export interface WorkoutActivity {
+    readonly startTimestamp: number;
+    readonly endTimestamp: number;
     readonly uuid: string;
     readonly duration: number;
 }
@@ -180,33 +181,27 @@ export interface WorkoutRoute {
 };
 
 interface QueryWorkoutSamplesWithAnchorResponseRaw {
-    readonly samples: readonly HKWorkoutRaw[],
-    readonly deletedSamples: readonly DeletedWorkoutSampleRaw[],
+    readonly samples: readonly WorkoutRaw[],
+    readonly deletedSamples: readonly DeletedSample[],
     readonly newAnchor: string
 }
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutconfiguration Apple Docs }
  */
-export interface HKWorkoutConfiguration {
+export interface WorkoutConfiguration {
     readonly activityType: number;
-    readonly locationType?: HKWorkoutSessionLocationType;
+    readonly locationType?: WorkoutSessionLocationType;
 };
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutsessionlocationtype Apple Docs }
  */
-export enum HKWorkoutSessionLocationType {
+export enum WorkoutSessionLocationType {
     unknown = 1,
     indoor = 2,
     outdoor = 3
 }
-
-export interface DeletedWorkoutSampleRaw {
-    readonly uuid: string;
-    readonly metadata: HKGenericMetadata;
-};
-
 
 export interface CLLocationRawForSaving {
     readonly latitude: number;
@@ -230,41 +225,40 @@ export interface WorkoutTotals {
 }
 
 export interface Workout extends HybridObject<{ ios: 'swift' }> {
-    readonly getWorkoutRoutes: (
+    getWorkoutRoutes(
         workoutUUID: string
-    ) => Promise<readonly WorkoutRoute[]>;
-    readonly getWorkoutPlanById: (
+    ): Promise<readonly WorkoutRoute[]>;
+    getWorkoutPlanById(
         workoutUUID: string
-    ) => Promise<WorkoutPlan | null>;
+    ): Promise<WorkoutPlan | null>;
 
     /**
      * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1648358-startwatchapp Apple Docs }
      */
-    readonly startWatchAppWithWorkoutConfiguration: (
-        workoutConfiguration: HKWorkoutConfiguration
-    ) => Promise<boolean>;
+    startWatchAppWithWorkoutConfiguration(
+        workoutConfiguration: WorkoutConfiguration
+    ): Promise<boolean>;
 
-
-    readonly saveWorkoutSample: (
+    saveWorkoutSample(
         typeIdentifier: number,
-        quantities: readonly HKQuantitySampleRawForSaving[],
-        start: string,
-        end: string,
+        quantities: readonly QuantitySampleRawForSaving[],
+        startTimestamp: number,
+        endTimestamp: number,
         totals: WorkoutTotals,
-        metadata: HKGenericMetadata
-    ) => Promise<string | null>;
+        metadata: AnyMap
+    ): Promise<string | null>;
 
-    readonly saveWorkoutRoute: (
+    saveWorkoutRoute(
         workoutUUID: string,
         locations: readonly CLLocationRawForSaving[]
-    ) => Promise<boolean>;
+    ): Promise<boolean>;
 
-    readonly queryWorkoutSamplesWithAnchor: (
-        energyUnit: EnergyUnit,
-        distanceUnit: LengthUnit,
-        from: string,
-        to: string,
+    queryWorkoutSamplesWithAnchor(
+        energyUnit: string,
+        distanceUnit: string,
+        fromTimestamp: number,
+        toTimestamp: number,
         limit: number,
-        anchor: string
-    ) => Promise<QueryWorkoutSamplesWithAnchorResponseRaw>;
+        anchor?: string
+    ): Promise<QueryWorkoutSamplesWithAnchorResponseRaw>;
 }

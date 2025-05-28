@@ -1,51 +1,45 @@
 import type { HybridObject } from "react-native-nitro-modules";
-import type { HKDevice, HKSourceRevision } from "./Source.nitro";
-import type { HKGenericMetadata } from "./Shared";
+import type { Device, SourceRevision } from "./Source.nitro";
+import type { DeletedSample, GenericMetadata } from "./Shared";
 
-export interface HKHeartbeatSeriesSampleMetadata extends HKGenericMetadata {
+export interface HeartbeatSeriesSampleMetadata extends GenericMetadata {
     readonly HKMetadataKeyAlgorithmVersion: string;
 };
 
-export interface HKHeartbeatRaw {
+export interface HeartbeatRaw {
     readonly timeSinceSeriesStart: number;
     readonly precededByGap: boolean;
 };
 
-export interface HKHeartbeatSeriesSampleRaw {
+export interface HeartbeatSeriesSampleRaw {
     readonly uuid: string;
-    readonly device?: HKDevice;
-    readonly startDate: string;
-    readonly endDate: string;
-    readonly heartbeats: readonly HKHeartbeatRaw[];
-    readonly metadata?: HKHeartbeatSeriesSampleMetadata;
-    readonly sourceRevision?: HKSourceRevision;
+    readonly device?: Device;
+    readonly startTimestamp: number;
+    readonly endTimestamp: number;
+    readonly heartbeats: readonly HeartbeatRaw[];
+    readonly metadata?: HeartbeatSeriesSampleMetadata;
+    readonly sourceRevision?: SourceRevision;
 };
 
 
 export interface QueryHeartbeatSeriesSamplesResponseRaw {
-    readonly samples: readonly HKHeartbeatSeriesSampleRaw[];
-    readonly deletedSamples: readonly DeletedHeartbeatSeriesSampleRaw[];
+    readonly samples: readonly HeartbeatSeriesSampleRaw[];
+    readonly deletedSamples: readonly DeletedSample[];
     readonly newAnchor: string;
 };
 
-export interface DeletedHeartbeatSeriesSampleRaw {
-    readonly uuid: string;
-    readonly metadata: HKHeartbeatSeriesSampleMetadata;
-};
-
-
 export interface HeartbeatSeries extends HybridObject<{ ios: 'swift' }> {
-    readonly queryHeartbeatSeriesSamples: (
-        from: string,
-        to: string,
+    queryHeartbeatSeriesSamples(
+        fromTimestamp: number,
+        toTimestamp: number,
         limit: number,
         ascending: boolean
-    ) => Promise<readonly HKHeartbeatSeriesSampleRaw[]>;
-    readonly queryHeartbeatSeriesSamplesWithAnchor: (
-        from: string,
-        to: string,
+    ): Promise<readonly HeartbeatSeriesSampleRaw[]>;
+    queryHeartbeatSeriesSamplesWithAnchor(
+        fromTimestamp: number,
+        toTimestamp: number,
         limit: number,
         anchor: string
-    ) => Promise<QueryHeartbeatSeriesSamplesResponseRaw>;
+    ): Promise<QueryHeartbeatSeriesSamplesResponseRaw>;
 
 }

@@ -1,12 +1,12 @@
 import type { HybridObject } from "react-native-nitro-modules";
 
 // Straight mapping to https://developer.apple.com/documentation/healthkit/hkcharacteristictypeidentifier
-export type HKCharacteristicTypeIdentifier = 'HKCharacteristicTypeIdentifierFitzpatrickSkinType' | 'HKCharacteristicTypeIdentifierBiologicalSex' | 'HKCharacteristicTypeIdentifierBloodType' | 'HKCharacteristicTypeIdentifierDateOfBirth' | 'HKCharacteristicTypeIdentifierWheelchairUse' | 'HKCharacteristicTypeIdentifierActivityMoveMode'
+export type CharacteristicTypeIdentifier = 'HKCharacteristicTypeIdentifierFitzpatrickSkinType' | 'HKCharacteristicTypeIdentifierBiologicalSex' | 'HKCharacteristicTypeIdentifierBloodType' | 'HKCharacteristicTypeIdentifierDateOfBirth' | 'HKCharacteristicTypeIdentifierWheelchairUse' | 'HKCharacteristicTypeIdentifierActivityMoveMode'
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkbloodtype Apple Docs }
  */
-export enum HKBloodType {
+export enum BloodType {
     notSet = 0,
     aPositive = 1,
     aNegative = 2,
@@ -21,7 +21,7 @@ export enum HKBloodType {
   /**
    * @see {@link https://developer.apple.com/documentation/healthkit/hkbiologicalsex Apple Docs }
    */
-  export enum HKBiologicalSex {
+  export enum BiologicalSex {
     notSet = 0,
     female = 1,
     male = 2,
@@ -31,7 +31,7 @@ export enum HKBloodType {
   /**
    * @see {@link https://developer.apple.com/documentation/healthkit/hkfitzpatrickskintype Apple Docs }
    */
-  export enum HKFitzpatrickSkinType {
+  export enum FitzpatrickSkinType {
     notSet = 0,
     I = 1,
     II = 2,
@@ -43,17 +43,17 @@ export enum HKBloodType {
   
 
 // Maps directly to https://developer.apple.com/documentation/healthkit/hkwheelchairuse
-export enum HKWheelchairUse {
+export enum WheelchairUse {
     notSet = 0,
     no = 1,
     yes = 2,
-  }
+}
 
 
 export interface Characteristic extends HybridObject<{ ios: 'swift' }> {
-  getBloodType(): Promise<HKBloodType>;
+  getBloodType(): Promise<number>;
   getDateOfBirth(): Promise<string>;
-  getBiologicalSex(): Promise<HKBiologicalSex>;
-  getFitzpatrickSkinType(): Promise<HKFitzpatrickSkinType>;
-  getWheelchairUse(): Promise<HKWheelchairUse>;
+  getBiologicalSex(): Promise<number>;
+  getFitzpatrickSkinType(): Promise<number>;
+  getWheelchairUse(): Promise<number>;
 }

@@ -18,8 +18,8 @@ const {
 /**
  * @typedef BackgroundConfig
  * @type {false | Partial<Record<
- *  import('./src/native-types').HKSampleTypeIdentifier,
- *  import('./src/native-types').HKUpdateFrequency
+ *  import('./src/native-types').SampleTypeIdentifier,
+ *  import('./src/native-types').UpdateFrequency
  * >>}
 
 /**

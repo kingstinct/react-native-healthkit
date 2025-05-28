@@ -1,55 +1,50 @@
 import type { HybridObject } from "react-native-nitro-modules";
-import type { HKCharacteristicTypeIdentifier } from "./Characteristic.nitro";
-import type { HKSampleTypeIdentifier } from "./Shared";
-import type { HKQuantityTypeIdentifier } from "../types/HKQuantityTypeIdentifier";
-import type { HKCategoryTypeIdentifier } from "../types/HKCategoryTypeIdentifier";
+/*import type { CharacteristicTypeIdentifier } from "./Characteristic.nitro";
+import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
+import type { CategoryTypeIdentifier } from "../types/CategoryTypeIdentifier";*/
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkauthorizationrequeststatus Apple Docs }
  */
-export enum HKAuthorizationRequestStatus {
+export enum AuthorizationRequestStatus {
     unknown = 0,
     shouldRequest = 1,
     unnecessary = 2,
 }
 
-export type HealthkitReadAuthorization =
-  | HKCharacteristicTypeIdentifier
-  | HKSampleTypeIdentifier
-
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkauthorizationstatus Apple Docs }
  */
-export enum HKAuthorizationStatus {
+export enum AuthorizationStatus {
     notDetermined = 0,
     sharingDenied = 1,
     sharingAuthorized = 2,
 }
 
-export type WritePermissions = Record<
-    HKCategoryTypeIdentifier | HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier,
+/*export type WritePermissions = Record<
+    CategoryTypeIdentifier | CharacteristicTypeIdentifier | QuantityTypeIdentifier,
     boolean
 >;
   
 export type ReadPermissions = Record<
-    HKCategoryTypeIdentifier | HKCharacteristicTypeIdentifier | HKQuantityTypeIdentifier,
+    CategoryTypeIdentifier | CharacteristicTypeIdentifier | QuantityTypeIdentifier,
     boolean
->;
+>;*/
 
 export interface Auth extends HybridObject<{ ios: 'swift' }> {
     /**
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614154-authorizationstatus Apple Docs }
    */
     authorizationStatusFor(
-        type: Record<string, boolean>
-    ): Promise<HKAuthorizationStatus>;
+        type: string
+    ): Promise<number>;
     /**
      * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/2994346-getrequeststatusforauthorization Apple Docs }
      */
     getRequestStatusForAuthorization(
         write: Record<string, boolean>,
         read: Record<string, boolean>
-    ): Promise<HKAuthorizationRequestStatus>;
+    ): Promise<number>;
     /**
      * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614152-requestauthorization Apple Docs }
      */
