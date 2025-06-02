@@ -45,6 +45,25 @@ export default function TabLayout() {
 					),
 				}}
 			/>
+			<Tabs.Screen
+				name="core"
+				options={{
+					title: "Core",
+					tabBarIcon: ({ color }) => (
+						<IconSymbol size={28} name="paperplane.fill" color={color} />
+					),
+				}}
+			/>
+
+			<Tabs.Screen
+				name="workouts"
+				options={{
+					title: "Workouts",
+					tabBarIcon: ({ color }) => (
+						<IconSymbol size={28} name="paperplane.fill" color={color} />
+					),
+				}}
+			/>
 		</Tabs>
 	);
 }

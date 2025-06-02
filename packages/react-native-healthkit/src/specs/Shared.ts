@@ -6,6 +6,7 @@ import type { HKWorkoutTypeIdentifier, HKStateOfMindTypeIdentifier, HKDataTypeId
 import type { Unit } from "../types/Units";
 import type { QuantityRaw } from "./QuantityType.nitro";
 import type { AnyMap } from "react-native-nitro-modules";
+import type { CharacteristicTypeIdentifier } from "./Characteristic.nitro";
 
 export interface Quantity {
     readonly unit: Unit;
@@ -39,6 +40,7 @@ export type SampleTypeIdentifier =
     | CategoryTypeIdentifier
     | CorrelationTypeIdentifier
     | QuantityTypeIdentifier
+    | CharacteristicTypeIdentifier
     | typeof HKStateOfMindTypeIdentifier
     | typeof ActivitySummaryTypeIdentifier
     | typeof AudiogramTypeIdentifier

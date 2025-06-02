@@ -9,3 +9,5 @@ export const Core = NitroModules.createHybridObject<CoreNative>("Core")
 export const Auth = NitroModules.createHybridObject<AuthNative>("Auth")
 
 export const Workouts = NitroModules.createHybridObject<WorkoutNative>("Workout")
+
+export const Characteristic = NitroModules.createHybridObject<CharacteristicNative>("Characteristic")

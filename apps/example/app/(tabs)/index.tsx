@@ -10,7 +10,7 @@ import { Auth, Core, Workouts } from "react-native-healthkit";
 const result = 12
 
 export default function HomeScreen() {
-	const hello = async () => {
+	/*const hello = async () => {
 		const hey = Auth.authorizationStatusFor('HKWorkoutTypeIdentifier')
 		console.log('authorizationStatusFor', hey)
 		
@@ -37,7 +37,7 @@ export default function HomeScreen() {
 		const hey4 = Core.isProtectedDataAvailable()
 		console.log('isProtectedDataAvailable', hey4)
 	}
-	hello()
+	hello()*/
 
 	const saveWorkoutRoute = async () => {
 		const hey = await Workouts.saveWorkoutRoute('123', [
@@ -68,8 +68,12 @@ export default function HomeScreen() {
 	}
 
 	const requestAuth = async () => {
+		try {
+
+		
+		console.log('requestAuth')
 		const hey = await Auth.requestAuthorization([
-			'HKWorkoutTypeIdentifier',
+			/*'HKWorkoutTypeIdentifier',
 			'HKWorkoutRouteTypeIdentifier',
 			'HKQuantityTypeIdentifierStepCount',
 			'HKQuantityTypeIdentifierDistanceWalkingRunning',
@@ -77,7 +81,15 @@ export default function HomeScreen() {
 			'HKQuantityTypeIdentifierActiveEnergyBurned',
 			'HKQuantityTypeIdentifierBasalEnergyBurned',
 			'HKQuantityTypeIdentifierFlightsClimbed',
-			'HKQuantityTypeIdentifierHeartRate',
+			'HKQuantityTypeIdentifierHeartRate',*/
+			'HKCharacteristicTypeIdentifierBiologicalSex',
+			'HKCharacteristicTypeIdentifierBloodType',
+			'HKCharacteristicTypeIdentifierDateOfBirth',
+			'HKCharacteristicTypeIdentifierFitzpatrickSkinType',
+			'HKCharacteristicTypeIdentifierWheelchairUse',
+			'HKQuantityTypeIdentifierDistanceWalkingRunning',
+                'HKQuantityTypeIdentifierBodyMass',
+                'HKQuantityTypeIdentifierBloodGlucose'
 			/*'HKQuantityTypeIdentifierBodyMass',
 			'HKQuantityTypeIdentifierBodyMassIndex',
 			'HKQuantityTypeIdentifierHeight',
@@ -91,7 +103,7 @@ export default function HomeScreen() {
 			'HKQuantityTypeIdentifierVO2Max',
 			'HKQuantityTypeIdentifierWalkingHeartRateAverage',*/
 		], [
-			'HKWorkoutTypeIdentifier',
+			/*'HKWorkoutTypeIdentifier',
 			'HKWorkoutRouteTypeIdentifier',
 			'HKQuantityTypeIdentifierStepCount',
 			'HKQuantityTypeIdentifierDistanceWalkingRunning',
@@ -99,12 +111,25 @@ export default function HomeScreen() {
 			'HKQuantityTypeIdentifierActiveEnergyBurned',
 			'HKQuantityTypeIdentifierBasalEnergyBurned',
 			'HKQuantityTypeIdentifierFlightsClimbed',
-			'HKQuantityTypeIdentifierHeartRate',
+			'HKQuantityTypeIdentifierHeartRate',*/
+			'HKCharacteristicTypeIdentifierBiologicalSex',
+			'HKCharacteristicTypeIdentifierBloodType',
+			'HKCharacteristicTypeIdentifierDateOfBirth',
+			'HKCharacteristicTypeIdentifierFitzpatrickSkinType',
+			'HKCharacteristicTypeIdentifierWheelchairUse',
+			'HKQuantityTypeIdentifierDistanceWalkingRunning',
+                'HKQuantityTypeIdentifierBodyMass',
+                'HKQuantityTypeIdentifierBloodGlucose'
+			
 		]).catch(err => {
 			console.log('requestAuthorization error', err)
 		})
 
 		console.log('requestAuth', hey)
+		}
+		catch (error) {
+			console.error('Error requesting authorization:', error);
+		}
 	}
 
 	return (

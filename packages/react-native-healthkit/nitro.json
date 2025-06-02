@@ -17,6 +17,9 @@
 		},
 		"Core": {
 			"swift": "Core"
+		},
+		"Characteristic": {
+			"swift": "Characteristic"
 		}
 	},
 	"ignorePaths": ["**/node_modules"]
