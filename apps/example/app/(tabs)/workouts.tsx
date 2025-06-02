@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 
 import { Workouts } from "react-native-healthkit";
-import { List } from "@expo/ui/swift-ui";
+import { Button, List, Section } from "@expo/ui/swift-ui";
 import { useEffect, useState } from "react";
 import { WorkoutActivityType } from "react-native-healthkit/specs/Workout.nitro";
 import { WorkoutSample } from "react-native-healthkit/types/WorkoutSample";
@@ -20,12 +20,11 @@ export default function HomeScreen() {
             setWorkouts(workouts.samples)
         }
         queryWorkoutSamples();
-    }
-        , []);
-
+    }, []);
 
     return (
         <List scrollEnabled selectEnabled onSelectionChange={(items) => alert(`indexes of selected items: ${items.join(', ')}`)} style={{ flex: 1 }} listStyle='insetGrouped'>
+            
             {
                 workouts.map((item) => (
                     <ListItem
@@ -35,6 +34,10 @@ export default function HomeScreen() {
                     />
                 ))
             }
+            
+            <Button
+                onPress={() => alert('Add Workout Pressed')}
+            >Fetch more</Button>
         </List>
     );
 }

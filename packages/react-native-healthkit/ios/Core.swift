@@ -7,6 +7,8 @@ import NitroModules
 //  Created by Robert Herber on 2025-05-28.
 //
 
+var store = HKHealthStore.init()
+
 class Core : HybridCoreSpec {
     func enableBackgroundDelivery(typeIdentifier: String, updateFrequency: Double) throws -> Promise<Bool> {
         if let frequency = HKUpdateFrequency(rawValue: Int(updateFrequency)) {
@@ -109,9 +111,6 @@ class Core : HybridCoreSpec {
                     
                 }
             }
-            
-        
-        
     }
     
     var _runningQueries: [String: HKQuery] = [:]
@@ -137,16 +136,8 @@ class Core : HybridCoreSpec {
           if error == nil {
               DispatchQueue.main.async {
                   callback(OnChangeCallbackArgs(typeIdentifier: typeIdentifier, errorMessage: error?.localizedDescription))
-              /*if self.bridge != nil && self.bridge.isValid {
-                self.sendEvent(
-                  withName: "onChange",
-                  body: [
-                    "typeIdentifier": typeIdentifier
-                  ])
-              }*/
-
-            }
-            handler()
+                  handler()
+              }
           }
         }
 

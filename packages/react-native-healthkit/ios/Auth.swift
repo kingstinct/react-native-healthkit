@@ -1,22 +1,7 @@
 import HealthKit
 import NitroModules
 
-var store = HKHealthStore.init()
 
-/*public extension HKAuthorizationStatus {
-    static func fromRawValue(rawValue: Int) -> HKAuthorizationStatus {
-        switch rawValue {
-        case 0:
-            return HKAuthorizationStatus(fromString: "notDetermined")!;
-        case 1:
-            return HKAuthorizationStatus(fromString: "sharingDenied")!;
-        case 2:
-            return HKAuthorizationStatus(fromString: "sharingAuthorized")!;
-        default:
-            fatalError("Unsupported raw value \(rawValue)");
-        }
-    }
-}*/
 
 class Auth : HybridAuthSpec {
     func authorizationStatusFor(

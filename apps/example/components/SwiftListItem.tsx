@@ -8,11 +8,10 @@ export type ListItemProps = {
 }
 
 export const ListItem = ({ title, subtitle }: ListItemProps) => (
-
-    <HStack>
-        <Text>{title}</Text>
-        <Spacer />
-        <Text weight='light' design="monospaced">{subtitle}</Text>
-    </HStack>
-
+    
+            <HStack>
+                <Text>{title}</Text>
+                <Spacer />
+                <Text weight='light' design="monospaced">{subtitle}</Text>
+            </HStack>
 );
