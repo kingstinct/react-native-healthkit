@@ -20,8 +20,13 @@ export default function HomeScreen() {
 		const hey3 = Core.getPreferredUnits([
 			'HKQuantityTypeIdentifierStepCount',
 			'HKQuantityTypeIdentifierDistanceWalkingRunning',
-		])
-		console.log('getPreferredUnits', hey3)
+			'HKQuantityTypeIdentifierDistanceCycling',
+			'HKQuantityTypeIdentifierActiveEnergyBurned',
+			'HKQuantityTypeIdentifierBasalEnergyBurned',
+		]).then(units => {
+			console.log('getPreferredUnits', units)
+			return units
+		})
 
 		const hey4 = Core.isProtectedDataAvailable()
 		console.log('isProtectedDataAvailable', hey4)
@@ -47,6 +52,7 @@ export default function HomeScreen() {
 
 	const queryWorkoutSamples = async () => {
 		const hey = await Workouts.queryWorkoutSamplesWithAnchor('kcal', 'm', 0, 0, 10)
+		console.log('queryWorkoutSamples', hey)
 		// console.log('queryWorkoutSamples', JSON.stringify(hey, null, 2))
 		const firstWorkout = hey.samples[0]
 		const routes = await Workouts.getWorkoutRoutes(firstWorkout.uuid).catch(err => {

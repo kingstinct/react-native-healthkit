@@ -8,6 +8,54 @@ import NitroModules
 //
 
 class Core : HybridCoreSpec {
+    func enableBackgroundDelivery(typeIdentifier: String, updateFrequency: Double) throws -> Promise<Bool> {
+        if let frequency = HKUpdateFrequency(rawValue: Int(updateFrequency)) {
+            return Promise.async {
+                try await withCheckedThrowingContinuation { continuation in
+                    store.enableBackgroundDelivery(
+                        for: objectTypeFromString(typeIdentifier: typeIdentifier)!,
+                        frequency: frequency
+                    ) { (success, error) in
+                        if let err = error {
+                            return continuation.resume(throwing: err)
+                        }
+                        return continuation.resume(returning: success)
+                    }
+                }
+            }
+        } else {
+            throw RuntimeError.error(withMessage: "Invalid update frequency value: \(updateFrequency)")
+        }
+    }
+    
+    func disableBackgroundDelivery(typeIdentifier: String) throws -> Promise<Bool> {
+        return Promise.async {
+            try await withCheckedThrowingContinuation { continuation in
+                store.disableBackgroundDelivery(
+                    for: objectTypeFromString(typeIdentifier: typeIdentifier)!
+                ) { (success, error) in
+                    if let err = error {
+                        return continuation.resume(throwing: err)
+                    }
+                    return continuation.resume(returning: success)
+                }
+            }
+        }
+    }
+    
+    func disableAllBackgroundDelivery() throws -> Promise<Bool> {
+        return Promise.async {
+            try await withCheckedThrowingContinuation { continuation in
+                store.disableAllBackgroundDelivery(completion: { (success, error) in
+                    guard let err = error else {
+                        return continuation.resume(returning: success)
+                    }
+                    return continuation.resume(throwing: err)
+                })
+            }
+        }
+    }
+    
     func unsubscribeQueryAsync(queryId: String) throws -> Promise<Bool> {
         let result = try self.unsubscribeQuery(queryId: queryId)
         

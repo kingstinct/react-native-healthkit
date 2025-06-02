@@ -51,9 +51,15 @@ export enum WheelchairUse {
 
 
 export interface Characteristic extends HybridObject<{ ios: 'swift' }> {
-  getBloodType(): Promise<number>;
-  getDateOfBirth(): Promise<string>;
-  getBiologicalSex(): Promise<number>;
-  getFitzpatrickSkinType(): Promise<number>;
-  getWheelchairUse(): Promise<number>;
+  getBloodType(): number;
+  getDateOfBirth(): string;
+  getBiologicalSex(): number;
+  getFitzpatrickSkinType(): number;
+  getWheelchairUse(): number;
+  
+  getBloodTypeAsync(): Promise<number>;
+  getDateOfBirthAsync(): Promise<string>;
+  getBiologicalSexAsync(): Promise<number>;
+  getFitzpatrickSkinTypeAsync(): Promise<number>;
+  getWheelchairUseAsync(): Promise<number>;
 }

@@ -16,7 +16,35 @@ interface IdentifierWithUnit {
     unit: string;
 }
 
+/**
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkupdatefrequency Apple Docs }
+ */
+export enum UpdateFrequency {
+    immediate = 1,
+    hourly = 2,
+    daily = 3,
+    weekly = 4,
+}
+
 export interface Core extends HybridObject<{ ios: 'swift' }> {
+/**
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614175-enablebackgrounddelivery Apple Docs }
+     */
+    enableBackgroundDelivery(
+        typeIdentifier: string,
+        updateFrequency: number
+    ): Promise<boolean>;
+    /**
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614177-disablebackgrounddelivery Apple Docs }
+     */
+    disableBackgroundDelivery(
+        typeIdentifier: string
+    ): Promise<boolean>;
+    /**
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614158-disableallbackgrounddelivery Apple Docs }
+     */
+    disableAllBackgroundDelivery(): Promise<boolean>;
+
     /**
      *  @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614180-ishealthdataavailable Apple Docs }
      */
