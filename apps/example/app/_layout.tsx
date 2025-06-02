@@ -9,9 +9,10 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+	anchor: '(tabs)',
 };
 
 export default function RootLayout() {
@@ -26,19 +27,21 @@ export default function RootLayout() {
 	}
 
 	return (
-		<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-			<Stack>
-				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-				<Stack.Screen name="+not-found" />
-				<Stack.Screen
-					name="auth"
-					options={{
-						title: "HealthKit Authorization",
-						presentation: "modal",
-					}}
-				/>
-			</Stack>
-			<StatusBar style="auto" />
-		</ThemeProvider>
+		<GestureHandlerRootView>
+			<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+				<Stack>
+					<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+					<Stack.Screen name="+not-found" />
+					<Stack.Screen
+						name="auth"
+						options={{
+							title: "HealthKit Authorization",
+							presentation: "modal",
+						}}
+					/>
+				</Stack>
+				<StatusBar style="auto" />
+			</ThemeProvider>
+		</GestureHandlerRootView>
 	);
 }
