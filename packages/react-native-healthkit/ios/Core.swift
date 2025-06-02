@@ -91,8 +91,11 @@ class Core : HybridCoreSpec {
                     }
 
                     store.preferredUnits(for: quantityTypes) {
-                      (typePerUnits: [HKQuantityType: HKUnit], _: Error?) in
-                      
+                      (typePerUnits: [HKQuantityType: HKUnit], error: Error?) in
+                        
+                        if let error = error {
+                            return continuation.resume(throwing: error)
+                        }
                         
                         let dic = typePerUnits.map { typePerUnit in
                             return IdentifierWithUnit(
@@ -101,7 +104,7 @@ class Core : HybridCoreSpec {
                             )
                         }
 
-                      continuation.resume(returning: dic)
+                      return continuation.resume(returning: dic)
                     }
                     
                 }

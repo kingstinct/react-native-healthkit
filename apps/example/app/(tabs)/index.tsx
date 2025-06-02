@@ -18,14 +18,20 @@ export default function HomeScreen() {
 		console.log('isHealthDataAvailable', hey2)
 
 		const hey3 = Core.getPreferredUnits([
+			'HKWorkoutTypeIdentifier',
+			'HKWorkoutRouteTypeIdentifier',
 			'HKQuantityTypeIdentifierStepCount',
 			'HKQuantityTypeIdentifierDistanceWalkingRunning',
 			'HKQuantityTypeIdentifierDistanceCycling',
 			'HKQuantityTypeIdentifierActiveEnergyBurned',
 			'HKQuantityTypeIdentifierBasalEnergyBurned',
+			'HKQuantityTypeIdentifierFlightsClimbed',
+			'HKQuantityTypeIdentifierHeartRate',
 		]).then(units => {
 			console.log('getPreferredUnits', units)
 			return units
+		}).catch(err => {
+			console.log('getPreferredUnits error', err)
 		})
 
 		const hey4 = Core.isProtectedDataAvailable()
@@ -65,10 +71,38 @@ export default function HomeScreen() {
 		const hey = await Auth.requestAuthorization([
 			'HKWorkoutTypeIdentifier',
 			'HKWorkoutRouteTypeIdentifier',
+			'HKQuantityTypeIdentifierStepCount',
+			'HKQuantityTypeIdentifierDistanceWalkingRunning',
+			'HKQuantityTypeIdentifierDistanceCycling',
+			'HKQuantityTypeIdentifierActiveEnergyBurned',
+			'HKQuantityTypeIdentifierBasalEnergyBurned',
+			'HKQuantityTypeIdentifierFlightsClimbed',
+			'HKQuantityTypeIdentifierHeartRate',
+			/*'HKQuantityTypeIdentifierBodyMass',
+			'HKQuantityTypeIdentifierBodyMassIndex',
+			'HKQuantityTypeIdentifierHeight',
+			'HKQuantityTypeIdentifierBodyTemperature',
+			'HKQuantityTypeIdentifierBloodPressureSystolic',
+			'HKQuantityTypeIdentifierBloodPressureDiastolic',
+			'HKQuantityTypeIdentifierBloodGlucose',
+			'HKQuantityTypeIdentifierOxygenSaturation',
+			'HKQuantityTypeIdentifierRespiratoryRate',
+			'HKQuantityTypeIdentifierPeripheralPerfusionIndex',
+			'HKQuantityTypeIdentifierVO2Max',
+			'HKQuantityTypeIdentifierWalkingHeartRateAverage',*/
 		], [
 			'HKWorkoutTypeIdentifier',
 			'HKWorkoutRouteTypeIdentifier',
-		])
+			'HKQuantityTypeIdentifierStepCount',
+			'HKQuantityTypeIdentifierDistanceWalkingRunning',
+			'HKQuantityTypeIdentifierDistanceCycling',
+			'HKQuantityTypeIdentifierActiveEnergyBurned',
+			'HKQuantityTypeIdentifierBasalEnergyBurned',
+			'HKQuantityTypeIdentifierFlightsClimbed',
+			'HKQuantityTypeIdentifierHeartRate',
+		]).catch(err => {
+			console.log('requestAuthorization error', err)
+		})
 
 		console.log('requestAuth', hey)
 	}
