@@ -10,6 +10,10 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 
+export const unstable_settings = {
+  anchor: '(tabs)',
+};
+
 export default function RootLayout() {
 	const colorScheme = useColorScheme();
 	const [loaded] = useFonts({
@@ -26,6 +30,13 @@ export default function RootLayout() {
 			<Stack>
 				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 				<Stack.Screen name="+not-found" />
+				<Stack.Screen
+					name="auth"
+					options={{
+						title: "HealthKit Authorization",
+						presentation: "modal",
+					}}
+				/>
 			</Stack>
 			<StatusBar style="auto" />
 		</ThemeProvider>

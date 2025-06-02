@@ -1,5 +1,5 @@
-import { Tabs } from "expo-router";
-import React from "react";
+import { Redirect, Tabs } from "expo-router";
+import React, { useEffect } from "react";
 import { Platform } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
@@ -7,15 +7,45 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { Auth } from "react-native-healthkit";
+import { AllUsedIdentifiersInApp } from "@/constants/AllUsedIdentifiersInApp";
+import { AuthorizationRequestStatus } from "react-native-healthkit/specs/Auth.nitro";
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
+
+	const [authStatus, setAuthStatus] = React.useState<AuthorizationRequestStatus | null>(null);
+
+	useEffect(() => {
+		try {
+
+		
+		Auth.getRequestStatusForAuthorization(AllUsedIdentifiersInApp, AllUsedIdentifiersInApp)
+		.then((status) => {
+			console.log("Authorization Status:", status);
+			setAuthStatus(status);
+		}).catch((error) => {
+			console.error("Error getting authorization status:", error);
+			setAuthStatus(AuthorizationRequestStatus.shouldRequest);
+		});
+		} catch (error) {
+			console.error("Error in useEffect:", error);
+			setAuthStatus(AuthorizationRequestStatus.shouldRequest);
+		}
+	}, [])
+
+	console.log("Auth Status:", authStatus);
+
+	if (authStatus === AuthorizationRequestStatus.shouldRequest) {
+		// If the user has not granted permissions, redirect to the auth screen
+		return <Redirect href="/auth" />;
+	}
 
 	return (
 		<Tabs
 			screenOptions={{
 				tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-				headerShown: false,
+				headerShown: true,
 				tabBarButton: HapticTab,
 				tabBarBackground: TabBarBackground,
 				tabBarStyle: Platform.select({

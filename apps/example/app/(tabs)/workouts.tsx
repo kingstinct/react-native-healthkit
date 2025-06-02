@@ -18,11 +18,6 @@ export default function HomeScreen() {
         const queryWorkoutSamples = async () => {
             const workouts = await Workouts.queryWorkoutSamplesWithAnchor('kcal', 'm', (Date.now() - 1000 * 60 * 60 * 24 * 7) / 1000, 0, 10)
             setWorkouts(workouts.samples)
-
-            /*const routes = await Workouts.getWorkoutRoutes(firstWorkout.uuid).catch(err => {
-                console.log('getWorkoutRoutes error', err)
-            })
-            console.log(JSON.stringify(routes, null, 2))*/
         }
         queryWorkoutSamples();
     }
