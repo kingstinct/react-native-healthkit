@@ -1,4 +1,4 @@
-import type { HybridObject } from "react-native-nitro-modules";
+import type { AnyMap, HybridObject } from "react-native-nitro-modules";
 import type { DeletedSample, GenericMetadata } from "./Shared";
 import type { WorkoutSample } from "../types/WorkoutSample";
 import type { BloodGlucoseUnit, CountPerTime, EnergyUnit, Unit, LengthUnit, MassUnit, SpeedUnit, TemperatureUnit, TimeUnit, VolumeUnit } from "../types/Units";
@@ -192,7 +192,7 @@ export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
     value: number,
     startTimestamp: number,
     endTimestamp: number,
-    metadata: GenericMetadata
+    metadata: AnyMap
   ): Promise<boolean>;
 
   deleteQuantitySample(

@@ -1,43 +1,29 @@
 import { StyleSheet } from "react-native";
 
 import { Workouts } from "react-native-healthkit";
-import { Button, List, Section } from "@expo/ui/swift-ui";
+import { List } from "@expo/ui/swift-ui";
 import { useEffect, useState } from "react";
 import { WorkoutActivityType } from "react-native-healthkit/specs/Workout.nitro";
 import { WorkoutSample } from "react-native-healthkit/types/WorkoutSample";
 import { ListItem } from "@/components/SwiftListItem";
 import { enumKeyLookup } from "@/utils/enumKeyLookup";
+import { useLocalSearchParams } from "expo-router";
+import { Text } from "@expo/ui/swift-ui-primitives";
 
 
 const workoutActivityTypeStrings = enumKeyLookup(WorkoutActivityType);
 
-export default function HomeScreen() {
-    const [workouts, setWorkouts] = useState<readonly WorkoutSample[]>([])
+type WorkoutDetailsProps = Readonly<{
+    workout: WorkoutSample;
+}>
 
-    useEffect(() => {
-        const queryWorkoutSamples = async () => {
-            const workouts = await Workouts.queryWorkoutSamplesWithAnchor('kcal', 'm', (Date.now() - 1000 * 60 * 60 * 24 * 7) / 1000, 0, 10)
-            setWorkouts(workouts.samples)
-        }
-        queryWorkoutSamples();
-    }, []);
+export default function WorkoutDetails() {
+    const { workout } = useLocalSearchParams<WorkoutDetailsProps>();
 
     return (
         <List scrollEnabled selectEnabled onSelectionChange={(items) => alert(`indexes of selected items: ${items.join(', ')}`)} style={{ flex: 1 }} listStyle='insetGrouped'>
-            
-            {
-                workouts.map((item) => (
-                    <ListItem
-                        key={item.uuid}
-                        title={workoutActivityTypeStrings[item.workoutActivityType]}
-                        subtitle={timestampToDate(item.startTimestamp)}
-                    />
-                ))
-            }
-            
-            <Button
-                onPress={() => alert('Add Workout Pressed')}
-            >Fetch more</Button>
+           <Text>{workoutActivityTypeStrings[workout.workoutActivityType]}</Text>
+           <Text>{timestampToDate(workout.startTimestamp)}</Text>
         </List>
     );
 }
