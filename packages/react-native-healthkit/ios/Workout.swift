@@ -151,7 +151,7 @@ func getSerializedWorkoutLocations(
     }
     for route in _routes {
         let routeMetadata = serializeMetadata(
-            metadata: route.metadata
+            route.metadata
         )
         
         let routeCLLocations = await getRouteLocations(
@@ -307,7 +307,7 @@ func mapWorkout(
         totalFlightsClimbed: totalFlightsClimbed,
         startTimestamp: workout.startDate.timeIntervalSince1970,
         endTimestamp: workout.endDate.timeIntervalSince1970,
-        metadata: serializeMetadata(metadata: workout.metadata),
+        metadata: serializeMetadata(workout.metadata),
         sourceRevision: nil,
         events: workoutEvents,
         activities: activitiesArray

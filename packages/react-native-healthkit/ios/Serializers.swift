@@ -32,29 +32,24 @@ func serializeQuantityTyped(unit: HKUnit, quantity: HKQuantity?) -> QuantityRaw?
     )
 }
 
-func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) -> NSDictionary {
-    let endDate = _dateFormatter.string(from: sample.endDate)
-    let startDate = _dateFormatter.string(from: sample.startDate)
-
-    let quantity = sample.quantity.doubleValue(for: unit)
-
-    return [
-        "uuid": sample.uuid.uuidString,
-        "device": serializeDevice(_device: sample.device) as Any,
-        "quantityType": sample.quantityType.identifier,
-        "endDate": endDate,
-        "startDate": startDate,
-        "quantity": quantity,
-        "unit": unit.unitString,
-        "metadata": serializeMetadata(metadata: sample.metadata),
-        "sourceRevision": serializeSourceRevision(_sourceRevision: sample.sourceRevision) as Any
-    ]
+func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) -> QuantitySampleRaw {
+    return QuantitySampleRaw(
+        uuid: sample.uuid.uuidString,
+        device: serializeDevice(hkDevice: sample.device),
+        quantityType: sample.quantityType.identifier,
+        startTimestamp: sample.startDate.timeIntervalSince1970,
+        endTimestamp: sample.endDate.timeIntervalSince1970,
+        quantity: sample.quantity.doubleValue(for: unit),
+        unit: unit.unitString,
+        metadata: serializeMetadata(sample.metadata),
+        sourceRevision: serializeSourceRevision(sample.sourceRevision),
+    )
 }
 
 func serializeDeletedSample(sample: HKDeletedObject) -> DeletedSample {
   return DeletedSample(
     uuid: sample.uuid.uuidString,
-    metadata: serializeMetadata(metadata: sample.metadata)
+    metadata: serializeMetadata(sample.metadata)
   )
 }
 
@@ -64,22 +59,21 @@ func serializeCategorySample(sample: HKCategorySample) -> NSDictionary {
 
     return [
         "uuid": sample.uuid.uuidString,
-        "device": serializeDevice(_device: sample.device) as Any,
+        "device": serializeDevice(hkDevice: sample.device) as Any,
         "categoryType": sample.categoryType.identifier,
         "endDate": endDate,
         "startDate": startDate,
         "value": sample.value,
-        "metadata": serializeMetadata(metadata: sample.metadata),
-        "sourceRevision": serializeSourceRevision(_sourceRevision: sample.sourceRevision) as Any
+        "metadata": serializeMetadata(sample.metadata),
+        "sourceRevision": serializeSourceRevision(sample.sourceRevision) as Any
     ]
 }
 
-func serializeSource(source: HKSource) -> NSDictionary {
-
-    return [
-        "bundleIdentifier": source.bundleIdentifier,
-        "name": source.name
-    ]
+func serializeSource(_ source: HKSource) -> margelo.nitro.healthkit.Source {
+    return margelo.nitro.healthkit.Source(
+        name: source.name,
+        bundleIdentifier: source.bundleIdentifier
+    )
 }
 
 func serializeUnknownQuantity(quantity: HKQuantity) -> Dictionary<String, AnyValue>? {
@@ -143,7 +137,7 @@ func serializeUnknownQuantity(quantity: HKQuantity) -> Dictionary<String, AnyVal
     return nil
 }
 
-func serializeMetadata(metadata: [String: Any]?) -> AnyMapHolder {
+func serializeMetadata(_ metadata: [String: Any]?) -> AnyMapHolder {
     let serialized = AnyMapHolder()
     if let m = metadata {
         for item in m {
@@ -167,25 +161,25 @@ func serializeMetadata(metadata: [String: Any]?) -> AnyMapHolder {
     return serialized
 }
 
-func serializeDevice(_device: HKDevice?) -> [String: String?]? {
-    guard let device = _device else {
+func serializeDevice(hkDevice: HKDevice?) -> Device? {
+    guard let hkDevice = hkDevice else {
         return nil
     }
-
-    return [
-        "name": device.name,
-        "firmwareVersion": device.firmwareVersion,
-        "hardwareVersion": device.hardwareVersion,
-        "localIdentifier": device.localIdentifier,
-        "manufacturer": device.manufacturer,
-        "model": device.model,
-        "softwareVersion": device.softwareVersion,
-        "udiDeviceIdentifier": device.udiDeviceIdentifier
-    ]
+    
+    return Device(
+        name: hkDevice.name,
+        firmwareVersion: hkDevice.firmwareVersion,
+        hardwareVersion: hkDevice.hardwareVersion,
+        localIdentifier: hkDevice.localIdentifier,
+        manufacturer: hkDevice.manufacturer,
+        model: hkDevice.model,
+        softwareVersion: hkDevice.softwareVersion,
+        udiDeviceIdentifier: hkDevice.udiDeviceIdentifier
+    )
 }
 
-func serializeOperatingSystemVersion(_version: OperatingSystemVersion?) -> String? {
-    guard let version = _version else {
+func serializeOperatingSystemVersion(_ version: OperatingSystemVersion?) -> String? {
+    guard let version = version else {
         return nil
     }
 
@@ -194,25 +188,27 @@ func serializeOperatingSystemVersion(_version: OperatingSystemVersion?) -> Strin
     return versionString
 }
 
-func serializeSourceRevision(_sourceRevision: HKSourceRevision?) -> [String: Any?]? {
-    guard let sourceRevision = _sourceRevision else {
+func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision?) -> SourceRevision? {
+    guard let hkSourceRevision = hkSourceRevision else {
         return nil
     }
 
-    var dict = [
-        "source": [
-            "name": sourceRevision.source.name,
-            "bundleIdentifier": sourceRevision.source.bundleIdentifier
-        ],
-        "version": sourceRevision.version as Any
-    ] as [String: Any]
-
+    
     if #available(iOS 11, *) {
-        dict["operatingSystemVersion"] = serializeOperatingSystemVersion(_version: sourceRevision.operatingSystemVersion)
-        dict["productType"] = sourceRevision.productType
+        return SourceRevision(
+            source: serializeSource(hkSourceRevision.source),
+            version: hkSourceRevision.version,
+            operatingSystemVersion: serializeOperatingSystemVersion( hkSourceRevision.operatingSystemVersion),
+            productType: hkSourceRevision.productType
+        )
     }
-
-    return dict
+    
+    return SourceRevision(
+        source: serializeSource(hkSourceRevision.source),
+        version: hkSourceRevision.version,
+        operatingSystemVersion: nil,
+        productType: nil
+    )
 }
 
 func deserializeHKQueryAnchor(anchor: String) -> HKQueryAnchor? {

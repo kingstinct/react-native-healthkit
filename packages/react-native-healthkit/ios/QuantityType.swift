@@ -2,6 +2,60 @@ import HealthKit
 import NitroModules
 
 
+
+func queryQuantitySamplesInternal(
+  typeIdentifier: QuantityTypeIdentifier,
+  unitString: String,
+  from: Double,
+  to: Double,
+  limit: Double,
+  ascending: Bool
+) throws -> Promise<[QuantitySampleRaw]> {
+    let identifier = HKQuantityTypeIdentifier(rawValue: typeIdentifier.stringValue)
+  guard let sampleType = HKSampleType.quantityType(forIdentifier: identifier) else {
+      throw RuntimeError.error(withMessage: "Failed to initialize " + typeIdentifier.stringValue)
+  }
+
+  let from = dateOrNilIfZero(from)
+  let to = dateOrNilIfZero(to)
+  let predicate = createPredicate(from: from, to: to)
+  let limit = limitOrNilIfZero(limit: limit)
+    
+    return Promise.async {
+        return try await withCheckedThrowingContinuation { continuation in
+            let q = HKSampleQuery(
+              sampleType: sampleType,
+              predicate: predicate,
+              limit: limit,
+              sortDescriptors: getSortDescriptors(ascending: ascending)
+            ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
+              guard let err = error else {
+                  if let returnValue = samples?.compactMap({ sample in
+                      if let sample = sample as? HKQuantitySample {
+                          let serialized = serializeQuantitySample(
+                            sample: sample,
+                            unit: HKUnit.init(from: unitString)
+                          )
+                          
+                          return serialized
+                      }
+                      
+                      return nil
+                  }) {
+                      return continuation.resume(returning: returnValue)
+                  }
+                  return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response returned")
+                  )
+              }
+              return continuation.resume(throwing: err)
+            }
+
+            store.execute(q)
+        }
+    }
+
+}
+
 func saveQuantitySampleInternal(
   typeIdentifier: HKQuantityType,
   unitString: String,
@@ -65,7 +119,7 @@ class QuantityType : HybridQuantityTypeSpec {
     }
     
     func queryQuantitySamples(identifier: QuantityTypeIdentifier, unit: String, fromTimestamp: Double, toTimestamp: Double, limit: Double, ascending: Bool) throws -> Promise<[QuantitySampleRaw]> {
-        return Promise.resolved(withResult: [])
+        return try queryQuantitySamplesInternal(typeIdentifier: identifier, unitString: unit, from: fromTimestamp, to: toTimestamp, limit: limit, ascending: ascending)
     }
     
     func queryStatisticsForQuantity(identifier: QuantityTypeIdentifier, unit: String, fromTimestamp: Double, toTimestamp: Double, options: [StatisticsOptions]) throws -> Promise<QueryStatisticsResponseRaw> {

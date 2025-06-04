@@ -67,11 +67,11 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="explore"
+				name="auth"
 				options={{
-					title: "Explore",
-					tabBarIcon: ({ color }) => (
-						<IconSymbol size={28} name="paperplane.fill" color={color} />
+					title: "Auth",
+					tabBarIcon: ({ color, focused }) => (
+						<IconSymbol size={28} name={focused ? "lock.fill" : "lock"} color={color} />
 					),
 				}}
 			/>
@@ -79,8 +79,18 @@ export default function TabLayout() {
 				name="core"
 				options={{
 					title: "Core",
-					tabBarIcon: ({ color }) => (
-						<IconSymbol size={28} name="paperplane.fill" color={color} />
+					tabBarIcon: ({ color, focused }) => (
+						<IconSymbol size={28} name={focused ? 'person.fill' : 'person'} color={color} />
+					),
+				}}
+			/>
+
+			<Tabs.Screen
+				name="quantityTypes"
+				options={{
+					title: "Quantities",
+					tabBarIcon: ({ color, focused }) => (
+						<IconSymbol size={28} name={focused ? "chart.bar.fill" : "chart.bar"} color={color} />
 					),
 				}}
 			/>
@@ -89,8 +99,8 @@ export default function TabLayout() {
 				name="workouts"
 				options={{
 					title: "Workouts",
-					tabBarIcon: ({ color }) => (
-						<IconSymbol size={28} name="paperplane.fill" color={color} />
+					tabBarIcon: ({ color, focused }) => (
+						<IconSymbol size={28} name={focused ? "figure.run.square.stack.fill" : "figure.run.square.stack"} color={color} />
 					),
 				}}
 			/>

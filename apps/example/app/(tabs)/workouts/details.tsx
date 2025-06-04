@@ -1,14 +1,12 @@
 import { StyleSheet } from "react-native";
 
-import { Workouts } from "react-native-healthkit";
 import { List } from "@expo/ui/swift-ui";
-import { useEffect, useState } from "react";
 import { WorkoutActivityType } from "react-native-healthkit/specs/Workout.nitro";
 import { WorkoutSample } from "react-native-healthkit/types/WorkoutSample";
-import { ListItem } from "@/components/SwiftListItem";
 import { enumKeyLookup } from "@/utils/enumKeyLookup";
 import { useLocalSearchParams } from "expo-router";
 import { Text } from "@expo/ui/swift-ui-primitives";
+import { timestampToDate } from "@/utils/timestampToDate";
 
 
 const workoutActivityTypeStrings = enumKeyLookup(WorkoutActivityType);
@@ -26,13 +24,6 @@ export default function WorkoutDetails() {
            <Text>{timestampToDate(workout.startTimestamp)}</Text>
         </List>
     );
-}
-
-const padNumber = (num: number) => num.toString().padStart(2, '0');
-
-const timestampToDate = (timestamp: number) => {
-    const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
-    return `${date.getFullYear()}-${padNumber(date.getMonth() + 1)}-${padNumber(date.getDate())} ${padNumber(date.getHours())}:${padNumber(date.getMinutes())}`;
 }
 
 const styles = StyleSheet.create({

@@ -13,10 +13,10 @@ export interface Source {
  * @see {@link https://developer.apple.com/documentation/healthkit/hkobject/1615483-sourcerevision Apple Docs }
  */
 export interface SourceRevision {
-    readonly source: Source;
-    readonly version: string;
-    readonly operatingSystemVersion?: string;
-    readonly productType?: string;
+    readonly source?: Source;
+    readonly version?: string;
+    readonly operatingSystemVersion?: string | null;
+    readonly productType?: string | null;
 };
 
 
@@ -36,7 +36,7 @@ export interface Device {
 
 
 
-export interface Source extends HybridObject<{ ios: 'swift' }> {
+export interface SourceHybridObject extends HybridObject<{ ios: 'swift' }> {
     querySources(
         identifier: SampleTypeIdentifier
     ): Promise<readonly Source[]>;

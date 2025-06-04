@@ -20,6 +20,9 @@
 		},
 		"Characteristic": {
 			"swift": "Characteristic"
+		},
+		"QuantityType":{
+			"swift": "QuantityType"
 		}
 	},
 	"ignorePaths": ["**/node_modules"]
