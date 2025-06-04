@@ -75,6 +75,11 @@ RCT_EXTERN_METHOD(deleteSamples:(NSString)typeIdentifier
                   reject:(RCTPromiseRejectBlock)reject
 )
 
+RCT_EXTERN_METHOD(deleteWorkoutSample:(NSString)uuid
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject
+)
+
 RCT_EXTERN_METHOD(subscribeToObserverQuery:(NSString)typeIdentifier
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
