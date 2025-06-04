@@ -11,6 +11,7 @@ import useSubscribeToChanges from './hooks/useSubscribeToChanges'
 import Native, { HKQuantityTypeIdentifier } from './native-types'
 import deleteQuantitySample from './utils/deleteQuantitySample'
 import deleteSamples from './utils/deleteSamples'
+import deleteWorkoutSample from './utils/deleteWorkoutSample'
 import getDateOfBirth from './utils/getDateOfBirth'
 import getMostRecentCategorySample from './utils/getMostRecentCategorySample'
 import getMostRecentQuantitySample from './utils/getMostRecentQuantitySample'
@@ -178,6 +179,7 @@ export default {
   // delete methods
   deleteQuantitySample,
   deleteSamples,
+  deleteWorkoutSample,
 
   // save methods
   /**
@@ -267,6 +269,7 @@ export {
   requestAuthorization,
   deleteQuantitySample,
   deleteSamples,
+  deleteWorkoutSample,
   getWorkoutPlanById,
   saveCategorySample,
   saveStateOfMindSample,
