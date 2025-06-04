@@ -12,6 +12,7 @@ import Healthkit, {
   useHealthkitAuthorization,
   deleteQuantitySample,
   deleteSamples,
+  deleteWorkoutSample,
   queryHeartbeatSeriesSamplesWithAnchor,
   queryQuantitySamplesWithAnchor,
   queryStatisticsCollectionForQuantity,
@@ -99,6 +100,26 @@ const LatestWorkout: React.FC<{
           [icon],
         )
 
+  const deleteFn = useCallback(async () => {
+    if (!latestValue?.uuid) {
+      return
+    }
+
+    try {
+      const result = await deleteWorkoutSample(latestValue.uuid)
+      Alert.alert(
+        'deleteWorkoutSample',
+        `Executed sucessfully. Result: ${result}.\n\nThe actual deletion will only happen if the workout was saved by the app.`,
+      )
+    } catch (error) {
+      console.error('Error deleting workout', error)
+      Alert.alert(
+        'Error',
+        'An error occurred while deleting the workout. Please check the console for more details.',
+      )
+    }
+  }, [latestValue])
+
   return (
     <List.Accordion title='Latest workout' id='workout'>
       <List.Item
@@ -157,6 +178,9 @@ const LatestWorkout: React.FC<{
           latestValue?.device ? `${latestValue.device.name}` : 'No data found'
         }
       />
+      <Button disabled={!latestValue?.uuid} onPress={deleteFn}>
+        Delete Workout
+      </Button>
     </List.Accordion>
   )
 }
