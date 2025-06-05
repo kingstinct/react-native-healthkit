@@ -128,7 +128,7 @@ func serializeLocation(location: CLLocation, previousLocation: CLLocation?) -> W
         latitude: location.coordinate.latitude,
         altitude: location.altitude,
         speed: location.speed,
-        timestamp: location.timestamp.timeIntervalSince1970,
+        date: location.timestamp,
         horizontalAccuracy: location.horizontalAccuracy,
         speedAccuracy: location.speedAccuracy,
         verticalAccuracy: location.verticalAccuracy,
@@ -253,8 +253,8 @@ func mapWorkout(
             ) {
                 return WorkoutEvent(
                     type: type,
-                    startTimestamp: event.dateInterval.start.timeIntervalSince1970,
-                    endTimestamp: event.dateInterval.end.timeIntervalSince1970
+                    start: event.dateInterval.start,
+                    end: event.dateInterval.end
                 )
             }
             return nil
@@ -272,8 +272,8 @@ func mapWorkout(
         
         activitiesArray = hkActivities.map { activity in
             return WorkoutActivity(
-                startTimestamp: activity.startDate.timeIntervalSince1970,
-                endTimestamp: activity.endDate?.timeIntervalSince1970 ?? activity.startDate.timeIntervalSince1970,
+                start: activity.startDate,
+                end: activity.endDate ?? activity.startDate,
                 uuid: activity.uuid.uuidString,
                 duration: activity.duration
             )
@@ -305,8 +305,8 @@ func mapWorkout(
         totalEnergyBurned: nil,
         totalSwimmingStrokeCount: nil,
         totalFlightsClimbed: totalFlightsClimbed,
-        startTimestamp: workout.startDate.timeIntervalSince1970,
-        endTimestamp: workout.endDate.timeIntervalSince1970,
+        start: workout.startDate,
+        end: workout.endDate,
         metadata: serializeMetadata(workout.metadata),
         sourceRevision: nil,
         events: workoutEvents,
@@ -341,8 +341,7 @@ func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
         let verticalAccuracy = location.verticalAccuracy
         let course = location.course
         let speed = location.speed
-        let timestamp = location.timestamp
-        
+        let timestamp = location.date
         
         let clLocation = CLLocation(
             coordinate: CLLocationCoordinate2D(
@@ -354,7 +353,7 @@ func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
             verticalAccuracy: verticalAccuracy,
             course: course,
             speed: speed,
-            timestamp: Date(timeIntervalSinceNow: timestamp)
+            timestamp: timestamp
         )
         
         return clLocation
@@ -362,7 +361,7 @@ func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
 }
 
 class Workout : HybridWorkoutSpec {
-    func saveWorkoutSample(workoutActivityType: WorkoutActivityType, quantities: [QuantitySampleForSaving], startTimestamp: Double?, endTimestamp: Double?, totals: WorkoutTotals, metadata: AnyMapHolder) throws -> Promise<String?> {
+    func saveWorkoutSample(workoutActivityType: WorkoutActivityType, quantities: [QuantitySampleForSaving], start: Date?, end: Date?, totals: WorkoutTotals, metadata: AnyMapHolder) throws -> Promise<String?> {
         return Promise.resolved(withResult: nil)
     }
     
@@ -412,10 +411,7 @@ class Workout : HybridWorkoutSpec {
         }
     }
     
-    func queryWorkoutSamplesWithAnchor(energyUnit: String, distanceUnit: String, fromTimestamp: Double?, toTimestamp: Double?, limit: Double, anchor: String?) throws -> Promise<QueryWorkoutSamplesWithAnchorResponse> {
-        let from = dateOrNilIfZero(fromTimestamp)
-        let to = dateOrNilIfZero(toTimestamp)
-        
+    func queryWorkoutSamplesWithAnchor(energyUnit: String, distanceUnit: String, from: Date?, to: Date?, limit: Double, anchor: String?) throws -> Promise<QueryWorkoutSamplesWithAnchorResponse> {
         let predicate = createPredicate(
             from: from,
             to: to

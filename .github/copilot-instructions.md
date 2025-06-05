@@ -7,13 +7,13 @@ This repository is a monorepo centering around the package react-native-healthki
 
 ## Development Commands
 ```bash
-# install dependencies (after adding any packages)
+# install dependencies (after adding any packages, can be run on root level)
 bun install
 
 # install cocoapods (after adding any packages with native code)
 cd apps/example/ios && pod install
 
-# After changes to any Nitro types (all in the `/packages/react-native-healthkit/src/specs` directory and referenced from there)
+# After changes to any Nitro types (all in the `/packages/react-native-healthkit/src/specs` directory and referenced from there, it's not necessary when ios/Swift files or unrelated TS-files have changed)
 bun codegen
 
 # start packager
@@ -27,7 +27,7 @@ IMPORTANT: After making code changes, you MUST use the XcodeBuildMCP commands to
 First, discover available schemes:
 
 Use MCP tool from XCodeBuildMCP: list_schems_proj with projectPath: "/Users/robertherber/code/react-native-healthkit-nitro/apps/example/ios/reactnativehealthkitexample.xcodeproj"
-Build the IcySky scheme for iOS Simulator:
+Build the reactnativehealthkitexample scheme for iOS Simulator:
 
 Use MCP tool from XcodeBuildMCP: build_ios_sim_name_proj with parameters:
 {

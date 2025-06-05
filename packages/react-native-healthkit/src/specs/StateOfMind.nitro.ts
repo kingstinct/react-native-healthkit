@@ -19,8 +19,8 @@ export enum StateOfMindValenceClassification {
 export interface StateOfMindSampleRaw {
   readonly uuid: string;
   readonly device?: Device;
-  readonly startTimestamp: number;
-  readonly endTimestamp: number;
+  readonly start: Date;
+  readonly end: Date;
   readonly metadata?: GenericMetadata;
   readonly sourceRevision?: SourceRevision;
   // State of mind sample properties
@@ -115,8 +115,8 @@ export enum StateOfMindAssociation {
 
 export interface StateOfMind extends HybridObject<{ ios: 'swift' }> {
     querySamples(
-        fromTimestamp: number | null,
-        toTimestamp: number | null,
+        from: Date | null,
+        to: Date | null,
         limit: number,
         ascending: boolean
       ): Promise<readonly StateOfMindSampleRaw[]>;

@@ -6,8 +6,8 @@ import NitroModules
 func queryQuantitySamplesInternal(
   typeIdentifier: QuantityTypeIdentifier,
   unitString: String,
-  from: Double,
-  to: Double,
+  from: Date?,
+  to: Date?,
   limit: Double,
   ascending: Bool
 ) throws -> Promise<[QuantitySampleRaw]> {
@@ -16,8 +16,6 @@ func queryQuantitySamplesInternal(
       throw RuntimeError.error(withMessage: "Failed to initialize " + typeIdentifier.stringValue)
   }
 
-  let from = dateOrNilIfZero(from)
-  let to = dateOrNilIfZero(to)
   let predicate = createPredicate(from: from, to: to)
   let limit = limitOrNilIfZero(limit: limit)
     
@@ -60,8 +58,8 @@ func saveQuantitySampleInternal(
   typeIdentifier: HKQuantityType,
   unitString: String,
   value: Double,
-  start: Double,
-  end: Double,
+  start: Date,
+  end: Date,
   metadata: [String: Any]?
 ) -> Promise<Bool> {
   let unit = HKUnit.init(from: unitString)
@@ -69,8 +67,8 @@ func saveQuantitySampleInternal(
   let sample = HKQuantitySample.init(
     type: typeIdentifier,
     quantity: quantity,
-    start: Date.init(timeIntervalSince1970: start),
-    end: Date.init(timeIntervalSince1970: end),
+    start: start,
+    end: end,
     metadata: metadata
   )
     
@@ -93,15 +91,15 @@ func anyMapToDictionary(_ anyMap: AnyMapHolder) -> [String: Any] {
 }
 
 class QuantityType : HybridQuantityTypeSpec {
-    func saveQuantitySample(identifier: QuantityTypeIdentifier, unit: String, value: Double, startTimestamp: Double, endTimestamp: Double, metadata: AnyMapHolder) throws -> Promise<Bool> {
+    func saveQuantitySample(identifier: QuantityTypeIdentifier, unit: String, value: Double, start: Date, end: Date, metadata: AnyMapHolder) throws -> Promise<Bool> {
         return saveQuantitySampleInternal(
             typeIdentifier: HKQuantityType(
                 HKQuantityTypeIdentifier(rawValue: identifier.stringValue)
             ),
             unitString: unit,
             value: value,
-            start: startTimestamp,
-            end: endTimestamp,
+            start: start,
+            end: end,
             metadata: anyMapToDictionary(metadata)
         )
     }
@@ -110,23 +108,23 @@ class QuantityType : HybridQuantityTypeSpec {
         return Promise.resolved(withResult: false)
     }
     
-    func deleteSamples(identifier: QuantityTypeIdentifier, startTimestamp: Double, endTimestamp: Double) throws -> Promise<Bool> {
+    func deleteSamples(identifier: QuantityTypeIdentifier, start: Date, end: Date) throws -> Promise<Bool> {
         return Promise.resolved(withResult: false)
     }
     
-    func queryWorkoutSamples(energyUnit: String, distanceUnit: String, fromTimestamp: Double, toTimestamp: Double, limit: Double, ascending: Bool) throws -> Promise<[WorkoutSample]> {
+    func queryWorkoutSamples(energyUnit: String, distanceUnit: String, from: Date, to: Date, limit: Double, ascending: Bool) throws -> Promise<[WorkoutSample]> {
         return Promise.resolved(withResult: [])
     }
     
-    func queryQuantitySamples(identifier: QuantityTypeIdentifier, unit: String, fromTimestamp: Double, toTimestamp: Double, limit: Double, ascending: Bool) throws -> Promise<[QuantitySampleRaw]> {
-        return try queryQuantitySamplesInternal(typeIdentifier: identifier, unitString: unit, from: fromTimestamp, to: toTimestamp, limit: limit, ascending: ascending)
+    func queryQuantitySamples(identifier: QuantityTypeIdentifier, unit: String, from: Date, to: Date, limit: Double, ascending: Bool) throws -> Promise<[QuantitySampleRaw]> {
+        return try queryQuantitySamplesInternal(typeIdentifier: identifier, unitString: unit, from: from, to: to, limit: limit, ascending: ascending)
     }
     
-    func queryStatisticsForQuantity(identifier: QuantityTypeIdentifier, unit: String, fromTimestamp: Double, toTimestamp: Double, options: [StatisticsOptions]) throws -> Promise<QueryStatisticsResponseRaw> {
+    func queryStatisticsForQuantity(identifier: QuantityTypeIdentifier, unit: String, from: Date, to: Date, options: [StatisticsOptions]) throws -> Promise<QueryStatisticsResponseRaw> {
         return Promise.resolved(withResult: QueryStatisticsResponseRaw())
     }
     
-    func queryStatisticsCollectionForQuantity(identifier: QuantityTypeIdentifier, unit: String, options: [StatisticsOptions], anchorDate: String, intervalComponents: IntervalComponents, startTimestamp: Double, endTimestamp: Double) throws -> Promise<[QueryStatisticsResponseRaw]> {
+    func queryStatisticsCollectionForQuantity(identifier: QuantityTypeIdentifier, unit: String, options: [StatisticsOptions], anchorDate: String, intervalComponents: IntervalComponents, start: Date, end: Date) throws -> Promise<[QueryStatisticsResponseRaw]> {
         return Promise.resolved(withResult: [])
     }
     

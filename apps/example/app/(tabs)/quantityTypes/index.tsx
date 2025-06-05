@@ -33,7 +33,7 @@ export default function QuantitiesScreen() {
         const queryQuantitySamples = async () => {
             const unit = await Core.getPreferredUnits([selectedQuantityType]) || 'kcal';
 
-            const samples = await QuantityType.queryQuantitySamples(selectedQuantityType, unit[0].unit, fromDate.valueOf() / 1000, toDate.valueOf() / 1000, 10, selectedIndex === 1);
+            const samples = await QuantityType.queryQuantitySamples(selectedQuantityType, unit[0].unit, fromDate, toDate, 10, selectedIndex === 1);
 
             setQuantitySamples(samples)
         }
@@ -110,7 +110,7 @@ export default function QuantitiesScreen() {
                         <ListItem
                             key={item.uuid}
                             title={quantityStr}
-                            subtitle={timestampToDate(item.startTimestamp)}
+                            subtitle={item.start.toLocaleString()}
                         />
                     )
                 })}

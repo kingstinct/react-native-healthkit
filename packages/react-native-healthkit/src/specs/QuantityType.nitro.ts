@@ -5,8 +5,8 @@ import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
 import type { QuantitySampleRaw } from "../types/QuantitySampleRaw";
 
 interface QuantityDateInterval {
-  readonly fromTimestamp: number;
-  readonly toTimestamp: number;
+  readonly from: Date;
+  readonly to: Date;
 };
 
 export interface QueryStatisticsResponseRaw {
@@ -189,8 +189,8 @@ export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
     identifier: QuantityTypeIdentifier,
     unit: string,
     value: number,
-    startTimestamp: number,
-    endTimestamp: number,
+    start: Date,
+    end: Date,
     metadata: AnyMap
   ): Promise<boolean>;
 
@@ -201,15 +201,15 @@ export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
   
   deleteSamples(
     identifier: QuantityTypeIdentifier,  
-    startTimestamp: number,
-    endTimestamp: number
+    start: Date,
+    end: Date
   ): Promise<boolean>;
   
   queryQuantitySamples(
     identifier: QuantityTypeIdentifier,
     unit: string,
-    fromTimestamp: number,
-    toTimestamp: number,
+    from: Date,
+    to: Date,
     limit: number,
     ascending: boolean
   ): Promise<readonly QuantitySampleRaw[]>;
@@ -217,8 +217,8 @@ export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
   queryStatisticsForQuantity(
     identifier: QuantityTypeIdentifier,
     unit: string,
-    fromTimestamp: number,
-    toTimestamp: number,
+    from: Date,
+    to: Date,
     options: readonly StatisticsOptions[],
   ): Promise<QueryStatisticsResponseRaw>;
 
@@ -228,8 +228,8 @@ export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
     options: readonly StatisticsOptions[],
     anchorDate: string,
     intervalComponents: IntervalComponents,
-    startTimestamp: number,
-    endTimestamp: number
+    start: Date,
+    end: Date
   ): Promise<readonly QueryStatisticsResponseRaw[]>;
 
 

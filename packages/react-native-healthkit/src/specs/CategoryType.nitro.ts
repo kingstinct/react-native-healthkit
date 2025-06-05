@@ -166,8 +166,8 @@ export enum CategoryValueAppleStandHour {
 
 
 export interface CategorySampleRawForSaving {
-  readonly startTimestamp?: number;
-  readonly endTimestamp?: number;
+  readonly start: Date;
+  readonly end: Date;
   readonly categoryType: CategoryTypeIdentifier;
   readonly value: CategoryValueForIdentifier;
   readonly metadata: GenericMetadata;
@@ -184,8 +184,8 @@ export interface CategorySampleRaw {
   readonly uuid: string;
   readonly device?: Device;
   readonly categoryType: CategoryTypeIdentifier;
-  readonly startTimestamp: number;
-  readonly endTimestamp: number;
+  readonly start: Date;
+  readonly end: Date;
   readonly value: CategoryValueForIdentifier;
   readonly metadata: GenericMetadata;
   readonly sourceRevision?: SourceRevision;
@@ -222,15 +222,15 @@ export interface CategoryType extends HybridObject<{ ios: 'swift' }> {
   saveCategorySample(
     identifier: CategoryTypeIdentifier,
     value: CategoryValueForIdentifier,
-    startTimestamp: number,
-    endTimestamp: number,
+    start: Date,
+    end: Date,
     metadata: GenericMetadata
   ): Promise<boolean>;
 
   queryCategorySamples(
     identifier: CategoryTypeIdentifier,
-    fromTimestamp: number,
-    toTimestamp: number,
+    from: Date,
+    to: Date,
     limit: number,
     ascending: boolean
   ): Promise<readonly CategorySampleRaw[]>;
@@ -238,8 +238,8 @@ export interface CategoryType extends HybridObject<{ ios: 'swift' }> {
 
   queryCategorySamplesWithAnchor(
     identifier: CategoryTypeIdentifier,
-    fromTimestamp: number,
-    toTimestamp: number,
+    from: Date,
+    to: Date,
     limit: number,
     anchor: string
   ): Promise<QueryCategorySamplesResponseRaw>;

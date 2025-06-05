@@ -12,8 +12,8 @@ export interface HKCorrelationRaw {
     readonly correlationType: CorrelationTypeIdentifier;
     readonly objects: readonly HKCorrelationRawObject[];
     readonly metadata: GenericMetadata;
-    readonly startTimestamp: number;
-    readonly endTimestamp: number;
+    readonly start: Date;
+    readonly end: Date;
 };
 
 
@@ -31,14 +31,14 @@ export interface Correlation extends HybridObject<{ ios: 'swift' }> {
     saveCorrelationSample(
       typeIdentifier: CorrelationTypeIdentifier,
       samples: SampleForSaving[],
-      startTimestamp: number,
-      endTimestamp: number,
+      start: Date,
+      end: Date,
       metadata: AnyMap
     ): Promise<boolean>;
 
   queryCorrelationSamples(
     typeIdentifier: CorrelationTypeIdentifier,
-    fromTimestamp: number,
-    toTimestamp: number
+    from: Date,
+    to: Date
   ): Promise<readonly HKCorrelationRaw[]>;
 }

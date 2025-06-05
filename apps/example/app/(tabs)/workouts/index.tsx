@@ -6,7 +6,6 @@ import { WorkoutActivityType } from "react-native-healthkit/specs/Workout.nitro"
 import { WorkoutSample } from "react-native-healthkit/types/WorkoutSample";
 import { ListItem } from "@/components/SwiftListItem";
 import { enumKeyLookup } from "@/utils/enumKeyLookup";
-import { timestampToDate } from "@/utils/timestampToDate";
 import { router } from "expo-router";
 import { View } from "react-native";
 import { Text } from "@expo/ui/swift-ui-primitives";
@@ -21,7 +20,7 @@ export default function WorkoutsScreen() {
     useEffect(() => {
         const queryWorkoutSamples = async () => {
             const startedAt = Date.now();
-            const workouts = await Workouts.queryWorkoutSamplesWithAnchor('kcal', 'm', (Date.now() - 1000 * 60 * 60 * 24 * 7) / 1000, 0, 10)
+            const workouts = await Workouts.queryWorkoutSamplesWithAnchor('kcal', 'm', new Date(Date.now() - 1000 * 60 * 60 * 24 * 7), new Date(), 10)
             setQueryTime(Date.now() - startedAt);
             setWorkouts(workouts.samples)
         }
@@ -40,7 +39,7 @@ export default function WorkoutsScreen() {
                         <ListItem
                             key={item.uuid}
                             title={workoutActivityTypeStrings[item.workoutActivityType]}
-                            subtitle={timestampToDate(item.startTimestamp)}
+                            subtitle={item.start.toLocaleString()}
                             onPress={() => router.push(`/workouts/details?workout=${JSON.stringify(item)}`)}
                         />
                     ))

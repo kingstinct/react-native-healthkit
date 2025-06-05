@@ -140,8 +140,8 @@ export interface WorkoutMetadata extends GenericMetadata {
 
 export interface WorkoutEvent {
     readonly type: WorkoutEventType;
-    readonly startTimestamp: number;
-    readonly endTimestamp: number;
+    readonly start: Date;
+    readonly end: Date;
 }
 
 export enum WorkoutEventType {
@@ -156,8 +156,8 @@ export enum WorkoutEventType {
 }
 
 export interface WorkoutActivity {
-    readonly startTimestamp: number;
-    readonly endTimestamp: number;
+    readonly start: Date;
+    readonly end: Date;
     readonly uuid: string;
     readonly duration: number;
 }
@@ -167,7 +167,7 @@ export interface WorkoutLocation {
     readonly latitude: number;
     readonly altitude: number;
     readonly speed: number;
-    readonly timestamp: number;
+    readonly date: Date;
     readonly horizontalAccuracy: number;
     readonly speedAccuracy: number;
     readonly verticalAccuracy: number;
@@ -211,7 +211,7 @@ export interface LocationForSaving {
     readonly verticalAccuracy: number;
     readonly course: number;
     readonly speed: number;
-    readonly timestamp: number; // unix timestamp in milliseconds
+    readonly date: Date; // unix timestamp in milliseconds
 };
 
 export interface WorkoutPlan {
@@ -242,8 +242,8 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
     saveWorkoutSample(
         workoutActivityType: WorkoutActivityType,
         quantities: readonly QuantitySampleForSaving[],
-        startTimestamp: number | null,
-        endTimestamp: number | null,
+        start: Date | null,
+        end: Date | null,
         totals: WorkoutTotals,
         metadata: AnyMap
     ): Promise<string | null>;
@@ -256,8 +256,8 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
     queryWorkoutSamplesWithAnchor(
         energyUnit: string,
         distanceUnit: string,
-        fromTimestamp: number | null,
-        toTimestamp: number | null,
+        from: Date | null,
+        to: Date | null,
         limit: number,
         anchor?: string
     ): Promise<QueryWorkoutSamplesWithAnchorResponse>;

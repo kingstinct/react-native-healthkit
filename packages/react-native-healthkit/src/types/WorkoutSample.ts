@@ -14,8 +14,8 @@ export interface WorkoutSample {
     readonly totalEnergyBurned?: QuantityRaw;
     readonly totalSwimmingStrokeCount?: QuantityRaw;
     readonly totalFlightsClimbed?: QuantityRaw;
-    readonly startTimestamp: number;
-    readonly endTimestamp: number;
+    readonly start: Date;
+    readonly end: Date;
     readonly metadata?: AnyMap;
     readonly sourceRevision?: SourceRevision;
     readonly events?: readonly WorkoutEvent[];
