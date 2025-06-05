@@ -13,10 +13,10 @@ export type ListItemProps = {
 export const ListItem = ({ title, subtitle, onPress }: ListItemProps) => (
     <HStack>
         <Text>{title}</Text>
-        <Button
+        { onPress ? <Button
             onPress={onPress}
-            > </Button>
-        <Text size={14} weight='light' design="monospaced">{subtitle}</Text>
+            > </Button> : <Spacer/>}
+        <Text size={12} weight='light' design="monospaced">{subtitle}</Text>
         
     </HStack>
 );
