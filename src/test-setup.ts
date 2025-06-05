@@ -13,6 +13,7 @@ beforeAll(async () => {
     saveQuantitySample: jest.fn(),
     deleteQuantitySample: jest.fn(),
     deleteSamples: jest.fn(),
+    deleteWorkoutSample: jest.fn(),
     disableAllBackgroundDelivery: jest.fn(),
     disableBackgroundDelivery: jest.fn(),
     enableBackgroundDelivery: jest.fn(),

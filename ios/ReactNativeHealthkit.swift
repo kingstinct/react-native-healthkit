@@ -344,6 +344,30 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
   }
 
+  @objc(deleteWorkoutSample:resolve:reject:)
+  func deleteWorkoutSample(
+    uuid: String,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    guard let store = _store else {
+      return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
+    }
+
+    guard let workoutUUID = UUID.init(uuidString: uuid) else {
+      return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize UUID from string", nil)
+    }
+
+    let samplePredicate = HKQuery.predicateForObject(with: workoutUUID)
+
+    store.deleteObjects(of: HKObjectType.workoutType(), predicate: samplePredicate) { (success: Bool, _: Int, error: Error?) in
+      guard let err = error else {
+        return resolve(success)
+      }
+      reject(GENERIC_ERROR, err.localizedDescription, error)
+    }
+  }
+
   @objc(saveCorrelationSample:samples:start:end:metadata:resolve:reject:)
   func saveCorrelationSample(
     typeIdentifier: String,

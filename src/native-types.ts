@@ -2190,6 +2190,9 @@ type ReactNativeHealthkitTypeNative = {
     start: string,
     end: string
   ) => Promise<boolean>;
+  readonly deleteWorkoutSample: (
+    uuid: string
+  ) => Promise<boolean>;
   readonly queryWorkoutSamples: <
     TEnergy extends EnergyUnit,
     TDistance extends LengthUnit
