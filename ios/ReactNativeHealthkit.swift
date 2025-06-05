@@ -864,7 +864,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     ) {
       if error == nil {
         DispatchQueue.main.async {
-          if self.bridge != nil && self.bridge.isValid {
+          if self._hasListeners {
             self.sendEvent(
               withName: "onChange",
               body: [
@@ -2373,7 +2373,7 @@ extension ReactNativeHealthkit: HKWorkoutSessionDelegate {
     Task { @MainActor [weak self] in
       guard let self = self else { return }
 
-      if self.bridge != nil && self.bridge.isValid {
+      if self._hasListeners {
         self.sendEvent(withName: "onRemoteWorkoutStateChange", body: [
           "toState": toState.rawValue,
           "fromState": fromState.rawValue,
@@ -2388,7 +2388,7 @@ extension ReactNativeHealthkit: HKWorkoutSessionDelegate {
     Task { @MainActor [weak self] in
       guard let self = self else { return }
 
-      if self.bridge != nil && self.bridge.isValid {
+      if self._hasListeners {
         self.sendEvent(
           withName: "onRemoteWorkoutError",
           body: ["error": error.localizedDescription]
@@ -2416,7 +2416,7 @@ extension ReactNativeHealthkit: HKWorkoutSessionDelegate {
         await MainActor.run { [weak self] in
           guard let self = self else { return }
 
-          if let bridge = self.bridge, bridge.isValid {
+          if self._hasListeners {
             self.sendEvent(
               withName: "onRemoteWorkoutDataReceived",
               body: ["data": serializedData]
@@ -2427,7 +2427,7 @@ extension ReactNativeHealthkit: HKWorkoutSessionDelegate {
         await MainActor.run { [weak self] in
           guard let self = self else { return }
 
-          if self.bridge != nil && self.bridge.isValid {
+          if self._hasListeners {
             self.sendEvent(
               withName: "onRemoteWorkoutError",
               body: ["error": error.localizedDescription]
@@ -2440,7 +2440,7 @@ extension ReactNativeHealthkit: HKWorkoutSessionDelegate {
 
   @available(iOS 17.0, *)
   func workoutSession(_ workoutSession: HKWorkoutSession, didGenerate event: HKWorkoutEvent) {
-    if self.bridge != nil && self.bridge.isValid {
+    if self._hasListeners {
       self.sendEvent(
         withName: "onRemoteWorkoutEventReceived",
         body: ["type": event.type.rawValue]
