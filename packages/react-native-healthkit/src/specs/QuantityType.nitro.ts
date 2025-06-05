@@ -236,8 +236,8 @@ export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
   queryQuantitySamplesWithAnchor(
     identifier: QuantityTypeIdentifier,
     unit: string,
-    fromTimestamp: number,
-    toTimestamp: number,
+    from: Date,
+    to: Date,
     limit: number,
     anchor: string
   ): Promise<QueryQuantitySamplesResponseRaw>;

@@ -130,7 +130,7 @@ class QuantityType : HybridQuantityTypeSpec {
         return Promise.resolved(withResult: [])
     }
     
-    func queryQuantitySamplesWithAnchor(identifier: QuantityTypeIdentifier, unit: String, fromTimestamp: Double, toTimestamp: Double, limit: Double, anchor: String) throws -> Promise<QueryQuantitySamplesResponseRaw> {
+    func queryQuantitySamplesWithAnchor(identifier: QuantityTypeIdentifier, unit: String, from: Date, to: Date, limit: Double, anchor: String) throws -> Promise<QueryQuantitySamplesResponseRaw> {
         return Promise.resolved(withResult: QueryQuantitySamplesResponseRaw())
     }
     

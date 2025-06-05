@@ -44,14 +44,14 @@
 	"homepage": "https://github.com/kingstinct/react-native-healthkit#readme",
 	"publishConfig": {
 		"registry": "https://registry.npmjs.org/",
-    	"access": "public"
+		"access": "public"
 	},
 	"devDependencies": {
-		"@types/react": "^19.0.6",
-		"nitro-codegen": "*",
+		"@types/react": "~19.0.10",
+		"nitro-codegen": "^0.26.0",
 		"react": "19.0.0",
-		"react-native": "0.79.2",
-		"react-native-nitro-modules": "*",
+		"react-native": "*",
+		"react-native-nitro-modules": "^0.26.0",
 		"typescript": "~5.8.3"
 	},
 	"peerDependencies": {

@@ -2,6 +2,7 @@ import { Host, HStack, Text } from "@expo/ui/swift-ui-primitives";
 import { Spacer } from "./Spacer";
 import { Pressable, View } from "react-native";
 import { ThemedText } from "./ThemedText";
+import { Button } from "@expo/ui/swift-ui";
 
 export type ListItemProps = {
     title: string;
@@ -12,8 +13,11 @@ export type ListItemProps = {
 export const ListItem = ({ title, subtitle, onPress }: ListItemProps) => (
     <HStack>
         <Text>{title}</Text>
-        <Spacer />
-        <Text weight='light' design="monospaced">{subtitle}</Text>
+        <Button
+            onPress={onPress}
+            > </Button>
+        <Text size={14} weight='light' design="monospaced">{subtitle}</Text>
+        
     </HStack>
 );
 

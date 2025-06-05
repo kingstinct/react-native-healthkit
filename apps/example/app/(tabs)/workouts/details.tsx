@@ -16,7 +16,9 @@ type WorkoutDetailsProps = Readonly<{
 }>
 
 export default function WorkoutDetails() {
-    const { workout } = useLocalSearchParams<WorkoutDetailsProps>();
+    const { workout: workoutStr } = useLocalSearchParams<{ workout?: string }>();
+
+    const workout = JSON.parse(workoutStr || '{}') as WorkoutSample;
 
     return (
         <List scrollEnabled selectEnabled onSelectionChange={(items) => alert(`indexes of selected items: ${items.join(', ')}`)} style={{ flex: 1 }} listStyle='insetGrouped'>
