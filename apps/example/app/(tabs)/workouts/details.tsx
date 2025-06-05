@@ -1,27 +1,36 @@
-import { StyleSheet } from "react-native";
-
 import { List } from "@expo/ui/swift-ui";
-import { WorkoutActivityType, WorkoutEventType } from "react-native-healthkit/specs/Workout.nitro";
-import { WorkoutSample } from "react-native-healthkit/types/WorkoutSample";
+import { WorkoutActivityType, WorkoutEventType } from "react-native-healthkit/specs/WorkoutsModule.nitro";
+import { WorkoutSample } from "react-native-healthkit/specs/WorkoutsModule.nitro";
 import { enumKeyLookup } from "@/utils/enumKeyLookup";
 import { useLocalSearchParams } from "expo-router";
 import { Section } from "@expo/ui/swift-ui-primitives";
-import { timestampToDateWithSeconds } from "@/utils/timestampToDate";
 import { ListItem } from "@/components/SwiftListItem";
+import { Workouts } from "react-native-healthkit";
+import { useEffect, useState } from "react";
 
 
 const workoutActivityTypeStrings = enumKeyLookup(WorkoutActivityType);
 
 const workoutEventTypeStrings = enumKeyLookup(WorkoutEventType);
 
-type WorkoutDetailsProps = Readonly<{
-    workout: WorkoutSample;
-}>
-
 export default function WorkoutDetails() {
-    const { workout: workoutStr } = useLocalSearchParams<{ workout?: string }>();
+    const { workoutId } = useLocalSearchParams<{ workoutId?: string }>();
 
-    const workout = JSON.parse(workoutStr || '{}') as WorkoutSample;
+    const [workout, setWorkout] = useState<WorkoutSample | null>(null);
+
+    useEffect(() => {
+        if (!workoutId) {
+            return;
+        }
+
+        Workouts.queryWorkoutByUUID(workoutId).then(setWorkout).catch(console.error);
+    }, [workoutId]);
+
+    console.log('workout', JSON.stringify(workout?.workoutActivityType, null, 2));
+
+    if (!workout) {
+        return <List><ListItem title="Loading workout details..." /></List>;
+    }
 
     return (
         <List scrollEnabled>
@@ -31,13 +40,13 @@ export default function WorkoutDetails() {
                     subtitle={workoutActivityTypeStrings[workout.workoutActivityType]} />
                 <ListItem
                     title='Started'
-                    subtitle={timestampToDateWithSeconds(workout.startTimestamp)} />
+                    subtitle={workout.start.toLocaleDateString()} />
                 <ListItem
                     title='Ended'
-                    subtitle={timestampToDateWithSeconds(workout.endTimestamp)} />
+                    subtitle={workout.end.toLocaleDateString()} />
                 <ListItem
                     title='Duration'
-                    subtitle={`${Math.round((workout.endTimestamp - workout.startTimestamp) / 60)} minutes`} />
+                    subtitle={`${Math.round((workout.end.valueOf() - workout.start.valueOf()) / 60 / 1000)} minutes`} />
                 { workout.totalDistance ? <ListItem
                     title='Total Distance'
                     subtitle={`${Math.round(workout.totalDistance.quantity)} ${workout.totalDistance.unit}`} /> : null }
@@ -85,7 +94,7 @@ export default function WorkoutDetails() {
                         <ListItem
                             key={index}
                             title={`Event ${index + 1}`}
-                            subtitle={`Type: ${workoutEventTypeStrings[event.type]}, Timestamp: ${timestampToDateWithSeconds(event.startTimestamp)}`} />
+                            subtitle={`Type: ${workoutEventTypeStrings[event.type]}, Timestamp: ${event.start.toLocaleDateString()}`} />
                     ))}
                 </Section>
                 
@@ -96,7 +105,7 @@ export default function WorkoutDetails() {
                         <ListItem
                             key={index}
                             title={`Activity ${index + 1}`}
-                            subtitle={`Duration: ${Math.round(activity.duration / 60)} minutes, Start: ${timestampToDateWithSeconds(activity.startTimestamp)}`} />
+                            subtitle={`Duration: ${Math.round(activity.duration / 60 / 1000)} minutes, Start: ${activity.start.toLocaleDateString()}`} />
                     ))}
                 </Section>
             }

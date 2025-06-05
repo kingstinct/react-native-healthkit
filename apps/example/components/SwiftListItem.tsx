@@ -6,7 +6,7 @@ import { Button } from "@expo/ui/swift-ui";
 
 export type ListItemProps = {
     title: string;
-    subtitle: string;
+    subtitle?: string;
     onPress?: () => void;
 }
 
@@ -16,7 +16,7 @@ export const ListItem = ({ title, subtitle, onPress }: ListItemProps) => (
         { onPress ? <Button
             onPress={onPress}
             > </Button> : <Spacer/>}
-        <Text size={12} weight='light' design="monospaced">{subtitle}</Text>
+        {subtitle && <Text size={12} weight='light' design="monospaced">{subtitle}</Text>}
         
     </HStack>
 );

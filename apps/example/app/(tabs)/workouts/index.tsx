@@ -2,14 +2,13 @@
 import { Workouts } from "react-native-healthkit";
 import { Host, List } from "@expo/ui/swift-ui";
 import { useEffect, useState } from "react";
-import { WorkoutActivityType } from "react-native-healthkit/specs/Workout.nitro";
-import { WorkoutSample } from "react-native-healthkit/types/WorkoutSample";
+import { WorkoutActivityType } from "react-native-healthkit/specs/WorkoutsModule.nitro";
+import { WorkoutSample } from "react-native-healthkit/specs/WorkoutsModule.nitro";
 import { ListItem } from "@/components/SwiftListItem";
 import { enumKeyLookup } from "@/utils/enumKeyLookup";
 import { router } from "expo-router";
 import { View } from "react-native";
 import { Text } from "@expo/ui/swift-ui-primitives";
-
 
 const workoutActivityTypeStrings = enumKeyLookup(WorkoutActivityType);
 
@@ -40,7 +39,7 @@ export default function WorkoutsScreen() {
                             key={item.uuid}
                             title={workoutActivityTypeStrings[item.workoutActivityType]}
                             subtitle={item.start.toLocaleString()}
-                            onPress={() => router.push(`/workouts/details?workout=${JSON.stringify(item)}`)}
+                            onPress={() => router.push(`/workouts/details?workoutId=${item.uuid}`)}
                         />
                     ))
                 }

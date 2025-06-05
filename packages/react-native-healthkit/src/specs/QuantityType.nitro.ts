@@ -2,7 +2,7 @@ import type { AnyMap, HybridObject } from "react-native-nitro-modules";
 import type { DeletedSample, GenericMetadata } from "./Shared";
 import type { BloodGlucoseUnit, CountPerTime, EnergyUnit, Unit, LengthUnit, MassUnit, SpeedUnit, TemperatureUnit, TimeUnit, VolumeUnit } from "../types/Units";
 import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
-import type { QuantitySampleRaw } from "../types/QuantitySampleRaw";
+import type { QuantitySample } from "../types/QuantitySample";
 
 interface QuantityDateInterval {
   readonly from: Date;
@@ -21,7 +21,7 @@ export interface QueryStatisticsResponseRaw {
 
 
 export interface QueryQuantitySamplesResponseRaw {
-  readonly samples: readonly QuantitySampleRaw[];
+  readonly samples: readonly QuantitySample[];
   readonly deletedSamples: readonly DeletedSample[];
   readonly newAnchor: string;
 };
@@ -212,7 +212,7 @@ export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
     to: Date,
     limit: number,
     ascending: boolean
-  ): Promise<readonly QuantitySampleRaw[]>;
+  ): Promise<readonly QuantitySample[]>;
 
   queryStatisticsForQuantity(
     identifier: QuantityTypeIdentifier,

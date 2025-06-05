@@ -1,17 +1,17 @@
 
 import type { AnyMap, HybridObject } from "react-native-nitro-modules";
 import type { GenericMetadata } from "./Shared";
-import type { CategorySampleRaw, CategorySampleRawForSaving } from "./CategoryType.nitro";
+import type { CategorySample, CategorySampleForSaving } from "./CategoryType.nitro";
 import type { CorrelationTypeIdentifier } from "../types/CorrelationTypeIdentifier";
-import type { QuantitySampleRaw, QuantitySampleForSaving } from "../types/QuantitySampleRaw";
+import type { QuantitySample, QuantitySampleForSaving } from "../types/QuantitySample";
 
 
-type HKCorrelationRawObject = CategorySampleRaw | QuantitySampleRaw;
+type CorrelationObject = CategorySample | QuantitySample;
 
-export interface HKCorrelationRaw {
+export interface CorrelationSample {
     readonly correlationType: CorrelationTypeIdentifier;
-    readonly objects: readonly HKCorrelationRawObject[];
-    readonly metadata: GenericMetadata;
+    readonly objects: readonly CorrelationObject[];
+    readonly metadata: AnyMap;
     readonly start: Date;
     readonly end: Date;
 };
@@ -25,7 +25,7 @@ TCorrelationTypeIdentifier = CorrelationTypeIdentifier
 }
 : GenericMetadata;
 
-export type SampleForSaving = CategorySampleRawForSaving | QuantitySampleForSaving;
+export type SampleForSaving = CategorySampleForSaving | QuantitySampleForSaving;
 
 export interface Correlation extends HybridObject<{ ios: 'swift' }> {
     saveCorrelationSample(
@@ -40,5 +40,5 @@ export interface Correlation extends HybridObject<{ ios: 'swift' }> {
     typeIdentifier: CorrelationTypeIdentifier,
     from: Date,
     to: Date
-  ): Promise<readonly HKCorrelationRaw[]>;
+  ): Promise<readonly CorrelationSample[]>;
 }

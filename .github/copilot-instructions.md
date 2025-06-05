@@ -26,15 +26,18 @@ IMPORTANT: After making code changes, you MUST use the XcodeBuildMCP commands to
 
 First, discover available schemes:
 
-Use MCP tool from XCodeBuildMCP: list_schems_proj with projectPath: "/Users/robertherber/code/react-native-healthkit-nitro/apps/example/ios/reactnativehealthkitexample.xcodeproj"
-Build the reactnativehealthkitexample scheme for iOS Simulator:
+Use MCP tool from XCodeBuildMCP: list_schems_ws with workspacePath: "/Users/robertherber/code/react-native-healthkit-nitro/apps/example/ios/reactnativehealthkitexample.xcworkspace"
 
-Use MCP tool from XcodeBuildMCP: build_ios_sim_name_proj with parameters:
+Build the reactnativehealthkitexample scheme for iOS Simulator using specific simulator UUID to avoid conflicts:
+
+Use MCP tool from XcodeBuildMCP: build_ios_sim_id_ws with parameters:
 {
-  projectPath: "/Users/robertherber/code/react-native-healthkit-nitro/apps/example/ios/reactnativehealthkitexample.xcodeproj", 
+  workspacePath: "/Users/robertherber/code/react-native-healthkit-nitro/apps/example/ios/reactnativehealthkitexample.xcworkspace", 
   scheme: "reactnativehealthkitexample", 
-  simulatorName: "iPhone 16" 
+  simulatorId: "EA08E938-A9F5-4067-A0E8-5BC013FDB4F1"
 }
+
+Note: Using simulatorId instead of simulatorName to avoid conflicts when multiple simulators have the same name.
 
 If there are build errors, fix them before considering the task complete.
 

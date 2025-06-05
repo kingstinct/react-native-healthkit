@@ -1,4 +1,4 @@
-import type { HybridObject } from "react-native-nitro-modules";
+import type { AnyMap, HybridObject } from "react-native-nitro-modules";
 import type { Device, SourceRevision } from "./Source.nitro";
 import type { DeletedSample, GenericMetadata } from "./Shared";
 import type { CategoryTypeIdentifier } from "../types/CategoryTypeIdentifier";
@@ -165,29 +165,29 @@ export enum CategoryValueAppleStandHour {
 }
 
 
-export interface CategorySampleRawForSaving {
+export interface CategorySampleForSaving {
   readonly start: Date;
   readonly end: Date;
   readonly categoryType: CategoryTypeIdentifier;
   readonly value: CategoryValueForIdentifier;
-  readonly metadata: GenericMetadata;
+  readonly metadata: AnyMap;
   readonly sourceRevision?: SourceRevision;
 };
 
 export interface QueryCategorySamplesResponseRaw {
-  readonly samples: readonly CategorySampleRaw[];
+  readonly samples: readonly CategorySample[];
   readonly deletedSamples: readonly DeletedSample[];
   readonly newAnchor: string;
 };
 
-export interface CategorySampleRaw {
+export interface CategorySample {
   readonly uuid: string;
   readonly device?: Device;
   readonly categoryType: CategoryTypeIdentifier;
   readonly start: Date;
   readonly end: Date;
   readonly value: CategoryValueForIdentifier;
-  readonly metadata: GenericMetadata;
+  readonly metadata: AnyMap;
   readonly sourceRevision?: SourceRevision;
 };
 
@@ -224,7 +224,7 @@ export interface CategoryType extends HybridObject<{ ios: 'swift' }> {
     value: CategoryValueForIdentifier,
     start: Date,
     end: Date,
-    metadata: GenericMetadata
+    metadata: AnyMap
   ): Promise<boolean>;
 
   queryCategorySamples(
@@ -233,7 +233,7 @@ export interface CategoryType extends HybridObject<{ ios: 'swift' }> {
     to: Date,
     limit: number,
     ascending: boolean
-  ): Promise<readonly CategorySampleRaw[]>;
+  ): Promise<readonly CategorySample[]>;
 
 
   queryCategorySamplesWithAnchor(

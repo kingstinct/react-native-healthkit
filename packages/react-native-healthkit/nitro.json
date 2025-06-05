@@ -12,8 +12,8 @@
 		"Auth": {
 			"swift": "Auth"
 		},
-		"Workout": {
-			"swift": "Workout"
+		"WorkoutsModule": {
+			"swift": "WorkoutsModule"
 		},
 		"Core": {
 			"swift": "Core"
@@ -23,6 +23,21 @@
 		},
 		"QuantityType":{
 			"swift": "QuantityType"
+		},
+		"CategoryType": {
+			"swift": "CategoryType"
+		},
+		"Correlation": {
+			"swift": "Correlation"
+		},
+		"HeartbeatSeries": {
+			"swift": "HeartbeatSeries"
+		},
+		"StateOfMind": {
+			"swift": "StateOfMind"
+		},
+		"SourceHybridObject": {
+			"swift": "SourceHybridObject"
 		}
 	},
 	"ignorePaths": ["**/node_modules"]

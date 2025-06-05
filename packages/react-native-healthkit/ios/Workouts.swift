@@ -180,7 +180,7 @@ func getSerializedWorkoutLocations(
 }
 
 @available(iOS 17.0.0, *)
-func getWorkoutPlan(workout: HKWorkout) async throws -> WorkoutPlan? {
+func getWorkoutPlanInternal(workout: HKWorkout) async throws -> WorkoutPlan? {
     let workoutPlan = try await workout.workoutPlan
     if let id = workoutPlan?.id.uuidString {
         if let activityType = workoutPlan?.workout.activity {
@@ -360,7 +360,23 @@ func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
     }
 }
 
-class Workout : HybridWorkoutSpec {
+class WorkoutsModule : HybridWorkoutsModuleSpec {
+    func queryWorkoutByUUID(workoutUUID: String) throws -> Promise<WorkoutSample?> {
+        if let uuid = UUID(uuidString: workoutUUID) {
+            return Promise.async {
+                let workout = await getWorkoutByID(store: store, workoutUUID: uuid)
+                
+                if let workout = workout {
+                    return mapWorkout(workout: workout, distanceUnit: HKUnit.meter(),
+                        energyUnit: HKUnit.kilocalorie()
+                    )
+                }
+                return nil
+            }
+        }
+        return Promise.resolved(withResult: nil)
+    }
+    
     func saveWorkoutSample(workoutActivityType: WorkoutActivityType, quantities: [QuantitySampleForSaving], start: Date?, end: Date?, totals: WorkoutTotals, metadata: AnyMapHolder) throws -> Promise<String?> {
         return Promise.resolved(withResult: nil)
     }
@@ -482,7 +498,7 @@ class Workout : HybridWorkoutSpec {
         }
     }
     
-    func getWorkoutPlanByWorkoutId(workoutUUID: String) -> Promise<WorkoutPlan?> {
+    func getWorkoutPlan(workoutUUID: String) -> Promise<WorkoutPlan?> {
         return Promise.async {
             if let uuid = UUID(uuidString: workoutUUID) {
                 let workout = await getWorkoutByID(
@@ -491,7 +507,7 @@ class Workout : HybridWorkoutSpec {
                 )
                 if let workout {
                     if #available(iOS 17.0.0, *) {
-                        let workoutPlan = try await getWorkoutPlan(workout: workout)
+                        let workoutPlan = try await getWorkoutPlanInternal(workout: workout)
                         return workoutPlan
                     } else {
                         throw RuntimeError.error(withMessage: "Workout Plans requires iOS 17+")

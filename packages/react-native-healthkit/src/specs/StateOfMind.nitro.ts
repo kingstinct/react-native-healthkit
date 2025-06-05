@@ -1,10 +1,8 @@
 // TODO: Export specs that extend HybridObject<...> here
 
-import type { HybridObject } from "react-native-nitro-modules";
+import type { AnyMap, HybridObject } from "react-native-nitro-modules";
 import type { Device } from "./Source.nitro";
 import type { SourceRevision } from "./Source.nitro";
-import type { GenericMetadata } from "./Shared";
-
 
 export enum StateOfMindValenceClassification {
   veryUnpleasant = 1,
@@ -16,12 +14,12 @@ export enum StateOfMindValenceClassification {
   veryPleasant = 7,
 }
 
-export interface StateOfMindSampleRaw {
+export interface StateOfMindSample {
   readonly uuid: string;
   readonly device?: Device;
   readonly start: Date;
   readonly end: Date;
-  readonly metadata?: GenericMetadata;
+  readonly metadata?: AnyMap;
   readonly sourceRevision?: SourceRevision;
   // State of mind sample properties
   /**
@@ -85,7 +83,7 @@ export enum StateOfMindLabel {
  */
 export enum StateOfMindKind {
   dailyMood = 2,
-  momentaryEmotion = 1
+  momentaryEmotion = 1,
 }
 
 /**
@@ -119,5 +117,5 @@ export interface StateOfMind extends HybridObject<{ ios: 'swift' }> {
         to: Date | null,
         limit: number,
         ascending: boolean
-      ): Promise<readonly StateOfMindSampleRaw[]>;
+      ): Promise<readonly StateOfMindSample[]>;
 }

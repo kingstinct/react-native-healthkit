@@ -1,4 +1,4 @@
-import type { HybridObject } from "react-native-nitro-modules";
+import type { AnyMap, HybridObject } from "react-native-nitro-modules";
 import type { Device, SourceRevision } from "./Source.nitro";
 import type { DeletedSample, GenericMetadata } from "./Shared";
 
@@ -11,19 +11,19 @@ export interface HeartbeatRaw {
     readonly precededByGap: boolean;
 };
 
-export interface HeartbeatSeriesSampleRaw {
+export interface HeartbeatSeriesSample {
     readonly uuid: string;
     readonly device?: Device;
     readonly start: Date;
     readonly end: Date;
     readonly heartbeats: readonly HeartbeatRaw[];
-    readonly metadata?: HeartbeatSeriesSampleMetadata;
+    readonly metadata?: AnyMap;
     readonly sourceRevision?: SourceRevision;
 };
 
 
 export interface QueryHeartbeatSeriesSamplesResponseRaw {
-    readonly samples: readonly HeartbeatSeriesSampleRaw[];
+    readonly samples: readonly HeartbeatSeriesSample[];
     readonly deletedSamples: readonly DeletedSample[];
     readonly newAnchor: string;
 };
@@ -34,7 +34,7 @@ export interface HeartbeatSeries extends HybridObject<{ ios: 'swift' }> {
         to: Date,
         limit: number,
         ascending: boolean
-    ): Promise<readonly HeartbeatSeriesSampleRaw[]>;
+    ): Promise<readonly HeartbeatSeriesSample[]>;
     queryHeartbeatSeriesSamplesWithAnchor(
         from: Date,
         to: Date,

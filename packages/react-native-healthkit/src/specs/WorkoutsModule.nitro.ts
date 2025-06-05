@@ -1,8 +1,8 @@
 import type { AnyMap, HybridObject } from "react-native-nitro-modules";
 import type { DeletedSample, GenericMetadata } from "./Shared";
-import type { QuantitySampleForSaving } from "../types/QuantitySampleRaw";
-import type { WorkoutSample } from "../types/WorkoutSample";
+import type { QuantitySampleForSaving } from "../types/QuantitySample";
 import type { QuantityRaw } from "./QuantityType.nitro";
+import type { Device, SourceRevision } from "./Source.nitro";
 
 export enum WorkoutActivityType {
     americanFootball = 1,
@@ -183,7 +183,7 @@ export interface WorkoutRoute {
 interface QueryWorkoutSamplesWithAnchorResponse {
     readonly samples: readonly WorkoutSample[],
     readonly deletedSamples: readonly DeletedSample[],
-    readonly newAnchor: string
+    readonly newAnchor?: string
 }
 
 /**
@@ -224,19 +224,37 @@ export interface WorkoutTotals {
     readonly energyBurned?: number;
 }
 
-export interface Workout extends HybridObject<{ ios: 'swift' }> {
-    getWorkoutRoutes(
-        workoutUUID: string
-    ): Promise<readonly WorkoutRoute[]>;
-    getWorkoutPlanByWorkoutId(
-        workoutUUID: string
-    ): Promise<WorkoutPlan | null>;
 
+export interface WorkoutSample {
+    readonly uuid: string;
+    readonly device?: Device;
+    readonly workoutActivityType: WorkoutActivityType;
+    readonly duration: QuantityRaw;
+    readonly totalDistance?: QuantityRaw;
+    readonly totalEnergyBurned?: QuantityRaw;
+    readonly totalSwimmingStrokeCount?: QuantityRaw;
+    readonly totalFlightsClimbed?: QuantityRaw;
+    readonly start: Date;
+    readonly end: Date;
+    readonly metadata?: AnyMap;
+    readonly sourceRevision?: SourceRevision;
+    readonly events?: readonly WorkoutEvent[];
+    readonly activities?: readonly WorkoutActivity[];
+};
+
+export interface WorkoutsModule extends HybridObject<{ ios: 'swift' }> {
     /**
      * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1648358-startwatchapp Apple Docs }
      */
     startWatchAppWithWorkoutConfiguration(
         workoutConfiguration: WorkoutConfiguration
+    ): Promise<boolean>;
+
+    getWorkoutRoutes(workoutUUID: string): Promise<readonly WorkoutRoute[]>;
+    getWorkoutPlan(workoutUUID: string): Promise<WorkoutPlan | null>;
+    saveWorkoutRoute(
+        workoutUUID: string,
+        locations: readonly LocationForSaving[]
     ): Promise<boolean>;
 
     saveWorkoutSample(
@@ -248,10 +266,9 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
         metadata: AnyMap
     ): Promise<string | null>;
 
-    saveWorkoutRoute(
-        workoutUUID: string,
-        locations: readonly LocationForSaving[]
-    ): Promise<boolean>;
+    queryWorkoutByUUID(
+        workoutUUID: string
+    ): Promise<WorkoutSample | null>;
 
     queryWorkoutSamplesWithAnchor(
         energyUnit: string,
@@ -262,3 +279,4 @@ export interface Workout extends HybridObject<{ ios: 'swift' }> {
         anchor?: string
     ): Promise<QueryWorkoutSamplesWithAnchorResponse>;
 }
+

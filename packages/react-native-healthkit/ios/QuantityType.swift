@@ -10,7 +10,7 @@ func queryQuantitySamplesInternal(
   to: Date?,
   limit: Double,
   ascending: Bool
-) throws -> Promise<[QuantitySampleRaw]> {
+) throws -> Promise<[QuantitySample]> {
     let identifier = HKQuantityTypeIdentifier(rawValue: typeIdentifier.stringValue)
   guard let sampleType = HKSampleType.quantityType(forIdentifier: identifier) else {
       throw RuntimeError.error(withMessage: "Failed to initialize " + typeIdentifier.stringValue)
@@ -116,7 +116,7 @@ class QuantityType : HybridQuantityTypeSpec {
         return Promise.resolved(withResult: [])
     }
     
-    func queryQuantitySamples(identifier: QuantityTypeIdentifier, unit: String, from: Date, to: Date, limit: Double, ascending: Bool) throws -> Promise<[QuantitySampleRaw]> {
+    func queryQuantitySamples(identifier: QuantityTypeIdentifier, unit: String, from: Date, to: Date, limit: Double, ascending: Bool) throws -> Promise<[QuantitySample]> {
         return try queryQuantitySamplesInternal(typeIdentifier: identifier, unitString: unit, from: from, to: to, limit: limit, ascending: ascending)
     }
     

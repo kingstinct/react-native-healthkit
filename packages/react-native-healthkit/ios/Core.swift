@@ -80,6 +80,27 @@ class Core : HybridCoreSpec {
         return UIApplication.shared.isProtectedDataAvailable
     }
     
+    /*
+     
+     alternative??
+     
+     func getPreferredUnits(
+         quantityTypes: Set<HKQuantityType>
+     ) -> Promise<[HKQuantityType: HKUnit]> {
+         return Promise.async {
+             try await withCheckedThrowingContinuation { continuation in
+                 store.preferredUnits(for: quantityTypes) {
+                     (typePerUnits: [HKQuantityType: HKUnit], _: Error?) in
+                     
+                     continuation.resume(returning: typePerUnits)
+                 }
+             }
+         }
+
+       
+     }
+     */
+    
     func getPreferredUnits(identifiers: [String]) throws -> Promise<[IdentifierWithUnit]> {
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in

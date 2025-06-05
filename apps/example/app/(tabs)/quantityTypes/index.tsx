@@ -1,13 +1,9 @@
 
 import { Core, QuantityType } from "react-native-healthkit";
-import { Button, ContextMenu, DateTimePicker, LabelPrimitive, List, Picker, Section } from "@expo/ui/swift-ui";
+import { Button, ContextMenu, DateTimePicker, List, Picker } from "@expo/ui/swift-ui";
 import { useEffect, useState } from "react";
-import { WorkoutActivityType } from "react-native-healthkit/specs/Workout.nitro";
-import { WorkoutSample } from "react-native-healthkit/types/WorkoutSample";
 import { ListItem } from "@/components/SwiftListItem";
-import { enumKeyLookup } from "@/utils/enumKeyLookup";
-import { QuantitySampleRaw } from "react-native-healthkit/types/QuantitySampleRaw";
-import { timestampToDate } from "@/utils/timestampToDate";
+import { QuantitySample } from "react-native-healthkit/types/QuantitySample";
 import { View } from "react-native";
 import { QuantityTypeIdentifier } from "react-native-healthkit/types/QuantityTypeIdentifier";
 import { AllQuantityTypeIdentifierInApp } from "@/constants/AllUsedIdentifiersInApp";
@@ -18,7 +14,7 @@ const transformQuantityIdentifierToName = (identifier: QuantityTypeIdentifier) =
 }
 
 export default function QuantitiesScreen() {
-    const [quantitySamples, setQuantitySamples] = useState<readonly QuantitySampleRaw[]>([])
+    const [quantitySamples, setQuantitySamples] = useState<readonly QuantitySample[]>([])
 
     console.log('samples', JSON.stringify(quantitySamples, null, 2));
 

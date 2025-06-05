@@ -32,11 +32,12 @@ func serializeQuantityTyped(unit: HKUnit, quantity: HKQuantity?) -> QuantityRaw?
     )
 }
 
-func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) -> QuantitySampleRaw {
-    return QuantitySampleRaw(
+func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) -> QuantitySample {
+    return QuantitySample(
         uuid: sample.uuid.uuidString,
         device: serializeDevice(hkDevice: sample.device),
-        quantityType: sample.quantityType.identifier,
+        // todo: handle unknowns
+        quantityType: QuantityTypeIdentifier(fromString: sample.quantityType.identifier)!,
         start: sample.startDate,
         end: sample.endDate,
         quantity: sample.quantity.doubleValue(for: unit),
@@ -53,20 +54,18 @@ func serializeDeletedSample(sample: HKDeletedObject) -> DeletedSample {
   )
 }
 
-func serializeCategorySample(sample: HKCategorySample) -> NSDictionary {
-    let endDate = _dateFormatter.string(from: sample.endDate)
-    let startDate = _dateFormatter.string(from: sample.startDate)
 
-    return [
-        "uuid": sample.uuid.uuidString,
-        "device": serializeDevice(hkDevice: sample.device) as Any,
-        "categoryType": sample.categoryType.identifier,
-        "endDate": endDate,
-        "startDate": startDate,
-        "value": sample.value,
-        "metadata": serializeMetadata(sample.metadata),
-        "sourceRevision": serializeSourceRevision(sample.sourceRevision) as Any
-    ]
+func serializeCategorySample(sample: HKCategorySample) -> CategorySample {
+    return CategorySample(
+        uuid: sample.uuid.uuidString,
+        device: serializeDevice(hkDevice: sample.device),
+        categoryType: CategoryTypeIdentifier(fromString: sample.categoryType.identifier)!,
+        start: sample.startDate,
+        end: sample.endDate,
+        value: Double(sample.value),
+        metadata: serializeMetadata(sample.metadata),
+        sourceRevision: serializeSourceRevision(sample.sourceRevision)
+    )
 }
 
 func serializeSource(_ source: HKSource) -> margelo.nitro.healthkit.Source {
@@ -215,11 +214,17 @@ func deserializeHKQueryAnchor(anchor: String) -> HKQueryAnchor? {
     return anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor)
 }
 
-func serializeAnchor(anchor: HKQueryAnchor) -> String {
-  let data = NSKeyedArchiver.archivedData(withRootObject: anchor)
-  let encoded = data.base64EncodedString()
+func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
+    if let anchor = anchor {
+        
+    
+      let data = NSKeyedArchiver.archivedData(withRootObject: anchor)
+      let encoded = data.base64EncodedString()
 
-  return encoded
+      return encoded
+    } else {
+        return nil
+    }
 }
 
 func serializeStatistic(unit: HKUnit, quantity: HKQuantity?, stats: HKStatistics?) -> [String: Any]? {
