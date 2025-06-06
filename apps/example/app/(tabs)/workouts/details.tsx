@@ -1,12 +1,11 @@
 import { List } from "@expo/ui/swift-ui";
-import { WorkoutActivityType, WorkoutEventType } from "react-native-healthkit/specs/WorkoutsModule.nitro";
-import { WorkoutSample } from "react-native-healthkit/specs/WorkoutsModule.nitro";
 import { enumKeyLookup } from "@/utils/enumKeyLookup";
 import { useLocalSearchParams } from "expo-router";
 import { Section } from "@expo/ui/swift-ui-primitives";
 import { ListItem } from "@/components/SwiftListItem";
 import { Workouts } from "react-native-healthkit";
 import { useEffect, useState } from "react";
+import { WorkoutActivityType, WorkoutEventType, WorkoutSample } from "react-native-healthkit/types/Workouts";
 
 
 const workoutActivityTypeStrings = enumKeyLookup(WorkoutActivityType);

@@ -46,7 +46,7 @@ func getSortDescriptors(ascending: Bool?) -> [NSSortDescriptor] {
     return [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending ?? false)]
 }
 
-func deserializeHKQueryAnchor(base64String: String?) -> HKQueryAnchor? {
+func deserializeHKQueryAnchor(base64String: String?) throws -> HKQueryAnchor? {
     if let base64String = base64String {
         if base64String.isEmpty {
             return nil
@@ -54,8 +54,7 @@ func deserializeHKQueryAnchor(base64String: String?) -> HKQueryAnchor? {
         
         // Step 1: Decode the base64 string to a Data object
         guard let data = Data(base64Encoded: base64String) else {
-            print("Error: Invalid base64 string")
-            return nil
+            throw RuntimeError.error(withMessage: "[react-native-healthkit] Invalid base64 string: \(base64String)")
         }
 
         // Step 2: Use NSKeyedUnarchiver to unarchive the data and create an HKQueryAnchor object
@@ -66,122 +65,95 @@ func deserializeHKQueryAnchor(base64String: String?) -> HKQueryAnchor? {
 
             return anchor as? HKQueryAnchor
         } catch {
-            print("Error: Unable to unarchive HKQueryAnchor object: \(error)")
-            return nil
+            throw RuntimeError.error(withMessage: "[react-native-healthkit] Error recreating HKQueryAnchor object: \(error.localizedDescription)")
         }
     }
     return nil
 }
 
-func sampleTypeFromString(typeIdentifier: String) -> HKSampleType? {
+
+func initializeCategoryType(_ identifier: String) throws -> HKCategoryType {
+    let identifier = HKCategoryTypeIdentifier(rawValue: identifier)
+    if let sampleType = HKSampleType.categoryType(forIdentifier: identifier) {
+        return sampleType
+    }
+    
+    throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized categoryType with identifier \(identifier)")
+}
+
+func initializeQuantityType(_ identifier: String) throws -> HKQuantityType {
+    let identifier = HKQuantityTypeIdentifier(rawValue: identifier)
+
+    if let sampleType = HKSampleType.quantityType(forIdentifier: identifier) {
+        return sampleType
+    }
+    
+    throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized quantityType with identifier \(identifier)")
+}
+
+func initializeCorrelationType(_ identifier: String) throws -> HKCorrelationType {
+    let identifier = HKCorrelationTypeIdentifier(rawValue: identifier)
+    
+    if let sampleType = HKSampleType.correlationType(forIdentifier: identifier) {
+        return sampleType
+    }
+    
+    throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized correlationType with identifier \(identifier)")
+}
+
+func initializeSeriesType(_ identifier: String) throws -> HKSeriesType {
+    if let seriesType = HKObjectType.seriesType(forIdentifier: identifier) {
+        return seriesType
+    }
+    
+    throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized seriesType with identifier \(identifier)")
+}
+
+func sampleTypeFrom(sampleTypeIdentifier: SampleTypeIdentifier) throws -> HKSampleType {
+    if let sampleType = try sampleTypeFromStringNullable(typeIdentifier: sampleTypeIdentifier.stringValue) {
+        return sampleType
+    }
+    
+    throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized sampleType with identifier \(sampleTypeIdentifier.stringValue)")
+}
+
+private func sampleTypeFromStringNullable(typeIdentifier: String) throws -> HKSampleType? {
     if typeIdentifier.starts(with: HKQuantityTypeIdentifier_PREFIX) {
-        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
-        return HKSampleType.quantityType(forIdentifier: identifier) as HKSampleType?
+        return try initializeQuantityType(typeIdentifier)
     }
 
     if typeIdentifier.starts(with: HKCategoryTypeIdentifier_PREFIX) {
-        let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier)
-        return HKSampleType.categoryType(forIdentifier: identifier) as HKSampleType?
+        return try initializeCategoryType(typeIdentifier)
     }
 
     if typeIdentifier.starts(with: HKCorrelationTypeIdentifier_PREFIX) {
-        let identifier = HKCorrelationTypeIdentifier.init(rawValue: typeIdentifier)
-        return HKSampleType.correlationType(forIdentifier: identifier) as HKSampleType?
+        return try initializeCorrelationType(typeIdentifier)
     }
-
-    if #available(iOS 13, *) {
-        if typeIdentifier == HKAudiogramTypeIdentifier {
-            return HKSampleType.audiogramSampleType()
-        }
-    }
-
+   
     if typeIdentifier == HKWorkoutTypeIdentifier {
         return HKSampleType.workoutType()
     }
 
     if #available(iOS 11.0, *) {
         if typeIdentifier == HKWorkoutRouteTypeIdentifier {
-            return HKObjectType.seriesType(forIdentifier: typeIdentifier)
+            return try initializeSeriesType(typeIdentifier)
         }
     }
 
-    return nil
-}
-
-func objectTypesFromDictionary(typeIdentifiers: Dictionary<SampleTypeIdentifier, Bool>) -> Set<HKObjectType> {
-    var share = Set<HKObjectType>()
-    for item in typeIdentifiers {
-        if item.value as Bool {
-            let objectType = objectTypeFromString(typeIdentifier: item.key.stringValue)
-            if objectType != nil {
-                share.insert(objectType!)
-            }
+    if #available(iOS 13, *) {
+        if typeIdentifier == HKAudiogramTypeIdentifier {
+            return HKObjectType.audiogramSampleType()
         }
-    }
-    return share
-}
 
-func objectTypesFromArray(typeIdentifiers: [SampleTypeIdentifier]) -> Set<HKObjectType> {
-    var share = Set<HKObjectType>()
-    for item in typeIdentifiers {
-        let typeIdentifier = item.stringValue
-        if let objectType = objectTypeFromString(typeIdentifier: typeIdentifier) {
-            share.insert(objectType)
-        }
-    }
-    return share
-}
-
-func sampleTypesFromDictionary(typeIdentifiers: Dictionary<SampleTypeIdentifier, Bool>) -> Set<HKSampleType> {
-    var share = Set<HKSampleType>()
-    for item in typeIdentifiers {
-        if item.value as Bool {
-            let sampleType = sampleTypeFromString(typeIdentifier: item.key.stringValue)
-            if sampleType != nil {
-                share.insert(sampleType!)
-            }
-        }
-    }
-    return share
-}
-
-func sampleTypesFromArray(typeIdentifiers: [SampleTypeIdentifier]) -> Set<HKSampleType> {
-    var share = Set<HKSampleType>()
-    for item in typeIdentifiers {
-        let typeIdentifier = item.stringValue
-        if let sampleType = sampleTypeFromString(typeIdentifier: typeIdentifier) {
-            share.insert(sampleType)
+        if typeIdentifier == HKDataTypeIdentifierHeartbeatSeries {
+            return try initializeSeriesType(typeIdentifier)
         }
         
+        if typeIdentifier == HKAudiogramTypeIdentifier {
+            return HKSampleType.audiogramSampleType()
+        }
     }
-    return share
-}
-
-func objectTypeFromString(typeIdentifier: String) -> HKObjectType? {
-    if typeIdentifier.starts(with: HKCharacteristicTypeIdentifier_PREFIX) {
-        let identifier = HKCharacteristicTypeIdentifier.init(rawValue: typeIdentifier)
-        return HKObjectType.characteristicType(forIdentifier: identifier) as HKObjectType?
-    }
-
-    if typeIdentifier.starts(with: HKQuantityTypeIdentifier_PREFIX) {
-        let identifier = HKQuantityTypeIdentifier.init(rawValue: typeIdentifier)
-        return HKObjectType.quantityType(forIdentifier: identifier) as HKObjectType?
-    }
-
-    if typeIdentifier.starts(with: HKCategoryTypeIdentifier_PREFIX) {
-        let identifier = HKCategoryTypeIdentifier.init(rawValue: typeIdentifier)
-        return HKObjectType.categoryType(forIdentifier: identifier) as HKObjectType?
-    }
-
-    if typeIdentifier.starts(with: HKCorrelationTypeIdentifier_PREFIX) {
-        let identifier = HKCorrelationTypeIdentifier.init(rawValue: typeIdentifier)
-        return HKObjectType.correlationType(forIdentifier: identifier) as HKObjectType?
-    }
-
-    if typeIdentifier == HKActivitySummaryTypeIdentifier {
-        return HKObjectType.activitySummaryType()
-    }
-
+    
     #if compiler(>=6)
         if #available(iOS 18, *) {
             if typeIdentifier == HKStateOfMindTypeIdentifier {
@@ -190,27 +162,63 @@ func objectTypeFromString(typeIdentifier: String) -> HKObjectType? {
         }
     #endif
 
-    if #available(iOS 13, *) {
-        if typeIdentifier == HKAudiogramTypeIdentifier {
-            return HKObjectType.audiogramSampleType()
-        }
-
-        if typeIdentifier == HKDataTypeIdentifierHeartbeatSeries {
-            return HKObjectType.seriesType(forIdentifier: typeIdentifier)
-        }
-    }
-
-    if typeIdentifier == HKWorkoutTypeIdentifier {
-        return HKObjectType.workoutType()
-    }
-
-    if #available(iOS 11.0, *) {
-        if typeIdentifier == HKWorkoutRouteTypeIdentifier {
-            return HKObjectType.seriesType(forIdentifier: typeIdentifier)
-        }
-    }
-
     return nil
+}
+
+func objectTypesFromArray(typeIdentifiers: [ObjectTypeIdentifier]) -> Set<HKObjectType> {
+    var share = Set<HKObjectType>()
+    for typeIdentifier in typeIdentifiers {
+        do {
+            let objectType = try objectTypeFrom(objectTypeIdentifier: typeIdentifier)
+            share.insert(objectType)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    return share
+}
+
+func initializeUUID(_ uuidString: String) throws -> UUID {
+    if let uuid = UUID(uuidString: uuidString) {
+       return uuid
+    }
+    
+    throw RuntimeError.error(withMessage: "[react-native-healthkit] Got invalid UUID: \(uuidString)")
+}
+
+func sampleTypesFromArray(typeIdentifiers: [SampleTypeIdentifier]) -> Set<HKSampleType> {
+    var share = Set<HKSampleType>()
+    for typeIdentifier in typeIdentifiers {
+        do {
+            let sampleType = try sampleTypeFrom(sampleTypeIdentifier: typeIdentifier)
+            share.insert(sampleType)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    return share
+}
+
+
+// objectType is wider than sampleType, so it uses it under the hood
+func objectTypeFrom(objectTypeIdentifier: ObjectTypeIdentifier) throws -> HKObjectType {
+    let typeIdentifier = objectTypeIdentifier.stringValue
+    if let sampleType = try sampleTypeFromStringNullable(typeIdentifier: typeIdentifier) {
+        return sampleType
+    }
+    
+    if typeIdentifier.starts(with: HKCharacteristicTypeIdentifier_PREFIX) {
+        let identifier = HKCharacteristicTypeIdentifier.init(rawValue: typeIdentifier)
+        if let type = HKObjectType.characteristicType(forIdentifier: identifier) as HKObjectType? {
+            return type
+        }
+    }
+
+    if typeIdentifier == HKActivitySummaryTypeIdentifier {
+        return HKObjectType.activitySummaryType()
+    }
+
+    throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed initializing unrecognized objectType identifier " + typeIdentifier)
 }
 
 func hkStatisticsOptionsFromOptions(_ options: NSArray) -> HKStatisticsOptions {
@@ -228,10 +236,6 @@ func hkStatisticsOptionsFromOptions(_ options: NSArray) -> HKStatisticsOptions {
             opts.insert(.discreteMax)
         case "discreteMin":
             opts.insert(.discreteMin)
-        case "discreteMostRecent":
-            if #available(iOS 12, *) {
-                opts.insert(.discreteMostRecent)
-            }
         case "duration":
             if #available(iOS 13, *) {
                 opts.insert(.duration)
@@ -266,17 +270,6 @@ func componentsFromInterval(_ interval: NSDictionary) -> DateComponents {
         }
     }
     return intervalComponents
-}
-
-func serializeQuantityIfExists(unit: HKUnit, quantity: HKQuantity?) -> [String: Any]? {
-    guard let quantity = quantity else { return nil }
-    return serializeQuantity(unit: unit, quantity: quantity)
-}
-
-func serializeStatisticIfExists(unit: HKUnit, quantity: HKQuantity?, stats: HKStatistics)
-    -> [String: Any]? {
-    guard let quantity = quantity else { return nil }
-    return serializeStatistic(unit: unit, quantity: quantity, stats: stats)
 }
 
 func parseWorkoutConfiguration(_ config: WorkoutConfiguration) -> HKWorkoutConfiguration {

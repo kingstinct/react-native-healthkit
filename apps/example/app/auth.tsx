@@ -1,4 +1,4 @@
-import { AllUsedIdentifiersInApp } from "@/constants/AllUsedIdentifiersInApp";
+import { AllObjectTypesInApp, AllSampleTypesInApp } from "@/constants/AllUsedIdentifiersInApp";
 import { enumKeyLookup } from "@/utils/enumKeyLookup";
 import { Button, CircularProgress, Host } from "@expo/ui/swift-ui";
 import { HStack, Text, VStack } from "@expo/ui/swift-ui-primitives";
@@ -6,14 +6,15 @@ import { router } from 'expo-router';
 import { useEffect, useState } from "react";
 
 import { Core } from "react-native-healthkit";
-import { AuthorizationRequestStatus, AuthorizationStatus } from "react-native-healthkit/specs/CoreModule.nitro";
+import { AuthorizationRequestStatus, AuthorizationStatus } from "react-native-healthkit/types/Auth";
+
 
 const authEnumLookup = enumKeyLookup(AuthorizationStatus);
 
 export default function AuthScreen() {
     const requestAuth = async () => {
         try {
-            const res = await Core.requestAuthorization(AllUsedIdentifiersInApp, AllUsedIdentifiersInApp)
+            const res = await Core.requestAuthorization(AllSampleTypesInApp, AllSampleTypesInApp)
 
             alert('response: ' + res)
 
@@ -30,7 +31,7 @@ export default function AuthScreen() {
     useEffect(() => {
         const updateStatus = async () => {
             try {
-                const status = await Core.getRequestStatusForAuthorization(AllUsedIdentifiersInApp, AllUsedIdentifiersInApp);
+                const status = await Core.getRequestStatusForAuthorization(AllSampleTypesInApp, AllObjectTypesInApp);
                 setStatus(status);
             } catch (error) {
                 setStatus(AuthorizationRequestStatus.unknown)

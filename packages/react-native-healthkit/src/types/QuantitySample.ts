@@ -1,7 +1,8 @@
 import type { AnyMap } from "react-native-nitro-modules";
 
 import type { QuantityTypeIdentifier } from "./QuantityTypeIdentifier";
-import type { Device, SourceRevision } from "../specs/CoreModule.nitro";
+import type { SourceRevision } from "./Source";
+import type { Device } from "./Device";
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitysample Apple Docs }

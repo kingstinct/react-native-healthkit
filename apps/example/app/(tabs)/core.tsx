@@ -4,7 +4,8 @@ import { List } from '@expo/ui/swift-ui';
 import { Section } from '@expo/ui/swift-ui-primitives';
 import { useEffect, useState } from 'react';
 import { Characteristics, Core } from 'react-native-healthkit';
-import { BiologicalSex, BloodType, FitzpatrickSkinType, WheelchairUse } from 'react-native-healthkit/specs/CharacteristicTypeModule.nitro';
+import { BiologicalSex, BloodType, FitzpatrickSkinType, WheelchairUse } from 'react-native-healthkit/types/Characteristics';
+
 
 const color = '#007AFF'; // Default color for the label, can be customized
 

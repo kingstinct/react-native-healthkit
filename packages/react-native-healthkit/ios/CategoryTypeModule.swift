@@ -1,6 +1,8 @@
 import HealthKit
 import NitroModules
 
+
+
 class CategoryTypeModule : HybridCategoryTypeModuleSpec {
     func saveCategorySample(
         identifier: CategoryTypeIdentifier,
@@ -9,11 +11,7 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
         end: Date,
         metadata: AnyMapHolder
     ) throws -> Promise<Bool> {
-        let identifier = HKCategoryTypeIdentifier(rawValue: identifier.stringValue)
-        
-        guard let type = HKObjectType.categoryType(forIdentifier: identifier) else {
-            throw RuntimeError.error(withMessage: "Failed to initialize category type with identifier \(identifier)")
-        }
+        let type = try initializeCategoryType(identifier.stringValue)
         
         let sample = HKCategorySample(
             type: type,
@@ -40,12 +38,7 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
         identifier: CategoryTypeIdentifier,
         options: QueryOptionsWithSortOrder?,
     ) throws -> Promise<[CategorySample]> {
-        let identifier = HKCategoryTypeIdentifier(rawValue: identifier.stringValue)
-        
-        guard let sampleType = HKSampleType.categoryType(forIdentifier: identifier) else {
-            throw RuntimeError.error(withMessage: "Failed to initialize category type with identifier \(identifier)")
-        }
-        
+        let sampleType = try initializeCategoryType(identifier.stringValue)
         let predicate = createPredicate(from: options?.from, to: options?.to)
         let queryLimit = getQueryLimit(options?.limit)
         
@@ -80,19 +73,16 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
         }
     }
     
+    
     func queryCategorySamplesWithAnchor(
         identifier: CategoryTypeIdentifier,
         options: QueryOptionsWithAnchor
-    ) throws -> Promise<QueryCategorySamplesResponseRaw> {
-        let identifier = HKCategoryTypeIdentifier(rawValue: identifier.stringValue)
-        
-        guard let sampleType = HKSampleType.categoryType(forIdentifier: identifier) else {
-            throw RuntimeError.error(withMessage: "Failed to initialize category type with identifier \(identifier)")
-        }
+    ) throws -> Promise<CategorySamplesWithAnchorResponse> {
+        let sampleType = try initializeCategoryType(identifier.stringValue)
         
         let predicate = createPredicate(from: options.from, to: options.to)
         let queryLimit = getQueryLimit(options.limit)
-        let queryAnchor = deserializeHKQueryAnchor(base64String: options.anchor)
+        let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
         
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
@@ -108,7 +98,7 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
                     }
                     
                     guard let samples = samples else {
-                        let response = QueryCategorySamplesResponseRaw(
+                        let response = CategorySamplesWithAnchorResponse(
                             samples: [],
                             deletedSamples: deletedSamples?.map { serializeDeletedSample(sample: $0) } ?? [],
                             newAnchor: serializeAnchor(anchor: newAnchor) ?? ""
@@ -122,7 +112,7 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
                         return serializeCategorySample(sample: categorySample)
                     }
                     
-                    let response = QueryCategorySamplesResponseRaw(
+                    let response = CategorySamplesWithAnchorResponse(
                         samples: categorySamples,
                         deletedSamples: deletedSamples?.map { serializeDeletedSample(sample: $0) } ?? [],
                         newAnchor: serializeAnchor(anchor: newAnchor) ?? ""

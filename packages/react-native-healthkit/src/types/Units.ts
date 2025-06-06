@@ -193,3 +193,9 @@ export type Unit =
     | TemperatureUnit
     | TimeUnit
     | VolumeUnit
+
+
+export interface IdentifierWithUnit {
+    typeIdentifier: string;
+    unit: string;
+}

@@ -9,11 +9,7 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
         end: Date,
         metadata: AnyMapHolder
     ) throws -> Promise<Bool> {
-        let identifier = HKCorrelationTypeIdentifier(rawValue: typeIdentifier.stringValue)
-        
-        guard let type = HKObjectType.correlationType(forIdentifier: identifier) else {
-            throw RuntimeError.error(withMessage: "Failed to initialize correlation type with identifier \(typeIdentifier)")
-        }
+        let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
         
         var initializedSamples = Set<HKSample>()
         
@@ -36,10 +32,7 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
                 initializedSamples.insert(hkQuantitySample)
                 
             } else if let categorySample = sample as? CategorySampleForSaving {
-                let categoryTypeId = HKCategoryTypeIdentifier(rawValue: categorySample.categoryType.stringValue)
-                guard let categoryType = HKSampleType.categoryType(forIdentifier: categoryTypeId) else {
-                    continue
-                }
+                let categoryType = try initializeCategoryType(categorySample.categoryType.stringValue)
                 
                 let hkCategorySample = HKCategorySample(
                     type: categoryType,
@@ -53,7 +46,7 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
         }
         
         let correlation = HKCorrelation(
-            type: type,
+            type: correlationType,
             start: start,
             end: end,
             objects: initializedSamples,
@@ -78,18 +71,13 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
         from: Date,
         to: Date
     ) throws -> Promise<[CorrelationSample]> {
-        let identifier = HKCorrelationTypeIdentifier(rawValue: typeIdentifier.stringValue)
-        
-        guard let sampleType = HKSampleType.correlationType(forIdentifier: identifier) else {
-            throw RuntimeError.error(withMessage: "Failed to initialize correlation type with identifier \(typeIdentifier)")
-        }
-    
+        let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
         let predicate = createPredicate(from: from, to: to)
         
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
                 let query = HKCorrelationQuery(
-                    type: sampleType,
+                    type: correlationType,
                     predicate: predicate,
                     samplePredicates: nil
                 ) { (_: HKCorrelationQuery, correlations: [HKCorrelation]?, error: Error?) in

@@ -1,5 +1,4 @@
-import type { HybridObject } from "react-native-nitro-modules";
-import type { WorkoutActivityType } from "./WorkoutsModule.nitro";
+import type { WorkoutActivityType } from "./Workouts";
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutconfiguration Apple Docs }
@@ -17,13 +16,3 @@ export enum WorkoutSessionLocationType {
     indoor = 2,
     outdoor = 3
 }
-
-export interface WorkoutKitModule extends HybridObject<{ ios: 'swift' }> {
-    /**
-     * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1648358-startwatchapp Apple Docs }
-     */
-    startWatchAppWithWorkoutConfiguration(
-        workoutConfiguration: WorkoutConfiguration
-    ): Promise<boolean>;
-}
-

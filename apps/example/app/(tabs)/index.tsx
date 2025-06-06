@@ -5,7 +5,7 @@ import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { Auth, Core, Workouts } from "react-native-healthkit";
+import { Workouts, Core } from "react-native-healthkit";
 
 const result = 12
 
@@ -72,7 +72,7 @@ export default function HomeScreen() {
 
 		
 		console.log('requestAuth')
-		const hey = await Auth.requestAuthorization([
+		const hey = await Core.requestAuthorization([
 			/*'HKWorkoutTypeIdentifier',
 			'HKWorkoutRouteTypeIdentifier',
 			'HKQuantityTypeIdentifierStepCount',
@@ -82,11 +82,6 @@ export default function HomeScreen() {
 			'HKQuantityTypeIdentifierBasalEnergyBurned',
 			'HKQuantityTypeIdentifierFlightsClimbed',
 			'HKQuantityTypeIdentifierHeartRate',*/
-			'HKCharacteristicTypeIdentifierBiologicalSex',
-			'HKCharacteristicTypeIdentifierBloodType',
-			'HKCharacteristicTypeIdentifierDateOfBirth',
-			'HKCharacteristicTypeIdentifierFitzpatrickSkinType',
-			'HKCharacteristicTypeIdentifierWheelchairUse',
 			'HKQuantityTypeIdentifierDistanceWalkingRunning',
                 'HKQuantityTypeIdentifierBodyMass',
                 'HKQuantityTypeIdentifierBloodGlucose'

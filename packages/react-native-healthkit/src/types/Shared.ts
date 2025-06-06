@@ -1,18 +1,14 @@
 
 import type { QuantityTypeIdentifier } from "./QuantityTypeIdentifier";
 import type { CategoryTypeIdentifier } from "./CategoryTypeIdentifier";
-import type { CorrelationTypeIdentifier } from "./CorrelationTypeIdentifier";
-import type { HKWorkoutTypeIdentifier, HKStateOfMindTypeIdentifier, HKDataTypeIdentifierHeartbeatSeries, HKWorkoutRouteTypeIdentifier } from "./Constants";
-import type { Unit } from "./Units";
+
+import type { WorkoutTypeIdentifier as WorkoutTypeIdentifier, StateOfMindTypeIdentifier as StateOfMindTypeIdentifier, HeartbeatSeriesTypeIdentifier as HeartbeatSeriesTypeIdentifier, WorkoutRouteTypeIdentifier as WorkoutRouteTypeIdentifier } from "./Constants";
+
+import type { CorrelationTypeIdentifier } from "./CorrelationType";
+import type { CharacteristicTypeIdentifier } from "./Characteristics";
 import type { AnyMap } from "react-native-nitro-modules";
-import type { CharacteristicTypeIdentifier } from "../specs/CharacteristicTypeModule.nitro";
 
-export interface Quantity {
-    readonly unit: Unit;
-    readonly quantity: number;
-};
-
-export interface GenericMetadata extends Record<string, Quantity | string | number | boolean | undefined> {
+export interface GenericMetadata {
     readonly HKExternalUUID?: string;
     readonly HKTimeZone?: string;
     readonly HKWasUserEntered?: boolean;
@@ -27,24 +23,32 @@ export interface GenericMetadata extends Record<string, Quantity | string | numb
     readonly HKWasTakenInLab?: boolean;
     readonly HKReferenceRangeLowerLimit?: number;
     readonly HKReferenceRangeUpperLimit?: number;
+
+    /**
+     *  Additional Metadata, will be merged with the main metadata on the native side
+     * */
+    readonly allMetadata?: AnyMap;
 };
 
 export interface DeletedSample {
     readonly uuid: string;
-    readonly metadata: AnyMap;
+    readonly metadata?: GenericMetadata;
 };
+
+export type ObjectTypeIdentifier =
+    | CharacteristicTypeIdentifier
+    | SampleTypeIdentifier
+    | typeof ActivitySummaryTypeIdentifier
 
 export type SampleTypeIdentifier =
     | CategoryTypeIdentifier
     | CorrelationTypeIdentifier
     | QuantityTypeIdentifier
-    | CharacteristicTypeIdentifier
-    | typeof HKStateOfMindTypeIdentifier
-    | typeof ActivitySummaryTypeIdentifier
+    | typeof StateOfMindTypeIdentifier
     | typeof AudiogramTypeIdentifier
-    | typeof HKDataTypeIdentifierHeartbeatSeries
-    | typeof HKWorkoutRouteTypeIdentifier
-    | typeof HKWorkoutTypeIdentifier
+    | typeof HeartbeatSeriesTypeIdentifier
+    | typeof WorkoutRouteTypeIdentifier
+    | typeof WorkoutTypeIdentifier
 
 /**
  * Represents a type that identifies activity summary objects.

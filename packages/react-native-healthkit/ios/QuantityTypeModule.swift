@@ -5,19 +5,15 @@ func queryQuantitySamplesInternal(
   typeIdentifier: QuantityTypeIdentifier,
   options: QueryOptionsWithSortOrderAndUnit?
 ) throws -> Promise<[QuantitySample]> {
-    let identifier = HKQuantityTypeIdentifier(rawValue: typeIdentifier.stringValue)
-  guard let sampleType = HKSampleType.quantityType(forIdentifier: identifier) else {
-      throw RuntimeError.error(withMessage: "Failed to initialize " + typeIdentifier.stringValue)
-  }
-
+    let quantityType = try initializeQuantityType(typeIdentifier.stringValue)
     let predicate = createPredicate(from: options?.from, to: options?.to)
     let limit = getQueryLimit(options?.limit)
     
     return Promise.async {
-        let unit = try await getUnitToUse(unitOverride: options?.unit, unitIdentifier: typeIdentifier)
+        let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
         return try await withCheckedThrowingContinuation { continuation in
             let q = HKSampleQuery(
-              sampleType: sampleType,
+              sampleType: quantityType,
               predicate: predicate,
               limit: limit,
               sortDescriptors: getSortDescriptors(ascending: options?.ascending)
@@ -98,11 +94,6 @@ func buildStatisticsOptions(statistics: [StatisticsOptions]) -> HKStatisticsOpti
         } else if statistic == .discretemin {
             opts.insert(HKStatisticsOptions.discreteMin)
         }
-        if #available(iOS 12, *) {
-            if statistic == .discretemostrecent {
-                opts.insert(HKStatisticsOptions.discreteMostRecent)
-            }
-        }
         if #available(iOS 13, *) {
             if statistic == .duration {
                 opts.insert(HKStatisticsOptions.duration)
@@ -119,16 +110,15 @@ func buildStatisticsOptions(statistics: [StatisticsOptions]) -> HKStatisticsOpti
 }
 
 class QuantityTypeModule : HybridQuantityTypeModuleSpec {
+    func isQuantityCompatibleWithUnit(identifier: QuantityTypeIdentifier, unit: String) throws -> Bool {
+        let sampleType = try initializeQuantityType(identifier.stringValue)
+        
+        return sampleType.is(compatibleWith: HKUnit.init(from: unit))
+    }
+    
     func deleteQuantitySample(identifier: QuantityTypeIdentifier, uuid: String) throws -> Promise<Bool> {
-        let hkIdentifier = HKQuantityTypeIdentifier(rawValue: identifier.stringValue)
-        guard let sampleType = HKObjectType.quantityType(forIdentifier: hkIdentifier) else {
-            throw RuntimeError.error(withMessage: "Failed to initialize " + identifier.stringValue)
-        }
-        
-        guard let sampleUuid = UUID(uuidString: uuid) else {
-            throw RuntimeError.error(withMessage: "Invalid UUID: " + uuid)
-        }
-        
+        let sampleType = try initializeQuantityType(identifier.stringValue)
+        let sampleUuid = try initializeUUID(uuid)
         let samplePredicate = HKQuery.predicateForObject(with: sampleUuid)
         
         return Promise.async {
@@ -145,10 +135,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
     }
     
     func deleteQuantitySamplesBetween(identifier: QuantityTypeIdentifier, from: Date, to: Date) throws -> Promise<Bool> {
-        let hkIdentifier = HKQuantityTypeIdentifier(rawValue: identifier.stringValue)
-        guard let sampleType = HKObjectType.quantityType(forIdentifier: hkIdentifier) else {
-            throw RuntimeError.error(withMessage: "Failed to initialize " + identifier.stringValue)
-        }
+        let sampleType = try initializeQuantityType(identifier.stringValue)
         
         let samplePredicate = HKQuery.predicateForSamples(
             withStart: from,
@@ -170,11 +157,8 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
     }
     
     func queryStatisticsForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], options: StatisticsQueryOptions?) throws -> Promise<QueryStatisticsResponse> {
-        let hkIdentifier = HKQuantityTypeIdentifier(rawValue: identifier.stringValue)
-        guard let quantityType = HKQuantityType.quantityType(forIdentifier: hkIdentifier) else {
-            throw RuntimeError.error(withMessage: "Failed to initialize " + identifier.stringValue)
-        }
         
+        let quantityType = try initializeQuantityType(identifier.stringValue)
         let predicate = createPredicate(from: options?.from, to: options?.to)
         let unit = HKUnit.init(from: options?.unit ?? "count")
         
@@ -258,10 +242,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
     }
     
     func queryStatisticsCollectionForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], anchorDate: String, intervalComponents: IntervalComponents, options: StatisticsQueryOptions?) throws -> Promise<[QueryStatisticsResponse]> {
-        let hkIdentifier = HKQuantityTypeIdentifier(rawValue: identifier.stringValue)
-        guard let quantityType = HKQuantityType.quantityType(forIdentifier: hkIdentifier) else {
-            throw RuntimeError.error(withMessage: "Failed to initialize " + identifier.stringValue)
-        }
+        let quantityType = try initializeQuantityType(identifier.stringValue)
         
         let predicate = createPredicate(from: options?.from, to: options?.to)
         let unit = HKUnit.init(from: options?.unit ?? "count")
@@ -291,7 +272,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
         }
         
         // Build statistics options
-        var opts = buildStatisticsOptions(statistics: statistics)
+        let opts = buildStatisticsOptions(statistics: statistics)
         
         return Promise.async {
             return try await withCheckedThrowingContinuation { continuation in
@@ -382,24 +363,20 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
     }
     
     func queryQuantitySamplesWithAnchor(identifier: QuantityTypeIdentifier, options: QueryOptionsWithAnchorAndUnit) throws -> Promise<QuantitySamplesWithAnchorResponse> {
-        let hkIdentifier = HKQuantityTypeIdentifier(rawValue: identifier.stringValue)
-        guard let sampleType = HKSampleType.quantityType(forIdentifier: hkIdentifier) else {
-            throw RuntimeError.error(withMessage: "Failed to initialize " + identifier.stringValue)
-        }
-        
+        let quantityType = try initializeQuantityType(identifier.stringValue)
         let predicate = createPredicate(from: options.from, to: options.to)
         let limit = getQueryLimit(options.limit)
-        let unit = HKUnit.init(from: options.unit ?? "count")
-        
-        var actualAnchor: HKQueryAnchor? = nil
-        if let anchor = options.anchor {
-            actualAnchor = deserializeHKQueryAnchor(base64String: anchor)
-        }
+        let actualAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
         
         return Promise.async {
+            let unit = try await getUnitToUse(
+                unitOverride: options.unit,
+                quantityType: quantityType
+            )
+            
             return try await withCheckedThrowingContinuation { continuation in
                 let query = HKAnchoredObjectQuery(
-                    type: sampleType,
+                    type: quantityType,
                     predicate: predicate,
                     anchor: actualAnchor,
                     limit: limit

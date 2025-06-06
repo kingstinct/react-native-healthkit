@@ -8,8 +8,9 @@ import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Core } from "react-native-healthkit";
-import { AllUsedIdentifiersInApp } from "@/constants/AllUsedIdentifiersInApp";
-import { AuthorizationRequestStatus } from "react-native-healthkit/specs/CoreModule.nitro";
+import { AllSampleTypesInApp } from "@/constants/AllUsedIdentifiersInApp";
+import { AuthorizationRequestStatus } from "react-native-healthkit/types/Auth";
+
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
@@ -20,7 +21,7 @@ export default function TabLayout() {
 		try {
 
 		
-		Core.getRequestStatusForAuthorization(AllUsedIdentifiersInApp, AllUsedIdentifiersInApp)
+		Core.getRequestStatusForAuthorization(AllSampleTypesInApp, AllSampleTypesInApp)
 		.then((status) => {
 			console.log("Authorization Status:", status);
 			setAuthStatus(status);

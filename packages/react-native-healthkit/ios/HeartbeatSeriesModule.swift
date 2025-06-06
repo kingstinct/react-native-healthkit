@@ -56,7 +56,7 @@ class HeartbeatSeriesModule : HybridHeartbeatSeriesModuleSpec {
     ) throws -> Promise<HeartbeatSeriesSamplesWithAnchorResponse> {
         let predicate = createPredicate(from: options.from, to: options.to)
         let queryLimit = getQueryLimit(options.limit)
-        let queryAnchor = deserializeHKQueryAnchor(base64String: options.anchor)
+        let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
         
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
@@ -125,9 +125,9 @@ class HeartbeatSeriesModule : HybridHeartbeatSeriesModuleSpec {
         )
     }
     
-    private func getHeartbeatSeriesHeartbeats(sample: HKHeartbeatSeriesSample) async throws -> [HeartbeatRaw] {
+    private func getHeartbeatSeriesHeartbeats(sample: HKHeartbeatSeriesSample) async throws -> [Heartbeat] {
         return try await withCheckedThrowingContinuation { continuation in
-            var allBeats: [HeartbeatRaw] = []
+            var allBeats: [Heartbeat] = []
             
             let query = HKHeartbeatSeriesQuery(heartbeatSeries: sample) { 
                 (_: HKHeartbeatSeriesQuery, timeSinceSeriesStart: TimeInterval, precededByGap: Bool, done: Bool, error: Error?) in
@@ -137,7 +137,7 @@ class HeartbeatSeriesModule : HybridHeartbeatSeriesModuleSpec {
                     return
                 }
                 
-                let heartbeat = HeartbeatRaw(
+                let heartbeat = Heartbeat(
                     timeSinceSeriesStart: timeSinceSeriesStart,
                     precededByGap: precededByGap
                 )

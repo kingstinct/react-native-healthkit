@@ -11,20 +11,25 @@ var store = HKHealthStore.init()
 
 var quantityTypeUnitCache = Dictionary<HKQuantityType, HKUnit>()
 
-func getUnitToUse(unitOverride: String?, unitIdentifier: QuantityTypeIdentifier) async throws -> HKUnit {
+func getUnitToUse(unitOverride: String?, quantityType: HKQuantityType) async throws -> HKUnit {
     if let unitOverride = unitOverride {
-        return HKUnit(from: unitOverride)
+        let unit = HKUnit(from: unitOverride)
+        
+        if(!quantityType.is(compatibleWith: unit)){
+            throw RuntimeError.error(withMessage: "[react-native-healthkit] Unit \(unitOverride) is incompatible with \(quantityType.identifier)")
+        }
+        
+        return unit
     }
     
-    return try await getPreferredUnitsInternal(identifiers: [unitIdentifier]).first?.value ?? HKUnit.count()
+    if let preferredUnit = try await getPreferredUnitsInternal(quantityTypes: [quantityType]).first?.value {
+        return preferredUnit
+    }
+    
+    throw RuntimeError.error(withMessage: "[react-native-healthkit] Must specify a unit for \(quantityType.identifier)")
 }
 
-func getPreferredUnitsInternal(identifiers: [QuantityTypeIdentifier], forceUpdate: Bool? = false) async throws -> [HKQuantityType: HKUnit] {
-    
-    let quantityTypes = identifiers.compactMap { identifier in
-        let hkIdentifier = HKQuantityTypeIdentifier.init(rawValue: identifier.stringValue)
-        return HKSampleType.quantityType(forIdentifier: hkIdentifier)
-    }
+func getPreferredUnitsInternal(quantityTypes: [HKQuantityType], forceUpdate: Bool? = false) async throws -> [HKQuantityType: HKUnit] {
     
     if(forceUpdate != true){
         let itemsInCache = quantityTypeUnitCache.filter { (quantityType: HKQuantityType, unit: HKUnit) in
@@ -53,14 +58,10 @@ func getPreferredUnitsInternal(identifiers: [QuantityTypeIdentifier], forceUpdat
 }
 
 class CoreModule : HybridCoreModuleSpec {
-    
-    
     func authorizationStatusFor(
-        type: SampleTypeIdentifier
+        type: ObjectTypeIdentifier
     ) throws -> AuthorizationStatus {
-        guard let objectType = objectTypeFromString(typeIdentifier: type.stringValue) else {
-            throw RuntimeError.error(withMessage: "Failed to initialize type with identifier \(type)")
-        }
+        let objectType = try objectTypeFrom(objectTypeIdentifier: type)
         
         let authStatus = store.authorizationStatus(for: objectType)
         
@@ -68,10 +69,10 @@ class CoreModule : HybridCoreModuleSpec {
             return authStatus
         }
         
-        throw RuntimeError.error(withMessage: "Failed to recognize AuthorizationStatus with value \(authStatus.rawValue)")
+        throw RuntimeError.error(withMessage: "Got unrecognized AuthorizationStatus with value \(authStatus.rawValue)")
     }
     
-    func getRequestStatusForAuthorization(write: [SampleTypeIdentifier], read: [SampleTypeIdentifier]) throws -> Promise<AuthorizationRequestStatus> {
+    func getRequestStatusForAuthorization(write: [SampleTypeIdentifier], read: [ObjectTypeIdentifier]) throws -> Promise<AuthorizationRequestStatus> {
         let share = sampleTypesFromArray(typeIdentifiers: write)
         let toRead = objectTypesFromArray(typeIdentifiers: read)
         
@@ -93,7 +94,7 @@ class CoreModule : HybridCoreModuleSpec {
         }
     }
     
-    func requestAuthorization(write: [SampleTypeIdentifier], read: [SampleTypeIdentifier]) throws -> Promise<Bool> {
+    func requestAuthorization(write: [SampleTypeIdentifier], read: [ObjectTypeIdentifier]) throws -> Promise<Bool> {
         let share = sampleTypesFromArray(typeIdentifiers: write)
         let toRead = objectTypesFromArray(typeIdentifiers: read)
         
@@ -111,13 +112,7 @@ class CoreModule : HybridCoreModuleSpec {
     }
     
     func querySources(identifier: SampleTypeIdentifier) throws -> Promise<[Source]> {
-        guard let type = objectTypeFromString(typeIdentifier: identifier.stringValue) else {
-            throw RuntimeError.error(withMessage: "Failed to initialize type with identifier \(identifier)")
-        }
-        
-        guard let sampleType = type as? HKSampleType else {
-            throw RuntimeError.error(withMessage: "Type \(identifier) is not a sample type")
-        }
+        let sampleType = try sampleTypeFrom(sampleTypeIdentifier: identifier)
         
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
@@ -150,12 +145,13 @@ class CoreModule : HybridCoreModuleSpec {
         }
     }
     
-    func enableBackgroundDelivery(typeIdentifier: String, updateFrequency: Double) throws -> Promise<Bool> {
-        if let frequency = HKUpdateFrequency(rawValue: Int(updateFrequency)) {
+    func enableBackgroundDelivery(typeIdentifier: ObjectTypeIdentifier, updateFrequency: UpdateFrequency) throws -> Promise<Bool> {
+        if let frequency = HKUpdateFrequency(rawValue: Int(updateFrequency.rawValue)) {
+            let type = try objectTypeFrom(objectTypeIdentifier: typeIdentifier)
             return Promise.async {
                 try await withCheckedThrowingContinuation { continuation in
                     store.enableBackgroundDelivery(
-                        for: objectTypeFromString(typeIdentifier: typeIdentifier)!,
+                        for: type,
                         frequency: frequency
                     ) { (success, error) in
                         if let err = error {
@@ -170,11 +166,14 @@ class CoreModule : HybridCoreModuleSpec {
         }
     }
     
-    func disableBackgroundDelivery(typeIdentifier: String) throws -> Promise<Bool> {
+    func disableBackgroundDelivery(
+        typeIdentifier: ObjectTypeIdentifier
+    ) throws -> Promise<Bool> {
         return Promise.async {
-            try await withCheckedThrowingContinuation { continuation in
+            let type = try objectTypeFrom(objectTypeIdentifier: typeIdentifier)
+            return try await withCheckedThrowingContinuation { continuation in
                 store.disableBackgroundDelivery(
-                    for: objectTypeFromString(typeIdentifier: typeIdentifier)!
+                    for: type
                 ) { (success, error) in
                     if let err = error {
                         return continuation.resume(throwing: err)
@@ -223,7 +222,17 @@ class CoreModule : HybridCoreModuleSpec {
     func getPreferredUnits(identifiers: [QuantityTypeIdentifier], forceUpdate: Bool?) throws -> Promise<[IdentifierWithUnit]> {
         return Promise.async {
             
-            let typePerUnits = try await getPreferredUnitsInternal(identifiers: identifiers, forceUpdate: forceUpdate)
+            let quantityTypes = identifiers.compactMap { identifier in
+                do {
+                    let quantityType = try initializeQuantityType(identifier.stringValue)
+                    return quantityType
+                } catch {
+                    print(error.localizedDescription)
+                    return nil
+                }
+            }
+            
+            let typePerUnits = try await getPreferredUnitsInternal(quantityTypes: quantityTypes, forceUpdate: forceUpdate)
             
             let dic = typePerUnits.map { typePerUnit in
                 return IdentifierWithUnit(
@@ -238,10 +247,11 @@ class CoreModule : HybridCoreModuleSpec {
     
     var _runningQueries: [String: HKQuery] = [:]
     
-    func subscribeToObserverQuery(typeIdentifier: String, callback: @escaping (OnChangeCallbackArgs) -> Void) throws -> String {
-        guard let sampleType = sampleTypeFromString(typeIdentifier: typeIdentifier) else {
-            throw RuntimeError.error(withMessage: "Failed to initialize " + typeIdentifier)
-        }
+    func subscribeToObserverQuery(
+        typeIdentifier: SampleTypeIdentifier,
+        callback: @escaping (OnChangeCallbackArgs) -> Void
+    ) throws -> String {
+        let sampleType = try sampleTypeFrom(sampleTypeIdentifier: typeIdentifier)
         
         let predicate = HKQuery.predicateForSamples(
             withStart: Date.init(),

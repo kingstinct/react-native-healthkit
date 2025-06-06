@@ -50,7 +50,7 @@ func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) -> Quantity
 func serializeDeletedSample(sample: HKDeletedObject) -> DeletedSample {
   return DeletedSample(
     uuid: sample.uuid.uuidString,
-    metadata: serializeMetadata(sample.metadata)
+    metadata: serializeGenericMetadata(sample.metadata)
   )
 }
 
@@ -75,64 +75,79 @@ func serializeSource(_ source: HKSource) -> margelo.nitro.healthkit.Source {
     )
 }
 
-func serializeUnknownQuantity(quantity: HKQuantity) -> Dictionary<String, AnyValue>? {
+func serializeUnknownQuantityTyped(quantity: HKQuantity?) -> Quantity? {
+    guard let quantity = quantity else {
+        return nil
+    }
+    
     if quantity.is(compatibleWith: HKUnit.percent()) {
-        return serializeQuantity(unit: HKUnit.percent(), quantity: quantity)
+        return serializeQuantityTyped(unit: HKUnit.percent(), quantity: quantity)
     }
 
     if quantity.is(compatibleWith: HKUnit.second()) {
-        return serializeQuantity(unit: HKUnit.second(), quantity: quantity)
+        return serializeQuantityTyped(unit: HKUnit.second(), quantity: quantity)
     }
 
     if quantity.is(compatibleWith: HKUnit.kilocalorie()) {
-        return serializeQuantity(unit: HKUnit.kilocalorie(), quantity: quantity)
+        return serializeQuantityTyped(unit: HKUnit.kilocalorie(), quantity: quantity)
     }
 
     if quantity.is(compatibleWith: HKUnit.count()) {
-        return serializeQuantity(unit: HKUnit.count(), quantity: quantity)
+        return serializeQuantityTyped(unit: HKUnit.count(), quantity: quantity)
     }
 
     if quantity.is(compatibleWith: HKUnit.meter()) {
-        return serializeQuantity(unit: HKUnit.meter(), quantity: quantity)
+        return serializeQuantityTyped(unit: HKUnit.meter(), quantity: quantity)
     }
 
     if #available(iOS 11, *) {
         if quantity.is(compatibleWith: HKUnit.internationalUnit()) {
-            return serializeQuantity(unit: HKUnit.internationalUnit(), quantity: quantity)
+            return serializeQuantityTyped(unit: HKUnit.internationalUnit(), quantity: quantity)
         }
     }
 
     if #available(iOS 13, *) {
         if quantity.is(compatibleWith: HKUnit.hertz()) {
-            return serializeQuantity(unit: HKUnit.hertz(), quantity: quantity)
+            return serializeQuantityTyped(unit: HKUnit.hertz(), quantity: quantity)
         }
         if quantity.is(compatibleWith: HKUnit.decibelHearingLevel()) {
-            return serializeQuantity(unit: HKUnit.decibelHearingLevel(), quantity: quantity)
+            return serializeQuantityTyped(unit: HKUnit.decibelHearingLevel(), quantity: quantity)
         }
     }
 
     if #available(iOS 17.0, *) {
         if quantity.is(compatibleWith: HKUnit.lux()) {
-            return serializeQuantity(unit: HKUnit.lux(), quantity: quantity)
+            return serializeQuantityTyped(unit: HKUnit.lux(), quantity: quantity)
         }
     }
 
 #if compiler(>=6)
     if #available(iOS 18.0, *) {
         if quantity.is(compatibleWith: HKUnit.appleEffortScore()) {
-            return serializeQuantity(unit: HKUnit.appleEffortScore(), quantity: quantity)
+            return serializeQuantityTyped(unit: HKUnit.appleEffortScore(), quantity: quantity)
         }
     }
 #endif
 
     if quantity.is(compatibleWith: SpeedUnit) {
-        return serializeQuantity(unit: SpeedUnit, quantity: quantity)
+        return serializeQuantityTyped(unit: SpeedUnit, quantity: quantity)
     }
 
     if quantity.is(compatibleWith: METUnit) {
-        return serializeQuantity(unit: METUnit, quantity: quantity)
+        return serializeQuantityTyped(unit: METUnit, quantity: quantity)
     }
 
+    return nil
+}
+
+func serializeUnknownQuantity(quantity: HKQuantity) -> Dictionary<String, AnyValue>? {
+    if let quantityTyped = serializeUnknownQuantityTyped(quantity: quantity) {
+        return [
+            "quantity": AnyValue.number(quantityTyped.quantity),
+            "unit": AnyValue.string(quantityTyped.unit)
+        ]
+    }
+    
     return nil
 }
 
@@ -158,6 +173,58 @@ func serializeMetadata(_ metadata: [String: Any]?) -> AnyMapHolder {
         }
     }
     return serialized
+}
+
+func serializeAllMetadata(_ metadata: [String: Any]?) -> AnyMapHolder? {
+    if let metadata = metadata {
+        var allMetadata = AnyMapHolder()
+        for item in metadata {
+            if let value = item.value as? String {
+                allMetadata.setString(key: item.key, value: value)
+            }
+            if let value = item.value as? Double {
+                allMetadata.setDouble(key: item.key, value: value)
+            }
+            if let value = item.value as? Bool {
+                allMetadata.setBoolean(key: item.key, value: value)
+            }
+            if let quantity = item.value as? HKQuantity {
+                if let s = serializeUnknownQuantity(quantity: quantity) {
+                    allMetadata.setObject(key: item.key, value: s)
+                }
+            }
+            // todo - cover more types??
+            /*if let value = item.value as? [String: Any] {
+                var dict = Dictionary<String, AnyValue>()
+                allMetadata.setObject(key: item.key, value: value)
+            }*/
+        }
+        return allMetadata
+    }
+    return nil
+}
+
+func serializeGenericMetadata(_ metadata: [String: Any]?) -> GenericMetadata? {
+    if let metadata = metadata {
+        return GenericMetadata(
+            HKExternalUUID: metadata["HKExternalUUID"] as? String,
+            HKTimeZone: metadata["HKTimeZone"] as? String,
+            HKWasUserEntered: metadata["HKWasUserEntered"] as? Bool,
+            HKDeviceSerialNumber: metadata["HKDeviceSerialNumber"] as? String,
+            HKUDIDeviceIdentifier: metadata["HKUDIDeviceIdentifier"] as? String,
+            HKUDIProductionIdentifier: metadata["HKUDIProductionIdentifier"] as? String,
+            HKDigitalSignature: metadata["HKDigitalSignature"] as? String,
+            HKDeviceName: metadata["HKDeviceName"] as? String,
+            HKDeviceManufacturerName: metadata["HKDeviceManufacturerName"] as? String,
+            HKSyncIdentifier: metadata["HKSyncIdentifier"] as? String,
+            HKSyncVersion: metadata["HKSyncVersion"] as? Double,
+            HKWasTakenInLab: metadata["HKWasTakenInLab"] as? Bool,
+            HKReferenceRangeLowerLimit: metadata["HKReferenceRangeLowerLimit"] as? Double,
+            HKReferenceRangeUpperLimit: metadata["HKReferenceRangeUpperLimit"] as? Double,
+            allMetadata: serializeAllMetadata(metadata)
+        )
+    }
+    return nil
 }
 
 func serializeDevice(hkDevice: HKDevice?) -> Device? {
@@ -219,22 +286,4 @@ func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
     } else {
         return nil
     }
-}
-
-func serializeStatistic(unit: HKUnit, quantity: HKQuantity?, stats: HKStatistics?) -> [String: Any]? {
-    guard let q = quantity, let stats = stats else {
-        return nil
-    }
-
-    let endDate = _dateFormatter.string(from: stats.endDate)
-    let startDate = _dateFormatter.string(from: stats.startDate)
-    let quantityType = stats.quantityType.identifier
-
-    return [
-        "quantityType": quantityType,
-        "startDate": startDate,
-        "endDate": endDate,
-        "quantity": q.doubleValue(for: unit),
-        "unit": unit.unitString
-    ]
 }

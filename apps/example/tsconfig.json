@@ -2,6 +2,8 @@
 	"extends": "expo/tsconfig.base",
 	"compilerOptions": {
 		"strict": true,
+		"noUncheckedIndexedAccess": true,
+		"strictNullChecks": true,
 		"paths": {
 			"@/*": ["./*"],
 			"react-native-healthkit": ["../../packages/react-native-healthkit/src/index.ts"],

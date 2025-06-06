@@ -7,7 +7,6 @@ import WorkoutKit
 #endif
 
 func getWorkoutByID(
-    store: HKHealthStore,
     workoutUUID: UUID
 ) async -> HKWorkout? {
     let workoutPredicate = HKQuery.predicateForObject(with: workoutUUID)
@@ -42,11 +41,48 @@ func getWorkoutByID(
     return workouts.first ?? nil
 }
 
+func tryParseWeatherCondition(_ weatherCondition: Int?) -> WeatherCondition? {
+    if let weatherCondition = weatherCondition {
+        return WeatherCondition.init(rawValue: Int32(weatherCondition))
+    }
+    return nil
+}
+
+
+func serializeWorkoutMetadata(_ metadata: [String: Any]?) -> WorkoutMetadata? {
+    if let metadata = metadata {
+        return WorkoutMetadata(
+            // todo: figure out conversions here
+            HKWeatherCondition: tryParseWeatherCondition(metadata["HKWeatherCondition"] as? Int),
+            HKWeatherHumidity: serializeUnknownQuantityTyped(quantity: metadata["HKWeatherHumidity"] as? HKQuantity),
+            HKWeatherTemperature: serializeUnknownQuantityTyped(quantity: metadata["HKWeatherTemperature"] as? HKQuantity),
+            HKAverageMETs: serializeUnknownQuantityTyped(quantity: metadata["HKAverageMETs"] as? HKQuantity),
+            HKElevationAscended: serializeUnknownQuantityTyped(quantity: metadata["HKElevationAscended"] as? HKQuantity),
+            HKIndoorWorkout: metadata["HKIndoorWorkout"] as? Bool,
+            HKExternalUUID: metadata["HKExternalUUID"] as? String,
+            HKTimeZone: metadata["HKTimeZone"] as? String,
+            HKWasUserEntered: metadata["HKWasUserEntered"] as? Bool,
+            HKDeviceSerialNumber: metadata["HKDeviceSerialNumber"] as? String,
+            HKUDIDeviceIdentifier: metadata["HKUDIDeviceIdentifier"] as? String,
+            HKUDIProductionIdentifier: metadata["HKUDIProductionIdentifier"] as? String,
+            HKDigitalSignature: metadata["HKDigitalSignature"] as? String,
+            HKDeviceName: metadata["HKDeviceName"] as? String,
+            HKDeviceManufacturerName: metadata["HKDeviceManufacturerName"] as? String,
+            HKSyncIdentifier: metadata["HKSyncIdentifier"] as? String,
+            HKSyncVersion: metadata["HKSyncVersion"] as? Double,
+            HKWasTakenInLab: metadata["HKWasTakenInLab"] as? Bool,
+            HKReferenceRangeLowerLimit: metadata["HKReferenceRangeLowerLimit"] as? Double,
+            HKReferenceRangeUpperLimit: metadata["HKReferenceRangeUpperLimit"] as? Double,
+            allMetadata: serializeAllMetadata(metadata)
+        )
+    }
+    return nil
+}
+
 func getWorkoutRoutes(
-    store: HKHealthStore,
     workoutUUID: UUID
 ) async throws -> [HKWorkoutRoute]? {
-    guard let workout = await getWorkoutByID(store: store, workoutUUID: workoutUUID) else {
+    guard let workout = await getWorkoutByID(workoutUUID: workoutUUID) else {
         return nil
     }
     
@@ -83,7 +119,6 @@ func getWorkoutRoutes(
 }
 
 func getRouteLocations(
-    store: HKHealthStore,
     route: HKWorkoutRoute
 ) async -> [CLLocation] {
     let locations = try! await withCheckedThrowingContinuation {
@@ -123,25 +158,25 @@ func serializeLocation(location: CLLocation, previousLocation: CLLocation?) -> W
     } else {
         distance = nil
     }
+    
     return WorkoutLocation(
-        longitude: location.coordinate.longitude,
-        latitude: location.coordinate.latitude,
         altitude: location.altitude,
-        speed: location.speed,
+        course: location.course,
         date: location.timestamp,
+        distance: distance,
         horizontalAccuracy: location.horizontalAccuracy,
+        latitude: location.coordinate.latitude,
+        longitude: location.coordinate.longitude,
+        speed: location.speed,
         speedAccuracy: location.speedAccuracy,
-        verticalAccuracy: location.verticalAccuracy,
-        distance: distance
+        verticalAccuracy: location.verticalAccuracy
     )
 }
 
 func getSerializedWorkoutLocations(
-    store: HKHealthStore,
     workoutUUID: UUID
 ) async throws -> [WorkoutRoute] {
     let routes = try await getWorkoutRoutes(
-        store: store,
         workoutUUID: workoutUUID
     )
     
@@ -155,7 +190,6 @@ func getSerializedWorkoutLocations(
         )
         
         let routeCLLocations = await getRouteLocations(
-            store: store,
             route: route
         )
         
@@ -307,7 +341,7 @@ func mapWorkout(
         totalFlightsClimbed: totalFlightsClimbed,
         start: workout.startDate,
         end: workout.endDate,
-        metadata: serializeMetadata(workout.metadata),
+        metadata: serializeWorkoutMetadata(workout.metadata),
         sourceRevision: nil,
         events: workoutEvents,
         activities: activitiesArray
@@ -337,7 +371,7 @@ func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
             verticalAccuracy: verticalAccuracy,
             course: course,
             speed: speed,
-            timestamp: timestamp
+            timestamp: timestamp,
         )
         
         return clLocation
@@ -346,22 +380,22 @@ func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
 
 class WorkoutsModule : HybridWorkoutsModuleSpec {
     func queryWorkoutByUUID(workoutUUID: String) throws -> Promise<WorkoutSample?> {
-        if let uuid = UUID(uuidString: workoutUUID) {
-            return Promise.async {
-                let workout = await getWorkoutByID(store: store, workoutUUID: uuid)
-                
-                if let workout = workout {
-                    return mapWorkout(workout: workout, distanceUnit: HKUnit.meter(),
-                        energyUnit: HKUnit.kilocalorie()
-                    )
-                }
-                return nil
+        let uuid = try initializeUUID(workoutUUID)
+        
+        return Promise.async {
+            let workout = await getWorkoutByID(workoutUUID: uuid)
+            
+            if let workout = workout {
+                return mapWorkout(workout: workout, distanceUnit: HKUnit.meter(),
+                    energyUnit: HKUnit.kilocalorie()
+                )
             }
+            return nil
         }
-        return Promise.resolved(withResult: nil)
     }
     
     func saveWorkoutSample(workoutActivityType: WorkoutActivityType, quantities: [QuantitySampleForSaving], start: Date?, end: Date?, totals: WorkoutTotals, metadata: AnyMapHolder) throws -> Promise<String?> {
+        // todo: implement
         return Promise.resolved(withResult: nil)
     }
     
@@ -386,25 +420,23 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
                 Task {
-                    if let uuid = UUID(uuidString: workoutUUID) {
-                        do {
-                            let workout = await getWorkoutByID(store: store, workoutUUID: uuid)
-                            if let workout {
-                                // create CLLocations and return if locations are empty
-                                let clLocations = mapLocations(from: locations)
-                                let routeBuilder = HKWorkoutRouteBuilder(healthStore: store, device: nil)
-                                try await routeBuilder.insertRouteData(clLocations)
-                                try await routeBuilder.finishRoute(with: workout, metadata: nil)
-                                
-                                return continuation.resume(returning: true)
-                            } else {
-                                return continuation.resume(throwing: RuntimeError.error(withMessage: "No workout found"))
-                            }
-                        } catch {
-                            return continuation.resume(throwing: error)
+                    let uuid = try initializeUUID(workoutUUID)
+                    
+                    do {
+                        let workout = await getWorkoutByID(workoutUUID: uuid)
+                        if let workout {
+                            // create CLLocations and return if locations are empty
+                            let clLocations = mapLocations(from: locations)
+                            let routeBuilder = HKWorkoutRouteBuilder(healthStore: store, device: nil)
+                            try await routeBuilder.insertRouteData(clLocations)
+                            try await routeBuilder.finishRoute(with: workout, metadata: nil)
+                            
+                            return continuation.resume(returning: true)
+                        } else {
+                            return continuation.resume(throwing: RuntimeError.error(withMessage: "No workout found"))
                         }
-                    } else {
-                        return continuation.resume(throwing: RuntimeError.error(withMessage: "Invalid UUID"))
+                    } catch {
+                        return continuation.resume(throwing: error)
                     }
                 }
             }
@@ -419,10 +451,7 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
         
         let limit = getQueryLimit(limit)
         
-        var actualAnchor: HKQueryAnchor? = nil
-        if let anchor = anchor {
-            actualAnchor = deserializeHKQueryAnchor(base64String: anchor)
-        }
+        let actualAnchor = try deserializeHKQueryAnchor(base64String: anchor)
         
         return Promise.async {
             return try await withCheckedThrowingContinuation { continuation in
@@ -484,24 +513,23 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
     
     func getWorkoutPlan(workoutUUID: String) -> Promise<WorkoutPlan?> {
         return Promise.async {
-            if let uuid = UUID(uuidString: workoutUUID) {
-                let workout = await getWorkoutByID(
-                    store: store,
-                    workoutUUID: uuid
-                )
-                if let workout {
-                    if #available(iOS 17.0.0, *) {
-                        let workoutPlan = try await getWorkoutPlanInternal(workout: workout)
-                        return workoutPlan
-                    } else {
-                        throw RuntimeError.error(withMessage: "Workout Plans requires iOS 17+")
-                    }
+            let uuid = try initializeUUID(workoutUUID)
+            
+            let workout = await getWorkoutByID(
+                workoutUUID: uuid
+            )
+            
+            if let workout {
+                if #available(iOS 17.0.0, *) {
+                    let workoutPlan = try await getWorkoutPlanInternal(workout: workout)
+                    return workoutPlan
                 } else {
-                    throw RuntimeError.error(withMessage: "No workout found with id \(workoutUUID)")
+                    throw RuntimeError.error(withMessage: "Workout Plans requires iOS 17+")
                 }
             } else {
-                throw RuntimeError.error(withMessage: "Invalid UUID")
+                throw RuntimeError.error(withMessage: "No workout found with id \(workoutUUID)")
             }
+            
         }
     }
     
@@ -513,7 +541,6 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
         
         return Promise.async {
             let locations = try await getSerializedWorkoutLocations(
-                store: store,
                 workoutUUID: _workoutUUID
             )
             return locations
