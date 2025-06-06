@@ -1491,7 +1491,7 @@ class ReactNativeHealthkit: RCTEventEmitter {
     let q = HKAnchoredObjectQuery(
       type: sampleType,
       predicate: predicate,
-      anchor: anchor != "" ? base64StringToHKQueryAnchor(base64String: anchor) : nil,
+      anchor: anchor != "" ? deserializeHKQueryAnchor(base64String: anchor) : nil,
       limit: limit
     ) {
       (

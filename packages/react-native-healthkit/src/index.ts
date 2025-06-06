@@ -1,31 +1,25 @@
 import { NitroModules } from "react-native-nitro-modules"
-import type { Core as CoreNative } from "./specs/Core.nitro"
-import type { Auth as AuthNative } from "./specs/Auth.nitro"
+import type { CoreModule } from "./specs/CoreModule.nitro"
 import type { WorkoutsModule } from "./specs/WorkoutsModule.nitro"
-import type { Characteristic as CharacteristicNative } from "./specs/Characteristic.nitro"
-import type { QuantityType as QuantityTypeNative } from "./specs/QuantityType.nitro"
-import type { CategoryType as CategoryTypeNative } from "./specs/CategoryType.nitro"
-import type { Correlation as CorrelationNative } from "./specs/Correlation.nitro"
-import type { HeartbeatSeries as HeartbeatSeriesNative } from "./specs/HeartbeatSeries.nitro"
-import type { SourceHybridObject as SourceNative } from "./specs/Source.nitro"
-import type { StateOfMind as StateOfMindNative } from "./specs/StateOfMind.nitro"
+import type { CharacteristicTypeModule } from "./specs/CharacteristicTypeModule.nitro"
+import type { QuantityTypeModule } from "./specs/QuantityTypeModule.nitro"
+import type { CategoryTypeModule } from "./specs/CategoryTypeModule.nitro"
+import type { CorrelationTypeModule } from "./specs/CorrelationTypeModule.nitro"
+import type { HeartbeatSeriesModule } from "./specs/HeartbeatSeriesModule.nitro"
+import type { StateOfMindModule } from "./specs/StateOfMindModule.nitro"
 
-export const Core = NitroModules.createHybridObject<CoreNative>("Core")
-
-export const Auth = NitroModules.createHybridObject<AuthNative>("Auth")
+export const Core = NitroModules.createHybridObject<CoreModule>("CoreModule")
 
 export const Workouts = NitroModules.createHybridObject<WorkoutsModule>("WorkoutsModule")
 
-export const Characteristic = NitroModules.createHybridObject<CharacteristicNative>("Characteristic")
+export const Characteristics = NitroModules.createHybridObject<CharacteristicTypeModule>("CharacteristicTypeModule")
 
-export const QuantityType = NitroModules.createHybridObject<QuantityTypeNative>("QuantityType")
+export const QuantityTypes = NitroModules.createHybridObject<QuantityTypeModule>("QuantityTypeModule")
 
-export const CategoryType = NitroModules.createHybridObject<CategoryTypeNative>("CategoryType")
+export const CategoryTypes = NitroModules.createHybridObject<CategoryTypeModule>("CategoryTypeModule")
 
-export const Correlation = NitroModules.createHybridObject<CorrelationNative>("Correlation")
+export const CorrelationTypes = NitroModules.createHybridObject<CorrelationTypeModule>("CorrelationTypeModule")
 
-export const HeartbeatSeries = NitroModules.createHybridObject<HeartbeatSeriesNative>("HeartbeatSeries")
+export const HeartbeatSeries = NitroModules.createHybridObject<HeartbeatSeriesModule>("HeartbeatSeriesModule")
 
-export const Source = NitroModules.createHybridObject<SourceNative>("SourceHybridObject")
-
-export const StateOfMind = NitroModules.createHybridObject<StateOfMindNative>("StateOfMind")
+export const StateOfMind = NitroModules.createHybridObject<StateOfMindModule>("StateOfMindModule")

@@ -5,15 +5,15 @@ import { HStack, Text, VStack } from "@expo/ui/swift-ui-primitives";
 import { router } from 'expo-router';
 import { useEffect, useState } from "react";
 
-import { Auth } from "react-native-healthkit";
-import { AuthorizationRequestStatus, AuthorizationStatus } from "react-native-healthkit/specs/Auth.nitro";
+import { Core } from "react-native-healthkit";
+import { AuthorizationRequestStatus, AuthorizationStatus } from "react-native-healthkit/specs/CoreModule.nitro";
 
 const authEnumLookup = enumKeyLookup(AuthorizationStatus);
 
 export default function AuthScreen() {
     const requestAuth = async () => {
         try {
-            const res = await Auth.requestAuthorization(AllUsedIdentifiersInApp, AllUsedIdentifiersInApp)
+            const res = await Core.requestAuthorization(AllUsedIdentifiersInApp, AllUsedIdentifiersInApp)
 
             alert('response: ' + res)
 
@@ -30,7 +30,7 @@ export default function AuthScreen() {
     useEffect(() => {
         const updateStatus = async () => {
             try {
-                const status = await Auth.getRequestStatusForAuthorization(AllUsedIdentifiersInApp, AllUsedIdentifiersInApp);
+                const status = await Core.getRequestStatusForAuthorization(AllUsedIdentifiersInApp, AllUsedIdentifiersInApp);
                 setStatus(status);
             } catch (error) {
                 setStatus(AuthorizationRequestStatus.unknown)

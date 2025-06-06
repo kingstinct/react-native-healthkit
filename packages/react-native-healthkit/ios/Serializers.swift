@@ -21,12 +21,12 @@ func serializeQuantity(unit: HKUnit, quantity: HKQuantity?) -> Dictionary<String
     ]
 }
 
-func serializeQuantityTyped(unit: HKUnit, quantity: HKQuantity?) -> QuantityRaw? {
+func serializeQuantityTyped(unit: HKUnit, quantity: HKQuantity?) -> Quantity? {
     guard let q = quantity else {
         return nil
     }
     
-    return QuantityRaw(
+    return Quantity(
         unit: unit.unitString,
         quantity: q.doubleValue(for: unit)
     )
@@ -210,14 +210,8 @@ func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision?) -> SourceRev
     )
 }
 
-func deserializeHKQueryAnchor(anchor: String) -> HKQueryAnchor? {
-    return anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor)
-}
-
 func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
     if let anchor = anchor {
-        
-    
       let data = NSKeyedArchiver.archivedData(withRootObject: anchor)
       let encoded = data.base64EncodedString()
 

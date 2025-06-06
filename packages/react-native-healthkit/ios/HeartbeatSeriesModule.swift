@@ -2,15 +2,12 @@ import HealthKit
 import NitroModules
 
 @available(iOS 13.0.0, *)
-class HeartbeatSeries : HybridHeartbeatSeriesSpec {
+class HeartbeatSeriesModule : HybridHeartbeatSeriesModuleSpec {
     func queryHeartbeatSeriesSamples(
-        from: Date,
-        to: Date,
-        limit: Double,
-        ascending: Bool
+        options: QueryOptionsWithSortOrder?
     ) throws -> Promise<[HeartbeatSeriesSample]> {
-        let predicate = createPredicate(from: from, to: to)
-        let queryLimit = limitOrNilIfZero(limit: limit)
+        let predicate = createPredicate(from: options?.from, to: options?.to)
+        let queryLimit = getQueryLimit(options?.limit)
         
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
@@ -19,7 +16,7 @@ class HeartbeatSeries : HybridHeartbeatSeriesSpec {
                     predicate: predicate,
                     limit: queryLimit,
                     sortDescriptors: [
-                        NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)
+                        NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: options?.ascending ?? false)
                     ]
                 ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
                     if let error = error {
@@ -55,14 +52,11 @@ class HeartbeatSeries : HybridHeartbeatSeriesSpec {
     }
     
     func queryHeartbeatSeriesSamplesWithAnchor(
-        from: Date,
-        to: Date,
-        limit: Double,
-        anchor: String
-    ) throws -> Promise<QueryHeartbeatSeriesSamplesResponseRaw> {
-        let predicate = createPredicate(from: from, to: to)
-        let queryLimit = limitOrNilIfZero(limit: limit)
-        let queryAnchor = anchor.isEmpty ? nil : base64StringToHKQueryAnchor(base64String: anchor)
+        options: QueryOptionsWithAnchor
+    ) throws -> Promise<HeartbeatSeriesSamplesWithAnchorResponse> {
+        let predicate = createPredicate(from: options.from, to: options.to)
+        let queryLimit = getQueryLimit(options.limit)
+        let queryAnchor = deserializeHKQueryAnchor(base64String: options.anchor)
         
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
@@ -78,7 +72,7 @@ class HeartbeatSeries : HybridHeartbeatSeriesSpec {
                     }
                     
                     guard let samples = samples else {
-                        let response = QueryHeartbeatSeriesSamplesResponseRaw(
+                        let response = HeartbeatSeriesSamplesWithAnchorResponse(
                             samples: [],
                             deletedSamples: deletedSamples?.map { serializeDeletedSample(sample: $0) } ?? [],
                             newAnchor: serializeAnchor(anchor: newAnchor) ?? ""
@@ -97,7 +91,7 @@ class HeartbeatSeries : HybridHeartbeatSeriesSpec {
                                 serializedSamples.append(serialized)
                             }
                             
-                            let response = QueryHeartbeatSeriesSamplesResponseRaw(
+                            let response = HeartbeatSeriesSamplesWithAnchorResponse(
                                 samples: serializedSamples,
                                 deletedSamples: deletedSamples?.map { serializeDeletedSample(sample: $0) } ?? [],
                                 newAnchor: serializeAnchor(anchor: newAnchor) ?? ""

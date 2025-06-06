@@ -1,7 +1,9 @@
 import type { AnyMap, HybridObject } from "react-native-nitro-modules";
-import type { Device, SourceRevision } from "./Source.nitro";
-import type { DeletedSample, GenericMetadata } from "./Shared";
+
+import type { DeletedSample, GenericMetadata } from "../types/Shared";
 import type { CategoryTypeIdentifier } from "../types/CategoryTypeIdentifier";
+import type { Device, SourceRevision } from "./CoreModule.nitro";
+import type { QueryOptionsWithAnchor, QueryOptionsWithSortOrder } from "../types/QueryOptions";
 
 
 export type CategoryTypePresenceIdentifier = 'CategoryTypeIdentifierAppetiteChanges'
@@ -217,7 +219,7 @@ export type CategoryValueForIdentifier<T extends CategoryTypeIdentifier = Catego
                         : number;
 
 
-export interface CategoryType extends HybridObject<{ ios: 'swift' }> {
+export interface CategoryTypeModule extends HybridObject<{ ios: 'swift' }> {
 
   saveCategorySample(
     identifier: CategoryTypeIdentifier,
@@ -229,19 +231,13 @@ export interface CategoryType extends HybridObject<{ ios: 'swift' }> {
 
   queryCategorySamples(
     identifier: CategoryTypeIdentifier,
-    from: Date,
-    to: Date,
-    limit: number,
-    ascending: boolean
+    options?: QueryOptionsWithSortOrder
   ): Promise<readonly CategorySample[]>;
 
 
   queryCategorySamplesWithAnchor(
     identifier: CategoryTypeIdentifier,
-    from: Date,
-    to: Date,
-    limit: number,
-    anchor: string
+    options: QueryOptionsWithAnchor
   ): Promise<QueryCategorySamplesResponseRaw>;
 
 }

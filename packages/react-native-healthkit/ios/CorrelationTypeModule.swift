@@ -1,7 +1,7 @@
 import HealthKit
 import NitroModules
 
-class Correlation : HybridCorrelationSpec {
+class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
     func saveCorrelationSample(
         typeIdentifier: CorrelationTypeIdentifier,
         samples: [SampleForSaving],

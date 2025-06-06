@@ -2,7 +2,7 @@
 import HealthKit
 import NitroModules
 
-class Characteristic: HybridCharacteristicSpec {
+class CharacteristicTypeModule: HybridCharacteristicTypeModuleSpec {
     func getBloodTypeAsync() throws -> Promise<Double> {
         return Promise.resolved(withResult: try self.getBloodType())
     }

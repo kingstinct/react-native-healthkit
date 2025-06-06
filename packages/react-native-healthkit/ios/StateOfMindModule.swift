@@ -2,16 +2,13 @@ import HealthKit
 import NitroModules
 
 #if compiler(>=6)
-class StateOfMind : HybridStateOfMindSpec {
+class StateOfMindModule : HybridStateOfMindModuleSpec {
     func querySamples(
-        from: Date?,
-        to: Date?,
-        limit: Double,
-        ascending: Bool
+        options: QueryOptionsWithSortOrder?
     ) throws -> Promise<[StateOfMindSample]> {
         if #available(iOS 18.0, *) {
-            let predicate = createPredicate(from: from, to: to)
-            let queryLimit = limitOrNilIfZero(limit: limit)
+            let predicate = createPredicate(from: options?.from, to: options?.to)
+            let queryLimit = getQueryLimit(options?.limit)
             
             return Promise.async {
                 try await withCheckedThrowingContinuation { continuation in
@@ -22,7 +19,7 @@ class StateOfMind : HybridStateOfMindSpec {
                         predicate: predicate,
                         limit: queryLimit,
                         sortDescriptors: [
-                            NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)
+                            NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: options?.ascending ?? false)
                         ]
                     ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
                         if let error = error {

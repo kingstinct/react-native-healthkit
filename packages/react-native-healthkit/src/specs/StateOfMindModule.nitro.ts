@@ -1,8 +1,9 @@
 // TODO: Export specs that extend HybridObject<...> here
 
 import type { AnyMap, HybridObject } from "react-native-nitro-modules";
-import type { Device } from "./Source.nitro";
-import type { SourceRevision } from "./Source.nitro";
+import type { Device, SourceRevision } from "./CoreModule.nitro";
+import type { QueryOptionsWithSortOrder } from "../types/QueryOptions";
+
 
 export enum StateOfMindValenceClassification {
   veryUnpleasant = 1,
@@ -111,11 +112,8 @@ export enum StateOfMindAssociation {
   weather = 18,
 }
 
-export interface StateOfMind extends HybridObject<{ ios: 'swift' }> {
+export interface StateOfMindModule extends HybridObject<{ ios: 'swift' }> {
     querySamples(
-        from: Date | null,
-        to: Date | null,
-        limit: number,
-        ascending: boolean
+        options?: QueryOptionsWithSortOrder
       ): Promise<readonly StateOfMindSample[]>;
 }

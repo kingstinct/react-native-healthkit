@@ -1,19 +1,18 @@
 
-import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
-import type { CategoryTypeIdentifier } from "../types/CategoryTypeIdentifier";
-import type { CorrelationTypeIdentifier } from "../types/CorrelationTypeIdentifier";
-import type { HKWorkoutTypeIdentifier, HKStateOfMindTypeIdentifier, HKDataTypeIdentifierHeartbeatSeries, HKWorkoutRouteTypeIdentifier } from "../types/Constants";
-import type { Unit } from "../types/Units";
-import type { QuantityRaw } from "./QuantityType.nitro";
+import type { QuantityTypeIdentifier } from "./QuantityTypeIdentifier";
+import type { CategoryTypeIdentifier } from "./CategoryTypeIdentifier";
+import type { CorrelationTypeIdentifier } from "./CorrelationTypeIdentifier";
+import type { HKWorkoutTypeIdentifier, HKStateOfMindTypeIdentifier, HKDataTypeIdentifierHeartbeatSeries, HKWorkoutRouteTypeIdentifier } from "./Constants";
+import type { Unit } from "./Units";
 import type { AnyMap } from "react-native-nitro-modules";
-import type { CharacteristicTypeIdentifier } from "./Characteristic.nitro";
+import type { CharacteristicTypeIdentifier } from "../specs/CharacteristicTypeModule.nitro";
 
 export interface Quantity {
     readonly unit: Unit;
     readonly quantity: number;
 };
 
-export interface GenericMetadata {
+export interface GenericMetadata extends Record<string, Quantity | string | number | boolean | undefined> {
     readonly HKExternalUUID?: string;
     readonly HKTimeZone?: string;
     readonly HKWasUserEntered?: boolean;
@@ -28,7 +27,6 @@ export interface GenericMetadata {
     readonly HKWasTakenInLab?: boolean;
     readonly HKReferenceRangeLowerLimit?: number;
     readonly HKReferenceRangeUpperLimit?: number;
-    [key: string]: QuantityRaw | boolean | number | string | undefined;
 };
 
 export interface DeletedSample {

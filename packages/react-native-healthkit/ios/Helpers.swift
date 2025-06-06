@@ -21,8 +21,16 @@ func dateOrNilIfZero(_ timestamp: Double?) -> Date? {
     
 }
 
-func limitOrNilIfZero(limit: Double) -> Int {
-    return limit == 0 ? HKObjectQueryNoLimit : Int(limit)
+func getQueryLimit(_ limit: Double?) -> Int {
+    if let limit = limit {
+        if(limit == .infinity || limit <= 0){
+            return HKObjectQueryNoLimit
+        }
+        
+        return Int(limit)
+    }
+    
+    return DEFAULT_QUERY_LIMIT
 }
 
 func createPredicate(from: Date?, to: Date?) -> NSPredicate? {
@@ -34,28 +42,35 @@ func createPredicate(from: Date?, to: Date?) -> NSPredicate? {
     }
 }
 
-func getSortDescriptors(ascending: Bool) -> [NSSortDescriptor] {
-    return [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending)]
+func getSortDescriptors(ascending: Bool?) -> [NSSortDescriptor] {
+    return [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending ?? false)]
 }
 
-func base64StringToHKQueryAnchor(base64String: String) -> HKQueryAnchor? {
-    // Step 1: Decode the base64 string to a Data object
-    guard let data = Data(base64Encoded: base64String) else {
-        print("Error: Invalid base64 string")
-        return nil
-    }
+func deserializeHKQueryAnchor(base64String: String?) -> HKQueryAnchor? {
+    if let base64String = base64String {
+        if base64String.isEmpty {
+            return nil
+        }
+        
+        // Step 1: Decode the base64 string to a Data object
+        guard let data = Data(base64Encoded: base64String) else {
+            print("Error: Invalid base64 string")
+            return nil
+        }
 
-    // Step 2: Use NSKeyedUnarchiver to unarchive the data and create an HKQueryAnchor object
-    do {
-        let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
-        unarchiver.requiresSecureCoding = true
-        let anchor = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
+        // Step 2: Use NSKeyedUnarchiver to unarchive the data and create an HKQueryAnchor object
+        do {
+            let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
+            unarchiver.requiresSecureCoding = true
+            let anchor = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
 
-        return anchor as? HKQueryAnchor
-    } catch {
-        print("Error: Unable to unarchive HKQueryAnchor object: \(error)")
-        return nil
+            return anchor as? HKQueryAnchor
+        } catch {
+            print("Error: Unable to unarchive HKQueryAnchor object: \(error)")
+            return nil
+        }
     }
+    return nil
 }
 
 func sampleTypeFromString(typeIdentifier: String) -> HKSampleType? {

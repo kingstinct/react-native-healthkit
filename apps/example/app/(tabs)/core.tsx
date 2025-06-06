@@ -1,11 +1,10 @@
 import { ListItem, ListItemProps } from '@/components/SwiftListItem';
 import { enumKeyLookup } from '@/utils/enumKeyLookup';
-import { LabelPrimitive, List } from '@expo/ui/swift-ui';
-import { HStack, Text, Host, Section } from '@expo/ui/swift-ui-primitives';
+import { List } from '@expo/ui/swift-ui';
+import { Section } from '@expo/ui/swift-ui-primitives';
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
-import { Characteristic, Core } from 'react-native-healthkit';
-import { BiologicalSex, BloodType, FitzpatrickSkinType, WheelchairUse } from 'react-native-healthkit/specs/Characteristic.nitro';
+import { Characteristics, Core } from 'react-native-healthkit';
+import { BiologicalSex, BloodType, FitzpatrickSkinType, WheelchairUse } from 'react-native-healthkit/specs/CharacteristicTypeModule.nitro';
 
 const color = '#007AFF'; // Default color for the label, can be customized
 
@@ -20,11 +19,11 @@ const coreStuffDefaults = [
 
 const CoreTab = () => {
     const characteristics: ListItemProps[] = [
-        { title: 'Biological Sex', subtitle: biologicalSexLookup[Characteristic.getBiologicalSex()] },
-        { title: 'Birthday', subtitle: Characteristic.getDateOfBirth() },
-        { title: 'Blood type', subtitle: bloodTypeLookup[Characteristic.getBloodType()] },
-        { title: 'Fitzpatrick Skin Type', subtitle: fitzpatrickSkinTypeLookup[Characteristic.getFitzpatrickSkinType()] },
-        { title: 'Wheelchair Use', subtitle: wheelchairUseLookup[Characteristic.getWheelchairUse()] },
+        { title: 'Biological Sex', subtitle: biologicalSexLookup[Characteristics.getBiologicalSex()] },
+        { title: 'Birthday', subtitle: Characteristics.getDateOfBirth() },
+        { title: 'Blood type', subtitle: bloodTypeLookup[Characteristics.getBloodType()] },
+        { title: 'Fitzpatrick Skin Type', subtitle: fitzpatrickSkinTypeLookup[Characteristics.getFitzpatrickSkinType()] },
+        { title: 'Wheelchair Use', subtitle: wheelchairUseLookup[Characteristics.getWheelchairUse()] },
     ];
 
     const [coreStuff, setCoreStuff] = useState<ListItemProps[]>([])

@@ -1,5 +1,5 @@
 
-import { Core, QuantityType } from "react-native-healthkit";
+import { Core, QuantityTypes } from "react-native-healthkit";
 import { Button, ContextMenu, DateTimePicker, List, Picker } from "@expo/ui/swift-ui";
 import { useEffect, useState } from "react";
 import { ListItem } from "@/components/SwiftListItem";
@@ -29,7 +29,7 @@ export default function QuantitiesScreen() {
         const queryQuantitySamples = async () => {
             const unit = await Core.getPreferredUnits([selectedQuantityType]) || 'kcal';
 
-            const samples = await QuantityType.queryQuantitySamples(selectedQuantityType, unit[0].unit, fromDate, toDate, 10, selectedIndex === 1);
+            const samples = await QuantityTypes.queryQuantitySamples(selectedQuantityType, {});
 
             setQuantitySamples(samples)
         }

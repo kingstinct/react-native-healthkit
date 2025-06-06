@@ -1,8 +1,9 @@
 import type { AnyMap, HybridObject } from "react-native-nitro-modules";
-import type { DeletedSample, GenericMetadata } from "./Shared";
+import type { DeletedSample, GenericMetadata } from "../types/Shared";
 import type { QuantitySampleForSaving } from "../types/QuantitySample";
-import type { QuantityRaw } from "./QuantityType.nitro";
-import type { Device, SourceRevision } from "./Source.nitro";
+import type { Quantity } from "./QuantityTypeModule.nitro";
+import type { Device, SourceRevision } from "./CoreModule.nitro";
+
 
 export enum WorkoutActivityType {
     americanFootball = 1,
@@ -129,14 +130,14 @@ enum IndoorWorkout {
     true = 1,
 }
 
-export interface WorkoutMetadata extends GenericMetadata {
+export type WorkoutMetadata = GenericMetadata & {
     readonly HKWeatherCondition?: number;
-    readonly HKWeatherHumidity?: QuantityRaw;
-    readonly HKWeatherTemperature: QuantityRaw;
-    readonly HKAverageMETs?: QuantityRaw;
-    readonly HKElevationAscended?: QuantityRaw;
+    readonly HKWeatherHumidity?: Quantity;
+    readonly HKWeatherTemperature: Quantity;
+    readonly HKAverageMETs?: Quantity;
+    readonly HKElevationAscended?: Quantity;
     readonly HKIndoorWorkout?: IndoorWorkout;
-}
+};
 
 export interface WorkoutEvent {
     readonly type: WorkoutEventType;
@@ -162,18 +163,6 @@ export interface WorkoutActivity {
     readonly duration: number;
 }
 
-export interface WorkoutLocation {
-    readonly longitude: number;
-    readonly latitude: number;
-    readonly altitude: number;
-    readonly speed: number;
-    readonly date: Date;
-    readonly horizontalAccuracy: number;
-    readonly speedAccuracy: number;
-    readonly verticalAccuracy: number;
-    readonly distance: number | null;
-};
-
 export interface WorkoutRoute {
     readonly locations: readonly WorkoutLocation[];
     readonly HKMetadataKeySyncIdentifier?: string;
@@ -186,22 +175,18 @@ interface QueryWorkoutSamplesWithAnchorResponse {
     readonly newAnchor?: string
 }
 
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutconfiguration Apple Docs }
- */
-export interface WorkoutConfiguration {
-    readonly activityType: WorkoutActivityType;
-    readonly locationType?: WorkoutSessionLocationType;
-};
 
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutsessionlocationtype Apple Docs }
- */
-export enum WorkoutSessionLocationType {
-    unknown = 1,
-    indoor = 2,
-    outdoor = 3
-}
+export interface WorkoutLocation {
+    readonly longitude: number;
+    readonly latitude: number;
+    readonly altitude: number;
+    readonly speed: number;
+    readonly date: Date;
+    readonly horizontalAccuracy: number;
+    readonly speedAccuracy: number;
+    readonly verticalAccuracy: number;
+    readonly distance: number | null;
+};
 
 export interface LocationForSaving {
     readonly latitude: number;
@@ -229,11 +214,11 @@ export interface WorkoutSample {
     readonly uuid: string;
     readonly device?: Device;
     readonly workoutActivityType: WorkoutActivityType;
-    readonly duration: QuantityRaw;
-    readonly totalDistance?: QuantityRaw;
-    readonly totalEnergyBurned?: QuantityRaw;
-    readonly totalSwimmingStrokeCount?: QuantityRaw;
-    readonly totalFlightsClimbed?: QuantityRaw;
+    readonly duration: Quantity;
+    readonly totalDistance?: Quantity;
+    readonly totalEnergyBurned?: Quantity;
+    readonly totalSwimmingStrokeCount?: Quantity;
+    readonly totalFlightsClimbed?: Quantity;
     readonly start: Date;
     readonly end: Date;
     readonly metadata?: AnyMap;
@@ -243,13 +228,6 @@ export interface WorkoutSample {
 };
 
 export interface WorkoutsModule extends HybridObject<{ ios: 'swift' }> {
-    /**
-     * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1648358-startwatchapp Apple Docs }
-     */
-    startWatchAppWithWorkoutConfiguration(
-        workoutConfiguration: WorkoutConfiguration
-    ): Promise<boolean>;
-
     getWorkoutRoutes(workoutUUID: string): Promise<readonly WorkoutRoute[]>;
     getWorkoutPlan(workoutUUID: string): Promise<WorkoutPlan | null>;
     saveWorkoutRoute(

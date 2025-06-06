@@ -9,35 +9,29 @@
 		"androidNamespace": ["healthkit"]
 	},
 	"autolinking": {
-		"Auth": {
-			"swift": "Auth"
-		},
 		"WorkoutsModule": {
 			"swift": "WorkoutsModule"
 		},
-		"Core": {
-			"swift": "Core"
+		"CoreModule": {
+			"swift": "CoreModule"
 		},
-		"Characteristic": {
-			"swift": "Characteristic"
+		"CharacteristicTypeModule": {
+			"swift": "CharacteristicTypeModule"
 		},
-		"QuantityType":{
-			"swift": "QuantityType"
+		"QuantityTypeModule":{
+			"swift": "QuantityTypeModule"
 		},
-		"CategoryType": {
-			"swift": "CategoryType"
+		"CategoryTypeModule": {
+			"swift": "CategoryTypeModule"
 		},
-		"Correlation": {
-			"swift": "Correlation"
+		"CorrelationTypeModule": {
+			"swift": "CorrelationTypeModule"
 		},
-		"HeartbeatSeries": {
-			"swift": "HeartbeatSeries"
+		"HeartbeatSeriesModule": {
+			"swift": "HeartbeatSeriesModule"
 		},
-		"StateOfMind": {
-			"swift": "StateOfMind"
-		},
-		"SourceHybridObject": {
-			"swift": "SourceHybridObject"
+		"StateOfMindModule": {
+			"swift": "StateOfMindModule"
 		}
 	},
 	"ignorePaths": ["**/node_modules"]

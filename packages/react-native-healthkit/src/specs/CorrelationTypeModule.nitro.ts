@@ -1,7 +1,7 @@
 
 import type { AnyMap, HybridObject } from "react-native-nitro-modules";
-import type { GenericMetadata } from "./Shared";
-import type { CategorySample, CategorySampleForSaving } from "./CategoryType.nitro";
+import type { GenericMetadata } from "../types/Shared";
+import type { CategorySample, CategorySampleForSaving } from "./CategoryTypeModule.nitro";
 import type { CorrelationTypeIdentifier } from "../types/CorrelationTypeIdentifier";
 import type { QuantitySample, QuantitySampleForSaving } from "../types/QuantitySample";
 
@@ -27,7 +27,7 @@ TCorrelationTypeIdentifier = CorrelationTypeIdentifier
 
 export type SampleForSaving = CategorySampleForSaving | QuantitySampleForSaving;
 
-export interface Correlation extends HybridObject<{ ios: 'swift' }> {
+export interface CorrelationTypeModule extends HybridObject<{ ios: 'swift' }> {
     saveCorrelationSample(
       typeIdentifier: CorrelationTypeIdentifier,
       samples: SampleForSaving[],

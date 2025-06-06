@@ -216,9 +216,9 @@ func mapWorkout(
             udiDeviceIdentifier: hkDevice.udiDeviceIdentifier
         )
     }
-    var totalDistance: QuantityRaw? = nil
+    var totalDistance: Quantity? = nil
     if let hkTotalDistance = workout.totalDistance {
-        totalDistance = QuantityRaw(
+        totalDistance = Quantity(
             unit: distanceUnit.unitString,
             quantity: hkTotalDistance.doubleValue(
                 for: distanceUnit
@@ -280,10 +280,10 @@ func mapWorkout(
         }
     }
     
-    var totalFlightsClimbed: QuantityRaw?
+    var totalFlightsClimbed: Quantity?
     if #available(iOS 11, *) {
         if let hkTotalFlightsClimbed = workout.totalFlightsClimbed {
-            totalFlightsClimbed = QuantityRaw(
+            totalFlightsClimbed = Quantity(
                 unit: "count",
                 quantity: hkTotalFlightsClimbed.doubleValue(for: HKUnit.count())
             )
@@ -314,22 +314,6 @@ func mapWorkout(
     )
     
     return workout
-}
-
-func getPreferredUnits(
-    quantityTypes: Set<HKQuantityType>
-) -> Promise<[HKQuantityType: HKUnit]> {
-    return Promise.async {
-        try await withCheckedThrowingContinuation { continuation in
-            store.preferredUnits(for: quantityTypes) {
-                (typePerUnits: [HKQuantityType: HKUnit], _: Error?) in
-                
-                continuation.resume(returning: typePerUnits)
-            }
-        }
-    }
-
-  
 }
 
 func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
@@ -433,11 +417,11 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
             to: to
         )
         
-        let limit = limitOrNilIfZero(limit: limit)
+        let limit = getQueryLimit(limit)
         
         var actualAnchor: HKQueryAnchor? = nil
         if let anchor = anchor {
-            actualAnchor = deserializeHKQueryAnchor(anchor: anchor)
+            actualAnchor = deserializeHKQueryAnchor(base64String: anchor)
         }
         
         return Promise.async {

@@ -50,7 +50,7 @@ export enum WheelchairUse {
 }
 
 
-export interface Characteristic extends HybridObject<{ ios: 'swift' }> {
+export interface CharacteristicTypeModule extends HybridObject<{ ios: 'swift' }> {
   getBloodType(): number;
   getDateOfBirth(): string;
   getBiologicalSex(): number;

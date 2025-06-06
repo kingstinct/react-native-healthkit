@@ -1,36 +1,36 @@
 import type { AnyMap, HybridObject } from "react-native-nitro-modules";
-import type { DeletedSample, GenericMetadata } from "./Shared";
+import type { DeletedSample, GenericMetadata } from "../types/Shared";
 import type { BloodGlucoseUnit, CountPerTime, EnergyUnit, Unit, LengthUnit, MassUnit, SpeedUnit, TemperatureUnit, TimeUnit, VolumeUnit } from "../types/Units";
 import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
 import type { QuantitySample } from "../types/QuantitySample";
+import type { QueryOptionsWithAnchorAndUnit, QueryOptionsWithSortOrderAndUnit } from "../types/QueryOptions";
 
 interface QuantityDateInterval {
   readonly from: Date;
   readonly to: Date;
 };
 
-export interface QueryStatisticsResponseRaw {
-  readonly averageQuantity?: QuantityRaw;
-  readonly maximumQuantity?: QuantityRaw;
-  readonly minimumQuantity?: QuantityRaw;
-  readonly sumQuantity?: QuantityRaw;
-  readonly mostRecentQuantity?: QuantityRaw;
+export interface QueryStatisticsResponse {
+  readonly averageQuantity?: Quantity;
+  readonly maximumQuantity?: Quantity;
+  readonly minimumQuantity?: Quantity;
+  readonly sumQuantity?: Quantity;
+  readonly mostRecentQuantity?: Quantity;
   readonly mostRecentQuantityDateInterval?: QuantityDateInterval;
-  readonly duration?: QuantityRaw;
+  readonly duration?: Quantity;
 };
 
 
-export interface QueryQuantitySamplesResponseRaw {
+export interface QuantitySamplesWithAnchorResponse {
   readonly samples: readonly QuantitySample[];
   readonly deletedSamples: readonly DeletedSample[];
   readonly newAnchor: string;
 };
 
-export interface QuantityRaw {
+export interface Quantity {
   readonly unit: string;
   readonly quantity: number;
 };
-
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkinsulindeliveryreason Apple Docs }
@@ -181,9 +181,14 @@ export type UnitForIdentifier<T extends QuantityTypeIdentifier = QuantityTypeIde
                           ? CountPerTime<TimeUnit>
                           : Unit;
 
+                          
+interface StatisticsQueryOptions {
+  from?: Date,
+  to?: Date,
+  unit?: string,
+}
 
-
-export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
+export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
 
   saveQuantitySample(
     identifier: QuantityTypeIdentifier,
@@ -199,46 +204,33 @@ export interface QuantityType extends HybridObject<{ ios: 'swift' }> {
     uuid: string
   ): Promise<boolean>;
   
-  deleteSamples(
+  deleteQuantitySamplesBetween(
     identifier: QuantityTypeIdentifier,  
-    start: Date,
-    end: Date
+    from: Date,
+    to: Date
   ): Promise<boolean>;
   
   queryQuantitySamples(
     identifier: QuantityTypeIdentifier,
-    unit: string,
-    from: Date,
-    to: Date,
-    limit: number,
-    ascending: boolean
+    options?: QueryOptionsWithSortOrderAndUnit
   ): Promise<readonly QuantitySample[]>;
 
   queryStatisticsForQuantity(
     identifier: QuantityTypeIdentifier,
-    unit: string,
-    from: Date,
-    to: Date,
-    options: readonly StatisticsOptions[],
-  ): Promise<QueryStatisticsResponseRaw>;
+    statistics: readonly StatisticsOptions[],
+    options?: StatisticsQueryOptions
+  ): Promise<QueryStatisticsResponse>;
 
   queryStatisticsCollectionForQuantity(
     identifier: QuantityTypeIdentifier,
-    unit: string,
-    options: readonly StatisticsOptions[],
+    statistics: readonly StatisticsOptions[],
     anchorDate: string,
     intervalComponents: IntervalComponents,
-    start: Date,
-    end: Date
-  ): Promise<readonly QueryStatisticsResponseRaw[]>;
-
+    options?: StatisticsQueryOptions
+  ): Promise<readonly QueryStatisticsResponse[]>;
 
   queryQuantitySamplesWithAnchor(
     identifier: QuantityTypeIdentifier,
-    unit: string,
-    from: Date,
-    to: Date,
-    limit: number,
-    anchor: string
-  ): Promise<QueryQuantitySamplesResponseRaw>;
+    options: QueryOptionsWithAnchorAndUnit
+  ): Promise<QuantitySamplesWithAnchorResponse>;
 }

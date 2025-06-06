@@ -1,6 +1,7 @@
 import type { AnyMap, HybridObject } from "react-native-nitro-modules";
-import type { Device, SourceRevision } from "./Source.nitro";
-import type { DeletedSample, GenericMetadata } from "./Shared";
+import type { DeletedSample, GenericMetadata } from "../types/Shared";
+import type { Device, SourceRevision } from "./CoreModule.nitro";
+import type { QueryOptionsWithAnchor, QueryOptionsWithSortOrder } from "../types/QueryOptions";
 
 export interface HeartbeatSeriesSampleMetadata extends GenericMetadata {
     readonly HKMetadataKeyAlgorithmVersion: string;
@@ -22,24 +23,18 @@ export interface HeartbeatSeriesSample {
 };
 
 
-export interface QueryHeartbeatSeriesSamplesResponseRaw {
+export interface HeartbeatSeriesSamplesWithAnchorResponse {
     readonly samples: readonly HeartbeatSeriesSample[];
     readonly deletedSamples: readonly DeletedSample[];
     readonly newAnchor: string;
 };
 
-export interface HeartbeatSeries extends HybridObject<{ ios: 'swift' }> {
+
+export interface HeartbeatSeriesModule extends HybridObject<{ ios: 'swift' }> {
     queryHeartbeatSeriesSamples(
-        from: Date,
-        to: Date,
-        limit: number,
-        ascending: boolean
+        options?: QueryOptionsWithSortOrder
     ): Promise<readonly HeartbeatSeriesSample[]>;
     queryHeartbeatSeriesSamplesWithAnchor(
-        from: Date,
-        to: Date,
-        limit: number,
-        anchor: string
-    ): Promise<QueryHeartbeatSeriesSamplesResponseRaw>;
-
+        options: QueryOptionsWithAnchor
+    ): Promise<HeartbeatSeriesSamplesWithAnchorResponse>;
 }
