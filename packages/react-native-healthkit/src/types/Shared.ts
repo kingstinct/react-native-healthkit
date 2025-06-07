@@ -32,7 +32,7 @@ export interface GenericMetadata {
 
 export interface DeletedSample {
     readonly uuid: string;
-    readonly metadata?: GenericMetadata;
+    readonly metadata?: AnyMap;
 };
 
 export type ObjectTypeIdentifier =

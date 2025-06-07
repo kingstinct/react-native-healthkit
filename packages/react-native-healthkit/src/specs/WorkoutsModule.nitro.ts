@@ -1,6 +1,15 @@
 import type { AnyMap, HybridObject } from "react-native-nitro-modules";
 import type { QuantitySampleForSaving } from "../types/QuantitySample";
-import type { LocationForSaving, QueryWorkoutSamplesWithAnchorResponse, WorkoutActivityType, WorkoutPlan, WorkoutRoute, WorkoutSample, WorkoutTotals } from "../types/Workouts";
+import type { LocationForSaving, QueryWorkoutSamplesWithAnchorResponse, WorkoutActivityType, WorkoutMetadata, WorkoutPlan, WorkoutRoute, WorkoutSample, WorkoutTotals } from "../types/Workouts";
+
+interface WorkoutQueryOptionsWithAnchor {
+    energyUnit?: string,
+    distanceUnit?: string,
+    from?: Date,
+    to?: Date,
+    limit?: number,
+    anchor?: string
+}
 
 export interface WorkoutsModule extends HybridObject<{ ios: 'swift' }> {
     getWorkoutRoutes(workoutUUID: string): Promise<readonly WorkoutRoute[]>;
@@ -13,8 +22,8 @@ export interface WorkoutsModule extends HybridObject<{ ios: 'swift' }> {
     saveWorkoutSample(
         workoutActivityType: WorkoutActivityType,
         quantities: readonly QuantitySampleForSaving[],
-        start: Date | null,
-        end: Date | null,
+        start: Date,
+        end: Date,
         totals: WorkoutTotals,
         metadata: AnyMap
     ): Promise<string | null>;
@@ -24,12 +33,7 @@ export interface WorkoutsModule extends HybridObject<{ ios: 'swift' }> {
     ): Promise<WorkoutSample | null>;
 
     queryWorkoutSamplesWithAnchor(
-        energyUnit: string,
-        distanceUnit: string,
-        from: Date | null,
-        to: Date | null,
-        limit: number,
-        anchor?: string
+        options: WorkoutQueryOptionsWithAnchor
     ): Promise<QueryWorkoutSamplesWithAnchorResponse>;
 }
 

@@ -50,7 +50,7 @@ func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) -> Quantity
 func serializeDeletedSample(sample: HKDeletedObject) -> DeletedSample {
   return DeletedSample(
     uuid: sample.uuid.uuidString,
-    metadata: serializeGenericMetadata(sample.metadata)
+    metadata: serializeMetadata(sample.metadata)
   )
 }
 
@@ -73,6 +73,69 @@ func serializeSource(_ source: HKSource) -> margelo.nitro.healthkit.Source {
         name: source.name,
         bundleIdentifier: source.bundleIdentifier
     )
+}
+
+
+func getUnitForQuantityType(quantityType: HKQuantityType) -> HKUnit? {
+    if quantityType.is(compatibleWith: HKUnit.percent()) {
+        return HKUnit.percent()
+    }
+
+    if quantityType.is(compatibleWith: HKUnit.second()) {
+        return HKUnit.second()
+    }
+
+    if quantityType.is(compatibleWith: HKUnit.kilocalorie()) {
+        return HKUnit.kilocalorie()
+    }
+
+    if quantityType.is(compatibleWith: HKUnit.count()) {
+        return HKUnit.count()
+    }
+
+    if quantityType.is(compatibleWith: HKUnit.meter()) {
+        return HKUnit.meter()
+    }
+    
+    if quantityType.is(compatibleWith: SpeedUnit) {
+        return SpeedUnit
+    }
+
+    if quantityType.is(compatibleWith: METUnit) {
+        return METUnit
+    }
+
+    if #available(iOS 11, *) {
+        if quantityType.is(compatibleWith: HKUnit.internationalUnit()) {
+            return HKUnit.internationalUnit()
+        }
+    }
+
+    if #available(iOS 13, *) {
+        if quantityType.is(compatibleWith: HKUnit.hertz()) {
+            return HKUnit.hertz()
+        }
+        if quantityType.is(compatibleWith: HKUnit.decibelHearingLevel()) {
+            return HKUnit.decibelHearingLevel()
+        }
+    }
+
+    if #available(iOS 17.0, *) {
+        if quantityType.is(compatibleWith: HKUnit.lux()) {
+            return HKUnit.lux()
+        }
+    }
+
+#if compiler(>=6)
+    if #available(iOS 18.0, *) {
+        if quantityType.is(compatibleWith: HKUnit.appleEffortScore()) {
+            return HKUnit.appleEffortScore()
+        }
+    }
+#endif
+
+
+    return nil
 }
 
 func serializeUnknownQuantityTyped(quantity: HKQuantity?) -> Quantity? {
@@ -204,7 +267,7 @@ func serializeAllMetadata(_ metadata: [String: Any]?) -> AnyMapHolder? {
     return nil
 }
 
-func serializeGenericMetadata(_ metadata: [String: Any]?) -> GenericMetadata? {
+/*func serializeGenericMetadata(_ metadata: [String: Any]?) -> GenericMetadata? {
     if let metadata = metadata {
         return GenericMetadata(
             HKExternalUUID: metadata["HKExternalUUID"] as? String,
@@ -225,7 +288,7 @@ func serializeGenericMetadata(_ metadata: [String: Any]?) -> GenericMetadata? {
         )
     }
     return nil
-}
+}*/
 
 func serializeDevice(hkDevice: HKDevice?) -> Device? {
     guard let hkDevice = hkDevice else {

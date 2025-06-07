@@ -75,10 +75,31 @@ func saveQuantitySampleInternal(
     }
 }
 
+func getAnyMapValue(_ anyMap: AnyMapHolder, key: String) -> Any? {
+    if(anyMap.isBool(key: key)){
+        return anyMap.getBoolean(key: key)
+    }
+    if(anyMap.isArray(key: key)){
+        return anyMap.getArray(key: key)
+    }
+    if(anyMap.isDouble(key: key)){
+        return anyMap.getDouble(key: key)
+    }
+    if(anyMap.isObject(key: key)){
+        return anyMap.getObject(key: key)
+    }
+    if(anyMap.isString(key: key)){
+        return anyMap.getString(key: key)
+    }
+    return nil
+}
+
 func anyMapToDictionary(_ anyMap: AnyMapHolder) -> [String: Any] {
-    // AnyMapHolder does not expose its contents to Swift directly.
-    // Placeholder: return an empty dictionary until a bridging method is implemented.
-    return [:]
+    var dict = Dictionary<String, Any>()
+    anyMap.getAllKeys().forEach { key in
+        dict[key] = getAnyMapValue(anyMap, key: key)
+    }
+    return dict
 }
 
 func buildStatisticsOptions(statistics: [StatisticsOptions]) -> HKStatisticsOptions{

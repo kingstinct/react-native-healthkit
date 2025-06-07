@@ -2,6 +2,7 @@ import type { SourceRevision } from "./Source";
 import type { DeletedSample, GenericMetadata } from "./Shared";
 import type { Device } from "./Device";
 import type { Quantity } from "./QuantityType";
+import type { AnyMap } from "react-native-nitro-modules";
 
 export enum WorkoutActivityType {
     americanFootball = 1,
@@ -215,7 +216,7 @@ export interface WorkoutSample {
     readonly totalFlightsClimbed?: Quantity;
     readonly start: Date;
     readonly end: Date;
-    readonly metadata?: WorkoutMetadata;
+    readonly metadata?: AnyMap;
     readonly sourceRevision?: SourceRevision;
     readonly events?: readonly WorkoutEvent[];
     readonly activities?: readonly WorkoutActivity[];

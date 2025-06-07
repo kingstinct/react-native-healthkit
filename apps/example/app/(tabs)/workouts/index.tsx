@@ -18,7 +18,7 @@ export default function WorkoutsScreen() {
     useEffect(() => {
         const queryWorkoutSamples = async () => {
             const startedAt = Date.now();
-            const workouts = await Workouts.queryWorkoutSamplesWithAnchor('kcal', 'm', new Date(Date.now() - 1000 * 60 * 60 * 24 * 7), new Date(), 10)
+            const workouts = await Workouts.queryWorkoutSamplesWithAnchor({})
             setQueryTime(Date.now() - startedAt);
             setWorkouts(workouts.samples)
         }

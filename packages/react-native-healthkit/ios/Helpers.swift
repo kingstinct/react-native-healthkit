@@ -81,6 +81,14 @@ func initializeCategoryType(_ identifier: String) throws -> HKCategoryType {
     throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized categoryType with identifier \(identifier)")
 }
 
+func initializeWorkoutActivityType(_ typeIdentifier: UInt) throws -> HKWorkoutActivityType {
+    if let type = HKWorkoutActivityType.init(rawValue: typeIdentifier) {
+        return type
+    }
+    
+    throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized quantityType with identifier \(typeIdentifier)")
+}
+
 func initializeQuantityType(_ identifier: String) throws -> HKQuantityType {
     let identifier = HKQuantityTypeIdentifier(rawValue: identifier)
 

@@ -48,6 +48,17 @@ func tryParseWeatherCondition(_ weatherCondition: Int?) -> WeatherCondition? {
     return nil
 }
 
+func deserializeWorkoutMetadata(_ metadata: WorkoutMetadata?) -> [String: Any]? {
+    if let metadata = metadata {
+        var dict = metadata.allMetadata != nil
+        ? anyMapToDictionary(metadata.allMetadata!)
+        : Dictionary<String, Any>()
+        // todo (important): hmm, not sure about the typed props here
+        // dict[""]
+        return dict
+    }
+    return nil
+}
 
 func serializeWorkoutMetadata(_ metadata: [String: Any]?) -> WorkoutMetadata? {
     if let metadata = metadata {
@@ -99,7 +110,7 @@ func getWorkoutRoutes(
             
             if let hasError = error {
                 return continuation.resume(throwing: hasError)
-
+                
             }
             
             guard let samples = samples else {
@@ -335,14 +346,13 @@ func mapWorkout(
             quantity: HKQuantity(unit: .second(), doubleValue: workout.duration)
         )!,
         totalDistance: totalDistance,
-        // todo
-        totalEnergyBurned: nil,
-        totalSwimmingStrokeCount: nil,
+        totalEnergyBurned: serializeQuantityTyped(unit: energyUnit, quantity: workout.totalEnergyBurned),
+        totalSwimmingStrokeCount: serializeQuantityTyped(unit: .count(), quantity: workout.totalSwimmingStrokeCount),
         totalFlightsClimbed: totalFlightsClimbed,
         start: workout.startDate,
         end: workout.endDate,
-        metadata: serializeWorkoutMetadata(workout.metadata),
-        sourceRevision: nil,
+        metadata: serializeMetadata(workout.metadata),
+        sourceRevision: serializeSourceRevision(workout.sourceRevision),
         events: workoutEvents,
         activities: activitiesArray
     )
@@ -379,6 +389,7 @@ func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
 }
 
 class WorkoutsModule : HybridWorkoutsModuleSpec {
+    
     func queryWorkoutByUUID(workoutUUID: String) throws -> Promise<WorkoutSample?> {
         let uuid = try initializeUUID(workoutUUID)
         
@@ -387,17 +398,156 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
             
             if let workout = workout {
                 return mapWorkout(workout: workout, distanceUnit: HKUnit.meter(),
-                    energyUnit: HKUnit.kilocalorie()
+                                  energyUnit: HKUnit.kilocalorie()
                 )
             }
             return nil
         }
     }
     
-    func saveWorkoutSample(workoutActivityType: WorkoutActivityType, quantities: [QuantitySampleForSaving], start: Date?, end: Date?, totals: WorkoutTotals, metadata: AnyMapHolder) throws -> Promise<String?> {
-        // todo: implement
-        return Promise.resolved(withResult: nil)
+    func saveWorkoutSample(
+        workoutActivityType: WorkoutActivityType,
+        quantities: [QuantitySampleForSaving],
+        start: Date,
+        end: Date,
+        totals: WorkoutTotals,
+        metadata: AnyMapHolder
+    ) throws -> Promise<String?> {
+        
+        let type = try initializeWorkoutActivityType(UInt(workoutActivityType.rawValue))
+        
+        // if start and end both exist,  ensure that start date is before end date
+        if let startDate = start as Date?, let endDate = end as Date? {
+            if startDate > endDate {
+                throw RuntimeError.error(withMessage: "endDate must not be less than startDate")
+            }
+        }
+        
+        let metadataDeserialized = anyMapToDictionary(metadata)
+        
+        var totalEnergyBurned: HKQuantity?
+        var totalDistance: HKQuantity?
+        var totalSwimmingStrokeCount: HKQuantity?
+        var totalFlightsClimbed: HKQuantity?
+        // generating quantity samples
+        let initializedSamples = try quantities.map { quantity in
+            let type = try initializeQuantityType(quantity.quantityType.stringValue)
+            let unitStr = quantity.unit
+            let quantityVal = quantity.quantity
+            let metadata = quantity.metadata
+            let quantityStart = quantity.start
+            let quantityEnd = quantity.end
+            let unit = HKUnit.init(from: unitStr)
+            let quantity = HKQuantity.init(unit: unit, doubleValue: quantityVal)
+            
+            if quantity.is(compatibleWith: HKUnit.kilocalorie()) {
+                totalEnergyBurned = quantity
+            }
+            
+            if quantity.is(compatibleWith: HKUnit.meter()) {
+                totalDistance = quantity
+            }
+            
+            if type.identifier == HKWorkoutSortIdentifierTotalSwimmingStrokeCount {
+                totalSwimmingStrokeCount = quantity
+            }
+            
+            if type.identifier == HKWorkoutSortIdentifierTotalFlightsClimbed {
+                totalFlightsClimbed = quantity
+            }
+            
+            return HKQuantitySample.init(
+                type: type,
+                quantity: quantity,
+                start: quantityStart,
+                end: quantityEnd,
+                metadata: metadataDeserialized
+            )
+        }
+        
+        // if totals are provided override samples
+        let rawTotalDistance = totals.distance ?? 0.0
+        let rawTotalEnergy = totals.energyBurned ?? 0.0
+        
+        if rawTotalDistance != 0.0 {
+            totalDistance = HKQuantity(unit: .meter(), doubleValue: rawTotalDistance)
+        }
+        if rawTotalEnergy != 0.0 {
+            totalEnergyBurned = HKQuantity(unit: .kilocalorie(), doubleValue: rawTotalEnergy)
+        }
+        
+        // creating workout
+        var workout: HKWorkout?
+        
+        if totalSwimmingStrokeCount != nil {
+            workout = HKWorkout.init(
+                activityType: type,
+                start: start,
+                end: end,
+                workoutEvents: nil,
+                totalEnergyBurned: totalEnergyBurned,
+                totalDistance: totalDistance,
+                totalSwimmingStrokeCount: totalSwimmingStrokeCount,
+                device: nil,
+                metadata: metadataDeserialized
+            )
+        } else {
+            if #available(iOS 11, *) {
+                if totalFlightsClimbed != nil {
+                    workout = HKWorkout.init(
+                        activityType: type,
+                        start: start,
+                        end: end,
+                        workoutEvents: nil,
+                        totalEnergyBurned: totalEnergyBurned,
+                        totalDistance: totalDistance,
+                        totalFlightsClimbed: totalFlightsClimbed,
+                        device: nil,
+                        metadata: metadataDeserialized
+                    )
+                }
+            }
+        }
+        
+        if workout == nil {
+            workout = HKWorkout.init(
+                activityType: type,
+                start: start,
+                end: end,
+                workoutEvents: nil,
+                totalEnergyBurned: totalEnergyBurned,
+                totalDistance: totalDistance,
+                metadata: metadataDeserialized
+            )
+        }
+        
+        guard let workout = workout else {
+            throw RuntimeError.error(withMessage: "Could not create workout")
+        }
+        
+        return Promise.async {
+            try await withCheckedThrowingContinuation { continuation in
+                // saving workout, samples and route
+                store.save(workout) { (_: Bool, error: Error?) in
+                    if let error = error {
+                        return continuation.resume(throwing: error)
+                    }
+                    
+                    if initializedSamples.isEmpty {
+                        return continuation.resume(returning: workout.uuid.uuidString)
+                    }
+                    
+                    store.add(initializedSamples, to: workout) { (_, error: Error?) in
+                        if let error = error {
+                            return continuation.resume(throwing: error)
+                        }
+                        return continuation.resume(returning: workout.uuid.uuidString)
+                    }
+                }
+            }
+        }
     }
+    
     
     func startWatchAppWithWorkoutConfiguration(workoutConfiguration: WorkoutConfiguration) -> Promise<Bool>
     {
@@ -439,21 +589,26 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
                         return continuation.resume(throwing: error)
                     }
                 }
+                
             }
         }
     }
     
-    func queryWorkoutSamplesWithAnchor(energyUnit: String, distanceUnit: String, from: Date?, to: Date?, limit: Double, anchor: String?) throws -> Promise<QueryWorkoutSamplesWithAnchorResponse> {
+    func queryWorkoutSamplesWithAnchor(options: WorkoutQueryOptionsWithAnchor) throws -> Promise<QueryWorkoutSamplesWithAnchorResponse> {
         let predicate = createPredicate(
-            from: from,
-            to: to
+            from: options.from,
+            to: options.to
         )
         
-        let limit = getQueryLimit(limit)
+        let limit = getQueryLimit(options.limit)
         
-        let actualAnchor = try deserializeHKQueryAnchor(base64String: anchor)
+        let actualAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
         
         return Promise.async {
+            let energyUnit = try await getUnitToUse(unitOverride: options.energyUnit, quantityType: HKQuantityType(.activeEnergyBurned))
+            
+            let distanceUnit = try await getUnitToUse(unitOverride: options.energyUnit, quantityType: HKQuantityType(.distanceWalkingRunning))
+            
             return try await withCheckedThrowingContinuation { continuation in
                 let q = HKAnchoredObjectQuery(
                     type: .workoutType(),
@@ -468,42 +623,40 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
                         newAnchor: HKQueryAnchor?,
                         error: Error?
                     ) in
-                    guard let err = error else {
-                        guard let samples = s, let newAnchor = newAnchor else {
-                            return continuation.resume(
-                                throwing: RuntimeError.error(
-                                    withMessage: "Empty response"
-                                )
+                    if let error = error {
+                        return continuation.resume(throwing: error)
+                    }
+                    
+                    guard let samples = s, let newAnchor = newAnchor else {
+                        return continuation.resume(
+                            throwing: RuntimeError.error(
+                                withMessage: "Empty response"
+                            )
+                        )
+                    }
+                    
+                    let workoutSamples = samples.compactMap { s in
+                        if let workout = s as? HKWorkout {
+                            return mapWorkout(
+                                workout: workout,
+                                distanceUnit: distanceUnit,
+                                energyUnit: energyUnit
                             )
                         }
-                        
-                        let energyUnit = HKUnit.init(from: energyUnit)
-                        let distanceUnit = HKUnit.init(from: distanceUnit)
-                        
-                        let arr = samples.compactMap { s in
-                            if let workout = s as? HKWorkout {
-                                return mapWorkout(
-                                    workout: workout,
-                                    distanceUnit: distanceUnit,
-                                    energyUnit: energyUnit
-                                )
-                            }
-                            return nil
-                        }
-                        
-                        let deletedSamples = deletedSamples?.map({ sample in
-                            return serializeDeletedSample(sample: sample)
-                        }) ?? []
-                        
-                        let returnValue = QueryWorkoutSamplesWithAnchorResponse(
-                            samples: arr,
-                            deletedSamples: deletedSamples,
-                            newAnchor: serializeAnchor(anchor: newAnchor)
-                        )
-                        return continuation.resume(returning: returnValue)
-                        
+                        return nil
                     }
-                    continuation.resume(throwing: err)
+                    
+                    let deletedSamples = deletedSamples?.map({ sample in
+                        return serializeDeletedSample(sample: sample)
+                    }) ?? []
+                    
+                    let returnValue = QueryWorkoutSamplesWithAnchorResponse(
+                        samples: workoutSamples,
+                        deletedSamples: deletedSamples,
+                        newAnchor: serializeAnchor(anchor: newAnchor)
+                    )
+                    
+                    return continuation.resume(returning: returnValue)
                 }
                 
                 store.execute(q)
@@ -534,18 +687,14 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
     }
     
     
-    func getWorkoutRoutes(workoutUUID: String) -> Promise<[WorkoutRoute]> {
-        guard let _workoutUUID = UUID(uuidString: workoutUUID) else {
-            return Promise.rejected(withError: RuntimeError.error(withMessage: "Invalid UUID"))
-        }
+    func getWorkoutRoutes(workoutUUID: String) throws -> Promise<[WorkoutRoute]> {
+        let uuid = try initializeUUID(workoutUUID)
         
         return Promise.async {
             let locations = try await getSerializedWorkoutLocations(
-                workoutUUID: _workoutUUID
+                workoutUUID: uuid
             )
             return locations
-            
         }
     }
 }
-
