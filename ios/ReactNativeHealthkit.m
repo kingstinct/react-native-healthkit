@@ -76,6 +76,7 @@ RCT_EXTERN_METHOD(deleteSamples:(NSString)typeIdentifier
 )
 
 RCT_EXTERN_METHOD(deleteWorkoutSample:(NSString)uuid
+                  associatedQuantityTypes:(NSArray)associatedQuantityTypes
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject
 )

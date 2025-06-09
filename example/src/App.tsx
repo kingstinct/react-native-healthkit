@@ -106,7 +106,17 @@ const LatestWorkout: React.FC<{
     }
 
     try {
-      const result = await deleteWorkoutSample(latestValue.uuid)
+      const result = await deleteWorkoutSample(latestValue.uuid, {
+        // Deleting a workout sample won't delete its assoeciated quantity samples.
+        // This is the default behavior of HealthKit.
+        // Specifying `associatedQuantityTypes` will ensure the linked quantity samples of
+        // the specified types are deleted as well.
+        associatedQuantityTypes: [
+          HKQuantityTypeIdentifier.activeEnergyBurned,
+          HKQuantityTypeIdentifier.distanceWalkingRunning,
+          HKQuantityTypeIdentifier.heartRate,
+        ],
+      })
       Alert.alert(
         'deleteWorkoutSample',
         `Executed sucessfully. Result: ${result}.\n\nThe actual deletion will only happen if the workout was saved by the app.`,

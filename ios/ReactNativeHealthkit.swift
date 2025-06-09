@@ -344,9 +344,10 @@ class ReactNativeHealthkit: RCTEventEmitter {
     }
   }
 
-  @objc(deleteWorkoutSample:resolve:reject:)
+  @objc(deleteWorkoutSample:associatedQuantityTypes:resolve:reject:)
   func deleteWorkoutSample(
     uuid: String,
+    associatedQuantityTypes: [String],
     resolve: @escaping RCTPromiseResolveBlock,
     reject: @escaping RCTPromiseRejectBlock
   ) {
@@ -354,18 +355,66 @@ class ReactNativeHealthkit: RCTEventEmitter {
       return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
     }
 
-    guard let workoutUUID = UUID.init(uuidString: uuid) else {
+    guard let workoutUUID = UUID(uuidString: uuid) else {
       return reject(TYPE_IDENTIFIER_ERROR, "Failed to initialize UUID from string", nil)
     }
 
-    let samplePredicate = HKQuery.predicateForObject(with: workoutUUID)
+    let workoutPredicate = HKQuery.predicateForObject(with: workoutUUID)
 
-    store.deleteObjects(of: HKObjectType.workoutType(), predicate: samplePredicate) { (success: Bool, _: Int, error: Error?) in
-      guard let err = error else {
-        return resolve(success)
+    let workoutQuery = HKSampleQuery(
+      sampleType: HKObjectType.workoutType(),
+      predicate: workoutPredicate,
+      limit: 1,
+      sortDescriptors: nil
+    ) { (success, samples, error) in
+      if let error = error {
+        return reject(GENERIC_ERROR, error.localizedDescription, error)
       }
-      reject(GENERIC_ERROR, err.localizedDescription, error)
+
+      guard let workout = samples?.first as? HKWorkout else {
+        return resolve(true)
+      }
+
+      let associatedObjectsPredicate = HKQuery.predicateForObjects(from: workout)
+
+      let quantityDeleteOperationsGroup = DispatchGroup()
+      var firstError: Error?
+
+      if !associatedQuantityTypes.isEmpty {
+        for typeIdentifier in associatedQuantityTypes {
+          let identifier = HKQuantityTypeIdentifier(rawValue: typeIdentifier)
+          guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else {
+            continue
+          }
+
+          quantityDeleteOperationsGroup.enter()
+          store.deleteObjects(of: quantityType, predicate: associatedObjectsPredicate) { _, _, error in
+            if let err = error, firstError == nil {
+              firstError = err
+            }
+            quantityDeleteOperationsGroup.leave()
+          }
+        }
+      }
+
+      quantityDeleteOperationsGroup.notify(queue: .main) { [workoutUUID] in
+        if let err = firstError {
+          return reject(GENERIC_ERROR, "Failed to delete associated samples: \(err.localizedDescription)", err)
+        }
+
+        let workoutPredicate = HKQuery.predicateForObject(with: workoutUUID)
+
+        store.deleteObjects(of: HKObjectType.workoutType(), predicate: workoutPredicate) { success, _, err in
+          if let err = err {
+            reject(GENERIC_ERROR, err.localizedDescription, err)
+          } else {
+            resolve(success)
+          }
+        }
+      }
     }
+
+    store.execute(workoutQuery)
   }
 
   @objc(saveCorrelationSample:samples:start:end:metadata:resolve:reject:)

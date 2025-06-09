@@ -1,7 +1,14 @@
 import Native from '../native-types'
 
-export type DeleteWorkoutSampleFn = (uuid: string) => Promise<boolean>
+import type { HKQuantityTypeIdentifier } from '../native-types'
 
-const deleteWorkoutSample: DeleteWorkoutSampleFn = async (uuid) => Native.deleteWorkoutSample(uuid)
+export type DeleteWorkoutSampleFn = (
+  uuid: string,
+  options?: {
+    readonly associatedQuantityTypes?: readonly HKQuantityTypeIdentifier[]
+  }
+) => Promise<boolean>
+
+const deleteWorkoutSample: DeleteWorkoutSampleFn = async (uuid, options) => Native.deleteWorkoutSample(uuid, options?.associatedQuantityTypes || [])
 
 export default deleteWorkoutSample
