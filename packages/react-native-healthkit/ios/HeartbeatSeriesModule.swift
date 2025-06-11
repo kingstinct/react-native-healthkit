@@ -35,6 +35,7 @@ class HeartbeatSeriesModule : HybridHeartbeatSeriesModuleSpec {
                             
                             for sample in samples {
                                 guard let heartbeatSample = sample as? HKHeartbeatSeriesSample else { continue }
+                                
                                 let serialized = try await self.serializeHeartbeatSeriesSample(sample: heartbeatSample)
                                 serializedSamples.append(serialized)
                             }
