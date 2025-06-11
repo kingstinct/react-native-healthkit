@@ -28,7 +28,7 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = reactnativehealthkitexample/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* reactnativehealthkitexample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "reactnativehealthkitexample-Bridging-Header.h"; path = "reactnativehealthkitexample/reactnativehealthkitexample-Bridging-Header.h"; sourceTree = "<group>"; };
-		F407C3A0BD5B27ABC3FF0D36 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = reactnativehealthkitexample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		F407C3A0BD5B27ABC3FF0D36 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = reactnativehealthkitexample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F7663FDC582174F4CA6EB8B5 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-reactnativehealthkitexample/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -128,7 +128,6 @@
 				BCD9F5045B134D5AE6A9E616 /* Pods-reactnativehealthkitexample.debug.xcconfig */,
 				C0CCA61DB0A886575DF4D2B9 /* Pods-reactnativehealthkitexample.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -340,6 +339,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = reactnativehealthkitexample/reactnativehealthkitexample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 34SE8X7Q58;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -359,7 +359,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kingstinct.reactnativehealthkitexample;
-				PRODUCT_NAME = reactnativehealthkitexample;
+				PRODUCT_NAME = "reactnativehealthkitexample";
 				SWIFT_OBJC_BRIDGING_HEADER = "reactnativehealthkitexample/reactnativehealthkitexample-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -376,6 +376,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = reactnativehealthkitexample/reactnativehealthkitexample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 34SE8X7Q58;
 				INFOPLIST_FILE = reactnativehealthkitexample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -390,7 +391,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kingstinct.reactnativehealthkitexample;
-				PRODUCT_NAME = reactnativehealthkitexample;
+				PRODUCT_NAME = "reactnativehealthkitexample";
 				SWIFT_OBJC_BRIDGING_HEADER = "reactnativehealthkitexample/reactnativehealthkitexample-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

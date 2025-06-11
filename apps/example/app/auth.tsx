@@ -3,16 +3,15 @@ import { enumKeyLookup } from "@/utils/enumKeyLookup";
 import { Button, CircularProgress, Host } from "@expo/ui/swift-ui";
 import { HStack, Text, VStack } from "@expo/ui/swift-ui-primitives";
 import { router } from 'expo-router';
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Core } from "react-native-healthkit";
 import { AuthorizationRequestStatus, AuthorizationStatus } from "react-native-healthkit/types/Auth";
 
-
 const authEnumLookup = enumKeyLookup(AuthorizationStatus);
 
 export default function AuthScreen() {
-    const requestAuth = async () => {
+    const requestAuth = useCallback(async () => {
         try {
             const res = await Core.requestAuthorization(AllSampleTypesInApp, AllSampleTypesInApp)
 
@@ -23,7 +22,7 @@ export default function AuthScreen() {
         catch (error) {
             console.error('Error requesting authorization:', error);
         }
-    }
+    }, []);
 
     const [status, setStatus] = useState<AuthorizationRequestStatus | null>(null);
 
