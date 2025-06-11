@@ -21,12 +21,16 @@ func queryQuantitySamplesInternal(
               guard let err = error else {
                   if let returnValue = samples?.compactMap({ sample in
                       if let sample = sample as? HKQuantitySample {
-                          let serialized = serializeQuantitySample(
-                            sample: sample,
-                            unit: unit
-                          )
-                          
-                          return serialized
+                          do {
+                              let serialized = try serializeQuantitySample(
+                                sample: sample,
+                                unit: unit
+                              )
+                              
+                              return serialized
+                          } catch {
+                              print(error.localizedDescription)
+                          }
                       }
                       
                       return nil
@@ -423,9 +427,18 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                         return
                     }
                     
-                    let quantitySamples = samples.compactMap { sample -> QuantitySample? in
-                        guard let quantitySample = sample as? HKQuantitySample else { return nil }
-                        return serializeQuantitySample(sample: quantitySample, unit: unit)
+                    let quantitySamples = samples.compactMap { sample in
+                        if let quantitySample = sample as? HKQuantitySample {
+                            do {
+                                return try serializeQuantitySample(
+                                    sample: quantitySample,
+                                    unit: unit
+                                )
+                            } catch {
+                                print(error.localizedDescription)
+                            }
+                        }
+                        return nil
                     }
                     
                     let response = QuantitySamplesWithAnchorResponse(

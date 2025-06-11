@@ -41,7 +41,7 @@ func getWorkoutByID(
     return workouts.first ?? nil
 }
 
-func tryParseWeatherCondition(_ weatherCondition: Int?) -> WeatherCondition? {
+/*func tryParseWeatherCondition(_ weatherCondition: Int?) -> WeatherCondition? {
     if let weatherCondition = weatherCondition {
         return WeatherCondition.init(rawValue: Int32(weatherCondition))
     }
@@ -88,160 +88,7 @@ func serializeWorkoutMetadata(_ metadata: [String: Any]?) -> WorkoutMetadata? {
         )
     }
     return nil
-}
-
-func getWorkoutRoutes(
-    workoutUUID: UUID
-) async throws -> [HKWorkoutRoute]? {
-    guard let workout = await getWorkoutByID(workoutUUID: workoutUUID) else {
-        return nil
-    }
-    
-    let workoutPredicate = HKQuery.predicateForObjects(from: workout)
-    let samples = try await withCheckedThrowingContinuation {
-        (continuation: CheckedContinuation<[HKSample], Error>) in
-        let query = HKAnchoredObjectQuery(
-            type: HKSeriesType.workoutRoute(),
-            predicate: workoutPredicate,
-            anchor: nil,
-            limit: HKObjectQueryNoLimit
-        ) {
-            (_, samples, _, _, error) in
-            
-            if let hasError = error {
-                return continuation.resume(throwing: hasError)
-                
-            }
-            
-            guard let samples = samples else {
-                return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response"))
-            }
-            
-            continuation.resume(returning: samples)
-        }
-        store.execute(query)
-    }
-    
-    guard let routes = samples as? [HKWorkoutRoute] else {
-        return nil
-    }
-    
-    return routes
-}
-
-func getRouteLocations(
-    route: HKWorkoutRoute
-) async -> [CLLocation] {
-    let locations = try! await withCheckedThrowingContinuation {
-        (continuation: CheckedContinuation<[CLLocation], Error>) in
-        var allLocations: [CLLocation] = []
-        
-        let query = HKWorkoutRouteQuery(route: route) {
-            (_, locationsOrNil, done, errorOrNil) in
-            
-            if let error = errorOrNil {
-                continuation.resume(throwing: error)
-                return
-            }
-            
-            guard let currentLocationBatch = locationsOrNil else {
-                return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response"))
-            }
-            
-            allLocations.append(contentsOf: currentLocationBatch)
-            
-            if done {
-                continuation.resume(returning: allLocations)
-            }
-        }
-        
-        store.execute(query)
-    }
-    
-    return locations
-}
-
-
-func serializeLocation(location: CLLocation, previousLocation: CLLocation?) -> WorkoutLocation {
-    var distance: CLLocationDistance?
-    if let previousLocation = previousLocation {
-        distance = location.distance(from: previousLocation)
-    } else {
-        distance = nil
-    }
-    
-    return WorkoutLocation(
-        altitude: location.altitude,
-        course: location.course,
-        date: location.timestamp,
-        distance: distance,
-        horizontalAccuracy: location.horizontalAccuracy,
-        latitude: location.coordinate.latitude,
-        longitude: location.coordinate.longitude,
-        speed: location.speed,
-        speedAccuracy: location.speedAccuracy,
-        verticalAccuracy: location.verticalAccuracy
-    )
-}
-
-func getSerializedWorkoutLocations(
-    workoutUUID: UUID
-) async throws -> [WorkoutRoute] {
-    let routes = try await getWorkoutRoutes(
-        workoutUUID: workoutUUID
-    )
-    
-    var allRoutes: [WorkoutRoute] = []
-    guard let _routes = routes else {
-        throw RuntimeError.error(withMessage: "Unexpected empty response")
-    }
-    for route in _routes {
-        let routeMetadata = serializeMetadata(
-            route.metadata
-        )
-        
-        let routeCLLocations = await getRouteLocations(
-            route: route
-        )
-        
-        let routeLocations = routeCLLocations.enumerated().map {
-            (i, loc) in
-            serializeLocation(
-                location: loc,
-                previousLocation: i == 0 ? nil : routeCLLocations[i - 1]
-            )
-        }
-        // let routeInfos: WorkoutRoute = ["locations": routeLocations]
-        
-        allRoutes.append(
-            WorkoutRoute(
-                locations: routeLocations,
-                HKMetadataKeySyncIdentifier: routeMetadata.getString(key: "HKMetadataKeySyncIdentifier"),
-                HKMetadataKeySyncVersion: routeMetadata.getDouble(key: "HKMetadataKeySyncVersion")
-            )
-        )
-    }
-    return allRoutes
-}
-
-@available(iOS 17.0.0, *)
-func getWorkoutPlanInternal(workout: HKWorkout) async throws -> WorkoutPlan? {
-    let workoutPlan = try await workout.workoutPlan
-    if let id = workoutPlan?.id.uuidString {
-        if let activityType = workoutPlan?.workout.activity {
-            let workoutPlan = WorkoutPlan(
-                id: id,
-                activityType: WorkoutActivityType.init(
-                    rawValue: Int32(activityType.rawValue)
-                )!
-            )
-            
-            return workoutPlan
-        }
-    }
-    
-    return nil
-}
+}*/
 
 func mapWorkout(
     workout: HKWorkout,
@@ -389,16 +236,21 @@ func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
 }
 
 class WorkoutsModule : HybridWorkoutsModuleSpec {
-    
-    func queryWorkoutByUUID(workoutUUID: String) throws -> Promise<WorkoutSample?> {
+    func queryWorkoutByUUID(workoutUUID: String) throws -> Promise<HybridWorkoutProxySpec?> {
         let uuid = try initializeUUID(workoutUUID)
         
         return Promise.async {
             let workout = await getWorkoutByID(workoutUUID: uuid)
             
             if let workout = workout {
-                return mapWorkout(workout: workout, distanceUnit: HKUnit.meter(),
-                                  energyUnit: HKUnit.kilocalorie()
+                let sample = mapWorkout(
+                    workout: workout,
+                    distanceUnit: HKUnit.meter(),
+                    energyUnit: HKUnit.kilocalorie()
+                )
+                return WorkoutProxy(
+                    workout: workout,
+                    sample: sample
                 )
             }
             return nil
@@ -412,7 +264,7 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
         end: Date,
         totals: WorkoutTotals,
         metadata: AnyMapHolder
-    ) throws -> Promise<String?> {
+    ) throws -> Promise<String> {
         
         let type = try initializeWorkoutActivityType(UInt(workoutActivityType.rawValue))
         
@@ -566,34 +418,6 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
         }
     }
     
-    func saveWorkoutRoute(workoutUUID: String, locations: [LocationForSaving]) -> Promise<Bool> {
-        return Promise.async {
-            try await withCheckedThrowingContinuation { continuation in
-                Task {
-                    let uuid = try initializeUUID(workoutUUID)
-                    
-                    do {
-                        let workout = await getWorkoutByID(workoutUUID: uuid)
-                        if let workout {
-                            // create CLLocations and return if locations are empty
-                            let clLocations = mapLocations(from: locations)
-                            let routeBuilder = HKWorkoutRouteBuilder(healthStore: store, device: nil)
-                            try await routeBuilder.insertRouteData(clLocations)
-                            try await routeBuilder.finishRoute(with: workout, metadata: nil)
-                            
-                            return continuation.resume(returning: true)
-                        } else {
-                            return continuation.resume(throwing: RuntimeError.error(withMessage: "No workout found"))
-                        }
-                    } catch {
-                        return continuation.resume(throwing: error)
-                    }
-                }
-                
-            }
-        }
-    }
-    
     func queryWorkoutSamplesWithAnchor(options: WorkoutQueryOptionsWithAnchor) throws -> Promise<QueryWorkoutSamplesWithAnchorResponse> {
         let predicate = createPredicate(
             from: options.from,
@@ -635,12 +459,16 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
                         )
                     }
                     
-                    let workoutSamples = samples.compactMap { s in
+                    let workoutProxies = samples.compactMap { s in
                         if let workout = s as? HKWorkout {
-                            return mapWorkout(
+                            let sample = mapWorkout(
                                 workout: workout,
                                 distanceUnit: distanceUnit,
                                 energyUnit: energyUnit
+                            )
+                            return WorkoutProxy.init(
+                                workout: workout,
+                                sample: sample
                             )
                         }
                         return nil
@@ -651,9 +479,9 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
                     }) ?? []
                     
                     let returnValue = QueryWorkoutSamplesWithAnchorResponse(
-                        samples: workoutSamples,
+                        workouts: workoutProxies,
                         deletedSamples: deletedSamples,
-                        newAnchor: serializeAnchor(anchor: newAnchor)
+                        newAnchor: serializeAnchor(anchor: newAnchor)!
                     )
                     
                     return continuation.resume(returning: returnValue)
@@ -661,40 +489,6 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
                 
                 store.execute(q)
             }
-        }
-    }
-    
-    func getWorkoutPlan(workoutUUID: String) -> Promise<WorkoutPlan?> {
-        return Promise.async {
-            let uuid = try initializeUUID(workoutUUID)
-            
-            let workout = await getWorkoutByID(
-                workoutUUID: uuid
-            )
-            
-            if let workout {
-                if #available(iOS 17.0.0, *) {
-                    let workoutPlan = try await getWorkoutPlanInternal(workout: workout)
-                    return workoutPlan
-                } else {
-                    throw RuntimeError.error(withMessage: "Workout Plans requires iOS 17+")
-                }
-            } else {
-                throw RuntimeError.error(withMessage: "No workout found with id \(workoutUUID)")
-            }
-            
-        }
-    }
-    
-    
-    func getWorkoutRoutes(workoutUUID: String) throws -> Promise<[WorkoutRoute]> {
-        let uuid = try initializeUUID(workoutUUID)
-        
-        return Promise.async {
-            let locations = try await getSerializedWorkoutLocations(
-                workoutUUID: uuid
-            )
-            return locations
         }
     }
 }

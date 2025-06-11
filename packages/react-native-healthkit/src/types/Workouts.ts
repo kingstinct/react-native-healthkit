@@ -3,6 +3,8 @@ import type { DeletedSample, GenericMetadata } from "./Shared";
 import type { Device } from "./Device";
 import type { Quantity } from "./QuantityType";
 import type { AnyMap } from "react-native-nitro-modules";
+import type { QuantitySampleForSaving } from "./QuantitySample";
+import type { WorkoutProxy } from "../specs/WorkoutProxy.nitro";
 
 export enum WorkoutActivityType {
     americanFootball = 1,
@@ -164,11 +166,19 @@ export interface WorkoutRoute {
 };
 
 export interface QueryWorkoutSamplesWithAnchorResponse {
-    readonly samples: readonly WorkoutSample[],
+    readonly workouts: readonly WorkoutProxy[],
     readonly deletedSamples: readonly DeletedSample[],
-    readonly newAnchor?: string
+    readonly newAnchor: string
 }
 
+export interface WorkoutQueryOptionsWithAnchor {
+    energyUnit?: string,
+    distanceUnit?: string,
+    from?: Date,
+    to?: Date,
+    limit?: number,
+    anchor?: string
+}
 
 export interface WorkoutLocation {
     readonly altitude: number;

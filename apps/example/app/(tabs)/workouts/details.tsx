@@ -22,7 +22,7 @@ export default function WorkoutDetails() {
             return;
         }
 
-        Workouts.queryWorkoutByUUID(workoutId).then(setWorkout).catch(console.error);
+        Workouts.queryWorkoutByUUID(workoutId).then((w) => setWorkout(w!.sample)).catch(console.error);
     }, [workoutId]);
 
     console.log('workout', JSON.stringify(workout?.workoutActivityType, null, 2));
@@ -39,10 +39,10 @@ export default function WorkoutDetails() {
                     subtitle={workoutActivityTypeStrings[workout.workoutActivityType]} />
                 <ListItem
                     title='Started'
-                    subtitle={workout.start.toLocaleDateString()} />
+                    subtitle={workout.start.toLocaleString()} />
                 <ListItem
                     title='Ended'
-                    subtitle={workout.end.toLocaleDateString()} />
+                    subtitle={workout.end.toLocaleString()} />
                 <ListItem
                     title='Duration'
                     subtitle={`${Math.round((workout.end.valueOf() - workout.start.valueOf()) / 60 / 1000)} minutes`} />
@@ -93,7 +93,7 @@ export default function WorkoutDetails() {
                         <ListItem
                             key={index}
                             title={`Event ${index + 1}`}
-                            subtitle={`Type: ${workoutEventTypeStrings[event.type]}, Timestamp: ${event.start.toLocaleDateString()}`} />
+                            subtitle={`Type: ${workoutEventTypeStrings[event.type]}, Timestamp: ${event.start.toLocaleString()}`} />
                     ))}
                 </Section>
                 
@@ -104,7 +104,7 @@ export default function WorkoutDetails() {
                         <ListItem
                             key={index}
                             title={`Activity ${index + 1}`}
-                            subtitle={`Duration: ${Math.round(activity.duration / 60 / 1000)} minutes, Start: ${activity.start.toLocaleDateString()}`} />
+                            subtitle={`Duration: ${Math.round(activity.duration / 60 / 1000)} minutes, Start: ${activity.start.toLocaleString()}`} />
                     ))}
                 </Section>
             }

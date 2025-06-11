@@ -111,7 +111,13 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
                             let objects = correlation.objects.compactMap { object -> CorrelationObject? in
                                 if let quantitySample = object as? HKQuantitySample,
                                    let unit = unitMap[quantitySample.quantityType] {
-                                    return CorrelationObject.second(serializeQuantitySample(sample: quantitySample, unit: unit))
+                                    do {
+                                        let quantitySample = try serializeQuantitySample(sample: quantitySample, unit: unit)
+                                        return CorrelationObject.second(quantitySample)
+                                    } catch {
+                                        print(error.localizedDescription)
+                                    }
+                                    
                                 } else if let categorySample = object as? HKCategorySample {
                                     return CorrelationObject.first(serializeCategorySample(sample: categorySample))
                                 }

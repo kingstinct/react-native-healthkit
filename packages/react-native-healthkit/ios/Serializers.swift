@@ -32,19 +32,21 @@ func serializeQuantityTyped(unit: HKUnit, quantity: HKQuantity?) -> Quantity? {
     )
 }
 
-func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) -> QuantitySample {
-    return QuantitySample(
-        uuid: sample.uuid.uuidString,
-        device: serializeDevice(hkDevice: sample.device),
-        // todo: handle unknowns
-        quantityType: QuantityTypeIdentifier(fromString: sample.quantityType.identifier)!,
-        start: sample.startDate,
-        end: sample.endDate,
-        quantity: sample.quantity.doubleValue(for: unit),
-        unit: unit.unitString,
-        metadata: serializeMetadata(sample.metadata),
-        sourceRevision: serializeSourceRevision(sample.sourceRevision),
-    )
+func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) throws -> QuantitySample {
+    if let quantityType = QuantityTypeIdentifier(fromString: sample.quantityType.identifier) {
+        return QuantitySample(
+            uuid: sample.uuid.uuidString,
+            device: serializeDevice(hkDevice: sample.device),
+            quantityType: quantityType,
+            start: sample.startDate,
+            end: sample.endDate,
+            quantity: sample.quantity.doubleValue(for: unit),
+            unit: unit.unitString,
+            metadata: serializeMetadata(sample.metadata),
+            sourceRevision: serializeSourceRevision(sample.sourceRevision),
+        )
+    }
+    throw RuntimeError.error(withMessage: "[react-native-healthkit] Unable to recognize quantityType: \(sample.quantityType.identifier)")
 }
 
 func serializeDeletedSample(sample: HKDeletedObject) -> DeletedSample {
