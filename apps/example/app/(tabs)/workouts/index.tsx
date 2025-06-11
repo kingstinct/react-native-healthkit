@@ -14,20 +14,25 @@ const workoutActivityTypeStrings = enumKeyLookup(WorkoutActivityType);
 export default function WorkoutsScreen() {
     const [workouts, setWorkouts] = useState<readonly WorkoutSample[]>([])
     const [queryTime, setQueryTime] = useState<null | number>();
-    const [anchor, setAnchor] = useState<string | undefined>(undefined);
+    const [anchor, setAnchor] = useState<string | undefined>('YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGkCwwTFFUkbnVsbNMNDg8QERJVcm93aWRWJGNsYXNzW2NsaWVudFRva2VuEgRQyRWAA4ACXxCAOTZhYTVkMjQwY2IzYzBiNmE0MjAzYTM0NDExMjlmNDViYzViZWUyOWExMjAwMTI2ZGE0OWUyMmZhMjJiNjU5MjQyMTM3ZDc5NTBlNDljMDU5Nzg4OWZiZTYwNDUzNDM2ODJhYWJlYjI3NDg4N2Q1ZDEwNzRkN2FjMjkwZDNlOTjSFRYXGFokY2xhc3NuYW1lWCRjbGFzc2VzXUhLUXVlcnlBbmNob3KiGRpdSEtRdWVyeUFuY2hvclhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAWABeAGUAawByAH4AgwCFAIcBCgEPARoBIwExATQBQgAAAAAAAAIBAAAAAAAAABsAAAAAAAAAAAAAAAAAAAFL');
     const [deletedSamples, setDeletedSamples] = useState<readonly string[]>([]);
 
     const queryWorkoutSamples = useCallback(async (anchor?: string) => {
-        const startedAt = Date.now();
-        const {workouts, deletedSamples, newAnchor} = await Workouts.queryWorkoutSamplesWithAnchor({ anchor })
-        setQueryTime(Date.now() - startedAt);
-        setWorkouts(workouts.map(w => w.sample));
-        setAnchor(newAnchor);
-        setDeletedSamples(deletedSamples.map(d => d.uuid));
+        try {
+            const startedAt = Date.now();
+            const { workouts, deletedSamples, newAnchor } = await Workouts.queryWorkoutSamplesWithAnchor({ anchor })
+            setQueryTime(Date.now() - startedAt);
+            setWorkouts(workouts.map(w => w.sample));
+            setAnchor(newAnchor);
+            setDeletedSamples(deletedSamples.map(d => d.uuid));
+        }
+        catch (error) {
+            console.error('Error querying workouts:', error);
+        }
     }, []);
 
     useEffect(() => {
-        queryWorkoutSamples();
+        queryWorkoutSamples(anchor);
     }, []);
 
     return (
@@ -35,18 +40,18 @@ export default function WorkoutsScreen() {
             <Host style={{ padding: 16 }}>
                 <VStack>
                     <Text>{queryTime !== null ? `Query time: ${queryTime}ms` : 'Loading...'}</Text>
-                    { deletedSamples.length > 0 ? <Text>{`Deleted samples: ${deletedSamples.length}`}</Text> : null }
-                    { anchor ?  <Text>{ `Anchor: ${anchor}`}</Text> : null }
-                    { anchor ? <Button
+                    {deletedSamples.length > 0 ? <Text>{`Deleted samples: ${deletedSamples.length}`}</Text> : null}
+                    {anchor ? <Text>{`Anchor: ${anchor}`}</Text> : null}
+                    {anchor ? <Button
                         onPress={() => {
                             queryWorkoutSamples(anchor);
                         }
-                    }>
+                        }>
                         Next page
-                    </Button> : null }
+                    </Button> : null}
                 </VStack>
             </Host>
-            
+
             <List
                 scrollEnabled>
                 {
