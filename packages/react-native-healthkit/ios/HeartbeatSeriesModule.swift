@@ -1,6 +1,41 @@
 import HealthKit
 import NitroModules
 
+func getHeartbeatSeriesByID(
+    seriesUUID: UUID
+) async -> HKHeartbeatSeriesSample? {
+    let seriesPredicate = HKQuery.predicateForObject(with: seriesUUID)
+    
+    let samples = try! await withCheckedThrowingContinuation {
+        (continuation: CheckedContinuation<[HKSample], Error>) in
+        let query = HKSampleQuery(
+            sampleType: HKSeriesType.heartbeat(),
+            predicate: seriesPredicate,
+            limit: 1,
+            sortDescriptors: nil
+        ) { (_, results, error) in
+            
+            if let hasError = error {
+                continuation.resume(throwing: hasError)
+                return
+            }
+            
+            guard let samples = results else {
+                return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response"))
+            }
+            
+            continuation.resume(returning: samples)
+        }
+        store.execute(query)
+    }
+    
+    guard let heartbeatSeries = samples as? [HKHeartbeatSeriesSample] else {
+        return nil
+    }
+    
+    return heartbeatSeries.first ?? nil
+}
+
 @available(iOS 13.0.0, *)
 class HeartbeatSeriesModule : HybridHeartbeatSeriesModuleSpec {
     func queryHeartbeatSeriesSamples(
@@ -107,6 +142,20 @@ class HeartbeatSeriesModule : HybridHeartbeatSeriesModuleSpec {
                 
                 store.execute(query)
             }
+        }
+    }
+    
+    func queryHeartbeatSeriesByUUID(seriesUUID: String) throws -> Promise<HeartbeatSeriesSample?> {
+        let uuid = try initializeUUID(seriesUUID)
+        
+        return Promise.async {
+            let heartbeatSeries = await getHeartbeatSeriesByID(seriesUUID: uuid)
+            
+            if let heartbeatSeries = heartbeatSeries {
+                let serialized = try await self.serializeHeartbeatSeriesSample(sample: heartbeatSeries)
+                return serialized
+            }
+            return nil
         }
     }
     

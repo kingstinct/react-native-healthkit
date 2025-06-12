@@ -5,9 +5,8 @@ import { Section } from "@expo/ui/swift-ui-primitives";
 import { ListItem } from "@/components/SwiftListItem";
 import { Workouts } from "react-native-healthkit";
 import { useEffect, useState } from "react";
-import { WorkoutActivityType, WorkoutEventType, WorkoutRoute, WorkoutSample } from "react-native-healthkit/types/Workouts";
+import { WorkoutActivityType, WorkoutEventType, WorkoutRoute } from "react-native-healthkit/types/Workouts";
 import { WorkoutProxy } from "react-native-healthkit/specs/WorkoutProxy.nitro";
-
 
 const workoutActivityTypeStrings = enumKeyLookup(WorkoutActivityType);
 

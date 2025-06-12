@@ -13,7 +13,7 @@ const authEnumLookup = enumKeyLookup(AuthorizationStatus);
 export default function AuthScreen() {
     const requestAuth = useCallback(async () => {
         try {
-            const res = await Core.requestAuthorization(AllSampleTypesInApp, AllSampleTypesInApp)
+            const res = await Core.requestAuthorization(AllSampleTypesInApp, AllObjectTypesInApp)
 
             alert('response: ' + res)
 

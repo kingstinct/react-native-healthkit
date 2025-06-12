@@ -8,9 +8,8 @@ import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Core } from "react-native-healthkit";
-import { AllSampleTypesInApp } from "@/constants/AllUsedIdentifiersInApp";
+import { AllObjectTypesInApp, AllSampleTypesInApp } from "@/constants/AllUsedIdentifiersInApp";
 import { AuthorizationRequestStatus } from "react-native-healthkit/types/Auth";
-
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
@@ -19,27 +18,24 @@ export default function TabLayout() {
 
 	useEffect(() => {
 		try {
-
-		
-		Core.getRequestStatusForAuthorization(AllSampleTypesInApp, AllSampleTypesInApp)
-		.then((status) => {
-			console.log("Authorization Status:", status);
-			setAuthStatus(status);
-		}).catch((error) => {
-			console.error("Error getting authorization status:", error);
-			setAuthStatus(AuthorizationRequestStatus.shouldRequest);
-		});
+			console.log('checking auth status for', AllSampleTypesInApp);
+			Core.getRequestStatusForAuthorization(AllSampleTypesInApp, AllObjectTypesInApp)
+			.then((status) => {
+				console.log("Authorization Status:", status);
+				setAuthStatus(status);
+			}).catch((error) => {
+				console.error("Error getting authorization status:", error);
+				setAuthStatus(AuthorizationRequestStatus.shouldRequest);
+			});
 		} catch (error) {
 			console.error("Error in useEffect:", error);
 			setAuthStatus(AuthorizationRequestStatus.shouldRequest);
 		}
 	}, [])
 
-	console.log("Auth Status:", authStatus);
-
 	if (authStatus === AuthorizationRequestStatus.shouldRequest) {
 		// If the user has not granted permissions, redirect to the auth screen
-		return <Redirect href="/auth" />;
+		return <Redirect href="../auth" relativeToDirectory />;
 	}
 
 	return (
@@ -102,6 +98,16 @@ export default function TabLayout() {
 					title: "Workouts",
 					tabBarIcon: ({ color, focused }) => (
 						<IconSymbol size={28} name={focused ? "figure.run.square.stack.fill" : "figure.run.square.stack"} color={color} />
+					),
+				}}
+			/>
+
+			<Tabs.Screen
+				name="heartbeats"
+				options={{
+					title: "Heartbeats",
+					tabBarIcon: ({ color, focused }) => (
+						<IconSymbol size={28} name={focused ? "heart.fill" : "heart"} color={color} />
 					),
 				}}
 			/>

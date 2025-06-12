@@ -8,7 +8,7 @@ export const WorkoutTypeIdentifier = 'HKWorkoutTypeIdentifier' as const
 
 /**
  * Represents a workout route type identifier.
- * @see {@link https://developer.apple.com/documentation/healthkit/WorkoutRouteTypeIdentifier Apple Docs WorkoutRouteTypeIdentifier}
+ * @see {@link https://developer.apple.com/documentation/healthkit/HKWorkoutRouteTypeIdentifier Apple Docs WorkoutRouteTypeIdentifier}
  */
 export const WorkoutRouteTypeIdentifier = 'HKWorkoutRouteTypeIdentifier' as const
 
@@ -22,6 +22,6 @@ export const StateOfMindTypeIdentifier = 'HKStateOfMindTypeIdentifier' as const
 
 /**
  * Represents a series sample containing heartbeat data..
- * @see {@link https://developer.apple.com/documentation/healthkit/DataTypeIdentifierHeartbeatSeries Apple Docs DataTypeIdentifierHeartbeatSeries}
+ * @see {@link https://developer.apple.com/documentation/healthkit/HKDataTypeIdentifierHeartbeatSeries Apple Docs DataTypeIdentifierHeartbeatSeries}
  */
-export declare const HeartbeatSeriesTypeIdentifier: 'HKDataTypeIdentifierHeartbeatSeries'
+export const HeartbeatSeriesTypeIdentifier = 'HKDataTypeIdentifierHeartbeatSeries' as const

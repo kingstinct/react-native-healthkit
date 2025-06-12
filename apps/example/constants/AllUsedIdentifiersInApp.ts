@@ -1,7 +1,7 @@
-
 import { CharacteristicTypeIdentifier } from "react-native-healthkit/types/Characteristics";
 import { QuantityTypeIdentifier } from "react-native-healthkit/types/QuantityTypeIdentifier";
 import { ObjectTypeIdentifier, SampleTypeIdentifier } from "react-native-healthkit/types/Shared";
+import { HeartbeatSeriesTypeIdentifier } from "react-native-healthkit/types/Constants";
 
 export const AllQuantityTypeIdentifierInApp: QuantityTypeIdentifier[] = [
     'HKQuantityTypeIdentifierStepCount',
@@ -14,6 +14,7 @@ export const AllQuantityTypeIdentifierInApp: QuantityTypeIdentifier[] = [
     'HKQuantityTypeIdentifierBodyMass',
     'HKQuantityTypeIdentifierBloodGlucose',
     'HKQuantityTypeIdentifierOxygenSaturation',
+    'HKQuantityTypeIdentifierHeartRateVariabilitySDNN',
 ]
 
 export const AllCharacteristicTypeIdentifierInApp: CharacteristicTypeIdentifier[] = [
@@ -27,6 +28,7 @@ export const AllCharacteristicTypeIdentifierInApp: CharacteristicTypeIdentifier[
 export const AllSampleTypesInApp: SampleTypeIdentifier[] = [
     'HKWorkoutTypeIdentifier',
     'HKWorkoutRouteTypeIdentifier',
+    'HKDataTypeIdentifierHeartbeatSeries',
     ...AllQuantityTypeIdentifierInApp,
     /*'HKQuantityTypeIdentifierRespiratoryRate',
     'HKQuantityTypeIdentifierVO2Max',
@@ -35,7 +37,8 @@ export const AllSampleTypesInApp: SampleTypeIdentifier[] = [
 
 export const AllObjectTypesInApp: ObjectTypeIdentifier[] = [
     ...AllSampleTypesInApp,
-    ...AllCharacteristicTypeIdentifierInApp
+    ...AllCharacteristicTypeIdentifierInApp,
+    // 'HKQuantityTypeIdentifierHeartRateVariabilitySDNN',
     /*'HKQuantityTypeIdentifierRespiratoryRate',
     'HKQuantityTypeIdentifierVO2Max',
     'HKQuantityTypeIdentifierWalkingHeartRateAverage'*/
