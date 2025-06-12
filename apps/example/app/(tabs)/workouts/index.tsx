@@ -33,6 +33,7 @@ export default function WorkoutsScreen() {
 		}
 	}, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		queryWorkoutSamples(anchor);
 	}, []);
@@ -53,7 +54,7 @@ export default function WorkoutsScreen() {
 						title={
 							workoutActivityTypeStrings[item.workoutActivityType] || "Unknown"
 						}
-						subtitle={item.start.toLocaleString()}
+						subtitle={item.startDate.toLocaleString()}
 						onPress={() =>
 							router.push(`/workouts/details?workoutId=${item.uuid}`)
 						}

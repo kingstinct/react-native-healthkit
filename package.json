@@ -7,7 +7,9 @@
 		"lint": "bunx @biomejs/biome format --write",
 		"typescript": "tsc",
 		"codegen": "cd packages/react-native-healthkit && bun run nitro-codegen && cd ../../apps/example/ios && pod install",
-		"test": "cd packages/react-native-healthkit && bun run test"
+		"test": "cd packages/react-native-healthkit && bun run test",
+		"prepare": "husky",
+		"lint-staged": "bunx @biomejs/biome format --write --staged --no-errors-on-unmatched"
 	},
 	"keywords": ["react-native", "nitro", "healthkit"],
 	"repository": {
@@ -18,10 +20,16 @@
 	"author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
 	"license": "MIT",
 	"private": true,
+	"commitlint": {
+		"extends": ["@commitlint/config-conventional"]
+	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
 		"@changesets/cli": "^2.29.4",
+		"@commitlint/config-conventional": "^19.8.1",
 		"@types/bun": "^1.2.16",
+		"commitlint": "^19.8.1",
+		"husky": "^9.1.7",
 		"pkg-pr-new": "^0.0.51",
 		"typescript": "~5.8.3"
 	}

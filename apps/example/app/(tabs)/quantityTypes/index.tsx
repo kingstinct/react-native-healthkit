@@ -166,7 +166,7 @@ export default function QuantitiesScreen() {
 						<ListItem
 							key={item.uuid}
 							title={quantityStr}
-							subtitle={item.start.toLocaleString()}
+							subtitle={item.startDate.toLocaleString()}
 						/>
 					);
 				})}

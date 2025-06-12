@@ -85,7 +85,7 @@ export default function HeartbeatSeriesScreen() {
 					<ListItem
 						key={item.uuid}
 						title={`${item.heartbeats.length} heartbeats`}
-						subtitle={`${item.start.toLocaleString()} • Duration: ${formatDuration(item.start, item.end)}`}
+						subtitle={`${item.startDate.toLocaleString()} • Duration: ${formatDuration(item.startDate, item.endDate)}`}
 						onPress={() =>
 							router.push(`/heartbeats/details?seriesId=${item.uuid}`)
 						}

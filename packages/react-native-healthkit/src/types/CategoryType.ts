@@ -191,7 +191,9 @@ export interface CategorySample {
 	readonly sourceRevision?: SourceRevision;
 }
 
-export interface CategorySamplesWithAnchorResponseTyped<T extends CategoryTypeIdentifier> {
+export interface CategorySamplesWithAnchorResponseTyped<
+	T extends CategoryTypeIdentifier,
+> {
 	readonly samples: readonly CategorySampleTyped<T>[];
 	readonly deletedSamples: readonly DeletedSample[];
 	readonly newAnchor: string;
@@ -221,7 +223,7 @@ export type MetadataForCategoryIdentifier<
 		: GenericMetadata;
 
 export type CategoryValueForIdentifier<
-	T extends CategoryTypeIdentifier,
+	T extends CategoryTypeIdentifier = CategoryTypeIdentifier,
 > = T extends "HKCategoryTypeIdentifierCervicalMucusQuality"
 	? CategoryValueCervicalMucusQuality
 	: T extends "CategoryTypeIdentifierMenstrualFlow"

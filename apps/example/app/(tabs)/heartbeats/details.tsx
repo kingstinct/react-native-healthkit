@@ -4,7 +4,7 @@ import { Section } from "@expo/ui/swift-ui-primitives";
 import { ListItem } from "@/components/SwiftListItem";
 import { HeartbeatSeries } from "@kingstinct/react-native-healthkit";
 import { useEffect, useState } from "react";
-import { HeartbeatSeriesSample } from "@kingstinct/react-native-healthkit/types/HeartbeatSeries";
+import type { HeartbeatSeriesSample } from "@kingstinct/react-native-healthkit/types/HeartbeatSeries";
 
 export default function HeartbeatSeriesDetails() {
 	const { seriesId } = useLocalSearchParams<{ seriesId?: string }>();
@@ -52,15 +52,15 @@ export default function HeartbeatSeriesDetails() {
 				<ListItem title="UUID" subtitle={heartbeatSeries.uuid} />
 				<ListItem
 					title="Started"
-					subtitle={heartbeatSeries.start.toLocaleString()}
+					subtitle={heartbeatSeries.startDate.toLocaleString()}
 				/>
 				<ListItem
 					title="Ended"
-					subtitle={heartbeatSeries.end.toLocaleString()}
+					subtitle={heartbeatSeries.endDate.toLocaleString()}
 				/>
 				<ListItem
 					title="Duration"
-					subtitle={`${Math.round((heartbeatSeries.end.valueOf() - heartbeatSeries.start.valueOf()) / 1000)} seconds`}
+					subtitle={`${Math.round((heartbeatSeries.endDate.valueOf() - heartbeatSeries.startDate.valueOf()) / 1000)} seconds`}
 				/>
 				<ListItem
 					title="Total Heartbeats"

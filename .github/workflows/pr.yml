@@ -2,6 +2,9 @@ name: PR Preview
 
 on:
   pull_request:
+  push:
+    branches:
+      - nitro-modules
 
 jobs:
   preview:

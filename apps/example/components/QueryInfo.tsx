@@ -14,7 +14,7 @@ export const QueryInfo = ({
 }) => {
 	return (
 		<Host style={{ padding: 16 }}>
-			<VStack padding={16} spacing={8}>
+			<VStack spacing={8}>
 				<Text>{queryTime ? `Query time: ${queryTime}ms` : "Loading..."}</Text>
 				{deletedSamples && deletedSamples.length > 0 ? (
 					<Text>{`Deleted samples: ${deletedSamples?.length}`}</Text>

@@ -60,11 +60,11 @@ export default function WorkoutDetails() {
 		<List scrollEnabled>
 			{queryTime ? (
 				<Section title="Query Information">
-					<ListItem title="Query Time" subtitle={queryTime + "ms"} />
+					<ListItem title="Query Time" subtitle={`${queryTime}ms`} />
 					{routesQueryTime ? (
 						<ListItem
 							title="Routes Query Time"
-							subtitle={routesQueryTime + "ms"}
+							subtitle={`${routesQueryTime}ms`}
 						/>
 					) : null}
 				</Section>
@@ -78,15 +78,15 @@ export default function WorkoutDetails() {
 				/>
 				<ListItem
 					title="Started"
-					subtitle={workout.sample.start.toLocaleString()}
+					subtitle={workout.sample.startDate.toLocaleString()}
 				/>
 				<ListItem
 					title="Ended"
-					subtitle={workout.sample.end.toLocaleString()}
+					subtitle={workout.sample.endDate.toLocaleString()}
 				/>
 				<ListItem
 					title="Duration"
-					subtitle={`${Math.round((workout.sample.end.valueOf() - workout.sample.start.valueOf()) / 60 / 1000)} minutes`}
+					subtitle={`${Math.round((workout.sample.endDate.valueOf() - workout.sample.startDate.valueOf()) / 60 / 1000)} minutes`}
 				/>
 				{workout.sample.totalDistance ? (
 					<ListItem
@@ -161,9 +161,9 @@ export default function WorkoutDetails() {
 				<Section title="Events">
 					{workout.sample.events.map((event, index) => (
 						<ListItem
-							key={index}
+							key={event.startDate.toISOString() + index.toString()}
 							title={`Event ${index + 1}`}
-							subtitle={`Type: ${workoutEventTypeStrings[event.type]}, Timestamp: ${event.start.toLocaleString()}`}
+							subtitle={`Type: ${workoutEventTypeStrings[event.type]}, Timestamp: ${event.startDate.toLocaleString()}`}
 						/>
 					))}
 				</Section>
@@ -172,9 +172,9 @@ export default function WorkoutDetails() {
 				<Section title="Activities">
 					{workout.sample.activities.map((activity, index) => (
 						<ListItem
-							key={index}
+							key={activity.uuid}
 							title={`Activity ${index + 1}`}
-							subtitle={`Duration: ${Math.round(activity.duration / 60)} minutes, Start: ${activity.start.toLocaleString()}`}
+							subtitle={`Duration: ${Math.round(activity.duration / 60)} minutes, Start: ${activity.startDate.toLocaleString()}`}
 						/>
 					))}
 				</Section>
@@ -183,7 +183,7 @@ export default function WorkoutDetails() {
 				<Section title="Routes">
 					{routes.map((route, index) => (
 						<ListItem
-							key={index}
+							key={index.toString()}
 							title={`Route ${index + 1}`}
 							subtitle={`Locations: ${Math.round(route.locations.length)}`}
 						/>

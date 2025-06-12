@@ -60,14 +60,14 @@ export default function AuthScreen() {
 	return (
 		<Host>
 			<VStack>
-				<HStack padding={16} spacing={16}>
+				<HStack spacing={16}>
 					{status ? (
 						<Text weight="bold">{authEnumLookup[status] as string}</Text>
 					) : (
 						<CircularProgress />
 					)}
 				</HStack>
-				<HStack padding={16} spacing={16}>
+				<HStack spacing={16}>
 					<Button onPress={requestAuth} variant="borderedProminent">
 						Request Permissions
 					</Button>
