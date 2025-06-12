@@ -1,6 +1,6 @@
 
-import { Workouts } from '@kingstinct/react-native-healthkit';
-import type { WorkoutQueryOptions } from '@kingstinct/react-native-healthkit/types/Workouts';
+import { Workouts } from '..';
+import type { WorkoutQueryOptions } from '../types/Workouts';
 
 const getMostRecentWorkout = async (options: Pick<WorkoutQueryOptions, 'distanceUnit' | 'energyUnit'>) => {
   const workouts = await Workouts.queryWorkoutSamples({

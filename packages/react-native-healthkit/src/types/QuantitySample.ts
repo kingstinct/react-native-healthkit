@@ -11,8 +11,8 @@ export interface QuantitySample {
 	readonly uuid: string;
 	readonly device?: Device;
 	readonly quantityType: QuantityTypeIdentifier;
-	readonly start: Date;
-	readonly end: Date;
+	readonly startDate: Date;
+	readonly endDate: Date;
 	readonly quantity: number;
 	readonly unit: string;
 	readonly metadata: AnyMap;
@@ -20,8 +20,8 @@ export interface QuantitySample {
 }
 
 export interface QuantitySampleForSaving {
-	readonly start: Date;
-	readonly end: Date;
+	readonly startDate: Date;
+	readonly endDate: Date;
 	readonly quantityType: QuantityTypeIdentifier;
 	readonly quantity: number;
 	readonly unit: string;

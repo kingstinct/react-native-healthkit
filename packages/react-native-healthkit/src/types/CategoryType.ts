@@ -5,14 +5,14 @@ import type { DeletedSample, GenericMetadata } from "./Shared";
 import type { SourceRevision } from "./Source";
 
 export type CategoryTypePresenceIdentifier =
-	| "CategoryTypeIdentifierAppetiteChanges"
-	| "CategoryTypeIdentifierSleepChanges";
+	| "HKCategoryTypeIdentifierAppetiteChanges"
+	| "HKCategoryTypeIdentifierSleepChanges";
 
 export type CategoryTypeValueNotApplicableIdentifier =
-	| "CategoryTypeIdentifierHighHeartRateEvent"
-	| "CategoryTypeIdentifierIntermenstrualBleeding"
-	| "CategoryTypeIdentifierMindfulSession"
-	| "CategoryTypeIdentifierSexualActivity";
+	| "HKCategoryTypeIdentifierHighHeartRateEvent"
+	| "HKCategoryTypeIdentifierIntermenstrualBleeding"
+	| "HKCategoryTypeIdentifierMindfulSession"
+	| "HKCategoryTypeIdentifierSexualActivity";
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluepregnancytestresult Apple Docs }
@@ -24,43 +24,43 @@ enum CategoryValuePregnancyTestResult {
 }
 
 export type CategoryTypeSeverityIdentifier =
-	| "CategoryTypeIdentifierAbdominalCramps"
-	| "CategoryTypeIdentifierAcne"
-	| "CategoryTypeIdentifierBladderIncontinence"
-	| "CategoryTypeIdentifierBloating"
-	| "CategoryTypeIdentifierBreastPain"
-	| "CategoryTypeIdentifierChestTightnessOrPain"
-	| "CategoryTypeIdentifierChills"
-	| "CategoryTypeIdentifierConstipation"
-	| "CategoryTypeIdentifierCoughing"
-	| "CategoryTypeIdentifierDiarrhea"
-	| "CategoryTypeIdentifierDizziness"
-	| "CategoryTypeIdentifierDrySkin"
-	| "CategoryTypeIdentifierFainting"
-	| "CategoryTypeIdentifierFatigue"
-	| "CategoryTypeIdentifierFever"
-	| "CategoryTypeIdentifierGeneralizedBodyAche"
-	| "CategoryTypeIdentifierHairLoss"
-	| "CategoryTypeIdentifierHeadache"
-	| "CategoryTypeIdentifierHeartburn"
-	| "CategoryTypeIdentifierHotFlashes"
-	| "CategoryTypeIdentifierLossOfSmell"
-	| "CategoryTypeIdentifierLossOfTaste"
-	| "CategoryTypeIdentifierLowerBackPain"
-	| "CategoryTypeIdentifierMemoryLapse"
-	| "CategoryTypeIdentifierMoodChanges"
-	| "CategoryTypeIdentifierNausea"
-	| "CategoryTypeIdentifierNightSweats"
-	| "CategoryTypeIdentifierPelvicPain"
-	| "CategoryTypeIdentifierRapidPoundingOrFlutteringHeartbeat"
-	| "CategoryTypeIdentifierRunnyNose"
-	| "CategoryTypeIdentifierShortnessOfBreath"
-	| "CategoryTypeIdentifierSinusCongestion"
-	| "CategoryTypeIdentifierSkippedHeartbeat"
-	| "CategoryTypeIdentifierSoreThroat"
-	| "CategoryTypeIdentifierVaginalDryness"
-	| "CategoryTypeIdentifierVomiting"
-	| "CategoryTypeIdentifierWheezing";
+	| "HKCategoryTypeIdentifierAbdominalCramps"
+	| "HKCategoryTypeIdentifierAcne"
+	| "HKCategoryTypeIdentifierBladderIncontinence"
+	| "HKCategoryTypeIdentifierBloating"
+	| "HKCategoryTypeIdentifierBreastPain"
+	| "HKCategoryTypeIdentifierChestTightnessOrPain"
+	| "HKCategoryTypeIdentifierChills"
+	| "HKCategoryTypeIdentifierConstipation"
+	| "HKCategoryTypeIdentifierCoughing"
+	| "HKCategoryTypeIdentifierDiarrhea"
+	| "HKCategoryTypeIdentifierDizziness"
+	| "HKCategoryTypeIdentifierDrySkin"
+	| "HKCategoryTypeIdentifierFainting"
+	| "HKCategoryTypeIdentifierFatigue"
+	| "HKCategoryTypeIdentifierFever"
+	| "HKCategoryTypeIdentifierGeneralizedBodyAche"
+	| "HKCategoryTypeIdentifierHairLoss"
+	| "HKCategoryTypeIdentifierHeadache"
+	| "HKCategoryTypeIdentifierHeartburn"
+	| "HKCategoryTypeIdentifierHotFlashes"
+	| "HKCategoryTypeIdentifierLossOfSmell"
+	| "HKCategoryTypeIdentifierLossOfTaste"
+	| "HKCategoryTypeIdentifierLowerBackPain"
+	| "HKCategoryTypeIdentifierMemoryLapse"
+	| "HKCategoryTypeIdentifierMoodChanges"
+	| "HKCategoryTypeIdentifierNausea"
+	| "HKCategoryTypeIdentifierNightSweats"
+	| "HKCategoryTypeIdentifierPelvicPain"
+	| "HKCategoryTypeIdentifierRapidPoundingOrFlutteringHeartbeat"
+	| "HKCategoryTypeIdentifierRunnyNose"
+	| "HKCategoryTypeIdentifierShortnessOfBreath"
+	| "HKCategoryTypeIdentifierSinusCongestion"
+	| "HKCategoryTypeIdentifierSkippedHeartbeat"
+	| "HKCategoryTypeIdentifierSoreThroat"
+	| "HKCategoryTypeIdentifierVaginalDryness"
+	| "HKCategoryTypeIdentifierVomiting"
+	| "HKCategoryTypeIdentifierWheezing";
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluecervicalmucusquality Apple Docs }

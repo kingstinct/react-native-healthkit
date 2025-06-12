@@ -3,7 +3,6 @@ import type { DeletedSample, GenericMetadata } from "./Shared";
 import type { Device } from "./Device";
 import type { Quantity } from "./QuantityType";
 import type { AnyMap } from "react-native-nitro-modules";
-import type { QuantitySampleForSaving } from "./QuantitySample";
 import type { WorkoutProxy } from "../specs/WorkoutProxy.nitro";
 
 export enum WorkoutActivityType {
