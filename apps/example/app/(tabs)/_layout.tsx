@@ -87,6 +87,7 @@ export default function TabLayout() {
 				name="workouts"
 				options={{
 					title: "Workouts",
+					headerShown: false,
 					tabBarIcon: ({ color, focused }) => (
 						<IconSymbol size={28} name={focused ? "figure.run.square.stack.fill" : "figure.run.square.stack"} color={color} />
 					),

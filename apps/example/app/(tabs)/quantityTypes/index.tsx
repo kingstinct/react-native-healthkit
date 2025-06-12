@@ -1,17 +1,20 @@
 
 import { Core, QuantityTypes } from "react-native-healthkit";
 import { Button, ContextMenu, DateTimePicker, List, Picker } from "@expo/ui/swift-ui";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ListItem } from "@/components/SwiftListItem";
 import { QuantitySample } from "react-native-healthkit/types/QuantitySample";
 import { View } from "react-native";
 import { QuantityTypeIdentifier } from "react-native-healthkit/types/QuantityTypeIdentifier";
 import { AllQuantityTypeIdentifierInApp } from "@/constants/AllUsedIdentifiersInApp";
+import { QueryInfo } from "@/components/QueryInfo";
 
 
 const transformQuantityIdentifierToName = (identifier: QuantityTypeIdentifier) => {
     return identifier.replace('HKQuantityTypeIdentifier', '').replace(/([A-Z])/g, ' $1').trim();
 }
+
+const PICKER_OPTIONS: ['Descending', 'Ascending', 'Anchor'] = ['Descending', 'Ascending', 'Anchor']
 
 export default function QuantitiesScreen() {
     const [quantitySamples, setQuantitySamples] = useState<readonly QuantitySample[]>([])
@@ -23,18 +26,42 @@ export default function QuantitiesScreen() {
 
     const [selectedQuantityType, setSelectedQuantityType] = useState<QuantityTypeIdentifier>('HKQuantityTypeIdentifierActiveEnergyBurned');
 
-    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [selectedOption, setSelectedOption] = useState<typeof PICKER_OPTIONS[number]>('Descending');
 
-    useEffect(() => {
-        const queryQuantitySamples = async () => {
-            const unit = await Core.getPreferredUnits([selectedQuantityType]) || 'kcal';
+    const [anchor, setAnchor] = useState<string | undefined>(undefined);
 
-            const samples = await QuantityTypes.queryQuantitySamples(selectedQuantityType, {});
+    const [queryTime, setQueryTime] = useState<number>();
+
+    const queryQuantitySamples = useCallback(async () => {
+        const startedAt = Date.now();
+        if (selectedOption === 'Anchor') {
+            QuantityTypes.queryQuantitySamplesWithAnchor(selectedQuantityType, {
+                from: fromDate,
+                to: toDate,
+                anchor: anchor,
+            }).then((result) => {
+                setQuantitySamples(result.samples);
+                setAnchor(result.newAnchor);
+                setQueryTime(Date.now() - startedAt);
+            }).catch((error) => {
+                console.error('Error querying quantity samples with anchor:', error);
+            })
+        } else {
+            setAnchor(undefined);
+            const samples = await QuantityTypes.queryQuantitySamples(selectedQuantityType, {
+                from: fromDate,
+                to: toDate,
+                ascending: selectedOption === 'Ascending',
+            });
+            setQueryTime(Date.now() - startedAt);
 
             setQuantitySamples(samples)
         }
+    }, [selectedQuantityType, selectedOption, fromDate, toDate, anchor]);
+
+    useEffect(() => {
         queryQuantitySamples();
-    }, [selectedQuantityType, selectedIndex, fromDate, toDate]);
+    }, [])
 
     return (
         <View style={{ flex: 1 }}>
@@ -62,39 +89,44 @@ export default function QuantitiesScreen() {
                 />
             </View>
             <View style={{ marginHorizontal: 16, marginTop: 16 }}>
-            <Picker
-                options={['Descending', 'Ascending']}
-                selectedIndex={selectedIndex}
-                onOptionSelected={({ nativeEvent: { index } }) => {
-                setSelectedIndex(index);
-                }}
-                variant="segmented"
-            />
+                <Picker
+                    options={PICKER_OPTIONS}
+                    selectedIndex={PICKER_OPTIONS.indexOf(selectedOption)}
+                    onOptionSelected={({ nativeEvent: { index } }) => {
+                        setSelectedOption(PICKER_OPTIONS[index]!);
+                    }}
+                    variant="segmented"
+                />
             </View>
+            <QueryInfo
+                queryTime={queryTime}
+                anchor={anchor}
+                onFetchMore={queryQuantitySamples}
+            />
             <View>
                 <ContextMenu style={{ margin: 16 }} >
-                <ContextMenu.Items>
-                    {
-                        AllQuantityTypeIdentifierInApp.map((quantityType) => (
-                            <Button
-                                key={quantityType}
-                                variant="bordered"
-                                systemImage={quantityType === selectedQuantityType ? "checkmark.circle" : undefined}
-                                onPress={() => {
-                                    setSelectedQuantityType(quantityType);
-                                }}>
-                                {transformQuantityIdentifierToName(quantityType)}
-                            </Button>
-                        ))
-                    }
-                </ContextMenu.Items>
-                <ContextMenu.Trigger>
+                    <ContextMenu.Items>
+                        {
+                            AllQuantityTypeIdentifierInApp.map((quantityType) => (
+                                <Button
+                                    key={quantityType}
+                                    variant="bordered"
+                                    systemImage={quantityType === selectedQuantityType ? "checkmark.circle" : undefined}
+                                    onPress={() => {
+                                        setSelectedQuantityType(quantityType);
+                                    }}>
+                                    {transformQuantityIdentifierToName(quantityType)}
+                                </Button>
+                            ))
+                        }
+                    </ContextMenu.Items>
+                    <ContextMenu.Trigger>
 
                         <Button variant="bordered" style={{ width: 200, height: 10 }}>
-                        {transformQuantityIdentifierToName(selectedQuantityType)}
-                    </Button>
-                </ContextMenu.Trigger>
-            </ContextMenu>
+                            {transformQuantityIdentifierToName(selectedQuantityType)}
+                        </Button>
+                    </ContextMenu.Trigger>
+                </ContextMenu>
             </View>
             <List
                 scrollEnabled

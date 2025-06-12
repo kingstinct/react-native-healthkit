@@ -19,16 +19,24 @@ export default function WorkoutDetails() {
 
     const [routes, setRoutes] = useState<readonly WorkoutRoute[]>([]);
 
+    const [queryTime, setQueryTime] = useState<number>();
+    const [routesQueryTime, setRoutesQueryTime] = useState<number>();
+
 
     useEffect(() => {
         if (!workoutId) {
             return;
         }
 
+        const startedAt = Date.now();
+
         Workouts.queryWorkoutByUUID(workoutId).then((w) => {
             setWorkout(w)
+            setQueryTime(Date.now() - startedAt);
+            const routeStartedAt = Date.now();
             w?.getWorkoutRoutes().then((r) => {
                 setRoutes(r);
+                setRoutesQueryTime(Date.now() - routeStartedAt);
             }
             ).catch(console.error);
         }).catch(console.error);
@@ -40,6 +48,14 @@ export default function WorkoutDetails() {
 
     return (
         <List scrollEnabled>
+            { queryTime ? <Section title="Query Information">
+                <ListItem
+                    title='Query Time'
+                    subtitle={queryTime + 'ms'} />
+                {routesQueryTime ? <ListItem
+                    title='Routes Query Time'
+                    subtitle={routesQueryTime + 'ms'} /> : null }
+            </Section>: null}
             <Section>
                 <ListItem
                     title='Workout Type'
@@ -111,7 +127,7 @@ export default function WorkoutDetails() {
                         <ListItem
                             key={index}
                             title={`Activity ${index + 1}`}
-                            subtitle={`Duration: ${Math.round(activity.duration / 60 / 1000)} minutes, Start: ${activity.start.toLocaleString()}`} />
+                            subtitle={`Duration: ${Math.round(activity.duration / 60)} minutes, Start: ${activity.start.toLocaleString()}`} />
                     ))}
                 </Section>
             }
