@@ -128,8 +128,8 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
                                 correlationType: CorrelationTypeIdentifier(fromString: correlation.correlationType.identifier)!,
                                 objects: objects,
                                 metadata: serializeMetadata(correlation.metadata),
-                                start: correlation.startDate,
-                                end: correlation.endDate
+                                startDate: correlation.startDate,
+                                endDate: correlation.endDate
                             )
                         }
                         

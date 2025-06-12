@@ -167,8 +167,8 @@ class HeartbeatSeriesModule : HybridHeartbeatSeriesModuleSpec {
         return HeartbeatSeriesSample(
             uuid: sample.uuid.uuidString,
             device: serializeDevice(hkDevice: sample.device),
-            start: sample.startDate,
-            end: sample.endDate,
+            startDate: sample.startDate,
+            endDate: sample.endDate,
             heartbeats: heartbeats,
             metadata: serializeMetadata(sample.metadata),
             sourceRevision: serializeSourceRevision(sample.sourceRevision)

@@ -7,8 +7,8 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
     func saveCategorySample(
         identifier: CategoryTypeIdentifier,
         value: Double,
-        start: Date,
-        end: Date,
+        startDate: Date,
+        endDate: Date,
         metadata: AnyMapHolder
     ) throws -> Promise<Bool> {
         let type = try initializeCategoryType(identifier.stringValue)
@@ -16,8 +16,8 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
         let sample = HKCategorySample(
             type: type,
             value: Int(value),
-            start: start,
-            end: end,
+            start: startDate,
+            end: endDate,
             metadata: anyMapToDictionary(metadata)
         )
         

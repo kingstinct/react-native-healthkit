@@ -108,3 +108,33 @@ jobs:
 
       - run: bun run nitro-codegen
         working-directory: packages/react-native-healthkit
+
+  build-ios:
+    # Only run on macOS since we need Xcode
+    runs-on: macos-latest
+    timeout-minutes: 20
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Install CocoaPods dependencies
+        working-directory: apps/example/ios
+        run: pod install
+
+      - name: Build iOS project
+        working-directory: apps/example/ios
+        run: |
+          xcodebuild -workspace reactnativehealthkitexample.xcworkspace \
+            -scheme reactnativehealthkitexample \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+            -configuration Debug \
+            clean build \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO

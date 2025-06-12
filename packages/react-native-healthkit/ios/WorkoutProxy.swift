@@ -97,7 +97,7 @@ func getRouteLocations(
 }
 
 
-func serializeLocation(location: CLLocation, previousLocation: CLLocation?) -> WorkoutLocation {
+func serializeLocation(location: CLLocation, previousLocation: CLLocation?) -> WorkoutRouteLocation {
     var distance: CLLocationDistance?
     if let previousLocation = previousLocation {
         distance = location.distance(from: previousLocation)
@@ -105,7 +105,7 @@ func serializeLocation(location: CLLocation, previousLocation: CLLocation?) -> W
         distance = nil
     }
     
-    return WorkoutLocation(
+    return WorkoutRouteLocation(
         altitude: location.altitude,
         course: location.course,
         date: location.timestamp,

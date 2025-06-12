@@ -145,8 +145,8 @@ func mapWorkout(
             ) {
                 return WorkoutEvent(
                     type: type,
-                    start: event.dateInterval.start,
-                    end: event.dateInterval.end
+                    startDate: event.dateInterval.start,
+                    endDate: event.dateInterval.end
                 )
             }
             return nil
@@ -164,8 +164,8 @@ func mapWorkout(
         
         activitiesArray = hkActivities.map { activity in
             return WorkoutActivity(
-                start: activity.startDate,
-                end: activity.endDate ?? activity.startDate,
+                startDate: activity.startDate,
+                endDate: activity.endDate ?? activity.startDate,
                 uuid: activity.uuid.uuidString,
                 duration: activity.duration
             )
@@ -196,8 +196,8 @@ func mapWorkout(
         totalEnergyBurned: serializeQuantityTyped(unit: energyUnit, quantity: workout.totalEnergyBurned),
         totalSwimmingStrokeCount: serializeQuantityTyped(unit: .count(), quantity: workout.totalSwimmingStrokeCount),
         totalFlightsClimbed: totalFlightsClimbed,
-        start: workout.startDate,
-        end: workout.endDate,
+        startDate: workout.startDate,
+        endDate: workout.endDate,
         metadata: serializeMetadata(workout.metadata),
         sourceRevision: serializeSourceRevision(workout.sourceRevision),
         events: workoutEvents,
@@ -236,6 +236,57 @@ func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
 }
 
 class WorkoutsModule : HybridWorkoutsModuleSpec {
+    func queryWorkoutSamples(options: WorkoutQueryOptions) throws -> Promise<[HybridWorkoutProxySpec]> {
+        let predicate = createPredicate(
+            from: options.from,
+            to: options.to
+        )
+        
+        let limit = getQueryLimit(options.limit)
+        
+        return Promise.async {
+            let energyUnit = try await getUnitToUse(unitOverride: options.energyUnit, quantityType: HKQuantityType(.activeEnergyBurned))
+            
+            let distanceUnit = try await getUnitToUse(unitOverride: options.distanceUnit, quantityType: HKQuantityType(.distanceWalkingRunning))
+            
+            return try await withCheckedThrowingContinuation { continuation in
+                let q = HKSampleQuery(
+                    sampleType: .workoutType(),
+                    predicate: predicate,
+                    limit: limit,
+                    sortDescriptors: getSortDescriptors(ascending: options.ascending ?? true)
+                ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
+                    if let error = error {
+                        return continuation.resume(throwing: error)
+                    }
+                    
+                    guard let samples = samples else {
+                        return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response"))
+                    }
+                    
+                    let workoutProxies = samples.compactMap { s in
+                        if let workout = s as? HKWorkout {
+                            let sample = mapWorkout(
+                                workout: workout,
+                                distanceUnit: distanceUnit,
+                                energyUnit: energyUnit
+                            )
+                            return WorkoutProxy.init(
+                                workout: workout,
+                                sample: sample
+                            )
+                        }
+                        return nil
+                    }
+                    
+                    return continuation.resume(returning: workoutProxies)
+                }
+                
+                store.execute(q)
+            }
+        }
+    }
+    
     func queryWorkoutByUUID(workoutUUID: String) throws -> Promise<HybridWorkoutProxySpec?> {
         let uuid = try initializeUUID(workoutUUID)
         
@@ -260,8 +311,8 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
     func saveWorkoutSample(
         workoutActivityType: WorkoutActivityType,
         quantities: [QuantitySampleForSaving],
-        start: Date,
-        end: Date,
+        startDate: Date,
+        endDate: Date,
         totals: WorkoutTotals,
         metadata: AnyMapHolder
     ) throws -> Promise<String> {
@@ -269,7 +320,7 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
         let type = try initializeWorkoutActivityType(UInt(workoutActivityType.rawValue))
         
         // if start and end both exist,  ensure that start date is before end date
-        if let startDate = start as Date?, let endDate = end as Date? {
+        if let startDate = startDate as Date?, let endDate = endDate as Date? {
             if startDate > endDate {
                 throw RuntimeError.error(withMessage: "endDate must not be less than startDate")
             }
@@ -287,8 +338,8 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
             let unitStr = quantity.unit
             let quantityVal = quantity.quantity
             let metadata = quantity.metadata
-            let quantityStart = quantity.start
-            let quantityEnd = quantity.end
+            let quantityStart = quantity.startDate
+            let quantityEnd = quantity.endDate
             let unit = HKUnit.init(from: unitStr)
             let quantity = HKQuantity.init(unit: unit, doubleValue: quantityVal)
             
@@ -334,8 +385,8 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
         if totalSwimmingStrokeCount != nil {
             workout = HKWorkout.init(
                 activityType: type,
-                start: start,
-                end: end,
+                start: startDate,
+                end: endDate,
                 workoutEvents: nil,
                 totalEnergyBurned: totalEnergyBurned,
                 totalDistance: totalDistance,
@@ -348,8 +399,8 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
                 if totalFlightsClimbed != nil {
                     workout = HKWorkout.init(
                         activityType: type,
-                        start: start,
-                        end: end,
+                        start: startDate,
+                        end: endDate,
                         workoutEvents: nil,
                         totalEnergyBurned: totalEnergyBurned,
                         totalDistance: totalDistance,
@@ -364,8 +415,8 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
         if workout == nil {
             workout = HKWorkout.init(
                 activityType: type,
-                start: start,
-                end: end,
+                start: startDate,
+                end: endDate,
                 workoutEvents: nil,
                 totalEnergyBurned: totalEnergyBurned,
                 totalDistance: totalDistance,
