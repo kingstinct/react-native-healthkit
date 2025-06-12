@@ -123,9 +123,13 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Install CocoaPods dependencies
-        working-directory: apps/example/ios
-        run: pod install
+      - name: Expo Prebuild
+        working-directory: apps/example
+        run: bunx expo prebuild --platform ios
+
+      # - name: Install CocoaPods dependencies
+      #   working-directory: apps/example/ios
+      #   run: pod install
 
       - name: Build iOS project
         working-directory: apps/example/ios
