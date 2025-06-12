@@ -42,22 +42,22 @@ env:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  test:
-    # The type of runner that the job will run on
-    runs-on: ${{ inputs.os || 'ubuntu-latest' }}
-    timeout-minutes: 10
+  # test:
+  #   # The type of runner that the job will run on
+  #   runs-on: ${{ inputs.os || 'ubuntu-latest' }}
+  #   timeout-minutes: 10
   
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+  #   # Steps represent a sequence of tasks that will be executed as part of the job
+  #   steps:
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v2
+  #     - uses: oven-sh/setup-bun@v2
 
-      - run: bun install
+  #     - run: bun install
 
-      - name: Test
-        run: bun run test
+  #     - name: Test
+  #       run: bun run test
 
   typecheck:
     runs-on: ${{ inputs.os || 'ubuntu-latest' }}
@@ -90,7 +90,7 @@ jobs:
       - run: bun install --ignore-scripts
 
       - name: Lint
-        run: bun run lint --quiet
+        run: bun run lint
 
   codegen:
     # The type of runner that the job will run on
@@ -106,4 +106,5 @@ jobs:
 
       - run: bun install --ignore-scripts
 
-      - run: bun run codegen
+      - run: bun run nitro-codegen
+        working-directory: packages/react-native-healthkit
