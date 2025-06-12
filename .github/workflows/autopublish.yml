@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  workflow_dispatch: 
+  push:
+    paths: 
+      - '.changeset/**'
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  test:
+    name: Test
+    uses: ./.github/workflows/test.yml
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    with:
+      os: ${{ matrix.os }}
+  release:
+    needs: test
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: HUSKY=0 bun install --ignore-scripts
+        env:
+          HUSKY: 0
+          
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          # This expects you to have a script called release which does a build for your packages and calls changeset publish
+          publish: bun run changeset-release
+          createGithubReleases: true
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -152,6 +152,12 @@ Example:
   // etc..
 ```
 
+## Migration to 9.0.0
+
+There are a lot of under-the-hood changes in version 9.0.0, some of them are breaking (although I've tried to reduce it as much as possible).
+- Most of all - the library has been migrated to use react-native-nitro-modules. This improves performance, type-safety and gets rid of a lot of boilerplate.
+- Naming conventions have changed - most of the HK-prefixed stuff has been removed to avoid confusion on the native side and also make the library more beautiful to look at. As an example the type previously called HKQuantityTypeIdentifier is not just QuantityTypeIdentifier on the library level.
+
 ## A note on Apple Documentation
 
 We're striving to do as straight a mapping as possible to the Native Libraries. This means that in most cases the Apple Documentation makes sense. However, when it comes to the Healthkit [Metadata Keys](https://developer.apple.com/documentation/healthkit/samples/metadata_keys) the documentation doesn't actually reflect the serialized values. For example HKMetadataKeyExternalUUID in the documentation serializes to HKExternalUUID - which is what we use.
@@ -177,3 +183,4 @@ At Kingstinct we're also able to provide enterprise-grade support for this packa
 ## License
 
 MIT
+

@@ -1,0 +1,38 @@
+{
+	"$schema": "https://nitro.margelo.com/nitro.schema.json",
+	"cxxNamespace": ["healthkit"],
+	"ios": {
+		"iosModuleName": "ReactNativeHealthkit"
+	},
+	"android": {
+		"androidCxxLibName": "ReactNativeHealthkit",
+		"androidNamespace": ["healthkit"]
+	},
+	"autolinking": {
+		"WorkoutsModule": {
+			"swift": "WorkoutsModule"
+		},
+		"CoreModule": {
+			"swift": "CoreModule"
+		},
+		"CharacteristicTypeModule": {
+			"swift": "CharacteristicTypeModule"
+		},
+		"QuantityTypeModule": {
+			"swift": "QuantityTypeModule"
+		},
+		"CategoryTypeModule": {
+			"swift": "CategoryTypeModule"
+		},
+		"CorrelationTypeModule": {
+			"swift": "CorrelationTypeModule"
+		},
+		"HeartbeatSeriesModule": {
+			"swift": "HeartbeatSeriesModule"
+		},
+		"StateOfMindModule": {
+			"swift": "StateOfMindModule"
+		}
+	},
+	"ignorePaths": ["**/node_modules"]
+}
