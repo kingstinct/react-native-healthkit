@@ -64,15 +64,6 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="auth"
-				options={{
-					title: "Auth",
-					tabBarIcon: ({ color, focused }) => (
-						<IconSymbol size={28} name={focused ? "lock.fill" : "lock"} color={color} />
-					),
-				}}
-			/>
-			<Tabs.Screen
 				name="core"
 				options={{
 					title: "Core",
