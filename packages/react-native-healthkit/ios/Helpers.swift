@@ -125,6 +125,14 @@ func sampleTypeFrom(sampleTypeIdentifier: SampleTypeIdentifier) throws -> HKSamp
     throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized sampleType with identifier \(sampleTypeIdentifier.stringValue)")
 }
 
+func sampleTypeFrom(sampleTypeIdentifierWriteable: SampleTypeIdentifierWriteable) throws -> HKSampleType {
+    if let sampleType = try sampleTypeFromStringNullable(typeIdentifier: sampleTypeIdentifierWriteable.stringValue) {
+        return sampleType
+    }
+    
+    throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized sampleType with identifier \(sampleTypeIdentifierWriteable.stringValue)")
+}
+
 private func sampleTypeFromStringNullable(typeIdentifier: String) throws -> HKSampleType? {
     if typeIdentifier.starts(with: HKQuantityTypeIdentifier_PREFIX) {
         return try initializeQuantityType(typeIdentifier)
@@ -195,16 +203,27 @@ func initializeUUID(_ uuidString: String) throws -> UUID {
 }
 
 func sampleTypesFromArray(typeIdentifiers: [SampleTypeIdentifier]) -> Set<HKSampleType> {
-    var share = Set<HKSampleType>()
-    for typeIdentifier in typeIdentifiers {
+    return Set(typeIdentifiers.compactMap { typeIdentifier in
         do {
             let sampleType = try sampleTypeFrom(sampleTypeIdentifier: typeIdentifier)
-            share.insert(sampleType)
+            return sampleType
         } catch {
             print(error.localizedDescription)
         }
-    }
-    return share
+        return nil
+    })
+}
+
+func sampleTypesFromArray(typeIdentifiersWriteable: [SampleTypeIdentifierWriteable]) -> Set<HKSampleType> {
+    return Set(typeIdentifiersWriteable.compactMap { typeIdentifier in
+        do {
+            let sampleType = try sampleTypeFrom(sampleTypeIdentifierWriteable: typeIdentifier)
+            return sampleType
+        } catch {
+            print(error.localizedDescription)
+        }
+        return nil
+    })
 }
 
 

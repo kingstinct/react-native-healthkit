@@ -72,13 +72,13 @@ class CoreModule : HybridCoreModuleSpec {
         throw RuntimeError.error(withMessage: "Got unrecognized AuthorizationStatus with value \(authStatus.rawValue)")
     }
     
-    func getRequestStatusForAuthorization(write: [SampleTypeIdentifier], read: [ObjectTypeIdentifier]) throws -> Promise<AuthorizationRequestStatus> {
-        let share = sampleTypesFromArray(typeIdentifiers: write)
-        let toRead = objectTypesFromArray(typeIdentifiers: read)
+    func getRequestStatusForAuthorization(toShare: [SampleTypeIdentifierWriteable], toRead: [ObjectTypeIdentifier]) throws -> Promise<AuthorizationRequestStatus> {
+        let toShare = sampleTypesFromArray(typeIdentifiersWriteable: toShare)
+        let toRead = objectTypesFromArray(typeIdentifiers: toRead)
         
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
-                store.getRequestStatusForAuthorization(toShare: share, read: toRead) { status, error in
+                store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) { status, error in
                     if let error = error {
                         continuation.resume(throwing: error)
                     } else {
@@ -94,9 +94,9 @@ class CoreModule : HybridCoreModuleSpec {
         }
     }
     
-    func requestAuthorization(write: [SampleTypeIdentifier], read: [ObjectTypeIdentifier]) throws -> Promise<Bool> {
-        let share = sampleTypesFromArray(typeIdentifiers: write)
-        let toRead = objectTypesFromArray(typeIdentifiers: read)
+    func requestAuthorization(toShare: [SampleTypeIdentifierWriteable], toRead: [ObjectTypeIdentifier]) throws -> Promise<Bool> {
+        let share = sampleTypesFromArray(typeIdentifiersWriteable: toShare)
+        let toRead = objectTypesFromArray(typeIdentifiers: toRead)
         
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
@@ -302,5 +302,29 @@ class CoreModule : HybridCoreModuleSpec {
         self._runningQueries.removeValue(forKey: queryId)
         
         return true
+    }
+    
+    func unsubscribeQueriesAsync(queryIds: [String]) throws -> Promise<Double> {
+        let successCount = self.unsubscribeQueries(queryIds: queryIds)
+        
+        return Promise.resolved(withResult: successCount)
+    }
+
+    func unsubscribeQueries(queryIds: [String]) -> Double {
+        let successCounts = queryIds.map { queryId in
+            if let query = self._runningQueries[queryId] {
+                store.stop(query)
+                
+                self._runningQueries.removeValue(forKey: queryId)
+                
+                return true
+            }
+            
+            print("Query with id \(queryId) not found, skipping unsubscribe")
+            
+            return false
+        }
+        
+        return Double(successCounts.filter { $0 }.count)
     }
 }

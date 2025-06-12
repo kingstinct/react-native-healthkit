@@ -1,10 +1,15 @@
 
+export type CategoryTypeIdentifierReadOnly = |
+    'HKCategoryTypeIdentifierAppleStandHour' |
+    'HKCategoryTypeIdentifierHighHeartRateEvent' |
+    'HKCategoryTypeIdentifierLowHeartRateEvent' |
+    'HKCategoryTypeIdentifierHeadphoneAudioExposureEvent'
+
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier Apple Docs }
  */
-export type CategoryTypeIdentifier =
+export type CategoryTypeIdentifierWriteable =
     'HKCategoryTypeIdentifierSleepAnalysis' |
-    'HKCategoryTypeIdentifierAppleStandHour' |
     'HKCategoryTypeIdentifierCervicalMucusQuality' |
     'HKCategoryTypeIdentifierOvulationTestResult' |
     /**
@@ -15,11 +20,10 @@ export type CategoryTypeIdentifier =
     'HKCategoryTypeIdentifierIntermenstrualBleeding' |
     'HKCategoryTypeIdentifierSexualActivity' |
     'HKCategoryTypeIdentifierMindfulSession' |
-    'HKCategoryTypeIdentifierHighHeartRateEvent' |
-    'HKCategoryTypeIdentifierLowHeartRateEvent' |
     'HKCategoryTypeIdentifierIrregularHeartRhythmEvent' |
     /**
      * @deprecated Use environmentalAudioExposureEvent instead.
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier/audioexposureevent Apple Docs }
      */
     'HKCategoryTypeIdentifierAudioExposureEvent' |
     'HKCategoryTypeIdentifierToothbrushingEvent' |
@@ -30,7 +34,6 @@ export type CategoryTypeIdentifier =
     'HKCategoryTypeIdentifierPregnancyTestResult' |
     'HKCategoryTypeIdentifierProgesteroneTestResult' |
     'HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent' |
-    'HKCategoryTypeIdentifierHeadphoneAudioExposureEvent' |
     'HKCategoryTypeIdentifierAppleWalkingSteadinessEvent' |
     'HKCategoryTypeIdentifierHandwashingEvent' |
   
@@ -88,3 +91,9 @@ export type CategoryTypeIdentifier =
      * @since iOS 18
      */
     'HKCategoryTypeIdentifierBleedingDuringPregnancy'
+
+
+/**
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier Apple Docs }
+ */
+export type CategoryTypeIdentifier = CategoryTypeIdentifierReadOnly | CategoryTypeIdentifierWriteable;

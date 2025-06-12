@@ -2,7 +2,19 @@
  * Represents a quantity type identifier.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier Apple Docs HKQuantityTypeIdentifier}
  */
-export type QuantityTypeIdentifier =
+export type QuantityTypeIdentifierReadOnly = |
+/**
+     * Walking Heart Rate Average
+     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierwalkingheartrateaverage Apple Docs HKQuantityTypeIdentifierWalkingHeartRateAverage}
+     * @since iOS 11.0
+     */
+    'HKQuantityTypeIdentifierWalkingHeartRateAverage'
+
+/**
+ * Represents a quantity type identifier.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier Apple Docs HKQuantityTypeIdentifier}
+ */
+export type QuantityTypeIdentifierWriteable =
     /**
      * Body Mass Index
      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbodymassindex Apple Docs HKQuantityTypeIdentifierBodyMassIndex}
@@ -154,12 +166,6 @@ export type QuantityTypeIdentifier =
      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierrestingheartrate Apple Docs HKQuantityTypeIdentifierRestingHeartRate}
      */
     'HKQuantityTypeIdentifierRestingHeartRate' |
-    /**
-     * Walking Heart Rate Average
-     * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierwalkingheartrateaverage Apple Docs HKQuantityTypeIdentifierWalkingHeartRateAverage}
-     * @since iOS 11.0
-     */
-    'HKQuantityTypeIdentifierWalkingHeartRateAverage' |
     /**
      * Heart Rate Variability SDNN
      * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierheartratevariabilitysdnn Apple Docs HKQuantityTypeIdentifierHeartRateVariabilitySDNN}
@@ -746,3 +752,6 @@ export type QuantityTypeIdentifier =
      * @since iOS 18
      */
     'HKQuantityTypeIdentifierWorkoutEffortScore'
+
+
+export type QuantityTypeIdentifier = QuantityTypeIdentifierReadOnly | QuantityTypeIdentifierWriteable

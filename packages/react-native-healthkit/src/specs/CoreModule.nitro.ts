@@ -1,11 +1,11 @@
 import type { HybridObject } from "react-native-nitro-modules";
-import type { ObjectTypeIdentifier, SampleTypeIdentifier } from "../types/Shared";
-import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
+import type { ObjectTypeIdentifier, SampleTypeIdentifier, SampleTypeIdentifierWriteable } from "../types/Shared";
 import type { UpdateFrequency } from "../types/Background";
 import type { IdentifierWithUnit } from "../types/Units";
 import type { Source } from "../types/Source";
 import type { OnChangeCallbackArgs } from "../types/Subscriptons";
 import type { AuthorizationRequestStatus, AuthorizationStatus } from "../types/Auth";
+import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
 
 export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
 /**
@@ -56,6 +56,9 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
     unsubscribeQuery(queryId: string): boolean;
     unsubscribeQueryAsync(queryId: string): Promise<boolean>;
 
+    unsubscribeQueries(queryIds: string[]): number;
+    unsubscribeQueriesAsync(queryIds: string[]): Promise<number>;
+
         /**
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614154-authorizationstatus Apple Docs }
    */
@@ -66,14 +69,14 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
      * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/2994346-getrequeststatusforauthorization Apple Docs }
      */
     getRequestStatusForAuthorization(
-        write: SampleTypeIdentifier[],
-        read: ObjectTypeIdentifier[]
+        toShare: SampleTypeIdentifierWriteable[],
+        toRead: ObjectTypeIdentifier[]
     ): Promise<AuthorizationRequestStatus>;
     /**
      * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614152-requestauthorization Apple Docs }
      */
     requestAuthorization(
-        write: SampleTypeIdentifier[],
-        read: ObjectTypeIdentifier[]
+        toShare: SampleTypeIdentifierWriteable[],
+        toRead: ObjectTypeIdentifier[]
     ): Promise<boolean>;
 }

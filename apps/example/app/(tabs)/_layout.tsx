@@ -103,6 +103,16 @@ export default function TabLayout() {
 					),
 				}}
 			/>
+
+			<Tabs.Screen
+				name="subscriptions"
+				options={{
+					title: "Subscriptions",
+					tabBarIcon: ({ color, focused }) => (
+						<IconSymbol size={28} name={focused ? "bell.fill" : "bell"} color={color} />
+					),
+				}}
+			/>
 		</Tabs>
 	);
 }

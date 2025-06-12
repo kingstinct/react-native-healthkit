@@ -14,14 +14,20 @@ const transformIdentifierToName = (identifier: SampleTypeIdentifier) => {
 const Subscriptions = () => {
     const [events, setEvents] = useState<{ sampleTypeIdentifier: SampleTypeIdentifier, timestamp: Date }[]>([]);
     useEffect(() => {
-        AllSampleTypesInApp.map((sampleType) => {
-            Core.subscribeToObserverQuery(sampleType, (args) => {
+        const subscriptionIds = AllSampleTypesInApp.map((sampleType) => {
+            return Core.subscribeToObserverQuery(sampleType, (args) => {
                 if(args.errorMessage){
                     alert(`Error in observer query for ${sampleType}: ${args.errorMessage}`);
                 }
                 setEvents((prevEvents) => [{ sampleTypeIdentifier: args.typeIdentifier, timestamp: new Date() }, ...prevEvents]);
             })
         })
+
+        return () => {
+            subscriptionIds.forEach((subscriptionId) => {
+                Core.unsubscribeQuery(subscriptionId);
+            });
+        }
         
     }, [])
 

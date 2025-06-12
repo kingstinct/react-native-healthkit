@@ -1,6 +1,6 @@
 
-import type { QuantityTypeIdentifier } from "./QuantityTypeIdentifier";
-import type { CategoryTypeIdentifier } from "./CategoryTypeIdentifier";
+import type { QuantityTypeIdentifier, QuantityTypeIdentifierWriteable } from "./QuantityTypeIdentifier";
+import type { CategoryTypeIdentifier, CategoryTypeIdentifierWriteable } from "./CategoryTypeIdentifier";
 
 import type { WorkoutTypeIdentifier as WorkoutTypeIdentifier, StateOfMindTypeIdentifier as StateOfMindTypeIdentifier, HeartbeatSeriesTypeIdentifier as HeartbeatSeriesTypeIdentifier, WorkoutRouteTypeIdentifier as WorkoutRouteTypeIdentifier } from "./Constants";
 
@@ -44,6 +44,16 @@ export type SampleTypeIdentifier =
     | CategoryTypeIdentifier
     | CorrelationTypeIdentifier
     | QuantityTypeIdentifier
+    | typeof StateOfMindTypeIdentifier
+    | typeof AudiogramTypeIdentifier
+    | typeof HeartbeatSeriesTypeIdentifier
+    | typeof WorkoutRouteTypeIdentifier
+    | typeof WorkoutTypeIdentifier
+
+export type SampleTypeIdentifierWriteable =
+    | CategoryTypeIdentifierWriteable
+    | CorrelationTypeIdentifier
+    | QuantityTypeIdentifierWriteable
     | typeof StateOfMindTypeIdentifier
     | typeof AudiogramTypeIdentifier
     | typeof HeartbeatSeriesTypeIdentifier
