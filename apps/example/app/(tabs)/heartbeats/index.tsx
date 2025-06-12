@@ -1,11 +1,11 @@
-import { HeartbeatSeries } from "react-native-healthkit";
+import { HeartbeatSeries } from "@kingstinct/react-native-healthkit";
 import { Button, Host, List } from "@expo/ui/swift-ui";
 import { useCallback, useEffect, useState } from "react";
 import { ListItem } from "@/components/SwiftListItem";
 import { router } from "expo-router";
 import { View } from "react-native";
 import { Text, VStack } from "@expo/ui/swift-ui-primitives";
-import { HeartbeatSeriesSample } from "react-native-healthkit/types/HeartbeatSeries";
+import type { HeartbeatSeriesSample } from "@kingstinct/react-native-healthkit/types/HeartbeatSeries";
 
 export default function HeartbeatSeriesScreen() {
 	const [heartbeatSeries, setHeartbeatSeries] = useState<

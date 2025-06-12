@@ -9,7 +9,11 @@ import type {
 	CategorySample,
 	CategoryValueForIdentifier,
 	CategorySamplesWithAnchorResponse,
+	MetadataForCategoryIdentifier,
+	CategorySampleTyped,
+	CategorySamplesWithAnchorResponseTyped,
 } from "../types/CategoryType";
+import type { InterfaceAssertion } from "../types/InterfaceVerification";
 
 export interface CategoryTypeModule extends HybridObject<{ ios: "swift" }> {
 	saveCategorySample(
@@ -29,4 +33,28 @@ export interface CategoryTypeModule extends HybridObject<{ ios: "swift" }> {
 		identifier: CategoryTypeIdentifier,
 		options: QueryOptionsWithAnchor,
 	): Promise<CategorySamplesWithAnchorResponse>;
+}
+
+// Interface verification to ensure CategoryTypeModule and CategoryTypeModuleTyped stay in sync
+// This will cause a TypeScript compilation error if the interfaces have different method names or parameter counts
+const _interfaceVerification: InterfaceAssertion<CategoryTypeModule, CategoryTypeModuleTyped, keyof HybridObject> = true;
+
+export interface CategoryTypeModuleTyped {
+	saveCategorySample<T extends CategoryTypeIdentifier>(
+		identifier: T,
+		value: CategoryValueForIdentifier,
+		startDate: Date,
+		endDate: Date,
+		metadata: MetadataForCategoryIdentifier<T>,
+	): Promise<boolean>;
+
+	queryCategorySamples<T extends CategoryTypeIdentifier>(
+		identifier: T,
+		options?: QueryOptionsWithSortOrder,
+	): Promise<readonly CategorySampleTyped<T>[]>;
+
+	queryCategorySamplesWithAnchor<T extends CategoryTypeIdentifier>(
+		identifier: T,
+		options: QueryOptionsWithAnchor,
+	): Promise<CategorySamplesWithAnchorResponseTyped<T>>;
 }

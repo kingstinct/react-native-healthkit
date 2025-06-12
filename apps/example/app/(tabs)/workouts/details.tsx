@@ -3,14 +3,14 @@ import { enumKeyLookup } from "@/utils/enumKeyLookup";
 import { useLocalSearchParams } from "expo-router";
 import { Section } from "@expo/ui/swift-ui-primitives";
 import { ListItem } from "@/components/SwiftListItem";
-import { Workouts } from "react-native-healthkit";
+import { Workouts } from "@kingstinct/react-native-healthkit";
 import { useEffect, useState } from "react";
 import {
 	WorkoutActivityType,
 	WorkoutEventType,
-	WorkoutRoute,
-} from "react-native-healthkit/types/Workouts";
-import { WorkoutProxy } from "react-native-healthkit/specs/WorkoutProxy.nitro";
+	type WorkoutRoute,
+} from "@kingstinct/react-native-healthkit/types/Workouts";
+import type { WorkoutProxy } from "@kingstinct/react-native-healthkit/specs/WorkoutProxy.nitro";
 
 const workoutActivityTypeStrings = enumKeyLookup(WorkoutActivityType);
 

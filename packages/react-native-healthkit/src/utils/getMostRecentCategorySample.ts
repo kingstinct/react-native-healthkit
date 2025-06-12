@@ -2,8 +2,8 @@ import { CategoryTypes } from "../"
 import type { CategoryTypeIdentifier } from "../types/CategoryTypeIdentifier"
 
 
-export async function getMostRecentCategorySample(
-  identifier: CategoryTypeIdentifier,
+export async function getMostRecentCategorySample<T extends CategoryTypeIdentifier>(
+  identifier: T,
 ) {
   const samples = await CategoryTypes.queryCategorySamples(identifier, {
     limit: 1,

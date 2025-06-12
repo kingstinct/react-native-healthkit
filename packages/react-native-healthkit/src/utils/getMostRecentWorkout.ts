@@ -10,7 +10,7 @@ const getMostRecentWorkout = async (options: Pick<WorkoutQueryOptions, 'distance
     distanceUnit: options?.distanceUnit,
   })
 
-  return workouts[0] || null
+  return workouts[0]
 }
 
 export default getMostRecentWorkout

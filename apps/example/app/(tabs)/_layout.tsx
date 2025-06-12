@@ -7,12 +7,12 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Core } from "react-native-healthkit";
+import { Core } from "@kingstinct/react-native-healthkit";
 import {
 	AllObjectTypesInApp,
 	AllSampleTypesInApp,
 } from "@/constants/AllUsedIdentifiersInApp";
-import { AuthorizationRequestStatus } from "react-native-healthkit/types/Auth";
+import { AuthorizationRequestStatus } from "@kingstinct/react-native-healthkit/types/Auth";
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();

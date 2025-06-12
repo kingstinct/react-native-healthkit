@@ -191,7 +191,24 @@ export interface CategorySample {
 	readonly sourceRevision?: SourceRevision;
 }
 
-export type MetadataMapperForCategoryIdentifier<
+export interface CategorySamplesWithAnchorResponseTyped<T extends CategoryTypeIdentifier> {
+	readonly samples: readonly CategorySampleTyped<T>[];
+	readonly deletedSamples: readonly DeletedSample[];
+	readonly newAnchor: string;
+}
+
+export interface CategorySampleTyped<T extends CategoryTypeIdentifier> {
+	readonly uuid: string;
+	readonly device?: Device;
+	readonly categoryType: T;
+	readonly startDate: Date;
+	readonly endDate: Date;
+	readonly value: CategoryValueForIdentifier<T>;
+	readonly metadata: MetadataForCategoryIdentifier<T>;
+	readonly sourceRevision?: SourceRevision;
+}
+
+export type MetadataForCategoryIdentifier<
 	T extends CategoryTypeIdentifier = CategoryTypeIdentifier,
 > = T extends "HKCategoryTypeIdentifierSexualActivity"
 	? GenericMetadata & {
@@ -204,7 +221,7 @@ export type MetadataMapperForCategoryIdentifier<
 		: GenericMetadata;
 
 export type CategoryValueForIdentifier<
-	T extends CategoryTypeIdentifier = CategoryTypeIdentifier,
+	T extends CategoryTypeIdentifier,
 > = T extends "HKCategoryTypeIdentifierCervicalMucusQuality"
 	? CategoryValueCervicalMucusQuality
 	: T extends "CategoryTypeIdentifierMenstrualFlow"

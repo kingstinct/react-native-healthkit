@@ -3,8 +3,8 @@ import { AllSampleTypesInApp } from "@/constants/AllUsedIdentifiersInApp";
 import { List } from "@expo/ui/swift-ui";
 import { Section, Text } from "@expo/ui/swift-ui-primitives";
 import { useEffect, useState } from "react";
-import { Core } from "react-native-healthkit";
-import { SampleTypeIdentifier } from "react-native-healthkit/types/Shared";
+import { Core } from "@kingstinct/react-native-healthkit";
+import type { SampleTypeIdentifier } from "@kingstinct/react-native-healthkit/types/Shared";
 
 const transformIdentifierToName = (identifier: SampleTypeIdentifier) => {
 	return identifier
@@ -34,9 +34,7 @@ const Subscriptions = () => {
 		});
 
 		return () => {
-			subscriptionIds.forEach((subscriptionId) => {
-				Core.unsubscribeQuery(subscriptionId);
-			});
+			Core.unsubscribeQueries(subscriptionIds);
 		};
 	}, []);
 
@@ -46,7 +44,7 @@ const Subscriptions = () => {
 			<Section title="Events">
 				{events.map((event, index) => (
 					<ListItem
-						key={index}
+						key={event.sampleTypeIdentifier + event.timestamp.toLocaleTimeString()}
 						title={transformIdentifierToName(event.sampleTypeIdentifier)}
 						subtitle={`${event.timestamp.toLocaleTimeString()}`}
 					/>

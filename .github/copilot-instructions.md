@@ -22,23 +22,10 @@ cd apps/example && bun start
 
 ## Build Verification Rule
 
-IMPORTANT: After making code changes, you MUST use the XcodeBuildMCP commands to build and verify the project compiles without errors:
+IMPORTANT: After making code changes, you MUST: 
+- first run `bun typecheck` and `bun lint` to ensure code quality and type safety. Iterate on these until they pass.
+- finally use xcodebuild to build and verify the project compiles without errors. Build the reactnativehealthkitexample scheme for iOS Simulator using specific simulator UUID to avoid conflicts. Note: Using simulatorId instead of simulatorName to avoid conflicts when multiple simulators have the same name.
 
-First, discover available schemes:
-
-Use MCP tool from XCodeBuildMCP: list_schems_ws with workspacePath: "/Users/robertherber/code/react-native-healthkit-nitro/apps/example/ios/reactnativehealthkitexample.xcworkspace"
-
-Build the reactnativehealthkitexample scheme for iOS Simulator using specific simulator UUID to avoid conflicts:
-
-Use MCP tool from XcodeBuildMCP: build_ios_sim_id_ws with parameters:
-{
-  workspacePath: "/Users/robertherber/code/react-native-healthkit-nitro/apps/example/ios/reactnativehealthkitexample.xcworkspace", 
-  scheme: "reactnativehealthkitexample", 
-  simulatorId: "EA08E938-A9F5-4067-A0E8-5BC013FDB4F1"
-}
-
-Note: Using simulatorId instead of simulatorName to avoid conflicts when multiple simulators have the same name.
-
-If there are build errors, fix them before considering the task complete.
+If there are build or validation errors, fix them before considering the task complete.
 
 This ensures code changes are syntactically correct and don't break the build.

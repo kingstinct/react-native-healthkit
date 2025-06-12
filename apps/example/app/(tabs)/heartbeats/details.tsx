@@ -2,9 +2,9 @@ import { List } from "@expo/ui/swift-ui";
 import { useLocalSearchParams } from "expo-router";
 import { Section } from "@expo/ui/swift-ui-primitives";
 import { ListItem } from "@/components/SwiftListItem";
-import { HeartbeatSeries } from "react-native-healthkit";
+import { HeartbeatSeries } from "@kingstinct/react-native-healthkit";
 import { useEffect, useState } from "react";
-import { HeartbeatSeriesSample } from "react-native-healthkit/types/HeartbeatSeries";
+import { HeartbeatSeriesSample } from "@kingstinct/react-native-healthkit/types/HeartbeatSeries";
 
 export default function HeartbeatSeriesDetails() {
 	const { seriesId } = useLocalSearchParams<{ seriesId?: string }>();

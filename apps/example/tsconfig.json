@@ -6,10 +6,10 @@
 		"strictNullChecks": true,
 		"paths": {
 			"@/*": ["./*"],
-			"react-native-healthkit": [
+			"@kingstinct/react-native-healthkit": [
 				"../../packages/react-native-healthkit/src/index.ts"
 			],
-			"react-native-healthkit/*": [
+			"@kingstinct/react-native-healthkit/*": [
 				"../../packages/react-native-healthkit/src/*"
 			]
 		}

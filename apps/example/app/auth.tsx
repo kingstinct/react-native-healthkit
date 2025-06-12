@@ -8,11 +8,11 @@ import { HStack, Text, VStack } from "@expo/ui/swift-ui-primitives";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 
-import { Core } from "react-native-healthkit";
+import { Core } from "@kingstinct/react-native-healthkit";
 import {
 	AuthorizationRequestStatus,
 	AuthorizationStatus,
-} from "react-native-healthkit/types/Auth";
+} from "@kingstinct/react-native-healthkit/types/Auth";
 
 const authEnumLookup = enumKeyLookup(AuthorizationStatus);
 
@@ -24,7 +24,7 @@ export default function AuthScreen() {
 				AllObjectTypesInApp,
 			);
 
-			alert("response: " + res);
+			alert(`response: ${res}`);
 
 			router.replace("/");
 		} catch (error) {

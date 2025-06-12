@@ -1,4 +1,4 @@
-import { Core, QuantityTypes } from "react-native-healthkit";
+import { Core, QuantityTypes } from "@kingstinct/react-native-healthkit";
 import {
 	Button,
 	ContextMenu,
@@ -8,9 +8,9 @@ import {
 } from "@expo/ui/swift-ui";
 import { useCallback, useEffect, useState } from "react";
 import { ListItem } from "@/components/SwiftListItem";
-import { QuantitySample } from "react-native-healthkit/types/QuantitySample";
+import type { QuantitySample } from "@kingstinct/react-native-healthkit/types/QuantitySample";
 import { View } from "react-native";
-import { QuantityTypeIdentifier } from "react-native-healthkit/types/QuantityTypeIdentifier";
+import type { QuantityTypeIdentifier } from "@kingstinct/react-native-healthkit/types/QuantityTypeIdentifier";
 import { AllQuantityTypeIdentifierInApp } from "@/constants/AllUsedIdentifiersInApp";
 import { QueryInfo } from "@/components/QueryInfo";
 

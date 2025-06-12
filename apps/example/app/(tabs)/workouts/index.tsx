@@ -1,4 +1,4 @@
-import { Workouts } from "react-native-healthkit";
+import { Workouts } from "@kingstinct/react-native-healthkit";
 import { List } from "@expo/ui/swift-ui";
 import { useCallback, useEffect, useState } from "react";
 import { ListItem } from "@/components/SwiftListItem";
@@ -7,8 +7,8 @@ import { router } from "expo-router";
 import { View } from "react-native";
 import {
 	WorkoutActivityType,
-	WorkoutSample,
-} from "react-native-healthkit/types/Workouts";
+	type WorkoutSample,
+} from "@kingstinct/react-native-healthkit/types/Workouts";
 import { QueryInfo } from "@/components/QueryInfo";
 
 const workoutActivityTypeStrings = enumKeyLookup(WorkoutActivityType);

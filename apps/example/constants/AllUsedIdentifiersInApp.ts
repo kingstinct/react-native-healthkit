@@ -1,10 +1,10 @@
-import type { CharacteristicTypeIdentifier } from "react-native-healthkit/types/Characteristics";
-import type { QuantityTypeIdentifierWriteable } from "react-native-healthkit/types/QuantityTypeIdentifier";
+import type { CharacteristicTypeIdentifier } from "@kingstinct/react-native-healthkit/types/Characteristics";
+import type { QuantityTypeIdentifierWriteable } from "@kingstinct/react-native-healthkit/types/QuantityTypeIdentifier";
 import type {
 	ObjectTypeIdentifier,
 	SampleTypeIdentifierWriteable,
-} from "react-native-healthkit/types/Shared";
-import type { CategoryTypeIdentifierWriteable } from "react-native-healthkit/types/CategoryTypeIdentifier";
+} from "@kingstinct/react-native-healthkit/types/Shared";
+import type { CategoryTypeIdentifierWriteable } from "@kingstinct/react-native-healthkit/types/CategoryTypeIdentifier";
 
 export const AllQuantityTypeIdentifierInApp: QuantityTypeIdentifierWriteable[] = [
 	"HKQuantityTypeIdentifierStepCount",

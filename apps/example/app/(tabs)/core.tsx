@@ -1,15 +1,15 @@
-import { ListItem, ListItemProps } from "@/components/SwiftListItem";
+import { ListItem, type ListItemProps } from "@/components/SwiftListItem";
 import { enumKeyLookup } from "@/utils/enumKeyLookup";
 import { List } from "@expo/ui/swift-ui";
 import { Section } from "@expo/ui/swift-ui-primitives";
 import { useEffect, useState } from "react";
-import { Characteristics, Core } from "react-native-healthkit";
+import { Characteristics, Core } from "@kingstinct/react-native-healthkit";
 import {
 	BiologicalSex,
 	BloodType,
 	FitzpatrickSkinType,
 	WheelchairUse,
-} from "react-native-healthkit/types/Characteristics";
+} from "@kingstinct/react-native-healthkit/types/Characteristics";
 
 const color = "#007AFF"; // Default color for the label, can be customized
 
