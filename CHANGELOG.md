@@ -1,3 +1,24 @@
+# [8.7.0](https://github.com/kingstinct/react-native-healthkit/compare/v8.5.0...v8.7.0) (2025-06-12)
+
+
+### Bug Fixes
+
+* added notation to saveStateOfMindSample ([60b19c5](https://github.com/kingstinct/react-native-healthkit/commit/60b19c5109487976d0d6fae444fe40b3ebbc40ae))
+* ensures valence does not exceed -1.0 and 1.0 ([bcec3d6](https://github.com/kingstinct/react-native-healthkit/commit/bcec3d6e07ea91dbe2af5a3aa95cdefc2dbb95cf))
+* incorrectly referenced HKStateOfMind.Label. Corrected to HKStateOfMind.Association ([0ec66eb](https://github.com/kingstinct/react-native-healthkit/commit/0ec66eb447d7c6f932d6aec020c497ca4de3b091))
+* remove not needed decoder ([4f4dafb](https://github.com/kingstinct/react-native-healthkit/commit/4f4dafbd59c06c93004240aab2a132def4452132))
+* replace bridge checks with _hasListeners check ([1cd2f11](https://github.com/kingstinct/react-native-healthkit/commit/1cd2f116d25bc1041b1a7ba24f3d9f903b9fdd75))
+
+
+### Features
+
+* add deleteWorkoutSample ([325535b](https://github.com/kingstinct/react-native-healthkit/commit/325535b9cf45b320a6583679595c639a1ed491e6))
+* add deleteWorkoutSample example ([10822b6](https://github.com/kingstinct/react-native-healthkit/commit/10822b67938d4a2636ac2dff2c2d87c4481495d8))
+* add handler and events support ([21b02ef](https://github.com/kingstinct/react-native-healthkit/commit/21b02ef2a0a6f6e2e2abbf09af2b8ba48eb4726b))
+* add workout event support ([12618e7](https://github.com/kingstinct/react-native-healthkit/commit/12618e716fcc76f00e0fbe0dd7d828bb21715c64))
+* added saveStateOfMindSample ([a2d4321](https://github.com/kingstinct/react-native-healthkit/commit/a2d43210b9593605be48eb819b31a468d90dcca1))
+* make sharable data dynamic ([8f78d16](https://github.com/kingstinct/react-native-healthkit/commit/8f78d162a83d48c108c76cc904ef2f32d260f407))
+
 # [8.5.0](https://github.com/kingstinct/react-native-healthkit/compare/v8.3.0...v8.5.0) (2025-01-23)
 
 
