@@ -1,0 +1,42 @@
+import {
+  useState, useEffect, useCallback, useRef,
+} from 'react'
+
+import useSubscribeToChanges from './useSubscribeToChanges'
+
+import { QuantityTypes } from '..'
+import type { QueryStatisticsResponse, StatisticsOptions } from '../types/QuantityType'
+import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
+
+export function useStatisticsForQuantity<TIdentifier extends QuantityTypeIdentifier>(
+  identifier: TIdentifier,
+  options: readonly StatisticsOptions[],
+  from: Date,
+  to?: Date,
+  unit?: string,
+) {
+  const [result, setResult] = useState<QueryStatisticsResponse | null>(null)
+
+  const optionsRef = useRef(options)
+
+  useEffect(() => {
+    optionsRef.current = options
+  }, [options])
+
+  const update = useCallback(async () => {
+    const res = await QuantityTypes.queryStatisticsForQuantity(identifier, optionsRef.current, { from, to, unit })
+    setResult(res)
+  }, [
+    identifier, from, to, unit,
+  ])
+
+  useEffect(() => {
+    void update()
+  }, [update])
+
+  useSubscribeToChanges(identifier, update)
+
+  return result
+}
+
+export default useStatisticsForQuantity

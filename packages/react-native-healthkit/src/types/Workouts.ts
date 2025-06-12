@@ -179,6 +179,15 @@ export interface WorkoutQueryOptionsWithAnchor {
 	anchor?: string;
 }
 
+export interface WorkoutQueryOptions {
+	energyUnit?: string;
+	distanceUnit?: string;
+	from?: Date;
+	to?: Date;
+	limit?: number;
+	ascending?: boolean;
+}
+
 export interface WorkoutLocation {
 	readonly altitude: number;
 	readonly course: number;

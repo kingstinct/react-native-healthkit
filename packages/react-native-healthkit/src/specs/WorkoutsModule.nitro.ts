@@ -2,6 +2,7 @@ import type { AnyMap, HybridObject } from "react-native-nitro-modules";
 import type {
 	QueryWorkoutSamplesWithAnchorResponse,
 	WorkoutActivityType,
+	WorkoutQueryOptions,
 	WorkoutQueryOptionsWithAnchor,
 	WorkoutTotals,
 } from "../types/Workouts";
@@ -23,4 +24,8 @@ export interface WorkoutsModule extends HybridObject<{ ios: "swift" }> {
 	queryWorkoutSamplesWithAnchor(
 		options: WorkoutQueryOptionsWithAnchor,
 	): Promise<QueryWorkoutSamplesWithAnchorResponse>;
+
+	queryWorkoutSamples(
+		options: WorkoutQueryOptions,
+	): Promise<WorkoutProxy[]>;
 }

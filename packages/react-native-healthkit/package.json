@@ -1,6 +1,6 @@
 {
 	"name": "@kingstinct/react-native-healthkit",
-	"version": "8.5.0",
+	"version": "9.0.0",
 	"description": "React Native bindings for HealthKit",
 	"main": "lib/index",
 	"module": "lib/index",
@@ -29,10 +29,11 @@
 		"typecheck": "tsc --noEmit",
 		"lint": "bunx @biomejs/biome format --write",
 		"typescript": "tsc",
-		"codegen": "tsc && nitro-codegen --logLevel=\"debug\""
+		"codegen": "tsc && nitro-codegen --logLevel=\"debug\"",
+		"test": "bun test"
 	},
 	"keywords": ["react-native", "nitro", "healthkit", "ios", "typescript"],
-	"funding":{
+	"funding": {
 		"type": "github",
 		"url": "https://github.com/sponsors/kingstinct"
 	},
@@ -51,6 +52,7 @@
 		"access": "public"
 	},
 	"devDependencies": {
+		"@testing-library/react-native": "^13.2.0",
 		"@types/react": "~19.0.14",
 		"nitro-codegen": "^0.26.2",
 		"react": "19.0.0",
