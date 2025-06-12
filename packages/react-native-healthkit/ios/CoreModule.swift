@@ -266,11 +266,9 @@ class CoreModule : HybridCoreModuleSpec {
             handler: @escaping HKObserverQueryCompletionHandler,
             error: Error?
         ) {
-            if error == nil {
-                DispatchQueue.main.async {
-                    callback(OnChangeCallbackArgs(typeIdentifier: typeIdentifier, errorMessage: error?.localizedDescription))
-                    handler()
-                }
+            DispatchQueue.main.async {
+                callback(OnChangeCallbackArgs(typeIdentifier: typeIdentifier, errorMessage: error?.localizedDescription))
+                handler()
             }
         }
         

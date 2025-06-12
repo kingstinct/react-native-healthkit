@@ -3,7 +3,7 @@
 This file contains instructions for Copilot to follow when working with code in this repository.
 
 ## Project Overview
-This repository is a monorepo centering around the package react-native-healthkit. It exposes Apple Healthkit APIs to React Native and uses react-native-nitro-modules with nitrogen to generate type-safe types.
+This repository is a monorepo centering around the package react-native-healthkit. It exposes Apple Healthkit APIs to React Native and uses react-native-nitro-modules with nitrogen to generate type-safe types. We use React Native and Expo.
 
 ## Development Commands
 ```bash
