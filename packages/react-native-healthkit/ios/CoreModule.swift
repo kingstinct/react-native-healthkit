@@ -69,7 +69,7 @@ class CoreModule : HybridCoreModuleSpec {
             return authStatus
         }
         
-        throw RuntimeError.error(withMessage: "Got unrecognized AuthorizationStatus with value \(authStatus.rawValue)")
+        throw RuntimeError.error(withMessage: "[react-native-healthkit] got unrecognized AuthorizationStatus with value \(authStatus.rawValue)")
     }
     
     func getRequestStatusForAuthorization(toShare: [SampleTypeIdentifierWriteable], toRead: [ObjectTypeIdentifier]) throws -> Promise<AuthorizationRequestStatus> {

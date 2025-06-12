@@ -5,12 +5,12 @@
 		"noUncheckedIndexedAccess": true,
 		"strictNullChecks": true,
 		"paths": {
-			"@/*": ["./*"],
+			"@/*": ["./apps/example/*"],
 			"react-native-healthkit": [
-				"../../packages/react-native-healthkit/src/index.ts"
+				"./packages/react-native-healthkit/src/index.ts"
 			],
 			"react-native-healthkit/*": [
-				"../../packages/react-native-healthkit/src/*"
+				"./packages/react-native-healthkit/src/*"
 			]
 		}
 	},

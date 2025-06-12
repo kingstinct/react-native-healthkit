@@ -1,57 +1,65 @@
 import type { AnyMap, HybridObject } from "react-native-nitro-modules";
 import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
 import type { QuantitySample } from "../types/QuantitySample";
-import type { QueryOptionsWithAnchorAndUnit, QueryOptionsWithSortOrderAndUnit } from "../types/QueryOptions";
-import type { IntervalComponents, QuantitySamplesWithAnchorResponse, QueryStatisticsResponse, StatisticsOptions, StatisticsQueryOptions } from "../types/QuantityType";
+import type {
+	QueryOptionsWithAnchorAndUnit,
+	QueryOptionsWithSortOrderAndUnit,
+} from "../types/QueryOptions";
+import type {
+	IntervalComponents,
+	QuantitySamplesWithAnchorResponse,
+	QueryStatisticsResponse,
+	StatisticsOptions,
+	StatisticsQueryOptions,
+} from "../types/QuantityType";
 
-export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
+export interface QuantityTypeModule extends HybridObject<{ ios: "swift" }> {
+	isQuantityCompatibleWithUnit(
+		identifier: QuantityTypeIdentifier,
+		unit: string,
+	): boolean;
 
-  isQuantityCompatibleWithUnit(
-    identifier: QuantityTypeIdentifier,
-    unit: string
-  ): boolean;
+	saveQuantitySample(
+		identifier: QuantityTypeIdentifier,
+		unit: string,
+		value: number,
+		start: Date,
+		end: Date,
+		metadata: AnyMap,
+	): Promise<boolean>;
 
-  saveQuantitySample(
-    identifier: QuantityTypeIdentifier,
-    unit: string,
-    value: number,
-    start: Date,
-    end: Date,
-    metadata: AnyMap
-  ): Promise<boolean>;
+	deleteQuantitySample(
+		identifier: QuantityTypeIdentifier,
+		uuid: string,
+	): Promise<boolean>;
 
-  deleteQuantitySample(
-    identifier: QuantityTypeIdentifier,
-    uuid: string
-  ): Promise<boolean>;
-  
-  deleteQuantitySamplesBetween(
-    identifier: QuantityTypeIdentifier,  
-    from: Date,
-    to: Date
-  ): Promise<boolean>;
-  
-  queryQuantitySamples(
-    identifier: QuantityTypeIdentifier,
-    options?: QueryOptionsWithSortOrderAndUnit
-  ): Promise<readonly QuantitySample[]>;
+	deleteQuantitySamplesBetween(
+		identifier: QuantityTypeIdentifier,
+		from: Date,
+		to: Date,
+	): Promise<boolean>;
 
-  queryStatisticsForQuantity(
-    identifier: QuantityTypeIdentifier,
-    statistics: readonly StatisticsOptions[],
-    options?: StatisticsQueryOptions
-  ): Promise<QueryStatisticsResponse>;
+	queryQuantitySamples(
+		identifier: QuantityTypeIdentifier,
+		options?: QueryOptionsWithSortOrderAndUnit,
+	): Promise<readonly QuantitySample[]>;
 
-  queryStatisticsCollectionForQuantity(
-    identifier: QuantityTypeIdentifier,
-    statistics: readonly StatisticsOptions[],
-    anchorDate: string,
-    intervalComponents: IntervalComponents,
-    options?: StatisticsQueryOptions
-  ): Promise<readonly QueryStatisticsResponse[]>;
+	queryStatisticsForQuantity(
+		identifier: QuantityTypeIdentifier,
+		statistics: readonly StatisticsOptions[],
+		options?: StatisticsQueryOptions,
+	): Promise<QueryStatisticsResponse>;
 
-  queryQuantitySamplesWithAnchor(
-    identifier: QuantityTypeIdentifier,
-    options: QueryOptionsWithAnchorAndUnit
-  ): Promise<QuantitySamplesWithAnchorResponse>;
+	queryStatisticsCollectionForQuantity(
+		identifier: QuantityTypeIdentifier,
+		statistics: readonly StatisticsOptions[],
+		anchorDate: string,
+		intervalComponents: IntervalComponents,
+		options?: StatisticsQueryOptions,
+	): Promise<readonly QueryStatisticsResponse[]>;
+
+	queryQuantitySamplesWithAnchor(
+		identifier: QuantityTypeIdentifier,
+		options: QueryOptionsWithAnchorAndUnit,
+	): Promise<QuantitySamplesWithAnchorResponse>;
 }

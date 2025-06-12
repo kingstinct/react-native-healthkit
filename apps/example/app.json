@@ -1,49 +1,52 @@
 {
-  "expo": {
-    "name": "react-native-healthkit-example",
-    "slug": "react-native-healthkit-example",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "reactnativehealthkitexample",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.kingstinct.reactnativehealthkitexample"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "package": "com.kingstinct.reactnativehealthkitexample"
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
-    },  
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ],
-      ["../../packages/react-native-healthkit/app.plugin.js", {
-        "NSHealthShareUsageDescription": "Your own custom usage description",
-        "NSHealthUpdateUsageDescription": "Your own custom usage description",  // if you have no plans to update data, you could skip adding it to your info.plist
-        "background": true // if you have no plans to use it in background mode, you could skip adding it to the entitlements
-      }]
-    ],
-    "experiments": {
-      "typedRoutes": true
-    }
-  }
+	"expo": {
+		"name": "react-native-healthkit-example",
+		"slug": "react-native-healthkit-example",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/images/icon.png",
+		"scheme": "reactnativehealthkitexample",
+		"userInterfaceStyle": "automatic",
+		"newArchEnabled": true,
+		"ios": {
+			"supportsTablet": true,
+			"bundleIdentifier": "com.kingstinct.reactnativehealthkitexample"
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/images/adaptive-icon.png",
+				"backgroundColor": "#ffffff"
+			},
+			"edgeToEdgeEnabled": true,
+			"package": "com.kingstinct.reactnativehealthkitexample"
+		},
+		"web": {
+			"bundler": "metro",
+			"output": "static",
+			"favicon": "./assets/images/favicon.png"
+		},
+		"plugins": [
+			"expo-router",
+			[
+				"expo-splash-screen",
+				{
+					"image": "./assets/images/splash-icon.png",
+					"imageWidth": 200,
+					"resizeMode": "contain",
+					"backgroundColor": "#ffffff"
+				}
+			],
+			[
+				"../../packages/react-native-healthkit/app.plugin.js",
+				{
+					"NSHealthShareUsageDescription": "Your own custom usage description",
+					"NSHealthUpdateUsageDescription": "Your own custom usage description",
+					"background": true
+				}
+			]
+		],
+		"experiments": {
+			"typedRoutes": true
+		}
+	}
 }

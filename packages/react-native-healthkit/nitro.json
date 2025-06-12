@@ -18,7 +18,7 @@
 		"CharacteristicTypeModule": {
 			"swift": "CharacteristicTypeModule"
 		},
-		"QuantityTypeModule":{
+		"QuantityTypeModule": {
 			"swift": "QuantityTypeModule"
 		},
 		"CategoryTypeModule": {

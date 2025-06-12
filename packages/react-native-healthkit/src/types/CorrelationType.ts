@@ -7,27 +7,25 @@ import type { GenericMetadata } from "./Shared";
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcorrelationtypeidentifier Apple Docs }
  */
 export type CorrelationTypeIdentifier =
-    'HKCorrelationTypeIdentifierBloodPressure' |
-    'HKCorrelationTypeIdentifierFood'
-
+	| "HKCorrelationTypeIdentifierBloodPressure"
+	| "HKCorrelationTypeIdentifierFood";
 
 type CorrelationObject = CategorySample | QuantitySample;
 
 export interface CorrelationSample {
-    readonly correlationType: CorrelationTypeIdentifier;
-    readonly objects: readonly CorrelationObject[];
-    readonly metadata: AnyMap;
-    readonly start: Date;
-    readonly end: Date;
-};
-
+	readonly correlationType: CorrelationTypeIdentifier;
+	readonly objects: readonly CorrelationObject[];
+	readonly metadata: AnyMap;
+	readonly start: Date;
+	readonly end: Date;
+}
 
 export type MetadataMapperForCorrelationIdentifier<
-TCorrelationTypeIdentifier = CorrelationTypeIdentifier
-> = TCorrelationTypeIdentifier extends 'CorrelationTypeIdentifierFood'
-? GenericMetadata & {
-  readonly HKFoodType?: string;
-}
-: GenericMetadata;
+	TCorrelationTypeIdentifier = CorrelationTypeIdentifier,
+> = TCorrelationTypeIdentifier extends "CorrelationTypeIdentifierFood"
+	? GenericMetadata & {
+			readonly HKFoodType?: string;
+		}
+	: GenericMetadata;
 
 export type SampleForSaving = CategorySampleForSaving | QuantitySampleForSaving;

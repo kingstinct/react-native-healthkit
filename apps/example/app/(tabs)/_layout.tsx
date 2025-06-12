@@ -8,30 +8,38 @@ import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Core } from "react-native-healthkit";
-import { AllObjectTypesInApp, AllSampleTypesInApp } from "@/constants/AllUsedIdentifiersInApp";
+import {
+	AllObjectTypesInApp,
+	AllSampleTypesInApp,
+} from "@/constants/AllUsedIdentifiersInApp";
 import { AuthorizationRequestStatus } from "react-native-healthkit/types/Auth";
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
 
-	const [authStatus, setAuthStatus] = React.useState<AuthorizationRequestStatus | null>(null);
+	const [authStatus, setAuthStatus] =
+		React.useState<AuthorizationRequestStatus | null>(null);
 
 	useEffect(() => {
 		try {
-			console.log('checking auth status for', AllSampleTypesInApp);
-			Core.getRequestStatusForAuthorization(AllSampleTypesInApp, AllObjectTypesInApp)
-			.then((status) => {
-				console.log("Authorization Status:", status);
-				setAuthStatus(status);
-			}).catch((error) => {
-				console.error("Error getting authorization status:", error);
-				setAuthStatus(AuthorizationRequestStatus.shouldRequest);
-			});
+			console.log("checking auth status for", AllSampleTypesInApp);
+			Core.getRequestStatusForAuthorization(
+				AllSampleTypesInApp,
+				AllObjectTypesInApp,
+			)
+				.then((status) => {
+					console.log("Authorization Status:", status);
+					setAuthStatus(status);
+				})
+				.catch((error) => {
+					console.error("Error getting authorization status:", error);
+					setAuthStatus(AuthorizationRequestStatus.shouldRequest);
+				});
 		} catch (error) {
 			console.error("Error in useEffect:", error);
 			setAuthStatus(AuthorizationRequestStatus.shouldRequest);
 		}
-	}, [])
+	}, []);
 
 	if (authStatus === AuthorizationRequestStatus.shouldRequest) {
 		// If the user has not granted permissions, redirect to the auth screen
@@ -68,7 +76,11 @@ export default function TabLayout() {
 				options={{
 					title: "Core",
 					tabBarIcon: ({ color, focused }) => (
-						<IconSymbol size={28} name={focused ? 'person.fill' : 'person'} color={color} />
+						<IconSymbol
+							size={28}
+							name={focused ? "person.fill" : "person"}
+							color={color}
+						/>
 					),
 				}}
 			/>
@@ -78,7 +90,11 @@ export default function TabLayout() {
 				options={{
 					title: "Quantities",
 					tabBarIcon: ({ color, focused }) => (
-						<IconSymbol size={28} name={focused ? "chart.bar.fill" : "chart.bar"} color={color} />
+						<IconSymbol
+							size={28}
+							name={focused ? "chart.bar.fill" : "chart.bar"}
+							color={color}
+						/>
 					),
 				}}
 			/>
@@ -89,7 +105,15 @@ export default function TabLayout() {
 					title: "Workouts",
 					headerShown: false,
 					tabBarIcon: ({ color, focused }) => (
-						<IconSymbol size={28} name={focused ? "figure.run.square.stack.fill" : "figure.run.square.stack"} color={color} />
+						<IconSymbol
+							size={28}
+							name={
+								focused
+									? "figure.run.square.stack.fill"
+									: "figure.run.square.stack"
+							}
+							color={color}
+						/>
 					),
 				}}
 			/>
@@ -99,7 +123,11 @@ export default function TabLayout() {
 				options={{
 					title: "Heartbeats",
 					tabBarIcon: ({ color, focused }) => (
-						<IconSymbol size={28} name={focused ? "heart.fill" : "heart"} color={color} />
+						<IconSymbol
+							size={28}
+							name={focused ? "heart.fill" : "heart"}
+							color={color}
+						/>
 					),
 				}}
 			/>
@@ -109,7 +137,11 @@ export default function TabLayout() {
 				options={{
 					title: "Subscriptions",
 					tabBarIcon: ({ color, focused }) => (
-						<IconSymbol size={28} name={focused ? "bell.fill" : "bell"} color={color} />
+						<IconSymbol
+							size={28}
+							name={focused ? "bell.fill" : "bell"}
+							color={color}
+						/>
 					),
 				}}
 			/>
