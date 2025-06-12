@@ -1,129 +1,16 @@
-# This is a basic workflow to help you get started with Actions
+name: PR Preview
 
-name: PR - Publish Preview
-
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the main branch
 on:
-  pull_request_target:
-  workflow_dispatch:
+  pull_request:
 
-concurrency:
-  group: preview-${{ github.ref }}
-  cancel-in-progress: true
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  expo-publish-preview:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-        with:
-          ref: refs/pull/${{ github.event.number }}/merge
-
-      - uses: cardinalby/export-env-action@v2
-        with:
-          envFile: .env.github
-
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
-
-      - name: Install dependencies (example-expo)
-        run: bun install --frozen-lockfile
-        working-directory: example-expo
-      
-      - name: Install dependencies (example)
-        run: bun install --frozen-lockfile
-        working-directory: example
-
-      - name: Expo GitHub Action
-        uses: expo/expo-github-action@v8
-        with:
-          # Your Expo username, for authentication.
-          token: ${{ secrets.EXPO_TOKEN }}
-          expo-version: latest
-          eas-version: latest
-          # If Expo should be stored in the GitHub Actions cache (can be true or false)
-          expo-cache: true # optional
-
-      - name: Find Metro cache
-        id: metro-cache-dir-path
-        uses: actions/github-script@v7
-        with:
-          result-encoding: string
-          script: |
-            const os = require('os');
-            const path = require('path');
-            return path.join(os.tmpdir(), 'metro-cache');
-
-      - name: Restore Metro cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.metro-cache-dir-path.outputs.result }}
-          key: ${{ runner.os }}-metro-cache-${{ matrix.app }}-${{ github.ref }}
-          restore-keys: |
-            ${{ runner.os }}-metro-cache-${{ matrix.app }}-${{ github.base_ref }}
-            ${{ runner.os }}-metro-cache-${{ matrix.app }}-
-
-      # Runs a set of commands using the runners shell
-      - name: Publish
-        run: bunx eas-cli@latest update --branch=master --auto -p=ios --json --non-interactive
-        working-directory: example-expo
-
-      - uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          recreate: true
-          message: |
-            Expo preview is ready for review.
-
-            There should soon be a [new native build available here](https://expo.dev/accounts/react-native-healthkit/projects/healthkit-example-expo)
-
-            With that installed just scan this QR code:
-            ![QR Preview](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=exp%2Bhealthkit-example-expo%3A%2F%2Fu.expo.dev%2Fupdate%2F${{ env.BUILD_ID }})
-
-  eas-ios:
-    # The type of runner that the job will run on
-    uses: Kingstinct/utils/.github/workflows/eas-build.yml@main
-    secrets:
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-    with:
-      platform: ios
-      build_profile: development
-      expo_organisation_or_user_slug: react-native-healthkit
-      working_directory: ./example-expo
-      always_run: true
-      package_manager: bun
-      no_wait: false
-      checkout_ref: refs/pull/${{ github.event.number }}/merge
-
-  package-preview:
+  preview:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: cardinalby/export-env-action@v2
-        with:
-          envFile: .env.github
 
       - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
 
-      - name: Install example deps
-        run: bun install --frozen-lockfile
-        working-directory: example
-
-      - name: Install example-expo deps
-        run: bun install --frozen-lockfile
-        working-directory: example-expo
-
-      - run: bun install --frozen-lockfile
+      - run: bun install
       
-      - run: npx pkg-pr-new publish
+      - run: bunx pkg-pr-new publish './packages/*'

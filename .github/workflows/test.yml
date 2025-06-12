@@ -2,106 +2,109 @@
 
 name: Test
 
-# Controls when the action will run.
 on:
-  push:
-  pull_request:
+  workflow_call:
+    inputs:
+      bun-version:
+        description: 'Bun Version'
+        required: false
+        type: string
+      os:
+        description: 'Operating System'
+        required: false
+        type: string
   workflow_dispatch:
+    inputs:
+      bun-version:
+        description: 'Bun Version'
+        required: false
+        default: 'latest'
+        type: string
+      os:
+        description: 'Operating System'
+        required: false
+        options:
+          - 'ubuntu-latest'
+          - 'macos-latest'
+          - 'windows-latest'
+        default: 'ubuntu-latest'
+        type: choice
+  
+  push:
+    branches:
+      - "*" # matches every branch that doesn't contain a '/'
+      - "*/*" # matches every branch containing a single '/'
+      - "**" # matches every branch
+      # - "!main" # matches every branch except main
+
+env:
+  RUNS_ON: ${{ inputs.os || 'ubuntu-latest' }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  test:
-    # The type of runner that the job will run on
-    runs-on: macos-latest
+  # test:
+  #   # The type of runner that the job will run on
+  #   runs-on: ${{ inputs.os || 'ubuntu-latest' }}
+  #   timeout-minutes: 10
+  
+  #   # Steps represent a sequence of tasks that will be executed as part of the job
+  #   steps:
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - uses: actions/checkout@v4
+
+  #     - uses: oven-sh/setup-bun@v2
+
+  #     - run: bun install
+
+  #     - name: Test
+  #       run: bun run test
+
+  typecheck:
+    runs-on: ${{ inputs.os || 'ubuntu-latest' }}
     timeout-minutes: 10
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - uses: cardinalby/export-env-action@v2
-        with:
-          envFile: .env.github
+      - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
 
-      - name: Install example deps
-        run: bun install --frozen-lockfile
-        working-directory: example
+      - run: bun install --ignore-scripts
 
-      - name: Install example-expo deps
-        run: bun install --frozen-lockfile
-        working-directory: example-expo
-
-      - name: Install deps
-        run: bun install --frozen-lockfile
-
-      - name: Test
-        run: bun test-only
+      - name: Typecheck
+        run: bun run typecheck
 
   lint:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.os || 'ubuntu-latest' }}
     timeout-minutes: 10
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - uses: cardinalby/export-env-action@v2
-        with:
-          envFile: .env.github
+      - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
 
-      - name: Install example deps
-        run: cd example && bun install && cd ..
-
-      - name: Install example-expo deps
-        run: cd example-expo && bun install && cd ..
-
-      - name: Install deps
-        run: bun install --frozen-lockfile
+      - run: bun install --ignore-scripts
 
       - name: Lint
-        run: bun lint
+        run: bun run lint
 
-  typecheck:
+  codegen:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.os || 'ubuntu-latest' }}
     timeout-minutes: 10
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - uses: cardinalby/export-env-action@v2
-        with:
-          envFile: .env.github
+      - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
 
-      - name: Install example deps
-        run: cd example && bun install && cd ..
+      - run: bun install --ignore-scripts
 
-      - name: Install example-expo deps
-        run: cd example-expo && bun install && cd ..
-
-      - name: Install deps
-        run: bun install --frozen-lockfile
-
-      - name: Types
-        run: bun typecheck
+      - run: bun run nitro-codegen
+        working-directory: packages/react-native-healthkit
