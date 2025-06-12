@@ -6,7 +6,7 @@ PODS:
   - EXJSONUtils (0.15.0)
   - EXManifests (0.16.5):
     - ExpoModulesCore
-  - Expo (53.0.10):
+  - Expo (53.0.11):
     - DoubleConversion
     - ExpoModulesCore
     - glog
@@ -280,7 +280,7 @@ PODS:
     - ExpoModulesCore
   - ExpoHead (5.0.7):
     - ExpoModulesCore
-  - ExpoImage (2.2.0):
+  - ExpoImage (2.2.1):
     - ExpoModulesCore
     - libavif/libdav1d
     - SDWebImage (~> 5.21.0)
@@ -322,7 +322,7 @@ PODS:
     - ExpoModulesCore
   - ExpoSystemUI (5.0.8):
     - ExpoModulesCore
-  - ExpoUI (0.1.1-canary-20250428-4156f88):
+  - ExpoUI (0.1.1-canary-20250611-f0afe80):
     - ExpoModulesCore
   - ExpoWebBrowser (14.1.6):
     - ExpoModulesCore
@@ -2122,7 +2122,7 @@ PODS:
     - React-logger (= 0.79.3)
     - React-perflogger (= 0.79.3)
     - React-utils (= 0.79.3)
-  - ReactNativeHealthkit (0.0.1):
+  - ReactNativeHealthkit (9.0.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2460,7 +2460,7 @@ DEPENDENCIES:
   - ReactAppDependencyProvider (from `build/generated/ios`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../../../node_modules/react-native/ReactCommon`)
-  - ReactNativeHealthkit (from `../../../node_modules/react-native-healthkit`)
+  - "ReactNativeHealthkit (from `../../../node_modules/@kingstinct/react-native-healthkit`)"
   - RNGestureHandler (from `../../../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../../../node_modules/react-native-reanimated`)
   - RNScreens (from `../../../node_modules/react-native-screens`)
@@ -2672,7 +2672,7 @@ EXTERNAL SOURCES:
   ReactCommon:
     :path: "../../../node_modules/react-native/ReactCommon"
   ReactNativeHealthkit:
-    :path: "../../../node_modules/react-native-healthkit"
+    :path: "../../../node_modules/@kingstinct/react-native-healthkit"
   RNGestureHandler:
     :path: "../../../node_modules/react-native-gesture-handler"
   RNReanimated:
@@ -2683,12 +2683,12 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
-  DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
+  boost: c7db0cf32caf6315b467a902f922c7a38b1ae426
+  DoubleConversion: 9aae6cc0ecb301224cc36b63bf0ff0d9ea15d00e
   EXConstants: 9f310f44bfedba09087042756802040e464323c0
   EXJSONUtils: 1d3e4590438c3ee593684186007028a14b3686cd
   EXManifests: 951161dd9a63523c4eef0fa2a7476639a7ba230d
-  Expo: 8c19e656be789af96dd7a4bc21f22af4ec0dea34
+  Expo: 4e8bda07d30b024b1732f87843a5349a3ecc1316
   expo-dev-client: cdc6599329032065992014c40413afd46629a9bc
   expo-dev-launcher: 0dc31c4b9834d170745fbed01673279db732dc1d
   expo-dev-menu: e0a52332a0daa07b22ea61f9d8ff0b25bc7e3971
@@ -2699,26 +2699,26 @@ SPEC CHECKSUMS:
   ExpoFont: abbb91a911eb961652c2b0a22eef801860425ed6
   ExpoHaptics: 0ff6e0d83cd891178a306e548da1450249d54500
   ExpoHead: af044f3e9c99e7d8d21bf653b4c2f2ef53a7f082
-  ExpoImage: 01564db38c4a19f61413a1fb8cc7b4464d3c7fe4
+  ExpoImage: a050311cad66f0e7f4dfe5cd1fc773e510cc25e4
   ExpoKeepAwake: bf0811570c8da182bfb879169437d4de298376e7
   ExpoLinking: b85ff4eafeae6fc638c6cace60007ae521af0ef4
   ExpoModulesCore: d431ffe83c8673d02cb38425594a5f5480fd3061
   ExpoSplashScreen: 03ef991c0f9575a10269e08083cb4bd10e0989bc
   ExpoSymbols: c5612a90fb9179cdaebcd19bea9d8c69e5d3b859
   ExpoSystemUI: 29fb31c0e06eea3f5d88299d5c290101fc69f61f
-  ExpoUI: 435cce084ee8c4b2a6a226aeb27a82f12bd5301d
+  ExpoUI: 0e1cc59c7a48e8183f41988586def57df4ca45cf
   ExpoWebBrowser: 06fb5f767f53ad53944b068cdd207984cb998712
   EXUpdatesInterface: 7ff005b7af94ee63fa452ea7bb95d7a8ff40277a
-  fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
+  fast_float: afdfb7d8d5934a5dc225af0c5a7ef27085c03424
   FBLazyVector: a62a7a5760929b6265e27bc01ab7598dde93ebd3
-  fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
-  glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
-  hermes-engine: 94ed01537bdeccaab1adbf94b040d115d6fa1a7f
+  fmt: 793e14dfc270e0be50ff8f6679d6de663e337e16
+  glog: 02d5a79e2d91544a6170b768f0b7791763d6a6ee
+  hermes-engine: f5c378b8fdb49b155146aa81acba4c23614ecc63
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   NitroModules: ccf2db518daf271800221ef472938a324672ff71
-  RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
+  RCT-Folly: 3c12715b5d41a41cda64c46bc7d2f5807bfa0e91
   RCTDeprecation: c3e3f5b4ea83e7ff3bc86ce09e2a54b7affd687d
   RCTRequired: ee438439880dffc9425930d1dd1a3c883ee6879c
   RCTTypeSafety: fe728195791e1a0222aa83596a570cf377cd475e
@@ -2782,7 +2782,7 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: e6d0c3c3cc9862a3ccef0c252835cd7ccb96313d
   ReactCodegen: 335a1399e0721bacab8c4ecf909bbacaf5852754
   ReactCommon: e243aa261effc83c10208f0794bade55ca9ae5b6
-  ReactNativeHealthkit: 517e14abfc92317e3c2988fca5b413509d4dd69b
+  ReactNativeHealthkit: 55a92edc1a4a0d5385a444d2e8a1e4fe0e27fb76
   RNGestureHandler: 7d0931a61d7ba0259f32db0ba7d0963c3ed15d2b
   RNReanimated: afd6a269a47d6f13ba295c46c6c0e14e3cbd0d8a
   RNScreens: 482e9707f9826230810c92e765751af53826d509

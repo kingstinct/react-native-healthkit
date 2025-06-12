@@ -135,8 +135,8 @@ export interface WorkoutMetadata extends GenericMetadata {
 
 export interface WorkoutEvent {
 	readonly type: WorkoutEventType;
-	readonly start: Date;
-	readonly end: Date;
+	readonly startDate: Date;
+	readonly endDate: Date;
 }
 
 export enum WorkoutEventType {
@@ -151,14 +151,14 @@ export enum WorkoutEventType {
 }
 
 export interface WorkoutActivity {
-	readonly start: Date;
-	readonly end: Date;
+	readonly startDate: Date;
+	readonly endDate: Date;
 	readonly uuid: string;
 	readonly duration: number;
 }
 
 export interface WorkoutRoute {
-	readonly locations: readonly WorkoutLocation[];
+	readonly locations: readonly WorkoutRouteLocation[];
 	readonly HKMetadataKeySyncIdentifier?: string;
 	readonly HKMetadataKeySyncVersion?: number;
 }
@@ -187,7 +187,7 @@ export interface WorkoutQueryOptions {
 	ascending?: boolean;
 }
 
-export interface WorkoutLocation {
+export interface WorkoutRouteLocation {
 	readonly altitude: number;
 	readonly course: number;
 	readonly date: Date;
@@ -230,8 +230,8 @@ export interface WorkoutSample {
 	readonly totalEnergyBurned?: Quantity;
 	readonly totalSwimmingStrokeCount?: Quantity;
 	readonly totalFlightsClimbed?: Quantity;
-	readonly start: Date;
-	readonly end: Date;
+	readonly startDate: Date;
+	readonly endDate: Date;
 	readonly metadata?: AnyMap;
 	readonly sourceRevision?: SourceRevision;
 	readonly events?: readonly WorkoutEvent[];

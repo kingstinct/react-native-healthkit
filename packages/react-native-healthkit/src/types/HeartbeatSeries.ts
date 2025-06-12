@@ -15,8 +15,8 @@ export interface Heartbeat {
 export interface HeartbeatSeriesSample {
 	readonly uuid: string;
 	readonly device?: Device;
-	readonly start: Date;
-	readonly end: Date;
+	readonly startDate: Date;
+	readonly endDate: Date;
 	readonly heartbeats: readonly Heartbeat[];
 	readonly metadata?: AnyMap;
 	readonly sourceRevision?: SourceRevision;

@@ -13,8 +13,8 @@ export interface WorkoutsModule extends HybridObject<{ ios: "swift" }> {
 	saveWorkoutSample(
 		workoutActivityType: WorkoutActivityType,
 		quantities: readonly QuantitySampleForSaving[],
-		start: Date,
-		end: Date,
+		startDate: Date,
+		endDate: Date,
 		totals: WorkoutTotals,
 		metadata: AnyMap,
 	): Promise<string>;

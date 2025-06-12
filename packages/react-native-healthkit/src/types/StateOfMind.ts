@@ -15,8 +15,8 @@ export enum StateOfMindValenceClassification {
 export interface StateOfMindSample {
 	readonly uuid: string;
 	readonly device?: Device;
-	readonly start: Date;
-	readonly end: Date;
+	readonly startDate: Date;
+	readonly endDate: Date;
 	readonly metadata?: AnyMap;
 	readonly sourceRevision?: SourceRevision;
 	// State of mind sample properties

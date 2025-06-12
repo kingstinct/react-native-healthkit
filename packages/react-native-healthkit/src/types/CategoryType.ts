@@ -184,8 +184,8 @@ export interface CategorySample {
 	readonly uuid: string;
 	readonly device?: Device;
 	readonly categoryType: CategoryTypeIdentifier;
-	readonly start: Date;
-	readonly end: Date;
+	readonly startDate: Date;
+	readonly endDate: Date;
 	readonly value: CategoryValueForIdentifier;
 	readonly metadata: AnyMap;
 	readonly sourceRevision?: SourceRevision;
@@ -193,11 +193,11 @@ export interface CategorySample {
 
 export type MetadataMapperForCategoryIdentifier<
 	T extends CategoryTypeIdentifier = CategoryTypeIdentifier,
-> = T extends "CategoryTypeIdentifierSexualActivity"
+> = T extends "HKCategoryTypeIdentifierSexualActivity"
 	? GenericMetadata & {
 			readonly HKSexualActivityProtectionUsed: boolean;
 		}
-	: T extends "CategoryTypeIdentifierMenstrualFlow"
+	: T extends "HKCategoryTypeIdentifierMenstrualFlow"
 		? GenericMetadata & {
 				readonly HKMenstrualCycleStart: boolean;
 			}
@@ -205,13 +205,13 @@ export type MetadataMapperForCategoryIdentifier<
 
 export type CategoryValueForIdentifier<
 	T extends CategoryTypeIdentifier = CategoryTypeIdentifier,
-> = T extends "CategoryTypeIdentifierCervicalMucusQuality"
+> = T extends "HKCategoryTypeIdentifierCervicalMucusQuality"
 	? CategoryValueCervicalMucusQuality
 	: T extends "CategoryTypeIdentifierMenstrualFlow"
 		? CategoryValueMenstrualFlow
-		: T extends "CategoryTypeIdentifierOvulationTestResult"
+		: T extends "HKCategoryTypeIdentifierOvulationTestResult"
 			? CategoryValueOvulationTestResult
-			: T extends "CategoryTypeIdentifierSleepAnalysis"
+			: T extends "HKCategoryTypeIdentifierSleepAnalysis"
 				? CategoryValueSleepAnalysis
 				: T extends CategoryTypeValueNotApplicableIdentifier
 					? CategoryValueNotApplicable
@@ -219,12 +219,12 @@ export type CategoryValueForIdentifier<
 						? CategoryValueSeverity
 						: T extends CategoryTypePresenceIdentifier
 							? CategoryValuePresence
-							: T extends "CategoryTypeIdentifierLowCardioFitnessEvent"
+							: T extends "HKCategoryTypeIdentifierLowCardioFitnessEvent"
 								? CategoryValueLowCardioFitnessEvent
-								: T extends "CategoryTypeIdentifierPregnancyTestResult"
+								: T extends "HKCategoryTypeIdentifierPregnancyTestResult"
 									? CategoryValuePregnancyTestResult
-									: T extends "CategoryTypeIdentifierPregnancyTestResult"
+									: T extends "HKCategoryTypeIdentifierPregnancyTestResult"
 										? CategoryValuePregnancyTestResult
-										: T extends "CategoryTypeIdentifierAppleStandHour"
+										: T extends "HKCategoryTypeIdentifierAppleStandHour"
 											? CategoryValueAppleStandHour
 											: number;

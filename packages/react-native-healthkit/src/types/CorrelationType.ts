@@ -16,8 +16,8 @@ export interface CorrelationSample {
 	readonly correlationType: CorrelationTypeIdentifier;
 	readonly objects: readonly CorrelationObject[];
 	readonly metadata: AnyMap;
-	readonly start: Date;
-	readonly end: Date;
+	readonly startDate: Date;
+	readonly endDate: Date;
 }
 
 export type MetadataMapperForCorrelationIdentifier<
