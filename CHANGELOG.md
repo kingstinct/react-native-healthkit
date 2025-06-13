@@ -1,3 +1,5 @@
+## [8.7.1](https://github.com/kingstinct/react-native-healthkit/compare/v8.7.0...v8.7.1) (2025-06-13)
+
 # [8.7.0](https://github.com/kingstinct/react-native-healthkit/compare/v8.5.0...v8.7.0) (2025-06-12)
 
 
