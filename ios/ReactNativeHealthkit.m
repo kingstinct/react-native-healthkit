@@ -268,8 +268,4 @@ RCT_EXTERN_METHOD(queryStateOfMindSamples:(NSDate)from
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(workoutSessionMirroringStartHandler:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject
-)
-
 @end
