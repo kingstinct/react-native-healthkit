@@ -2337,11 +2337,6 @@ type ReactNativeHealthkitTypeNative = {
     limit: number,
     ascending: boolean
   ) => Promise<readonly HKStateOfMindSampleRaw[]>;
-
-  /**
-   * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/4172878-workoutsessionmirroringstarthand Apple Docs }
-   */
-  readonly workoutSessionMirroringStartHandler: () => Promise<boolean>;
 };
 
 export enum HKStateOfMindValenceClassification {
