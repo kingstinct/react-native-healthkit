@@ -46,7 +46,6 @@ beforeAll(async () => {
     getWorkoutPlanById: jest.fn(),
     startWatchAppWithWorkoutConfiguration: jest.fn(),
     queryStateOfMindSamples: jest.fn(),
-    workoutSessionMirroringStartHandler: jest.fn(),
   }
 
   await mock.module('react-native', () => ({
