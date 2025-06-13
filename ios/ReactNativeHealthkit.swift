@@ -13,15 +13,6 @@ class ReactNativeHealthkit: RCTEventEmitter {
   var _dateFormatter: ISO8601DateFormatter
   var _hasListeners = false
 
-  #if os(iOS)
-  @available(iOS 17.0, *)
-  var _workoutSession: HKWorkoutSession? {
-    get { return __session as? HKWorkoutSession }
-    set { __session = newValue }
-  }
-  private var __session: Any?
-  #endif
-
   override init() {
     self._runningQueries = [String: HKQuery]()
     self._dateFormatter = ISO8601DateFormatter()
@@ -2338,113 +2329,5 @@ class ReactNativeHealthkit: RCTEventEmitter {
       resolve(success)
     }
   }
-
-  @available(iOS 17.0.0, *)
-  @objc(workoutSessionMirroringStartHandler:reject:)
-  func workoutSessionMirroringStartHandler(
-    resolve: @escaping RCTPromiseResolveBlock,
-    reject: @escaping RCTPromiseRejectBlock
-  ) {
-    guard let store = _store else {
-      return reject(INIT_ERROR, INIT_ERROR_MESSAGE, nil)
-    }
-
-    store.workoutSessionMirroringStartHandler = { [weak self] mirroringSession in
-      self?._workoutSession = mirroringSession
-      self?._workoutSession?.delegate = self
-    }
-
-    resolve(true)
-  }
-
 }
 
-// MARK: - HKWorkoutSessionDelegate
-
-extension ReactNativeHealthkit: HKWorkoutSessionDelegate {
-
-  @available(iOS 17.0.0, *)
-  func workoutSession(
-    _ workoutSession: HKWorkoutSession,
-    didChangeTo toState: HKWorkoutSessionState,
-    from fromState: HKWorkoutSessionState,
-    date: Date
-  ) {
-    Task { @MainActor [weak self] in
-      guard let self = self else { return }
-
-      if self._hasListeners {
-        self.sendEvent(withName: "onRemoteWorkoutStateChange", body: [
-          "toState": toState.rawValue,
-          "fromState": fromState.rawValue,
-          "date": self._dateFormatter.string(from: date)
-        ])
-      }
-    }
-  }
-
-  @available(iOS 17.0.0, *)
-  func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: any Error) {
-    Task { @MainActor [weak self] in
-      guard let self = self else { return }
-
-      if self._hasListeners {
-        self.sendEvent(
-          withName: "onRemoteWorkoutError",
-          body: ["error": error.localizedDescription]
-        )
-      }
-    }
-  }
-
-  @available(iOS 17.0.0, *)
-  func workoutSession(
-    _ workoutSession: HKWorkoutSession,
-    didReceiveDataFromRemoteWorkoutSession data: [Data]
-  ) {
-    Task { [weak self] in
-      guard let self = self else { return }
-
-      do {
-        let serializedData = try data.compactMap { dataItem -> [String: Any]? in
-          guard let json = try? JSONSerialization.jsonObject(with: dataItem) as? [String: Any] else {
-            return nil
-          }
-          return json
-        }
-
-        await MainActor.run { [weak self] in
-          guard let self = self else { return }
-
-          if self._hasListeners {
-            self.sendEvent(
-              withName: "onRemoteWorkoutDataReceived",
-              body: ["data": serializedData]
-            )
-          }
-        }
-      } catch {
-        await MainActor.run { [weak self] in
-          guard let self = self else { return }
-
-          if self._hasListeners {
-            self.sendEvent(
-              withName: "onRemoteWorkoutError",
-              body: ["error": error.localizedDescription]
-            )
-          }
-        }
-      }
-    }
-  }
-
-  @available(iOS 17.0, *)
-  func workoutSession(_ workoutSession: HKWorkoutSession, didGenerate event: HKWorkoutEvent) {
-    if self._hasListeners {
-      self.sendEvent(
-        withName: "onRemoteWorkoutEventReceived",
-        body: ["type": event.type.rawValue]
-      )
-    }
-  }
-}
