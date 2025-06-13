@@ -9,18 +9,6 @@ import Foundation
 import HealthKit
 import NitroModules
 
-let _dateFormatter = ISO8601DateFormatter()
-
-func serializeQuantity(unit: HKUnit, quantity: HKQuantity?) -> Dictionary<String, AnyValue>? {
-    guard let q = quantity else {
-        return nil
-    }
-    return [
-        "quantity": AnyValue.number( q.doubleValue(for: unit)),
-        "unit": AnyValue.string( unit.unitString)
-    ]
-}
-
 func serializeQuantityTyped(unit: HKUnit, quantity: HKQuantity?) -> Quantity? {
     guard let q = quantity else {
         return nil
@@ -223,6 +211,7 @@ func serializeMetadata(_ metadata: [String: Any]?) -> AnyMapHolder {
             if let bool = item.value as? Bool {
                 serialized.setBoolean(key: item.key, value: bool)
             }
+            
             if let str = item.value as? String {
                 serialized.setString(key: item.key, value: str)
             }
@@ -230,43 +219,19 @@ func serializeMetadata(_ metadata: [String: Any]?) -> AnyMapHolder {
             if let double = item.value as? Double {
                 serialized.setDouble(key: item.key, value: double)
             }
+            
             if let quantity = item.value as? HKQuantity {
                 if let s = serializeUnknownQuantity(quantity: quantity) {
                     serialized.setObject(key: item.key, value: s)
                 }
             }
+            
+            if let dict = item.value as? Dictionary<String, AnyValue> {
+                serialized.setObject(key: item.key, value: dict)
+            }
         }
     }
     return serialized
-}
-
-func serializeAllMetadata(_ metadata: [String: Any]?) -> AnyMapHolder? {
-    if let metadata = metadata {
-        var allMetadata = AnyMapHolder()
-        for item in metadata {
-            if let value = item.value as? String {
-                allMetadata.setString(key: item.key, value: value)
-            }
-            if let value = item.value as? Double {
-                allMetadata.setDouble(key: item.key, value: value)
-            }
-            if let value = item.value as? Bool {
-                allMetadata.setBoolean(key: item.key, value: value)
-            }
-            if let quantity = item.value as? HKQuantity {
-                if let s = serializeUnknownQuantity(quantity: quantity) {
-                    allMetadata.setObject(key: item.key, value: s)
-                }
-            }
-            // todo - cover more types??
-            /*if let value = item.value as? [String: Any] {
-                var dict = Dictionary<String, AnyValue>()
-                allMetadata.setObject(key: item.key, value: value)
-            }*/
-        }
-        return allMetadata
-    }
-    return nil
 }
 
 /*func serializeGenericMetadata(_ metadata: [String: Any]?) -> GenericMetadata? {

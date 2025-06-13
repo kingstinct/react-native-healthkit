@@ -2,8 +2,8 @@ import HealthKit
 import NitroModules
 
 #if compiler(>=6)
-class StateOfMindModule : HybridStateOfMindModuleSpec {
-    func querySamples(
+class StateOfMindModule : HybridStateOfMindModuleSpec {    
+    func queryStateOfMindSamples(
         options: QueryOptionsWithSortOrder?
     ) throws -> Promise<[StateOfMindSample]> {
         if #available(iOS 18.0, *) {
@@ -79,12 +79,9 @@ class StateOfMindModule : HybridStateOfMindModuleSpec {
 }
 #else
 // Fallback for older Xcode versions
-class StateOfMind : HybridStateOfMindSpec {
-    func querySamples(
-        from: Date?,
-        to: Date?,
-        limit: Double,
-        ascending: Bool
+class StateOfMind : HybridStateOfMindModuleSpec {
+    func queryStateOfMindSamples(
+        options: QueryOptionsWithSortOrder?
     ) throws -> Promise<[StateOfMindSample]> {
         throw RuntimeError.error(withMessage: "State of Mind features require iOS 18.0 or later and Xcode 16 or later to compile")
     }
