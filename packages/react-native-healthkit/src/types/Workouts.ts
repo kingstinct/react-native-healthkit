@@ -174,14 +174,50 @@ type WorkoutActivityTypePredicate = {
 	readonly workoutActivityType: WorkoutActivityType;
 };
 
+enum ComparisonPredicateOperator {
+	lessThan = 0,
+	lessThanOrEqualTo = 1,
+	greaterThan = 2,
+	greaterThanOrEqualTo = 3,
+	equalTo = 4,
+	notEqualTo = 5,
+	matches = 6,
+	like = 7,
+	beginsWith = 8,
+	endsWith = 9,
+	in = 10,
+	customSelector = 11,
+	contains = 99,
+	between = 100,
+}
+
+type WorkoutDurationPredicate = {
+	readonly predicateOperator: ComparisonPredicateOperator;
+	readonly durationInSeconds: number;
+};
+
 export type PredicateForWorkouts =
 	| PredicateForSamples
-	| WorkoutActivityTypePredicate;
+	| WorkoutActivityTypePredicate
+	| WorkoutDurationPredicate;
+
+export type PredicateForWorkoutsOr = {
+	readonly OR: readonly PredicateForWorkouts[];
+};
+
+export type PredicateForWorkoutsAnd = {
+	readonly AND: readonly PredicateForWorkouts[];
+};
+
+export type FilterForWorkouts =
+	| PredicateForWorkouts
+	| PredicateForWorkoutsOr
+	| PredicateForWorkoutsAnd;
 
 export interface WorkoutQueryOptionsWithAnchor {
 	energyUnit?: string;
 	distanceUnit?: string;
-	filter?: PredicateForWorkouts;
+	filter?: FilterForWorkouts;
 	limit?: number;
 	anchor?: string;
 }
@@ -189,7 +225,7 @@ export interface WorkoutQueryOptionsWithAnchor {
 export interface WorkoutQueryOptions {
 	energyUnit?: string;
 	distanceUnit?: string;
-	filter?: PredicateForWorkouts;
+	filter?: FilterForWorkouts;
 	limit?: number;
 	ascending?: boolean;
 }

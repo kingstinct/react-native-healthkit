@@ -141,7 +141,7 @@ func buildStatisticsOptions(statistics: [StatisticsOptions]) -> HKStatisticsOpti
 }
 
 class QuantityTypeModule : HybridQuantityTypeModuleSpec {
-    func deleteQuantitySamples(identifier: QuantityTypeIdentifier, filter: PredicateForSamples) throws -> Promise<Bool> {
+    func deleteQuantitySamples(identifier: QuantityTypeIdentifier, filter: FilterForSamples) throws -> Promise<Bool> {
         let sampleType = try initializeQuantityType(identifier.stringValue)
         let samplePredicate = try createPredicateForSamples(filter: filter)
         
@@ -163,28 +163,6 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
         let sampleType = try initializeQuantityType(identifier.stringValue)
         
         return sampleType.is(compatibleWith: HKUnit.init(from: unit))
-    }
-    
-    func deleteQuantitySamplesBetween(identifier: QuantityTypeIdentifier, from: Date, to: Date) throws -> Promise<Bool> {
-        let sampleType = try initializeQuantityType(identifier.stringValue)
-        
-        let samplePredicate = HKQuery.predicateForSamples(
-            withStart: from,
-            end: to,
-            options: HKQueryOptions.strictStartDate
-        )
-        
-        return Promise.async {
-            return try await withCheckedThrowingContinuation { continuation in
-                store.deleteObjects(of: sampleType, predicate: samplePredicate) { (success: Bool, _: Int, error: Error?) in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                    } else {
-                        continuation.resume(returning: success)
-                    }
-                }
-            }
-        }
     }
     
     func queryStatisticsForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], options: StatisticsQueryOptions?) throws -> Promise<QueryStatisticsResponse> {

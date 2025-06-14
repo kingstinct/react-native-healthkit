@@ -13,6 +13,7 @@ import type {
 	AuthorizationStatus,
 } from "../types/Auth";
 import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
+import type { FilterForSamples } from "../types/QueryOptions";
 
 export interface CoreModule extends HybridObject<{ ios: "swift" }> {
 	/**
@@ -82,4 +83,9 @@ export interface CoreModule extends HybridObject<{ ios: "swift" }> {
 		toShare: SampleTypeIdentifierWriteable[],
 		toRead: ObjectTypeIdentifier[],
 	): Promise<boolean>;
+
+	deleteObjects(
+		objectTypeIdentifier: ObjectTypeIdentifier,
+		filter: FilterForSamples,
+	): Promise<number>;
 }

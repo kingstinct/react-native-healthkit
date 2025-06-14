@@ -1,42 +1,47 @@
-import {
-  useState, useEffect, useCallback, useRef,
-} from 'react'
+import { useState, useEffect, useCallback, useRef } from "react";
 
-import useSubscribeToChanges from './useSubscribeToChanges'
+import useSubscribeToChanges from "./useSubscribeToChanges";
 
-import { QuantityTypes } from '..'
-import type { QueryStatisticsResponse, StatisticsOptions } from '../types/QuantityType'
-import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
+import { QuantityTypes } from "..";
+import type {
+	QueryStatisticsResponse,
+	StatisticsOptions,
+} from "../types/QuantityType";
+import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
 
-export function useStatisticsForQuantity<TIdentifier extends QuantityTypeIdentifier>(
-  identifier: TIdentifier,
-  options: readonly StatisticsOptions[],
-  from: Date,
-  to?: Date,
-  unit?: string,
+export function useStatisticsForQuantity<
+	TIdentifier extends QuantityTypeIdentifier,
+>(
+	identifier: TIdentifier,
+	options: readonly StatisticsOptions[],
+	from: Date,
+	to?: Date,
+	unit?: string,
 ) {
-  const [result, setResult] = useState<QueryStatisticsResponse | null>(null)
+	const [result, setResult] = useState<QueryStatisticsResponse | null>(null);
 
-  const optionsRef = useRef(options)
+	const optionsRef = useRef(options);
 
-  useEffect(() => {
-    optionsRef.current = options
-  }, [options])
+	useEffect(() => {
+		optionsRef.current = options;
+	}, [options]);
 
-  const update = useCallback(async () => {
-    const res = await QuantityTypes.queryStatisticsForQuantity(identifier, optionsRef.current, { from, to, unit })
-    setResult(res)
-  }, [
-    identifier, from, to, unit,
-  ])
+	const update = useCallback(async () => {
+		const res = await QuantityTypes.queryStatisticsForQuantity(
+			identifier,
+			optionsRef.current,
+			{ filter: { startDate: from, endDate: to }, unit },
+		);
+		setResult(res);
+	}, [identifier, from, to, unit]);
 
-  useEffect(() => {
-    void update()
-  }, [update])
+	useEffect(() => {
+		void update();
+	}, [update]);
 
-  useSubscribeToChanges(identifier, update)
+	useSubscribeToChanges(identifier, update);
 
-  return result
+	return result;
 }
 
-export default useStatisticsForQuantity
+export default useStatisticsForQuantity;

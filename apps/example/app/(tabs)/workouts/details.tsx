@@ -33,8 +33,10 @@ export default function WorkoutDetails() {
 
 		const startedAt = Date.now();
 
-		Workouts.queryWorkoutByUUID(workoutId)
-			.then((w) => {
+		Workouts.queryWorkoutSamples({ filter: { uuid: workoutId }, limit: 1 })
+			.then((ws) => {
+				// biome-ignore lint/style/noNonNullAssertion: <explanation>
+				const w = ws[0]!;
 				setWorkout(w);
 				setQueryTime(Date.now() - startedAt);
 				const routeStartedAt = Date.now();

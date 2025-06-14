@@ -247,6 +247,23 @@ class CoreModule : HybridCoreModuleSpec {
     
     var _runningQueries: [String: HKQuery] = [:]
     
+    func deleteObjects(objectTypeIdentifier: ObjectTypeIdentifier, filter: FilterForSamples) throws -> Promise<Double> {
+        let predicate = try createPredicateForSamples(filter: filter)
+        let of = try objectTypeFrom(objectTypeIdentifier: objectTypeIdentifier)
+        
+        return Promise.async {
+            return try await withCheckedThrowingContinuation { continuation in
+                store.deleteObjects(of: of, predicate: predicate) { (success, count, error) in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume(returning: Double(count))
+                    }
+                }
+            }
+        }
+    }
+    
     func subscribeToObserverQuery(
         typeIdentifier: SampleTypeIdentifier,
         callback: @escaping (OnChangeCallbackArgs) -> Void

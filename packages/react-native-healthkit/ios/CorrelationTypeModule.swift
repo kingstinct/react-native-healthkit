@@ -72,7 +72,12 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
         to: Date
     ) throws -> Promise<[CorrelationSample]> {
         let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
-        let predicate = try createPredicate(filter: .fourth(PredicateWithStartAndEnd(withStart: from, end: to, strictEndDate: true, strictStartDate: true)))
+        let predicate = try createPredicate(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_PredicateWithMetadataKey_PredicateWithStartAndEnd.fourth(PredicateWithStartAndEnd(
+            startDate: from,
+            endDate: to,
+            strictEndDate: true,
+            strictStartDate: true))
+        )
         
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in

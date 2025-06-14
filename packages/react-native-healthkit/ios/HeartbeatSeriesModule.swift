@@ -145,22 +145,6 @@ class HeartbeatSeriesModule : HybridHeartbeatSeriesModuleSpec {
         }
     }
     
-    func queryHeartbeatSeriesByUUID(seriesUUID: String) throws -> Promise<HeartbeatSeriesSample?> {
-        let uuid = try initializeUUID(seriesUUID)
-        
-        return Promise.async {
-            let heartbeatSeries = await getHeartbeatSeriesByID(seriesUUID: uuid)
-            
-            if let heartbeatSeries = heartbeatSeries {
-                let serialized = try await self.serializeHeartbeatSeriesSample(sample: heartbeatSeries)
-                return serialized
-            }
-            return nil
-        }
-    }
-    
-    // MARK: - Helper Methods
-    
     private func serializeHeartbeatSeriesSample(sample: HKHeartbeatSeriesSample) async throws -> HeartbeatSeriesSample {
         let heartbeats = try await getHeartbeatSeriesHeartbeats(sample: sample)
         

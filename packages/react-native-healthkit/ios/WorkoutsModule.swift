@@ -284,27 +284,6 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
         }
     }
     
-    func queryWorkoutByUUID(workoutUUID: String) throws -> Promise<HybridWorkoutProxySpec?> {
-        let uuid = try initializeUUID(workoutUUID)
-        
-        return Promise.async {
-            let workout = await getWorkoutByID(workoutUUID: uuid)
-            
-            if let workout = workout {
-                let sample = mapWorkout(
-                    workout: workout,
-                    distanceUnit: HKUnit.meter(),
-                    energyUnit: HKUnit.kilocalorie()
-                )
-                return WorkoutProxy(
-                    workout: workout,
-                    sample: sample
-                )
-            }
-            return nil
-        }
-    }
-    
     func saveWorkoutSample(
         workoutActivityType: WorkoutActivityType,
         quantities: [QuantitySampleForSaving],

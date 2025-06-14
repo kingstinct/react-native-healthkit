@@ -33,7 +33,31 @@ func getQueryLimit(_ limit: Double?) -> Int {
     return DEFAULT_QUERY_LIMIT
 }
 
-func createPredicateForWorkout(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_PredicateWithMetadataKey_PredicateWithStartAndEnd_WorkoutActivityTypePredicate?) throws -> NSPredicate? {
+func createPredicateForWorkout(filter: PredicateForWorkouts) throws -> NSPredicate {
+    switch filter {
+        case .first(let uuidWrapper):
+            return HKQuery.predicateForObject(with: try initializeUUID(uuidWrapper.uuid))
+        case .second(let uuidsWrapper):
+            return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
+        case .third(let metadataKey):
+            return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
+        case .fourth(let dateFilter):
+            return createDatePredicate(dateFilter: dateFilter)
+        case .fifth(let activityType):
+            if let activityType = HKWorkoutActivityType.init(rawValue: UInt(activityType.workoutActivityType.rawValue)) {
+                return HKQuery.predicateForWorkouts(with: activityType)
+            } else {
+                throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized workoutActivityType with identifier \(activityType.workoutActivityType.rawValue)")
+            }
+        case .sixth(let durationPredicate):
+            if let op = NSComparisonPredicate.Operator(rawValue: UInt(durationPredicate.predicateOperator.rawValue)){
+                return HKQuery.predicateForWorkouts(with: op, duration: durationPredicate.durationInSeconds)
+            }
+            throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized workout duration predicate operator \(durationPredicate.predicateOperator.rawValue)")
+    }
+}
+
+func createPredicateForWorkout(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_PredicateWithMetadataKey_PredicateWithStartAndEnd_WorkoutActivityTypePredicate_WorkoutDurationPredicate_PredicateForWorkoutsOr_PredicateForWorkoutsAnd?) throws -> NSPredicate? {
     if let filter = filter {
         switch filter {
         case .first(let uuidWrapper):
@@ -50,6 +74,21 @@ func createPredicateForWorkout(filter: Variant_PredicateWithUUID_PredicateWithUU
             } else {
                 throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized workoutActivityType with identifier \(activityType.workoutActivityType.rawValue)")
             }
+        case .sixth(let durationPredicate):
+            if let op = NSComparisonPredicate.Operator(rawValue: UInt(durationPredicate.predicateOperator.rawValue)){
+                return HKQuery.predicateForWorkouts(with: op, duration: durationPredicate.durationInSeconds)
+            }
+            throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized workout duration predicate operator \(durationPredicate.predicateOperator.rawValue)")
+            
+        case .seventh(let or):
+            return NSCompoundPredicate.init(andPredicateWithSubpredicates: try or.OR.map { predicate in
+                return try createPredicateForWorkout(filter: predicate)
+            })
+        case .eigth(let and):
+            return NSCompoundPredicate.init(orPredicateWithSubpredicates: try and.AND
+                .map { predicate in
+                    return try createPredicateForWorkout(filter: predicate)
+                })
         }
     }
     
@@ -69,14 +108,14 @@ func createDatePredicate(dateFilter: PredicateWithStartAndEnd) -> NSPredicate {
                 : []
     
     return HKQuery.predicateForSamples(
-        withStart: dateFilter.withStart,
-        end: dateFilter.end,
+        withStart: dateFilter.startDate,
+        end: dateFilter.endDate,
         options: options
     )
 }
 
 func createUUIDsPredicate(uuidsWrapper: PredicateWithUUIDs) -> NSPredicate {
-    let uuids = uuidsWrapper.uuids.compactMap { uuidStr in
+    let uuids = uuidsWrapper.uuids.compactMap { uuidStr -> UUID? in
         do {
             let uuid = try initializeUUID(uuidStr)
             return uuid
@@ -92,6 +131,46 @@ func createUUIDsPredicate(uuidsWrapper: PredicateWithUUIDs) -> NSPredicate {
 func createPredicate(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_PredicateWithMetadataKey_PredicateWithStartAndEnd?) throws -> NSPredicate? {
     if let filter = filter {
         switch filter {
+            case .first(let uuidWrapper):
+                return HKQuery.predicateForObject(with: try initializeUUID(uuidWrapper.uuid))
+            case .second(let uuidsWrapper):
+                return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
+            case .third(let metadataKey):
+                return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
+            case .fourth(let dateFilter):
+                return createDatePredicate(dateFilter: dateFilter)
+        }
+    }
+    return nil
+}
+
+func createPredicate(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_PredicateWithMetadataKey_PredicateWithStartAndEnd_FilterForSamplesAnd_FilterForSamplesOr?) throws -> NSPredicate? {
+    if let filter = filter {
+        switch filter {
+            case .first(let uuidWrapper):
+                return HKQuery.predicateForObject(with: try initializeUUID(uuidWrapper.uuid))
+            case .second(let uuidsWrapper):
+                return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
+            case .third(let metadataKey):
+                return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
+            case .fourth(let dateFilter):
+                return createDatePredicate(dateFilter: dateFilter)
+            case .fifth(let and):
+                return NSCompoundPredicate.init(andPredicateWithSubpredicates: try and.AND.map { predicate in
+                    return try createPredicateForSamples(filter: predicate)
+                })
+            case .sixth(let or):
+                return NSCompoundPredicate.init(orPredicateWithSubpredicates: try or.OR
+                    .map { predicate in
+                    return try createPredicateForSamples(filter: predicate)
+                })
+        }
+    }
+    return nil
+}
+
+func createPredicateForSamples(filter: PredicateForSamples) throws -> NSPredicate {
+    switch filter {
         case .first(let uuidWrapper):
             return HKQuery.predicateForObject(with: try initializeUUID(uuidWrapper.uuid))
         case .second(let uuidsWrapper):
@@ -100,12 +179,10 @@ func createPredicate(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_Predic
             return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
         case .fourth(let dateFilter):
             return createDatePredicate(dateFilter: dateFilter)
-        }
     }
-    return nil
 }
 
-func createPredicateForSamples(filter: PredicateForSamples) throws -> NSPredicate {
+func createPredicateForSamples(filter: FilterForSamples) throws -> NSPredicate {
     switch filter {
     case .first(let uuidWrapper):
         return HKQuery.predicateForObject(with: try initializeUUID(uuidWrapper.uuid))
@@ -115,10 +192,45 @@ func createPredicateForSamples(filter: PredicateForSamples) throws -> NSPredicat
         return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
     case .fourth(let dateFilter):
         return createDatePredicate(dateFilter: dateFilter)
+    case .fifth(let and):
+        return NSCompoundPredicate.init(andPredicateWithSubpredicates: try and.AND.map { predicate in
+            return try createPredicateForSamples(filter: predicate)
+        })
+    case .sixth(let or):
+        return NSCompoundPredicate.init(orPredicateWithSubpredicates: try or.OR
+            .map { predicate in
+            return try createPredicateForSamples(filter: predicate)
+        })
+    }
+}
+
+func createPredicateForSamples(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_PredicateWithMetadataKey_PredicateWithStartAndEnd_FilterForSamplesAnd_FilterForSamplesOr) throws -> NSPredicate {
+    switch filter {
+    case .first(let uuidWrapper):
+        return HKQuery.predicateForObject(with: try initializeUUID(uuidWrapper.uuid))
+    case .second(let uuidsWrapper):
+        return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
+    case .third(let metadataKey):
+        return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
+    case .fourth(let dateFilter):
+        return createDatePredicate(dateFilter: dateFilter)
+    case .fifth(let and):
+        return NSCompoundPredicate.init(andPredicateWithSubpredicates: try and.AND.map { predicate in
+            return try createPredicateForSamples(filter: predicate)
+        })
+    case .sixth(let or):
+        return NSCompoundPredicate.init(orPredicateWithSubpredicates: try or.OR
+            .map { predicate in
+            return try createPredicateForSamples(filter: predicate)
+        })
     }
 }
 
 func getSortDescriptors(ascending: Bool?) -> [NSSortDescriptor] {
+    return [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending ?? false)]
+}
+
+func getSortDescsdsdriptors(ascending: Bool?) -> [NSSortDescriptor] {
     return [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending ?? false)]
 }
 

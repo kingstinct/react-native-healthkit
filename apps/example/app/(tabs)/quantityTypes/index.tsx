@@ -57,8 +57,10 @@ export default function QuantitiesScreen() {
 		const startedAt = Date.now();
 		if (selectedOption === "Anchor") {
 			QuantityTypes.queryQuantitySamplesWithAnchor(selectedQuantityType, {
-				from: fromDate,
-				to: toDate,
+				filter: {
+					startDate: fromDate,
+					endDate: toDate,
+				},
 				anchor: anchor,
 			})
 				.then((result) => {
@@ -74,8 +76,10 @@ export default function QuantitiesScreen() {
 			const samples = await QuantityTypes.queryQuantitySamples(
 				selectedQuantityType,
 				{
-					from: fromDate,
-					to: toDate,
+					filter: {
+						startDate: fromDate,
+						endDate: toDate,
+					},
 					ascending: selectedOption === "Ascending",
 				},
 			);
@@ -85,6 +89,7 @@ export default function QuantitiesScreen() {
 		}
 	}, [selectedQuantityType, selectedOption, fromDate, toDate, anchor]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		queryQuantitySamples();
 	}, []);

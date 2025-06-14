@@ -7,8 +7,8 @@ type PredicateWithUUIDs = {
 };
 
 type PredicateWithStartAndEnd = {
-	readonly withStart?: Date;
-	readonly end?: Date;
+	readonly startDate?: Date;
+	readonly endDate?: Date;
 	readonly strictEndDate?: boolean;
 	readonly strictStartDate?: boolean;
 };
@@ -16,6 +16,19 @@ type PredicateWithStartAndEnd = {
 type PredicateWithMetadataKey = {
 	readonly withMetadataKey: string;
 };
+
+export type FilterForSamplesAnd = {
+	AND: PredicateForSamples[];
+};
+
+export type FilterForSamplesOr = {
+	OR: PredicateForSamples[];
+};
+
+export type FilterForSamples =
+	| PredicateForSamples
+	| FilterForSamplesAnd
+	| FilterForSamplesOr;
 
 export type PredicateForSamples =
 	| PredicateWithUUID
@@ -27,7 +40,7 @@ export type PredicateForSamples =
  * Generic options for querying.
  */
 export interface GenericQueryOptions {
-	filter?: PredicateForSamples;
+	filter?: FilterForSamples;
 	readonly limit?: number;
 }
 
