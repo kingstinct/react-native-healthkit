@@ -7,7 +7,7 @@ class StateOfMindModule : HybridStateOfMindModuleSpec {
         options: QueryOptionsWithSortOrder?
     ) throws -> Promise<[StateOfMindSample]> {
         if #available(iOS 18.0, *) {
-            let predicate = createPredicate(from: options?.from, to: options?.to)
+            let predicate = try createPredicate(filter: options?.filter)
             let queryLimit = getQueryLimit(options?.limit)
             
             return Promise.async {

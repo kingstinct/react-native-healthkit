@@ -19,13 +19,9 @@ export interface WorkoutsModule extends HybridObject<{ ios: "swift" }> {
 		metadata: AnyMap,
 	): Promise<string>;
 
-	queryWorkoutByUUID(workoutUUID: string): Promise<WorkoutProxy | null>;
-
 	queryWorkoutSamplesWithAnchor(
 		options: WorkoutQueryOptionsWithAnchor,
 	): Promise<QueryWorkoutSamplesWithAnchorResponse>;
 
-	queryWorkoutSamples(
-		options: WorkoutQueryOptions,
-	): Promise<WorkoutProxy[]>;
+	queryWorkoutSamples(options: WorkoutQueryOptions): Promise<WorkoutProxy[]>;
 }

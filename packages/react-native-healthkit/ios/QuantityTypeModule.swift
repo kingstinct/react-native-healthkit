@@ -6,7 +6,7 @@ func queryQuantitySamplesInternal(
   options: QueryOptionsWithSortOrderAndUnit?
 ) throws -> Promise<[QuantitySample]> {
     let quantityType = try initializeQuantityType(typeIdentifier.stringValue)
-    let predicate = createPredicate(from: options?.from, to: options?.to)
+    let predicate = try createPredicate(filter: options?.filter)
     let limit = getQueryLimit(options?.limit)
     
     return Promise.async {
@@ -95,6 +95,12 @@ func getAnyMapValue(_ anyMap: AnyMapHolder, key: String) -> Any? {
     if(anyMap.isString(key: key)){
         return anyMap.getString(key: key)
     }
+    if(anyMap.isBigInt(key: key)){
+        return anyMap.getBigInt(key: key)
+    }
+    if(anyMap.isNull(key: key)){
+        return nil
+    }
     return nil
 }
 
@@ -135,16 +141,9 @@ func buildStatisticsOptions(statistics: [StatisticsOptions]) -> HKStatisticsOpti
 }
 
 class QuantityTypeModule : HybridQuantityTypeModuleSpec {
-    func isQuantityCompatibleWithUnit(identifier: QuantityTypeIdentifier, unit: String) throws -> Bool {
+    func deleteQuantitySamples(identifier: QuantityTypeIdentifier, filter: PredicateForSamples) throws -> Promise<Bool> {
         let sampleType = try initializeQuantityType(identifier.stringValue)
-        
-        return sampleType.is(compatibleWith: HKUnit.init(from: unit))
-    }
-    
-    func deleteQuantitySample(identifier: QuantityTypeIdentifier, uuid: String) throws -> Promise<Bool> {
-        let sampleType = try initializeQuantityType(identifier.stringValue)
-        let sampleUuid = try initializeUUID(uuid)
-        let samplePredicate = HKQuery.predicateForObject(with: sampleUuid)
+        let samplePredicate = try createPredicateForSamples(filter: filter)
         
         return Promise.async {
             return try await withCheckedThrowingContinuation { continuation in
@@ -157,6 +156,13 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                 }
             }
         }
+        
+    }
+    
+    func isQuantityCompatibleWithUnit(identifier: QuantityTypeIdentifier, unit: String) throws -> Bool {
+        let sampleType = try initializeQuantityType(identifier.stringValue)
+        
+        return sampleType.is(compatibleWith: HKUnit.init(from: unit))
     }
     
     func deleteQuantitySamplesBetween(identifier: QuantityTypeIdentifier, from: Date, to: Date) throws -> Promise<Bool> {
@@ -184,7 +190,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
     func queryStatisticsForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], options: StatisticsQueryOptions?) throws -> Promise<QueryStatisticsResponse> {
         
         let quantityType = try initializeQuantityType(identifier.stringValue)
-        let predicate = createPredicate(from: options?.from, to: options?.to)
+        let predicate = try createPredicate(filter: options?.filter)
         let unit = HKUnit.init(from: options?.unit ?? "count")
         
         return Promise.async {
@@ -269,7 +275,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
     func queryStatisticsCollectionForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], anchorDate: String, intervalComponents: IntervalComponents, options: StatisticsQueryOptions?) throws -> Promise<[QueryStatisticsResponse]> {
         let quantityType = try initializeQuantityType(identifier.stringValue)
         
-        let predicate = createPredicate(from: options?.from, to: options?.to)
+        let predicate = try createPredicate(filter: options?.filter)
         let unit = HKUnit.init(from: options?.unit ?? "count")
         
         // Convert the anchor date string to Date
@@ -322,7 +328,8 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                     
                     var responseArray: [QueryStatisticsResponse] = []
                     
-                    statistics.enumerateStatistics(from: options?.from ?? Date.distantPast, to: options?.to ?? Date()) { stats, _ in
+                    // todo: handle from/to here?
+                    statistics.enumerateStatistics(from: Date.distantPast, to: Date()) { stats, _ in
                         var response = QueryStatisticsResponse()
                         
                         if let averageQuantity = stats.averageQuantity() {
@@ -389,7 +396,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
     
     func queryQuantitySamplesWithAnchor(identifier: QuantityTypeIdentifier, options: QueryOptionsWithAnchorAndUnit) throws -> Promise<QuantitySamplesWithAnchorResponse> {
         let quantityType = try initializeQuantityType(identifier.stringValue)
-        let predicate = createPredicate(from: options.from, to: options.to)
+        let predicate = try createPredicate(filter: options.filter)
         let limit = getQueryLimit(options.limit)
         let actualAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
         

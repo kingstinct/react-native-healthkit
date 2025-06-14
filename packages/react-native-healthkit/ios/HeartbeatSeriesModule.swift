@@ -41,7 +41,7 @@ class HeartbeatSeriesModule : HybridHeartbeatSeriesModuleSpec {
     func queryHeartbeatSeriesSamples(
         options: QueryOptionsWithSortOrder?
     ) throws -> Promise<[HeartbeatSeriesSample]> {
-        let predicate = createPredicate(from: options?.from, to: options?.to)
+        let predicate = try createPredicate(filter: options?.filter)
         let queryLimit = getQueryLimit(options?.limit)
         
         return Promise.async {
@@ -90,7 +90,7 @@ class HeartbeatSeriesModule : HybridHeartbeatSeriesModuleSpec {
     func queryHeartbeatSeriesSamplesWithAnchor(
         options: QueryOptionsWithAnchor
     ) throws -> Promise<HeartbeatSeriesSamplesWithAnchorResponse> {
-        let predicate = createPredicate(from: options.from, to: options.to)
+        let predicate = try createPredicate(filter: options.filter)
         let queryLimit = getQueryLimit(options.limit)
         let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
         

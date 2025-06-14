@@ -12,10 +12,8 @@ export interface HeartbeatSeriesModule extends HybridObject<{ ios: "swift" }> {
 	queryHeartbeatSeriesSamples(
 		options?: QueryOptionsWithSortOrder,
 	): Promise<readonly HeartbeatSeriesSample[]>;
+
 	queryHeartbeatSeriesSamplesWithAnchor(
 		options: QueryOptionsWithAnchor,
 	): Promise<HeartbeatSeriesSamplesWithAnchorResponse>;
-	queryHeartbeatSeriesByUUID(
-		seriesUUID: string,
-	): Promise<HeartbeatSeriesSample | null>;
 }

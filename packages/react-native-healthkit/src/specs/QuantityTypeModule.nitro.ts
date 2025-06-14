@@ -2,6 +2,7 @@ import type { AnyMap, HybridObject } from "react-native-nitro-modules";
 import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
 import type { QuantitySample } from "../types/QuantitySample";
 import type {
+	PredicateForSamples,
 	QueryOptionsWithAnchorAndUnit,
 	QueryOptionsWithSortOrderAndUnit,
 } from "../types/QueryOptions";
@@ -28,15 +29,9 @@ export interface QuantityTypeModule extends HybridObject<{ ios: "swift" }> {
 		metadata: AnyMap,
 	): Promise<boolean>;
 
-	deleteQuantitySample(
+	deleteQuantitySamples(
 		identifier: QuantityTypeIdentifier,
-		uuid: string,
-	): Promise<boolean>;
-
-	deleteQuantitySamplesBetween(
-		identifier: QuantityTypeIdentifier,
-		from: Date,
-		to: Date,
+		filter: PredicateForSamples,
 	): Promise<boolean>;
 
 	queryQuantitySamples(

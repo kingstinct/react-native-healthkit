@@ -39,7 +39,7 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
         options: QueryOptionsWithSortOrder?,
     ) throws -> Promise<[CategorySample]> {
         let sampleType = try initializeCategoryType(identifier.stringValue)
-        let predicate = createPredicate(from: options?.from, to: options?.to)
+        let predicate = try createPredicate(filter: options?.filter)
         let queryLimit = getQueryLimit(options?.limit)
         
         return Promise.async {
@@ -80,7 +80,7 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
     ) throws -> Promise<CategorySamplesWithAnchorResponse> {
         let sampleType = try initializeCategoryType(identifier.stringValue)
         
-        let predicate = createPredicate(from: options.from, to: options.to)
+        let predicate = try createPredicate(filter: options.filter)
         let queryLimit = getQueryLimit(options.limit)
         let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
         

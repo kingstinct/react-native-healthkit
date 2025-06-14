@@ -237,10 +237,7 @@ func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
 
 class WorkoutsModule : HybridWorkoutsModuleSpec {
     func queryWorkoutSamples(options: WorkoutQueryOptions) throws -> Promise<[HybridWorkoutProxySpec]> {
-        let predicate = createPredicate(
-            from: options.from,
-            to: options.to
-        )
+        let predicate = try createPredicateForWorkout(filter: options.filter)
         
         let limit = getQueryLimit(options.limit)
         
@@ -470,10 +467,7 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
     }
     
     func queryWorkoutSamplesWithAnchor(options: WorkoutQueryOptionsWithAnchor) throws -> Promise<QueryWorkoutSamplesWithAnchorResponse> {
-        let predicate = createPredicate(
-            from: options.from,
-            to: options.to
-        )
+        let predicate = try createPredicateForWorkout(filter: options.filter)
         
         let limit = getQueryLimit(options.limit)
         

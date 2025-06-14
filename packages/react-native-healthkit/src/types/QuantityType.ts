@@ -1,5 +1,6 @@
 import type { QuantitySample } from "./QuantitySample";
 import type { QuantityTypeIdentifier } from "./QuantityTypeIdentifier";
+import type { PredicateForSamples } from "./QueryOptions";
 import type { DeletedSample, GenericMetadata } from "./Shared";
 import type {
 	BloodGlucoseUnit,
@@ -63,8 +64,7 @@ export interface IntervalComponents {
 }
 
 export interface StatisticsQueryOptions {
-	from?: Date;
-	to?: Date;
+	filter?: PredicateForSamples;
 	unit?: string;
 }
 

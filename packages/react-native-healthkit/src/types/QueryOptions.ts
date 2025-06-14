@@ -1,9 +1,33 @@
+type PredicateWithUUID = {
+	readonly uuid: string;
+};
+
+type PredicateWithUUIDs = {
+	readonly uuids: readonly string[];
+};
+
+type PredicateWithStartAndEnd = {
+	readonly withStart?: Date;
+	readonly end?: Date;
+	readonly strictEndDate?: boolean;
+	readonly strictStartDate?: boolean;
+};
+
+type PredicateWithMetadataKey = {
+	readonly withMetadataKey: string;
+};
+
+export type PredicateForSamples =
+	| PredicateWithUUID
+	| PredicateWithUUIDs
+	| PredicateWithMetadataKey
+	| PredicateWithStartAndEnd;
+
 /**
  * Generic options for querying.
  */
 export interface GenericQueryOptions {
-	readonly from?: Date;
-	readonly to?: Date;
+	filter?: PredicateForSamples;
 	readonly limit?: number;
 }
 

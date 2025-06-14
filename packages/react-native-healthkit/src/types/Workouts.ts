@@ -4,6 +4,7 @@ import type { Device } from "./Device";
 import type { Quantity } from "./QuantityType";
 import type { AnyMap } from "react-native-nitro-modules";
 import type { WorkoutProxy } from "../specs/WorkoutProxy.nitro";
+import type { PredicateForSamples } from "./QueryOptions";
 
 export enum WorkoutActivityType {
 	americanFootball = 1,
@@ -169,11 +170,18 @@ export interface QueryWorkoutSamplesWithAnchorResponse {
 	readonly newAnchor: string;
 }
 
+type WorkoutActivityTypePredicate = {
+	readonly workoutActivityType: WorkoutActivityType;
+};
+
+export type PredicateForWorkouts =
+	| PredicateForSamples
+	| WorkoutActivityTypePredicate;
+
 export interface WorkoutQueryOptionsWithAnchor {
 	energyUnit?: string;
 	distanceUnit?: string;
-	from?: Date;
-	to?: Date;
+	filter?: PredicateForWorkouts;
 	limit?: number;
 	anchor?: string;
 }
@@ -181,8 +189,7 @@ export interface WorkoutQueryOptionsWithAnchor {
 export interface WorkoutQueryOptions {
 	energyUnit?: string;
 	distanceUnit?: string;
-	from?: Date;
-	to?: Date;
+	filter?: PredicateForWorkouts;
 	limit?: number;
 	ascending?: boolean;
 }

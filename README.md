@@ -157,6 +157,8 @@ Example:
 There are a lot of under-the-hood changes in version 9.0.0, some of them are breaking (although I've tried to reduce it as much as possible).
 - Most of all - the library has been migrated to use react-native-nitro-modules. This improves performance, type-safety and gets rid of a lot of boilerplate.
 - Naming conventions have changed - most of the HK-prefixed stuff has been removed to avoid confusion on the native side and also make the library more beautiful to look at. As an example the type previously called HKQuantityTypeIdentifier is not just QuantityTypeIdentifier on the library level.
+- Less required params. Making it easier to start using.
+- Flexible filters.
 
 ## A note on Apple Documentation
 
