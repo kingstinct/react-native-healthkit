@@ -2,11 +2,15 @@ import type { AnyMap, HybridObject } from "react-native-nitro-modules";
 import type { WorkoutConfiguration } from "../types/WorkoutKit";
 import type { WorkoutEventType } from "../types/Workouts";
 
-export interface StartWatchAppWithWorkoutConfigurationOptions {
-	onError?(event: WorkoutErrorEvent): void;
-	onStateChange?(event: WorkoutStateChangeEvent): void;
-	onDataReceived?(event: WorkoutDataReceivedEvent): void;
-	onEventReceived?(event: WorkoutEventReceivedEvent): void;
+export interface WorkoutSessionMirroringStartHandlerOptions {
+	onError(errorMessage: string): void;
+	onStateChange(
+		toState: WorkoutSessionState,
+		fromState: WorkoutSessionState,
+		date: Date,
+	): void;
+	onDataReceived(data: RemoteSessionSharableData[]): void;
+	onEventReceived(type: WorkoutEventType): void;
 }
 
 export interface WorkoutSessionModule extends HybridObject<{ ios: "swift" }> {
@@ -18,7 +22,11 @@ export interface WorkoutSessionModule extends HybridObject<{ ios: "swift" }> {
 	): Promise<boolean>;
 
 	workoutSessionMirroringStartHandler(
-		options: StartWatchAppWithWorkoutConfigurationOptions,
+		/*onError: (event: WorkoutErrorEvent) => void,
+		onStateChange: (event: WorkoutStateChangeEvent) => void,
+		onDataReceived: (event: WorkoutDataReceivedEvent) => void,
+		onEventReceived: (event: WorkoutEventReceivedEvent) => void,*/
+		options: WorkoutSessionMirroringStartHandlerOptions,
 	): boolean;
 }
 

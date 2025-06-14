@@ -4,22 +4,33 @@
 //
 //  Created by Robert Herber on 2025-06-13.
 //
-#if canImport(WorkoutKit)
-  import WorkoutKit
-#endif
+
+import WorkoutKit
 import NitroModules
 import HealthKit
 
+
 @available(iOS 17.0, *)
 class WorkoutSessionDelegate: NSObject, HKWorkoutSessionDelegate {
-    
-    let _listeners: StartWatchAppWithWorkoutConfigurationOptions
-    
-    init(options: StartWatchAppWithWorkoutConfigurationOptions){
-        _listeners = options
+    func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {
+        
     }
+    
+    func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: any Error) {
+        
+    }
+    
+    
+    
+    // var options: WorkoutSessionMirroringStartHandlerOptions? = nil
+    /*var onStateChange: ((_ event: WorkoutStateChangeEvent) -> Void)?
+    var onError: ((_ event: WorkoutErrorEvent) -> Void)?
+    var onDataReceived: ((_ event: WorkoutDataReceivedEvent) -> Void)?
+    var onEventReceived: ((_ event: WorkoutEventReceivedEvent) -> Void)?*/
+    // var options: WorkoutSessionMirroringStartHandlerOptions? = nil
+    
 
-  func workoutSession(
+    /*func workoutSession(
     _ workoutSession: HKWorkoutSession,
     didChangeTo toState: HKWorkoutSessionState,
     from fromState: HKWorkoutSessionState,
@@ -28,7 +39,7 @@ class WorkoutSessionDelegate: NSObject, HKWorkoutSessionDelegate {
     Task { @MainActor [weak self] in
       guard let self = self else { return }
         
-        _listeners.onStateChange?(
+        _listeners.onStateChange(
             WorkoutStateChangeEvent(
                 toState: WorkoutSessionState(rawValue: Int32(toState.rawValue))!,
                 fromState: WorkoutSessionState(rawValue: Int32(fromState.rawValue))!,
@@ -42,7 +53,7 @@ class WorkoutSessionDelegate: NSObject, HKWorkoutSessionDelegate {
     Task { @MainActor [weak self] in
       guard let self = self else { return }
 
-        self._listeners.onError?(
+        self._listeners.onError(
             WorkoutErrorEvent(error: error.localizedDescription)
         )
     }
@@ -74,7 +85,7 @@ class WorkoutSessionDelegate: NSObject, HKWorkoutSessionDelegate {
         await MainActor.run { [weak self] in
           guard let self = self else { return }
             
-            self._listeners.onDataReceived?(
+            self._listeners.onDataReceived(
                 WorkoutDataReceivedEvent(data: serializedData)
             )
         }
@@ -85,15 +96,53 @@ class WorkoutSessionDelegate: NSObject, HKWorkoutSessionDelegate {
   
     func workoutSession(_ workoutSession: HKWorkoutSession, didGenerate event: HKWorkoutEvent) {
         
-        self._listeners.onEventReceived?(
+        self._listeners.onEventReceived(
             WorkoutEventReceivedEvent(
                 type: WorkoutEventType(rawValue: Int32(event.type.rawValue))!,
             )
         )
-  }
+  }*/
 }
 
-class WorkoutSessionModule:  HybridWorkoutSessionModuleSpec  {
+class WorkoutSessionModule:  HybridWorkoutSessionModuleSpec {
+    // var options: WorkoutSessionMirroringStartHandlerOptions? = nil
+    func workoutSessionMirroringStartHandler(options: WorkoutSessionMirroringStartHandlerOptions) throws -> Bool {
+        // self.options = options
+        if #available(iOS 17.0, *) {
+            store.workoutSessionMirroringStartHandler = { [weak self] mirroringSession in
+                let workoutSessionDelegate = WorkoutSessionDelegate()
+                // workoutSessionDelegate.options = options
+                /*workoutSessionDelegate.onStateChange = { event in
+                    // if let options = self?.options {
+                        // options.onStateChange(event)
+                    // }
+                    
+                    
+                    options.onStateChange(event)
+                }*/
+                mirroringSession.delegate = workoutSessionDelegate
+                self?._workoutSession = mirroringSession
+                self?._workoutSessionDelegate = workoutSessionDelegate
+            }
+        }
+        
+        return true
+    }
+    
+    /*func workoutSessionMirroringStartHandler(onError: @escaping (WorkoutErrorEvent) -> Void, onStateChange: @escaping (WorkoutStateChangeEvent) -> Void, onDataReceived: @escaping (WorkoutDataReceivedEvent) -> Void, onEventReceived: @escaping (WorkoutEventReceivedEvent) -> Void) throws -> Bool {
+        if #available(iOS 17.0, *) {
+            /*store.workoutSessionMirroringStartHandler = { [weak self] mirroringSession in
+                let workoutSessionDelegate = WorkoutSessionDelegate()
+                // workoutSessionDelegate.onStateChange = onStateChange
+                mirroringSession.delegate = workoutSessionDelegate
+                self?._workoutSession = mirroringSession
+                self?._workoutSessionDelegate = workoutSessionDelegate
+            }*/
+        }
+        
+        return true
+    }*/
+    
     // var workoutSession: HKWorkoutSession? = nil
     // var workoutSessionDelegate: WorkoutSessionDelegate? = nil
     
@@ -116,10 +165,11 @@ class WorkoutSessionModule:  HybridWorkoutSessionModuleSpec  {
     var _workoutSession: Any? = nil
     var _workoutSessionDelegate: Any? = nil
     
-    func workoutSessionMirroringStartHandler(options: StartWatchAppWithWorkoutConfigurationOptions) throws -> Bool {
+    /*func workoutSessionMirroringStartHandler(options: StartWatchAppWithWorkoutConfigurationOptions) throws -> Bool {
         if #available(iOS 17.0, *) {
             store.workoutSessionMirroringStartHandler = { [weak self] mirroringSession in
-                let workoutSessionDelegate = WorkoutSessionDelegate(options: options)
+                let workoutSessionDelegate = WorkoutSessionDelegate()
+                workoutSessionDelegate.onStateChange = options.onStateChange
                 mirroringSession.delegate = workoutSessionDelegate
                 self?._workoutSession = mirroringSession
                 self?._workoutSessionDelegate = workoutSessionDelegate
@@ -127,6 +177,6 @@ class WorkoutSessionModule:  HybridWorkoutSessionModuleSpec  {
         }
         
         return true
-    }
+    }*/
 
 }
