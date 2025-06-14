@@ -1,3 +1,10 @@
+## [8.7.2](https://github.com/kingstinct/react-native-healthkit/compare/v8.7.1...v8.7.2) (2025-06-14)
+
+
+### Bug Fixes
+
+* remove unimplemented method leftover ([d5087f4](https://github.com/kingstinct/react-native-healthkit/commit/d5087f4e984e7877150f31981d161b9c8c11583d))
+
 ## [8.7.1](https://github.com/kingstinct/react-native-healthkit/compare/v8.7.0...v8.7.1) (2025-06-13)
 
 # [8.7.0](https://github.com/kingstinct/react-native-healthkit/compare/v8.5.0...v8.7.0) (2025-06-12)
