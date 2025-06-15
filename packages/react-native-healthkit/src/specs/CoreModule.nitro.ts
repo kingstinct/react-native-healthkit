@@ -88,4 +88,18 @@ export interface CoreModule extends HybridObject<{ ios: "swift" }> {
 		objectTypeIdentifier: ObjectTypeIdentifier,
 		filter: FilterForSamples,
 	): Promise<number>;
+
+	isObjectTypeAvailable(objectTypeIdentifier: ObjectTypeIdentifier): boolean;
+
+	areObjectTypesAvailable(
+		objectTypeIdentifiers: ObjectTypeIdentifier[],
+	): Record<string, boolean>;
+
+	areObjectTypesAvailableAsync(
+		objectTypeIdentifiers: ObjectTypeIdentifier[],
+	): Promise<Record<string, boolean>>;
+
+	isObjectTypeAvailableAsync(
+		objectTypeIdentifier: ObjectTypeIdentifier,
+	): Promise<boolean>;
 }

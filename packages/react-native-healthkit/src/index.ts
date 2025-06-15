@@ -15,7 +15,6 @@ import { Platform } from "react-native";
 import getMostRecentCategorySample from "./utils/getMostRecentCategorySample";
 import getMostRecentQuantitySample from "./utils/getMostRecentQuantitySample";
 import getMostRecentWorkout from "./utils/getMostRecentWorkout";
-import { WorkoutSessionState } from "./specs/WorkoutSessionModule.nitro";
 import useHealthkitAuthorization from "./hooks/useHealthkitAuthorization";
 import useMostRecentCategorySample from "./hooks/useMostRecentCategorySample";
 import useMostRecentQuantitySample from "./hooks/useMostRecentQuantitySample";
@@ -24,6 +23,7 @@ import useSubscribeToChanges from "./hooks/useSubscribeToChanges";
 import { useIsHealthDataAvailable } from "./hooks/useIsHealthDataAvailable";
 import useSources from "./hooks/useSources";
 import useStatisticsForQuantity from "./hooks/useStatisticsForQuantity";
+import getPreferredUnit from "./utils/getPreferredUnit";
 
 const Core = NitroModules.createHybridObject<CoreModule>("CoreModule");
 
@@ -145,11 +145,22 @@ const queryStateOfMindSamples =
 	StateOfMind.queryStateOfMindSamples.bind(StateOfMind);
 const saveStateOfMindSample =
 	StateOfMind.saveStateOfMindSample.bind(StateOfMind);
+const isQuantityCompatibleWithUnit =
+	QuantityTypes.isQuantityCompatibleWithUnit.bind(QuantityTypes);
+
+const isObjectTypeAvailable = Core.isObjectTypeAvailable.bind(Core);
+const isObjectTypeAvailableAsync = Core.isObjectTypeAvailableAsync.bind(Core);
+const areObjectTypesAvailable = Core.areObjectTypesAvailable.bind(Core);
+const areObjectTypesAvailableAsync =
+	Core.areObjectTypesAvailableAsync.bind(Core);
 
 export {
 	authorizationStatusFor,
-	// todo:
-	// availableQuantityTypes: QuantityTypes.availableQuantityTypes,
+	isObjectTypeAvailable,
+	isObjectTypeAvailableAsync,
+	areObjectTypesAvailable,
+	areObjectTypesAvailableAsync,
+	isQuantityCompatibleWithUnit,
 	disableAllBackgroundDelivery,
 	disableBackgroundDelivery,
 	enableBackgroundDelivery,
@@ -160,9 +171,8 @@ export {
 	getMostRecentCategorySample,
 	getMostRecentQuantitySample,
 	getMostRecentWorkout,
-	// todo:
-	// getPreferredUnit: QuantityTypes.getPreferredUnit,
 	getPreferredUnits,
+	getPreferredUnit,
 	getRequestStatusForAuthorization,
 	getWheelchairUse,
 	isHealthDataAvailable,
@@ -199,7 +209,6 @@ export {
 	CorrelationTypes,
 	HeartbeatSeries,
 	StateOfMind,
-	WorkoutSessionState,
 	// hooks
 	useMostRecentCategorySample,
 	useMostRecentQuantitySample,

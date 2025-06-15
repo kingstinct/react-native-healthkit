@@ -58,6 +58,35 @@ func getPreferredUnitsInternal(quantityTypes: [HKQuantityType], forceUpdate: Boo
 }
 
 class CoreModule : HybridCoreModuleSpec {
+    func areObjectTypesAvailable(objectTypeIdentifiers: [ObjectTypeIdentifier]) -> Dictionary<String, Bool> {
+        var dict = Dictionary<String, Bool>()
+        
+        for objectTypeIdentifier in objectTypeIdentifiers {
+            dict[objectTypeIdentifier.stringValue] = isObjectTypeAvailable(objectTypeIdentifier: objectTypeIdentifier)
+        }
+        
+        return dict
+    }
+    
+    func areObjectTypesAvailableAsync(objectTypeIdentifiers: [ObjectTypeIdentifier]) -> Promise<Dictionary<String, Bool>> {
+        return Promise.resolved(withResult:  areObjectTypesAvailable(objectTypeIdentifiers: objectTypeIdentifiers))
+    }
+    
+    
+    
+    func isObjectTypeAvailable(objectTypeIdentifier: ObjectTypeIdentifier) -> Bool {
+        do {
+            let _ = try objectTypeFrom(objectTypeIdentifier: objectTypeIdentifier)
+            return true
+        } catch {
+            return false
+        }
+    }
+    
+    func isObjectTypeAvailableAsync(objectTypeIdentifier: ObjectTypeIdentifier) -> Promise<Bool> {
+        return Promise.resolved(withResult: isObjectTypeAvailable(objectTypeIdentifier: objectTypeIdentifier))
+    }
+    
     func authorizationStatusFor(
         type: ObjectTypeIdentifier
     ) throws -> AuthorizationStatus {
@@ -344,4 +373,5 @@ class CoreModule : HybridCoreModuleSpec {
         
         return Double(successCounts.filter { $0 }.count)
     }
+
 }
