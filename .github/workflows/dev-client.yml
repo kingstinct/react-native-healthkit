@@ -37,3 +37,4 @@ jobs:
           working-directory: ./apps/example
           profile: development-appstore-connect
           branch: ${{ github.ref_name }}
+          

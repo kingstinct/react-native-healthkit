@@ -10,7 +10,8 @@
 		},
 		"development-appstore-connect": {
 			"developmentClient": true,
-			"distribution": "store"
+			"distribution": "store",
+			"autoIncrement": true
 		},
 		"preview": {
 			"distribution": "internal"
