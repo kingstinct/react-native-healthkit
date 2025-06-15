@@ -1,4 +1,5 @@
 import { mock, jest } from "bun:test";
+import { deleteObjects } from ".";
 
 const mockModule = {
 	queryWorkoutSamplesWithAnchor: jest.fn(),
@@ -42,6 +43,12 @@ const mockModule = {
 	saveWorkoutRoute: jest.fn(),
 	getWorkoutPlanById: jest.fn(),
 	startWatchAppWithWorkoutConfiguration: jest.fn(),
+	deleteObjects: jest.fn(),
+	isQuantityCompatibleWithUnit: jest.fn(),
+	isObjectTypeAvailable: jest.fn(),
+	isObjectTypeAvailableAsync: jest.fn(),
+	areObjectTypesAvailable: jest.fn(),
+	areObjectTypesAvailableAsync: jest.fn(),
 	queryStateOfMindSamples: jest.fn(),
 	workoutSessionMirroringStartHandler: jest.fn(),
 };

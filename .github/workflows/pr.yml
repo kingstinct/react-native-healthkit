@@ -17,3 +17,27 @@ jobs:
       - run: bun install
       
       - run: bunx pkg-pr-new publish './packages/*'
+
+  eas-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install
+      
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Continuously Deploy
+        uses: expo/expo-github-action/continuous-deploy-fingerprint@main
+        with:
+          auto-submit-builds: true
+          platform: ios
+          working-directory: ./apps/example
+          profile: development-appstore-connect
+          branch: ${{ github.event.pull_request.head.ref }}

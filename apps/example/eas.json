@@ -8,6 +8,10 @@
 			"developmentClient": true,
 			"distribution": "internal"
 		},
+		"development-appstore-connect": {
+			"developmentClient": true,
+			"distribution": "store"
+		},
 		"preview": {
 			"distribution": "internal"
 		},
