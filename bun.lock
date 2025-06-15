@@ -52,6 +52,7 @@
       "devDependencies": {
         "@babel/core": "^7.27.4",
         "@types/react": "~19.0.14",
+        "nitro-codegen": "^0.26.2",
         "typescript": "~5.8.3",
       },
     },

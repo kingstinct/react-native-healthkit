@@ -93,7 +93,7 @@ class StateOfMindModule : HybridStateOfMindModuleSpec {
         associations: [StateOfMindAssociation],
         metadata: AnyMapHolder?
     ) throws -> Promise<Bool> {
-        if #available(iOS 18.0, *) {
+        if #available(iOS 18, *) {
             return Promise.async {
                 try await withCheckedThrowingContinuation { continuation in
                     // Convert enum values to HKStateOfMind types

@@ -79,7 +79,7 @@ lib/
 
 /.eslintcache
 
-generated
+packages/react-native-healthkit/nitrogen/generated
 apps/example/android
 
 tsconfig.tsbuildinfo
