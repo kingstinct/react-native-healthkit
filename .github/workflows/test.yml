@@ -120,8 +120,8 @@ jobs:
       - name: Build iOS project
         working-directory: apps/example/ios
         run: |
-          xcodebuild -workspace reactnativehealthkitexample.xcworkspace \
-            -scheme reactnativehealthkitexample \
+          xcodebuild -workspace RNHealthKit.xcworkspace \
+            -scheme RNHealthKit \
             -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
             -configuration Debug \
             clean build \
