@@ -3,7 +3,14 @@ import { enumKeyLookup } from "@/utils/enumKeyLookup";
 import { List } from "@expo/ui/swift-ui";
 import { Section } from "@expo/ui/swift-ui-primitives";
 import { useEffect, useState } from "react";
-import { Characteristics, Core } from "@kingstinct/react-native-healthkit";
+import {
+	Characteristics,
+	Core,
+	getBloodType,
+	getDateOfBirth,
+	getFitzpatrickSkinType,
+	getWheelchairUse,
+} from "@kingstinct/react-native-healthkit";
 import {
 	BiologicalSex,
 	BloodType,
@@ -28,25 +35,26 @@ const coreStuffDefaults = [
 	},
 ];
 
+console.log("getDateOfBirth():", getDateOfBirth().toISOString());
+
 const CoreTab = () => {
 	const characteristics: ListItemProps[] = [
 		{
 			title: "Biological Sex",
 			subtitle: biologicalSexLookup[Characteristics.getBiologicalSex()],
 		},
-		{ title: "Birthday", subtitle: Characteristics.getDateOfBirth() },
+		{ title: "Birthday", subtitle: getDateOfBirth().toDateString() },
 		{
 			title: "Blood type",
-			subtitle: bloodTypeLookup[Characteristics.getBloodType()],
+			subtitle: bloodTypeLookup[getBloodType()],
 		},
 		{
 			title: "Fitzpatrick Skin Type",
-			subtitle:
-				fitzpatrickSkinTypeLookup[Characteristics.getFitzpatrickSkinType()],
+			subtitle: fitzpatrickSkinTypeLookup[getFitzpatrickSkinType()],
 		},
 		{
 			title: "Wheelchair Use",
-			subtitle: wheelchairUseLookup[Characteristics.getWheelchairUse()],
+			subtitle: wheelchairUseLookup[getWheelchairUse()],
 		},
 	];
 
@@ -91,18 +99,30 @@ const CoreTab = () => {
 			// selectEnabled={selectEnabled}
 		>
 			<Section title="Characteristics">
-				{characteristics.map((item, index) => (
-					<ListItem key={index} title={item.title} subtitle={item.subtitle} />
+				{characteristics.map((item) => (
+					<ListItem
+						key={item.title}
+						title={item.title}
+						subtitle={item.subtitle}
+					/>
 				))}
 			</Section>
 			<Section title="Device">
-				{coreStuffDefaults.map((item, index) => (
-					<ListItem key={index} title={item.title} subtitle={item.subtitle} />
+				{coreStuffDefaults.map((item) => (
+					<ListItem
+						key={item.title}
+						title={item.title}
+						subtitle={item.subtitle}
+					/>
 				))}
 			</Section>
 			<Section title="Units">
-				{coreStuff.map((item, index) => (
-					<ListItem key={index} title={item.title} subtitle={item.subtitle} />
+				{coreStuff.map((item) => (
+					<ListItem
+						key={item.title}
+						title={item.title}
+						subtitle={item.subtitle}
+					/>
 				))}
 			</Section>
 		</List>

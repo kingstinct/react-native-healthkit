@@ -1,16 +1,22 @@
 import type { HybridObject } from "react-native-nitro-modules";
+import type {
+	BiologicalSex,
+	BloodType,
+	FitzpatrickSkinType,
+	WheelchairUse,
+} from "../types/Characteristics";
 
 export interface CharacteristicTypeModule
 	extends HybridObject<{ ios: "swift" }> {
-	getBloodType(): number;
-	getDateOfBirth(): string;
-	getBiologicalSex(): number;
-	getFitzpatrickSkinType(): number;
-	getWheelchairUse(): number;
+	getBloodType(): BloodType;
+	getDateOfBirth(): Date;
+	getBiologicalSex(): BiologicalSex;
+	getFitzpatrickSkinType(): FitzpatrickSkinType;
+	getWheelchairUse(): WheelchairUse;
 
-	getBloodTypeAsync(): Promise<number>;
-	getDateOfBirthAsync(): Promise<string>;
-	getBiologicalSexAsync(): Promise<number>;
-	getFitzpatrickSkinTypeAsync(): Promise<number>;
-	getWheelchairUseAsync(): Promise<number>;
+	getBloodTypeAsync(): Promise<BloodType>;
+	getDateOfBirthAsync(): Promise<Date>;
+	getBiologicalSexAsync(): Promise<BiologicalSex>;
+	getFitzpatrickSkinTypeAsync(): Promise<FitzpatrickSkinType>;
+	getWheelchairUseAsync(): Promise<WheelchairUse>;
 }

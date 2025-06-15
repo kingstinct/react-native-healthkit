@@ -33,11 +33,6 @@ export interface GenericMetadata {
 	readonly HKWasTakenInLab?: boolean;
 	readonly HKReferenceRangeLowerLimit?: number;
 	readonly HKReferenceRangeUpperLimit?: number;
-
-	/**
-	 *  Additional Metadata, will be merged with the main metadata on the native side
-	 * */
-	readonly allMetadata?: AnyMap;
 }
 
 export interface DeletedSample {

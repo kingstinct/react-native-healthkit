@@ -8,6 +8,7 @@ import type {
 } from "../types/Workouts";
 import type { QuantitySampleForSaving } from "../types/QuantitySample";
 import type { WorkoutProxy } from "./WorkoutProxy.nitro";
+import type { WorkoutConfiguration } from "../types/WorkoutKit";
 
 export interface WorkoutsModule extends HybridObject<{ ios: "swift" }> {
 	saveWorkoutSample(
@@ -24,4 +25,8 @@ export interface WorkoutsModule extends HybridObject<{ ios: "swift" }> {
 	): Promise<QueryWorkoutSamplesWithAnchorResponse>;
 
 	queryWorkoutSamples(options: WorkoutQueryOptions): Promise<WorkoutProxy[]>;
+
+	startWatchAppWithWorkoutConfiguration(
+		workoutConfiguration: WorkoutConfiguration,
+	): Promise<boolean>;
 }

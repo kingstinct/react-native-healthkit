@@ -48,6 +48,6 @@ export enum FitzpatrickSkinType {
 // Maps directly to https://developer.apple.com/documentation/healthkit/hkwheelchairuse
 export enum WheelchairUse {
 	notSet = 0,
-	no = 1,
-	yes = 2,
+	notUsingWheelchair = 1,
+	usingWheelchair = 2,
 }

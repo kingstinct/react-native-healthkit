@@ -159,6 +159,8 @@ There are a lot of under-the-hood changes in version 9.0.0, some of them are bre
 - Naming conventions have changed - most of the HK-prefixed stuff has been removed to avoid confusion on the native side and also make the library more beautiful to look at. As an example the type previously called HKQuantityTypeIdentifier is not just QuantityTypeIdentifier on the library level.
 - Less required params. Making it easier to start using.
 - Flexible filters.
+- `deleteObjects` replaces all previous deletion methods, using the new flexible filters.
+- Workouts are delivered as proxies both containing follow-up functions for that workout together with the sample itself.
 
 ## A note on Apple Documentation
 
