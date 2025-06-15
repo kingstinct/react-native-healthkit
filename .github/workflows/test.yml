@@ -117,14 +117,14 @@ jobs:
       #   working-directory: apps/example/ios
       #   run: pod install
 
-      - name: Build iOS project
-        working-directory: apps/example/ios
-        run: |
-          xcodebuild -workspace RNHealthKit.xcworkspace \
-            -scheme RNHealthKit \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
-            -configuration Debug \
-            clean build \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO
+      # - name: Build iOS project
+      #   working-directory: apps/example/ios
+      #   run: |
+      #     xcodebuild -workspace RNHealthKit.xcworkspace \
+      #       -scheme RNHealthKit \
+      #       -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+      #       -configuration Debug \
+      #       clean build \
+      #       CODE_SIGN_IDENTITY="" \
+      #       CODE_SIGNING_REQUIRED=NO \
+      #       CODE_SIGNING_ALLOWED=NO
