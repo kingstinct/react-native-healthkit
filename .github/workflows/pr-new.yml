@@ -41,6 +41,7 @@ jobs:
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
+          packager: bun
 
       - name: Continuously Deploy
         uses: expo/expo-github-action/continuous-deploy-fingerprint@main
