@@ -7,6 +7,7 @@ on:
       - '.changeset/**'
     branches:
       - main
+      - master
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 

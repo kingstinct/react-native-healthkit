@@ -1,0 +1,25 @@
+name: Package Preview
+
+on:
+  pull_request:
+  push:
+    branches:
+      - nitro-modules
+      - nitro-modules-merged
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        # with:
+        #  ref: refs/pull/${{ github.event.number }}/merge
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install
+
+      - run: bun run nitro-codegen
+        working-directory: packages/react-native-healthkit
+      
+      - run: bunx pkg-pr-new publish './packages/*'
