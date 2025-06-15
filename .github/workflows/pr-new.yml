@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: refs/pull/${{ github.event.number }}/merge
+        # with:
+        #  ref: refs/pull/${{ github.event.number }}/merge
 
       - uses: oven-sh/setup-bun@v2
 
@@ -43,4 +43,4 @@ jobs:
           platform: ios
           working-directory: ./apps/example
           profile: development-appstore-connect
-          branch: ${{ github.event.pull_request.head.ref }}
+          branch: ${{ github.ref_name }}

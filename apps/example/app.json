@@ -1,6 +1,6 @@
 {
 	"expo": {
-		"name": "react-native-healthkit-example",
+		"name": "RN HealthKit",
 		"slug": "react-native-healthkit-example",
 		"owner": "react-native-healthkit",
 		"version": "1.0.0",
@@ -18,19 +18,6 @@
 			"infoPlist": {
 				"ITSAppUsesNonExemptEncryption": false
 			}
-		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/images/adaptive-icon.png",
-				"backgroundColor": "#ffffff"
-			},
-			"edgeToEdgeEnabled": true,
-			"package": "com.kingstinct.reactnativehealthkitexample"
-		},
-		"web": {
-			"bundler": "metro",
-			"output": "static",
-			"favicon": "./assets/images/favicon.png"
 		},
 		"plugins": [
 			"expo-router",
