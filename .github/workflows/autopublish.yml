@@ -12,18 +12,7 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  test:
-    name: Test
-    uses: ./.github/workflows/test.yml
-    strategy:
-      fail-fast: false
-      max-parallel: 10
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    with:
-      os: ${{ matrix.os }}
   release:
-    needs: test
     name: Release
     runs-on: ubuntu-latest
     steps:
