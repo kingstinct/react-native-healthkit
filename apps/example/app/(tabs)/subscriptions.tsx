@@ -3,8 +3,9 @@ import { AllSampleTypesInApp } from '@/constants/AllUsedIdentifiersInApp'
 import { List } from '@expo/ui/swift-ui'
 import { Section, Text } from '@expo/ui/swift-ui-primitives'
 import {
-  Core,
   enableBackgroundDelivery,
+  subscribeToChanges,
+  unsubscribeQueries,
 } from '@kingstinct/react-native-healthkit'
 import { UpdateFrequency } from '@kingstinct/react-native-healthkit/types/Background'
 import type { SampleTypeIdentifier } from '@kingstinct/react-native-healthkit/types/Shared'
@@ -41,7 +42,7 @@ const Subscriptions = () => {
       subscriptionIds = AllSampleTypesInApp.map((sampleType) => {
         enableBackgroundDelivery(sampleType, UpdateFrequency.immediate)
 
-        return Core.subscribeToObserverQuery(sampleType, (args) => {
+        return subscribeToChanges(sampleType, (args) => {
           if (args.errorMessage) {
             if (AppState.currentState === 'active') {
               alert(
@@ -83,7 +84,7 @@ const Subscriptions = () => {
     void init()
 
     return () => {
-      Core.unsubscribeQueries(subscriptionIds)
+      unsubscribeQueries(subscriptionIds)
     }
   }, [])
 

@@ -1,4 +1,4 @@
-import { Workouts } from '..'
+import { Workouts } from '../modules'
 import type { WorkoutQueryOptions } from '../types/Workouts'
 
 const getMostRecentWorkout = async (

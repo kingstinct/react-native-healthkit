@@ -8,7 +8,10 @@ import { HStack, Text, VStack } from '@expo/ui/swift-ui-primitives'
 import { router } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
 
-import { Core } from '@kingstinct/react-native-healthkit'
+import {
+  getRequestStatusForAuthorization,
+  requestAuthorization,
+} from '@kingstinct/react-native-healthkit'
 import {
   AuthorizationRequestStatus,
   AuthorizationStatus,
@@ -19,7 +22,7 @@ const authEnumLookup = enumKeyLookup(AuthorizationStatus)
 export default function AuthScreen() {
   const requestAuth = useCallback(async () => {
     try {
-      const res = await Core.requestAuthorization(
+      const res = await requestAuthorization(
         AllSampleTypesInApp,
         AllObjectTypesInApp,
       )
@@ -37,7 +40,7 @@ export default function AuthScreen() {
   useEffect(() => {
     const updateStatus = async () => {
       try {
-        const status = await Core.getRequestStatusForAuthorization(
+        const status = await getRequestStatusForAuthorization(
           AllSampleTypesInApp,
           AllObjectTypesInApp,
         )

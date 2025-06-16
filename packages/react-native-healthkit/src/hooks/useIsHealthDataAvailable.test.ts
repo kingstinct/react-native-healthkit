@@ -1,7 +1,7 @@
 import { describe, expect, jest, test } from 'bun:test'
 import { renderHook } from '@testing-library/react-native'
 
-import { Core } from '..'
+import { Core } from '../modules'
 import waitForNextUpdate from '../test-utils'
 
 describe('useIsHealthDataAvailable', () => {

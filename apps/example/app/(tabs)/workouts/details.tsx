@@ -2,7 +2,7 @@ import { ListItem } from '@/components/SwiftListItem'
 import { enumKeyLookup } from '@/utils/enumKeyLookup'
 import { List } from '@expo/ui/swift-ui'
 import { Section } from '@expo/ui/swift-ui-primitives'
-import { Workouts } from '@kingstinct/react-native-healthkit'
+import { queryWorkoutSamples } from '@kingstinct/react-native-healthkit'
 import type { WorkoutProxy } from '@kingstinct/react-native-healthkit/specs/WorkoutProxy.nitro'
 import {
   WorkoutActivityType,
@@ -33,7 +33,7 @@ export default function WorkoutDetails() {
 
     const startedAt = Date.now()
 
-    Workouts.queryWorkoutSamples({ filter: { uuid: workoutId }, limit: 1 })
+    queryWorkoutSamples({ filter: { uuid: workoutId }, limit: 1 })
       .then((ws) => {
         // biome-ignore lint/style/noNonNullAssertion: <explanation>
         const w = ws[0]!

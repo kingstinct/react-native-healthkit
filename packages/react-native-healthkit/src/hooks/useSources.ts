@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { Core } from '..'
+import { Core } from '../modules'
 import type { SourceProxy } from '../specs/SourceProxy.nitro'
 import type { SampleTypeIdentifier } from '../types/Shared'
 

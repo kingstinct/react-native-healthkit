@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { Core } from '..'
+import { Core } from '../modules'
 import type { AuthorizationRequestStatus } from '../types/Auth'
 import type {
   ObjectTypeIdentifier,

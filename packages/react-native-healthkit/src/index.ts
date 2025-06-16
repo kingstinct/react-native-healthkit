@@ -1,162 +1,384 @@
 import { Platform } from 'react-native'
-import { NitroModules } from 'react-native-nitro-modules'
-import useHealthkitAuthorization from './hooks/useHealthkitAuthorization'
-import { useIsHealthDataAvailable } from './hooks/useIsHealthDataAvailable'
-import useMostRecentCategorySample from './hooks/useMostRecentCategorySample'
-import useMostRecentQuantitySample from './hooks/useMostRecentQuantitySample'
-import useMostRecentWorkout from './hooks/useMostRecentWorkout'
-import useSources from './hooks/useSources'
-import useStatisticsForQuantity from './hooks/useStatisticsForQuantity'
-import useSubscribeToChanges from './hooks/useSubscribeToChanges'
+
+// Import types for default values and function signatures.
+// These types are expected to be available via the './types' export.
+// You might need to adjust the import path or ensure these types are correctly exported from './types'
+
+// This import is crucial for deriving the type of the default export `HealthkitModule`
+// It assumes that index.ios.ts exports a default object matching the Healthkit native module structure.
+import type * as ReactNativeHealthkit from './index.ios'
+import type { SourceProxy } from './specs/SourceProxy.nitro'
+import type { WorkoutProxy } from './specs/WorkoutProxy.nitro'
+import { AuthorizationRequestStatus, AuthorizationStatus } from './types/Auth'
 import type {
-  CategoryTypeModule,
-  CategoryTypeModuleTyped,
-} from './specs/CategoryTypeModule.nitro'
-import type { CharacteristicTypeModule } from './specs/CharacteristicTypeModule.nitro'
-import type { CoreModule } from './specs/CoreModule.nitro'
-import type { CorrelationTypeModule } from './specs/CorrelationTypeModule.nitro'
-import type { HeartbeatSeriesModule } from './specs/HeartbeatSeriesModule.nitro'
-import type { QuantityTypeModule } from './specs/QuantityTypeModule.nitro'
-import type { StateOfMindModule } from './specs/StateOfMindModule.nitro'
-import type { WorkoutsModule } from './specs/WorkoutsModule.nitro'
-import type { QuantityTypeIdentifier } from './types/QuantityTypeIdentifier'
-import getMostRecentCategorySample from './utils/getMostRecentCategorySample'
-import getMostRecentQuantitySample from './utils/getMostRecentQuantitySample'
-import getMostRecentWorkout from './utils/getMostRecentWorkout'
-import getPreferredUnit from './utils/getPreferredUnit'
+  CategorySample,
+  CategorySampleTyped,
+  CategorySamplesWithAnchorResponseTyped,
+} from './types/CategoryType'
+import type { CategoryTypeIdentifier } from './types/CategoryTypeIdentifier'
+import {
+  BiologicalSex,
+  BloodType,
+  FitzpatrickSkinType,
+  WheelchairUse,
+} from './types/Characteristics'
+import type { CorrelationSample } from './types/CorrelationType'
+import type {
+  HeartbeatSeriesSample,
+  HeartbeatSeriesSamplesWithAnchorResponse,
+} from './types/HeartbeatSeries'
+import type { QuantitySample } from './types/QuantitySample'
+import type {
+  QuantitySamplesWithAnchorResponse,
+  QueryStatisticsResponse,
+} from './types/QuantityType'
+import type { StateOfMindSample } from './types/StateOfMind'
+import type { IdentifierWithUnit } from './types/Units'
+import type { QueryWorkoutSamplesWithAnchorResponse } from './types/Workouts'
 
-const Core = NitroModules.createHybridObject<CoreModule>('CoreModule')
+const notAvailableError = `[@kingstinct/react-native-healthkit] Platform "${Platform.OS}" not supported. HealthKit is only available on iOS.`
 
-const Workouts =
-  NitroModules.createHybridObject<WorkoutsModule>('WorkoutsModule')
+let hasWarned = false
 
-const Characteristics =
-  NitroModules.createHybridObject<CharacteristicTypeModule>(
-    'CharacteristicTypeModule',
-  )
+// @ts-ignore
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
+function UnavailableFnNew<T extends Function>(defaultValue: ReturnType<T>): T {
+  // @ts-ignore
+  return () => {
+    if (Platform.OS !== 'ios' && !hasWarned) {
+      console.warn(notAvailableError)
+      hasWarned = true
+    }
+    return defaultValue
+  }
+}
 
-const QuantityTypes =
-  NitroModules.createHybridObject<QuantityTypeModule>('QuantityTypeModule')
+// @ts-ignore
+function UnavailableFnFromModule<
+  TKey extends keyof typeof ReactNativeHealthkit,
+  // @ts-ignore
+  // biome-ignore lint/complexity/noBannedTypes: <explanation>
+  T extends Function = (typeof ReactNativeHealthkit)[TKey],
+  // @ts-ignore
+>(fn: TKey, defaultValue: ReturnType<T>): T {
+  // @ts-ignore
+  return () => {
+    if (Platform.OS !== 'ios' && !hasWarned) {
+      console.warn(notAvailableError)
+      hasWarned = true
+    }
+    return defaultValue
+  }
+}
 
-const CategoryTypes = NitroModules.createHybridObject<CategoryTypeModule>(
-  'CategoryTypeModule',
-) as CategoryTypeModuleTyped
+// --- Mock Implementations for exported functions ---
 
-const CorrelationTypes = NitroModules.createHybridObject<CorrelationTypeModule>(
-  'CorrelationTypeModule',
+// CoreModule functions
+export const authorizationStatusFor = UnavailableFnFromModule(
+  'authorizationStatusFor',
+  AuthorizationStatus.notDetermined,
+)
+export const disableAllBackgroundDelivery = UnavailableFnFromModule(
+  'disableAllBackgroundDelivery',
+  Promise.resolve(false),
+)
+export const disableBackgroundDelivery = UnavailableFnFromModule(
+  'disableBackgroundDelivery',
+  Promise.resolve(false),
+)
+export const enableBackgroundDelivery = UnavailableFnFromModule(
+  'enableBackgroundDelivery',
+  Promise.resolve(false),
+)
+export const getPreferredUnits = UnavailableFnFromModule(
+  'getPreferredUnits',
+  Promise.resolve([]),
+)
+export const getRequestStatusForAuthorization = UnavailableFnFromModule(
+  'getRequestStatusForAuthorization',
+  Promise.resolve(AuthorizationRequestStatus.unknown),
+)
+export const isHealthDataAvailable = UnavailableFnFromModule(
+  'isHealthDataAvailable',
+  false,
+) // Original was synchronous
+export const isHealthDataAvailableAsync = UnavailableFnFromModule(
+  'isHealthDataAvailableAsync',
+  Promise.resolve(false),
+) // Added for consistency if needed
+export const querySources = UnavailableFnFromModule(
+  'querySources',
+  Promise.resolve([]),
+)
+export const requestAuthorization = UnavailableFnFromModule(
+  'requestAuthorization',
+  Promise.resolve(false),
+)
+export const deleteObjects = UnavailableFnFromModule(
+  'deleteObjects',
+  Promise.resolve(0),
+)
+export const subscribeToChanges = UnavailableFnFromModule(
+  'subscribeToChanges',
+  'dummy-query-uuid',
+) // Mocking the observer query UUID
+export const isProtectedDataAvailable = UnavailableFnFromModule(
+  'isProtectedDataAvailable',
+  false,
+)
+export const isObjectTypeAvailable = UnavailableFnFromModule(
+  'isObjectTypeAvailable',
+  false,
+)
+export const isObjectTypeAvailableAsync = UnavailableFnFromModule(
+  'isObjectTypeAvailableAsync',
+  Promise.resolve(false),
+)
+export const areObjectTypesAvailable = UnavailableFnFromModule(
+  'areObjectTypesAvailable',
+  {},
+)
+export const areObjectTypesAvailableAsync = UnavailableFnFromModule(
+  'areObjectTypesAvailableAsync',
+  Promise.resolve({}),
 )
 
-const HeartbeatSeries = NitroModules.createHybridObject<HeartbeatSeriesModule>(
-  'HeartbeatSeriesModule',
+// CharacteristicTypeModule functions
+export const getBiologicalSex = UnavailableFnFromModule(
+  'getBiologicalSex',
+  BiologicalSex.notSet,
+)
+export const getBloodType = UnavailableFnFromModule(
+  'getBloodType',
+  BloodType.notSet,
+)
+export const getDateOfBirth = UnavailableFnFromModule(
+  'getDateOfBirth',
+  new Date(0),
+) // Assuming string for date
+export const getFitzpatrickSkinType = UnavailableFnFromModule(
+  'getFitzpatrickSkinType',
+  FitzpatrickSkinType.notSet,
+)
+export const getWheelchairUse = UnavailableFnFromModule(
+  'getWheelchairUse',
+  WheelchairUse.notSet,
 )
 
-const StateOfMind =
-  NitroModules.createHybridObject<StateOfMindModule>('StateOfMindModule')
+// QuantityTypeModule functions
+export const queryQuantitySamples = UnavailableFnFromModule(
+  'queryQuantitySamples',
+  Promise.resolve([]),
+)
+export const queryQuantitySamplesWithAnchor = UnavailableFnFromModule(
+  'queryQuantitySamplesWithAnchor',
+  Promise.resolve({
+    samples: [],
+    deletedSamples: [],
+    newAnchor: '',
+  }),
+)
+export const queryStatisticsForQuantity = UnavailableFnFromModule(
+  'queryStatisticsForQuantity',
+  Promise.resolve({}),
+)
+export const queryStatisticsCollectionForQuantity = UnavailableFnFromModule(
+  'queryStatisticsCollectionForQuantity',
+  Promise.resolve([]),
+)
+export const saveQuantitySample = UnavailableFnFromModule(
+  'saveQuantitySample',
+  Promise.resolve(false),
+)
+export const isQuantityCompatibleWithUnit = UnavailableFnFromModule(
+  'isQuantityCompatibleWithUnit',
+  false,
+)
 
-const currentMajorVersionIOS =
-  Platform.OS === 'ios' ? Number.parseInt(Platform.Version, 10) : 0
+// CategoryTypeModule functions
+export function queryCategorySamples<T extends CategoryTypeIdentifier>(
+  categoryTypeIdentifier: T,
+): Promise<CategorySampleTyped<T>[]> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve([])
+}
 
-/**
- * Quantity types that are not available before iOS 17
- */
-type QuantityTypesIOS17Plus =
-  | 'HKQuantityTypeIdentifierCyclingCadence'
-  | 'HKQuantityTypeIdentifierCyclingFunctionalThresholdPower'
-  | 'HKQuantityTypeIdentifierCyclingPower'
-  | 'HKQuantityTypeIdentifierCyclingSpeed'
-  | 'HKQuantityTypeIdentifierPhysicalEffort'
-  | 'HKQuantityTypeIdentifierTimeInDaylight'
+export function queryCategorySamplesWithAnchor<
+  T extends CategoryTypeIdentifier,
+>(
+  categoryTypeIdentifier: T,
+): Promise<CategorySamplesWithAnchorResponseTyped<T>> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve({
+    samples: [],
+    deletedSamples: [],
+    newAnchor: '',
+  })
+}
+export const saveCategorySample = UnavailableFnFromModule(
+  'saveCategorySample',
+  Promise.resolve(false),
+)
 
-/**
- * Available quantity types for iOS versions before iOS 17
- */
-export type AvailableQuantityTypesBeforeIOS17 = Exclude<
-  QuantityTypeIdentifier,
-  QuantityTypesIOS17Plus
->
+// CorrelationTypeModule functions
+export const queryCorrelationSamples = UnavailableFnFromModule(
+  'queryCorrelationSamples',
+  Promise.resolve([]),
+)
+export const saveCorrelationSample = UnavailableFnFromModule(
+  'saveCorrelationSample',
+  Promise.resolve(false),
+)
 
-/**
- * Available quantity types for iOS 17 and later (all quantity types)
- */
-export type AvailableQuantityTypesIOS17Plus = QuantityTypeIdentifier
+// HeartbeatSeriesModule functions
+export const queryHeartbeatSeriesSamples = UnavailableFnFromModule(
+  'queryHeartbeatSeriesSamples',
+  Promise.resolve([]),
+)
+export const queryHeartbeatSeriesSamplesWithAnchor = UnavailableFnFromModule(
+  'queryHeartbeatSeriesSamplesWithAnchor',
+  Promise.resolve({
+    samples: [],
+    deletedSamples: [],
+    newAnchor: '',
+  }),
+)
 
-/**
- * Get available quantity types based on iOS version
- * @param majorVersionIOS - iOS major version number (defaults to current iOS version)
- * @returns Available quantity types for the given iOS version
- */
-export type AvailableQuantityTypes<
-  T extends number = typeof currentMajorVersionIOS,
-> = T extends 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25
-  ? AvailableQuantityTypesIOS17Plus
-  : AvailableQuantityTypesBeforeIOS17
+// WorkoutsModule functions
+export const queryWorkoutSamples = UnavailableFnFromModule(
+  'queryWorkoutSamples',
+  Promise.resolve([]),
+)
+export const queryWorkoutSamplesWithAnchor = UnavailableFnFromModule(
+  'queryWorkoutSamplesWithAnchor',
+  Promise.resolve({
+    workouts: [],
+    deletedSamples: [],
+    newAnchor: '',
+  }),
+)
+export const saveWorkoutSample = UnavailableFnFromModule(
+  'saveWorkoutSample',
+  Promise.resolve(''),
+)
+export const startWatchApp = UnavailableFnFromModule(
+  'startWatchApp',
+  Promise.resolve(false),
+)
 
-// Named exports - all functions bound to their respective modules
-const authorizationStatusFor = Core.authorizationStatusFor.bind(Core)
-const disableAllBackgroundDelivery =
-  Core.disableAllBackgroundDelivery.bind(Core)
-const disableBackgroundDelivery = Core.disableBackgroundDelivery.bind(Core)
-const enableBackgroundDelivery = Core.enableBackgroundDelivery.bind(Core)
-const getBiologicalSex = Characteristics.getBiologicalSex.bind(Characteristics)
-const getBloodType = Characteristics.getBloodType.bind(Characteristics)
-const getDateOfBirth = Characteristics.getDateOfBirth.bind(Characteristics)
-const getFitzpatrickSkinType =
-  Characteristics.getFitzpatrickSkinType.bind(Characteristics)
-const getPreferredUnits = Core.getPreferredUnits.bind(Core)
-const getRequestStatusForAuthorization =
-  Core.getRequestStatusForAuthorization.bind(Core)
-const getWheelchairUse = Characteristics.getWheelchairUse.bind(Characteristics)
-const isHealthDataAvailable = Core.isHealthDataAvailable.bind(Core)
-const isHealthDataAvailableAsync = Core.isHealthDataAvailableAsync.bind(Core)
-const queryCategorySamples =
-  CategoryTypes.queryCategorySamples.bind(CategoryTypes)
-const queryCategorySamplesWithAnchor =
-  CategoryTypes.queryCategorySamplesWithAnchor.bind(CategoryTypes)
-const queryCorrelationSamples =
-  CorrelationTypes.queryCorrelationSamples.bind(CorrelationTypes)
-const queryHeartbeatSeriesSamples =
-  HeartbeatSeries.queryHeartbeatSeriesSamples.bind(HeartbeatSeries)
-const queryHeartbeatSeriesSamplesWithAnchor =
-  HeartbeatSeries.queryHeartbeatSeriesSamplesWithAnchor.bind(HeartbeatSeries)
-const queryQuantitySamples =
-  QuantityTypes.queryQuantitySamples.bind(QuantityTypes)
-const queryQuantitySamplesWithAnchor =
-  QuantityTypes.queryQuantitySamplesWithAnchor.bind(QuantityTypes)
-const queryStatisticsForQuantity =
-  QuantityTypes.queryStatisticsForQuantity.bind(QuantityTypes)
-const queryStatisticsCollectionForQuantity =
-  QuantityTypes.queryStatisticsCollectionForQuantity.bind(QuantityTypes)
-const queryWorkoutSamples = Workouts.queryWorkoutSamples.bind(Workouts)
-const queryWorkoutSamplesWithAnchor =
-  Workouts.queryWorkoutSamplesWithAnchor.bind(Workouts)
-const querySources = Core.querySources.bind(Core)
-const requestAuthorization = Core.requestAuthorization.bind(Core)
-const deleteObjects = Core.deleteObjects.bind(Core)
-const saveCategorySample = CategoryTypes.saveCategorySample.bind(CategoryTypes)
-const saveCorrelationSample =
-  CorrelationTypes.saveCorrelationSample.bind(CorrelationTypes)
-const saveQuantitySample = QuantityTypes.saveQuantitySample.bind(QuantityTypes)
-const saveWorkoutSample = Workouts.saveWorkoutSample.bind(Workouts)
-const subscribeToChanges = Core.subscribeToObserverQuery.bind(Core)
-const startWatchApp =
-  Workouts.startWatchAppWithWorkoutConfiguration.bind(Workouts)
-const isProtectedDataAvailable = Core.isProtectedDataAvailable.bind(Core)
-const queryStateOfMindSamples =
-  StateOfMind.queryStateOfMindSamples.bind(StateOfMind)
-const saveStateOfMindSample =
-  StateOfMind.saveStateOfMindSample.bind(StateOfMind)
-const isQuantityCompatibleWithUnit =
-  QuantityTypes.isQuantityCompatibleWithUnit.bind(QuantityTypes)
+// StateOfMindModule functions
+export const queryStateOfMindSamples = UnavailableFnFromModule(
+  'queryStateOfMindSamples',
+  Promise.resolve([]),
+)
+export const saveStateOfMindSample = UnavailableFnFromModule(
+  'saveStateOfMindSample',
+  Promise.resolve(false),
+)
 
-const isObjectTypeAvailable = Core.isObjectTypeAvailable.bind(Core)
-const isObjectTypeAvailableAsync = Core.isObjectTypeAvailableAsync.bind(Core)
-const areObjectTypesAvailable = Core.areObjectTypesAvailable.bind(Core)
-const areObjectTypesAvailableAsync =
-  Core.areObjectTypesAvailableAsync.bind(Core)
+// Utility functions (from original export list)
+export function getMostRecentCategorySample<T extends CategoryTypeIdentifier>(
+  identifier: T,
+): Promise<CategorySampleTyped<T> | undefined> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve(undefined)
+}
 
-export {
+export const getMostRecentQuantitySample = UnavailableFnFromModule(
+  'getMostRecentQuantitySample',
+  Promise.resolve(undefined),
+)
+export const getMostRecentWorkout = UnavailableFnFromModule(
+  'getMostRecentWorkout',
+  Promise.resolve(undefined),
+)
+export const getPreferredUnit = UnavailableFnFromModule(
+  'getPreferredUnit',
+  Promise.resolve('count'),
+) // Defaulting to 'count'
+
+// Hooks (from original export list)
+export function useMostRecentCategorySample<T extends CategoryTypeIdentifier>(
+  categoryTypeIdentifier: T,
+): CategorySampleTyped<T> | undefined {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return undefined
+}
+
+export const useMostRecentQuantitySample = UnavailableFnFromModule(
+  'useMostRecentQuantitySample',
+  undefined,
+)
+export const useMostRecentWorkout = UnavailableFnFromModule(
+  'useMostRecentWorkout',
+  undefined,
+)
+export const useSubscribeToChanges = UnavailableFnFromModule(
+  'useSubscribeToChanges',
+  undefined,
+) // Mocking callback structure
+export const useHealthkitAuthorization = UnavailableFnFromModule(
+  'useHealthkitAuthorization',
+  [
+    AuthorizationRequestStatus.unknown,
+    () => Promise.resolve(AuthorizationRequestStatus.unknown),
+  ] as const,
+)
+export const useIsHealthDataAvailable = UnavailableFnFromModule(
+  'useIsHealthDataAvailable',
+  false,
+)
+export const useSources = UnavailableFnFromModule('useSources', null)
+export const useStatisticsForQuantity = UnavailableFnFromModule(
+  'useStatisticsForQuantity',
+  null,
+)
+
+export const getBiologicalSexAsync = UnavailableFnFromModule(
+  'getBiologicalSexAsync',
+  Promise.resolve(BiologicalSex.notSet),
+)
+export const getBloodTypeAsync = UnavailableFnFromModule(
+  'getBloodTypeAsync',
+  Promise.resolve(BloodType.notSet),
+)
+export const getDateOfBirthAsync = UnavailableFnFromModule(
+  'getDateOfBirthAsync',
+  Promise.resolve(new Date(0)),
+) // Assuming string for date
+export const getFitzpatrickSkinTypeAsync = UnavailableFnFromModule(
+  'getFitzpatrickSkinTypeAsync',
+  Promise.resolve(FitzpatrickSkinType.notSet),
+)
+export const getWheelchairUseAsync = UnavailableFnFromModule(
+  'getWheelchairUseAsync',
+  Promise.resolve(WheelchairUse.notSet),
+)
+
+export const unsubscribeQueries = UnavailableFnFromModule(
+  'unsubscribeQueries',
+  0,
+)
+
+// --- Default Export ---
+// This attempts to match the structure of the default export from index.ios.ts
+const HealthkitModule = {
+  // All named exports are also part of the default export object
   authorizationStatusFor,
   isObjectTypeAvailable,
+  unsubscribeQueries,
   isObjectTypeAvailableAsync,
   areObjectTypesAvailable,
   areObjectTypesAvailableAsync,
@@ -200,16 +422,8 @@ export {
   isProtectedDataAvailable,
   queryStateOfMindSamples,
   saveStateOfMindSample,
-  // Modules
-  Core,
-  Workouts,
-  Characteristics,
-  QuantityTypes,
-  CategoryTypes,
-  CorrelationTypes,
-  HeartbeatSeries,
-  StateOfMind,
-  // hooks
+
+  // Hooks
   useMostRecentCategorySample,
   useMostRecentQuantitySample,
   useMostRecentWorkout,
@@ -218,4 +432,14 @@ export {
   useIsHealthDataAvailable,
   useSources,
   useStatisticsForQuantity,
-}
+  getBiologicalSexAsync,
+  getBloodTypeAsync,
+  getDateOfBirthAsync,
+  getFitzpatrickSkinTypeAsync,
+  getWheelchairUseAsync,
+} as Omit<typeof ReactNativeHealthkit, 'default'>
+
+export default {
+  ...HealthkitModule,
+  default: HealthkitModule,
+} as typeof ReactNativeHealthkit

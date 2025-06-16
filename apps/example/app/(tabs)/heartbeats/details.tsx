@@ -1,7 +1,7 @@
 import { ListItem } from '@/components/SwiftListItem'
 import { List } from '@expo/ui/swift-ui'
 import { Section } from '@expo/ui/swift-ui-primitives'
-import { HeartbeatSeries } from '@kingstinct/react-native-healthkit'
+import { queryHeartbeatSeriesSamples } from '@kingstinct/react-native-healthkit'
 import type { HeartbeatSeriesSample } from '@kingstinct/react-native-healthkit/types/HeartbeatSeries'
 import { useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
@@ -19,7 +19,7 @@ export default function HeartbeatSeriesDetails() {
     // Find the specific heartbeat series by UUID
     // Since we don't have a direct "get by UUID" method, we'll query recent samples
     // and find the one with matching UUID
-    HeartbeatSeries.queryHeartbeatSeriesSamples({
+    queryHeartbeatSeriesSamples({
       limit: 100,
       ascending: false,
     })

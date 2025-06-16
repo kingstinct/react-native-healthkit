@@ -1,4 +1,4 @@
-import { Core } from '..'
+import { Core } from '../modules'
 import type { SampleTypeIdentifier } from '../types/Shared'
 import type { OnChangeCallbackArgs } from '../types/Subscriptons'
 

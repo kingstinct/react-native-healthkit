@@ -8,7 +8,8 @@ import {
   List,
   Picker,
 } from '@expo/ui/swift-ui'
-import { Core, QuantityTypes } from '@kingstinct/react-native-healthkit'
+import { queryQuantitySamplesWithAnchor } from '@kingstinct/react-native-healthkit'
+import { QuantityTypes } from '@kingstinct/react-native-healthkit/modules'
 import type { QuantitySample } from '@kingstinct/react-native-healthkit/types/QuantitySample'
 import type { QuantityTypeIdentifier } from '@kingstinct/react-native-healthkit/types/QuantityTypeIdentifier'
 import { useCallback, useEffect, useState } from 'react'
@@ -56,7 +57,7 @@ export default function QuantitiesScreen() {
   const queryQuantitySamples = useCallback(async () => {
     const startedAt = Date.now()
     if (selectedOption === 'Anchor') {
-      QuantityTypes.queryQuantitySamplesWithAnchor(selectedQuantityType, {
+      queryQuantitySamplesWithAnchor(selectedQuantityType, {
         filter: {
           startDate: fromDate,
           endDate: toDate,

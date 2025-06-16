@@ -1,7 +1,7 @@
 import { ListItem } from '@/components/SwiftListItem'
 import { Button, Host, List } from '@expo/ui/swift-ui'
 import { Text, VStack } from '@expo/ui/swift-ui-primitives'
-import { HeartbeatSeries } from '@kingstinct/react-native-healthkit'
+import { HeartbeatSeries } from '@kingstinct/react-native-healthkit/modules'
 import type { HeartbeatSeriesSample } from '@kingstinct/react-native-healthkit/types/HeartbeatSeries'
 import { router } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'

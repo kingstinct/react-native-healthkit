@@ -1,4 +1,4 @@
-import { CategoryTypes } from '../'
+import { CategoryTypes } from '../modules'
 import type { CategoryTypeIdentifier } from '../types/CategoryTypeIdentifier'
 
 export async function getMostRecentCategorySample<

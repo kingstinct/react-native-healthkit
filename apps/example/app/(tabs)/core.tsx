@@ -3,12 +3,14 @@ import { enumKeyLookup } from '@/utils/enumKeyLookup'
 import { List } from '@expo/ui/swift-ui'
 import { Section } from '@expo/ui/swift-ui-primitives'
 import {
-  Characteristics,
-  Core,
+  getBiologicalSex,
   getBloodType,
   getDateOfBirth,
   getFitzpatrickSkinType,
+  getPreferredUnits,
   getWheelchairUse,
+  isHealthDataAvailable,
+  isProtectedDataAvailable,
 } from '@kingstinct/react-native-healthkit'
 import {
   BiologicalSex,
@@ -18,8 +20,6 @@ import {
 } from '@kingstinct/react-native-healthkit/types/Characteristics'
 import { useEffect, useState } from 'react'
 
-const color = '#007AFF' // Default color for the label, can be customized
-
 const biologicalSexLookup = enumKeyLookup(BiologicalSex)
 const bloodTypeLookup = enumKeyLookup(BloodType)
 const wheelchairUseLookup = enumKeyLookup(WheelchairUse)
@@ -27,11 +27,11 @@ const fitzpatrickSkinTypeLookup = enumKeyLookup(FitzpatrickSkinType)
 const coreStuffDefaults = [
   {
     title: 'Is health data available?',
-    subtitle: Core.isHealthDataAvailable() ? '✅' : '❌',
+    subtitle: isHealthDataAvailable() ? '✅' : '❌',
   },
   {
     title: 'Is protected data available?',
-    subtitle: Core.isProtectedDataAvailable() ? '✅' : '❌',
+    subtitle: isProtectedDataAvailable() ? '✅' : '❌',
   },
 ]
 
@@ -41,7 +41,7 @@ const CoreTab = () => {
   const characteristics: ListItemProps[] = [
     {
       title: 'Biological Sex',
-      subtitle: biologicalSexLookup[Characteristics.getBiologicalSex()],
+      subtitle: biologicalSexLookup[getBiologicalSex()],
     },
     { title: 'Birthday', subtitle: getDateOfBirth().toDateString() },
     {
@@ -63,7 +63,7 @@ const CoreTab = () => {
   useEffect(() => {
     const init = async () => {
       try {
-        const units = await Core.getPreferredUnits([
+        const units = await getPreferredUnits([
           'HKQuantityTypeIdentifierDistanceWalkingRunning',
           'HKQuantityTypeIdentifierBodyMass',
           'HKQuantityTypeIdentifierBloodGlucose',

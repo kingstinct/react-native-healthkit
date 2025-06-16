@@ -1,4 +1,4 @@
-import { Core } from '..'
+import { Core } from '../modules'
 import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 
 const getPreferredUnit = async (

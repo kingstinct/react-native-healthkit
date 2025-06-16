@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import useSubscribeToChanges from './useSubscribeToChanges'
 
-import { QuantityTypes } from '..'
+import { QuantityTypes } from '../modules'
 import type {
   QueryStatisticsResponse,
   StatisticsOptions,

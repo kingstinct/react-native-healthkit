@@ -1,4 +1,4 @@
-import { QuantityTypes } from '..'
+import { QuantityTypes } from '../modules'
 import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 
 async function getMostRecentQuantitySample(

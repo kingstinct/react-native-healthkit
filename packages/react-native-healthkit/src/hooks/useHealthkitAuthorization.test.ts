@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, jest, test } from 'bun:test'
 
 import { act, renderHook } from '@testing-library/react-native'
 
-import { Core } from '..'
+import { Core } from '../modules'
 import waitForNextUpdate from '../test-utils'
 import { AuthorizationRequestStatus } from '../types/Auth'
 import type UseHealthkitAuthorization from './useHealthkitAuthorization'

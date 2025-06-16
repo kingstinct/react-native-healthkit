@@ -11,7 +11,7 @@ import {
 } from '@/constants/AllUsedIdentifiersInApp'
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import { Core } from '@kingstinct/react-native-healthkit'
+import { getRequestStatusForAuthorization } from '@kingstinct/react-native-healthkit'
 import { AuthorizationRequestStatus } from '@kingstinct/react-native-healthkit/types/Auth'
 
 export default function TabLayout() {
@@ -23,10 +23,7 @@ export default function TabLayout() {
   useEffect(() => {
     try {
       console.log('checking auth status for', AllSampleTypesInApp)
-      Core.getRequestStatusForAuthorization(
-        AllSampleTypesInApp,
-        AllObjectTypesInApp,
-      )
+      getRequestStatusForAuthorization(AllSampleTypesInApp, AllObjectTypesInApp)
         .then((status) => {
           console.log('Authorization Status:', status)
           setAuthStatus(status)

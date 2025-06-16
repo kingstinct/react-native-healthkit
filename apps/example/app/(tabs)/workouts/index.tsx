@@ -2,7 +2,7 @@ import { QueryInfo } from '@/components/QueryInfo'
 import { ListItem } from '@/components/SwiftListItem'
 import { enumKeyLookup } from '@/utils/enumKeyLookup'
 import { List } from '@expo/ui/swift-ui'
-import { Workouts } from '@kingstinct/react-native-healthkit'
+import { queryWorkoutSamplesWithAnchor } from '@kingstinct/react-native-healthkit'
 import {
   WorkoutActivityType,
   type WorkoutSample,
@@ -23,7 +23,7 @@ export default function WorkoutsScreen() {
     try {
       const startedAt = Date.now()
       const { workouts, deletedSamples, newAnchor } =
-        await Workouts.queryWorkoutSamplesWithAnchor({ anchor })
+        await queryWorkoutSamplesWithAnchor({ anchor })
       setQueryTime(Date.now() - startedAt)
 
       console.log(workouts[0])
