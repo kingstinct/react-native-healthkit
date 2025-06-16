@@ -6,41 +6,6 @@ import NitroModules
 import WorkoutKit
 #endif
 
-func getWorkoutByID(
-    workoutUUID: UUID
-) async -> HKWorkout? {
-    let workoutPredicate = HKQuery.predicateForObject(with: workoutUUID)
-    
-    let samples = try! await withCheckedThrowingContinuation {
-        (continuation: CheckedContinuation<[HKSample], Error>) in
-        let query = HKSampleQuery(
-            sampleType: HKObjectType.workoutType(),
-            predicate: workoutPredicate,
-            limit: 1,
-            sortDescriptors: nil
-        ) { (_, results, error) in
-            
-            if let hasError = error {
-                continuation.resume(throwing: hasError)
-                return
-            }
-            
-            guard let samples = results else {
-                return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response"))
-            }
-            
-            continuation.resume(returning: samples)
-        }
-        store.execute(query)
-    }
-    
-    guard let workouts = samples as? [HKWorkout] else {
-        return nil
-    }
-    
-    return workouts.first ?? nil
-}
-
 /*func tryParseWeatherCondition(_ weatherCondition: Int?) -> WeatherCondition? {
     if let weatherCondition = weatherCondition {
         return WeatherCondition.init(rawValue: Int32(weatherCondition))
@@ -89,123 +54,6 @@ func serializeWorkoutMetadata(_ metadata: [String: Any]?) -> WorkoutMetadata? {
     }
     return nil
 }*/
-
-func mapWorkout(
-    workout: HKWorkout,
-    distanceUnit: HKUnit,
-    energyUnit: HKUnit
-) -> WorkoutSample {
-    var device: Device? = nil
-    if let hkDevice = workout.device {
-        device = Device(
-            name: hkDevice.name,
-            firmwareVersion: hkDevice.firmwareVersion,
-            hardwareVersion: hkDevice.hardwareVersion,
-            localIdentifier: hkDevice.localIdentifier,
-            manufacturer: hkDevice.manufacturer,
-            model: hkDevice.model,
-            softwareVersion: hkDevice.softwareVersion,
-            udiDeviceIdentifier: hkDevice.udiDeviceIdentifier
-        )
-    }
-    var totalDistance: Quantity? = nil
-    if let hkTotalDistance = workout.totalDistance {
-        totalDistance = Quantity(
-            unit: distanceUnit.unitString,
-            quantity: hkTotalDistance.doubleValue(
-                for: distanceUnit
-            )
-        )
-    }
-    
-    /*
-     "uuid": workout.uuid.uuidString,
-     "device": serializeDevice(_device: workout.device) as Any,
-     "duration": workout.duration,
-     "totalDistance": serializeQuantity(unit: distanceUnit, quantity: workout.totalDistance)
-     as Any,
-     "totalEnergyBurned": serializeQuantity(unit: energyUnit, quantity: workout.totalEnergyBurned)
-     as Any,
-     "totalSwimmingStrokeCount": serializeQuantity(
-     unit: HKUnit.count(), quantity: workout.totalSwimmingStrokeCount) as Any,
-     "workoutActivityType": workout.workoutActivityType.rawValue,
-     "startDate": startDate,
-     "endDate": endDate,
-     "metadata": serializeMetadata(metadata: workout.metadata),
-     "sourceRevision": serializeSourceRevision(_sourceRevision: workout.sourceRevision) as Any
-     ]*/
-    
-    // this is used for our laps functionality to get markers
-    // https://developer.apple.com/documentation/healthkit/hkworkoutevent
-    var workoutEvents: [WorkoutEvent] = []
-    if let hkWorkoutEvents = workout.workoutEvents {
-        workoutEvents = hkWorkoutEvents.compactMap { event in
-            if let type = WorkoutEventType.init(
-                rawValue: Int32(event.type.rawValue)
-            ) {
-                return WorkoutEvent(
-                    type: type,
-                    startDate: event.dateInterval.start,
-                    endDate: event.dateInterval.end
-                )
-            }
-            return nil
-        }
-    }
-    
-    
-    
-    // also used for our laps functionality to get activities for custom workouts defined by the user
-    // https://developer.apple.com/documentation/healthkit/hkworkout/1615340-init
-    // it seems this might be depricated in the latest beta so this might need updating!
-    var activitiesArray: [WorkoutActivity] = []
-    if #available(iOS 16.0, *) {
-        let hkActivities = workout.workoutActivities
-        
-        activitiesArray = hkActivities.map { activity in
-            return WorkoutActivity(
-                startDate: activity.startDate,
-                endDate: activity.endDate ?? activity.startDate,
-                uuid: activity.uuid.uuidString,
-                duration: activity.duration
-            )
-        }
-    }
-    
-    var totalFlightsClimbed: Quantity?
-    if #available(iOS 11, *) {
-        if let hkTotalFlightsClimbed = workout.totalFlightsClimbed {
-            totalFlightsClimbed = Quantity(
-                unit: "count",
-                quantity: hkTotalFlightsClimbed.doubleValue(for: HKUnit.count())
-            )
-        }
-    }
-    
-    let workout = WorkoutSample.init(
-        uuid: workout.uuid.uuidString,
-        device: device,
-        workoutActivityType: WorkoutActivityType.init(
-            rawValue: Int32(workout.workoutActivityType.rawValue)
-        )!,
-        duration: serializeQuantityTyped(
-            unit: .second(),
-            quantity: HKQuantity(unit: .second(), doubleValue: workout.duration)
-        )!,
-        totalDistance: totalDistance,
-        totalEnergyBurned: serializeQuantityTyped(unit: energyUnit, quantity: workout.totalEnergyBurned),
-        totalSwimmingStrokeCount: serializeQuantityTyped(unit: .count(), quantity: workout.totalSwimmingStrokeCount),
-        totalFlightsClimbed: totalFlightsClimbed,
-        startDate: workout.startDate,
-        endDate: workout.endDate,
-        metadata: serializeMetadata(workout.metadata),
-        sourceRevision: serializeSourceRevision(workout.sourceRevision),
-        events: workoutEvents,
-        activities: activitiesArray
-    )
-    
-    return workout
-}
 
 func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
     return locations.compactMap { location in
@@ -263,14 +111,10 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
                     
                     let workoutProxies = samples.compactMap { s in
                         if let workout = s as? HKWorkout {
-                            let sample = mapWorkout(
+                            return WorkoutProxy.init(
                                 workout: workout,
                                 distanceUnit: distanceUnit,
                                 energyUnit: energyUnit
-                            )
-                            return WorkoutProxy.init(
-                                workout: workout,
-                                sample: sample
                             )
                         }
                         return nil
@@ -313,7 +157,6 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
             let type = try initializeQuantityType(quantity.quantityType.stringValue)
             let unitStr = quantity.unit
             let quantityVal = quantity.quantity
-            let metadata = quantity.metadata
             let quantityStart = quantity.startDate
             let quantityEnd = quantity.endDate
             let unit = HKUnit.init(from: unitStr)
@@ -485,14 +328,10 @@ class WorkoutsModule : HybridWorkoutsModuleSpec {
                     
                     let workoutProxies = samples.compactMap { s in
                         if let workout = s as? HKWorkout {
-                            let sample = mapWorkout(
+                            return WorkoutProxy.init(
                                 workout: workout,
                                 distanceUnit: distanceUnit,
                                 energyUnit: energyUnit
-                            )
-                            return WorkoutProxy.init(
-                                workout: workout,
-                                sample: sample
                             )
                         }
                         return nil

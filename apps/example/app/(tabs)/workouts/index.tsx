@@ -25,7 +25,11 @@ export default function WorkoutsScreen() {
 			const { workouts, deletedSamples, newAnchor } =
 				await Workouts.queryWorkoutSamplesWithAnchor({ anchor });
 			setQueryTime(Date.now() - startedAt);
-			setWorkouts(workouts.map((w) => w.sample));
+
+			console.log(workouts[0]);
+
+			console.log(workouts[0]?.sourceRevision);
+			setWorkouts(workouts.map((w) => w));
 			setAnchor(newAnchor);
 			setDeletedSamples(deletedSamples.map((d) => d.uuid));
 		} catch (error) {

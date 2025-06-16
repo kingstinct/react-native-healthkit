@@ -1,3 +1,5 @@
+import type { WorkoutProxy } from "../specs/WorkoutProxy.nitro";
+
 type PredicateWithUUID = {
 	readonly uuid: string;
 };
@@ -25,6 +27,10 @@ export type FilterForSamplesOr = {
 	OR: PredicateForSamples[];
 };
 
+export type PredicateFromWorkout = {
+	workout: WorkoutProxy;
+};
+
 export type FilterForSamples =
 	| PredicateForSamples
 	| FilterForSamplesAnd
@@ -34,7 +40,8 @@ export type PredicateForSamples =
 	| PredicateWithUUID
 	| PredicateWithUUIDs
 	| PredicateWithMetadataKey
-	| PredicateWithStartAndEnd;
+	| PredicateWithStartAndEnd
+	| PredicateFromWorkout;
 
 /**
  * Generic options for querying.

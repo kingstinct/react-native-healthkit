@@ -14,6 +14,7 @@ import type {
 } from "../types/Auth";
 import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
 import type { FilterForSamples } from "../types/QueryOptions";
+import type { SourceProxy } from "./SourceProxy.nitro";
 
 export interface CoreModule extends HybridObject<{ ios: "swift" }> {
 	/**
@@ -48,7 +49,9 @@ export interface CoreModule extends HybridObject<{ ios: "swift" }> {
 		forceUpdate?: boolean,
 	): Promise<IdentifierWithUnit[]>;
 
-	querySources(identifier: SampleTypeIdentifier): Promise<readonly Source[]>;
+	querySources(
+		identifier: SampleTypeIdentifier,
+	): Promise<readonly SourceProxy[]>;
 
 	/** @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614180-requestauthorizationtoaccess Apple Docs }
 	 * @param {SampleTypeIdentifier} typeIdentifier - The type identifier of the sample to request authorization for.

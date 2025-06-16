@@ -140,9 +140,9 @@ class CoreModule : HybridCoreModuleSpec {
         }
     }
     
-    func querySources(identifier: SampleTypeIdentifier) throws -> Promise<[Source]> {
+    func querySources(identifier: SampleTypeIdentifier) throws -> Promise<[HybridSourceProxySpec]> {
         let sampleType = try sampleTypeFrom(sampleTypeIdentifier: identifier)
-        
+      
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
                 let query = HKSourceQuery(
@@ -155,14 +155,13 @@ class CoreModule : HybridCoreModuleSpec {
                     }
                     
                     guard let sources = sources else {
-                        continuation.resume(returning: [])
-                        return
+                      return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response for sample type \(identifier.stringValue)"))
                     }
                     
-                    let serializedSources = sources.map { source -> Source in
-                        return Source(
-                            name: source.name,
-                            bundleIdentifier: source.bundleIdentifier
+                    let serializedSources = sources.map { source -> SourceProxy in
+                      
+                        return SourceProxy(
+                            source: source
                         )
                     }
                     

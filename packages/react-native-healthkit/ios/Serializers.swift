@@ -9,14 +9,21 @@ import Foundation
 import HealthKit
 import NitroModules
 
-func serializeQuantityTyped(unit: HKUnit, quantity: HKQuantity?) -> Quantity? {
-    guard let q = quantity else {
+func serializeQuantityTyped(unit: HKUnit, quantityNullable: HKQuantity?) -> Quantity? {
+    guard let q = quantityNullable else {
         return nil
     }
     
     return Quantity(
         unit: unit.unitString,
         quantity: q.doubleValue(for: unit)
+    )
+}
+
+func serializeQuantityTyped(unit: HKUnit, quantity: HKQuantity) -> Quantity {
+    return Quantity(
+        unit: unit.unitString,
+        quantity: quantity.doubleValue(for: unit)
     )
 }
 
@@ -58,10 +65,9 @@ func serializeCategorySample(sample: HKCategorySample) -> CategorySample {
     )
 }
 
-func serializeSource(_ source: HKSource) -> margelo.nitro.healthkit.Source {
-    return margelo.nitro.healthkit.Source(
-        name: source.name,
-        bundleIdentifier: source.bundleIdentifier
+func serializeSource(_ source: HKSource) -> SourceProxy {
+    return SourceProxy(
+        source: source
     )
 }
 
