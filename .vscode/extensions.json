@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "swiftlang.swift-vscode",
+    "biomejs.biome",
+    "vknabel.vscode-swiftlint"
+  ]
+}

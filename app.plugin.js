@@ -10,7 +10,7 @@ const {
  * @typedef ConfigPlugin
  * @type {import('@expo/config-plugins').ConfigPlugin<T>}
  * @template T = void
-*/
+ */
 
 // please note that the BackgroundConfig currently doesn't actually enable background delivery for any types, but you
 // can set it to false if you don't want the entitlement
@@ -33,59 +33,71 @@ const {
 /**
  * @typedef AppPluginConfig
  * @type {InfoPlistConfig & { background?: BackgroundConfig }}
-*/
+ */
 
 /**
-   * @type {ConfigPlugin<{background: BackgroundConfig}>}
-   */
+ * @type {ConfigPlugin<{background: BackgroundConfig}>}
+ */
 const withEntitlementsPlugin = (
   config,
   /**
    * @type {{background: BackgroundConfig} | undefined}
    * */
   props,
-) => withEntitlementsPlist(config, (config) => {
-  config.modResults['com.apple.developer.healthkit'] = true
+) =>
+  withEntitlementsPlist(config, (config) => {
+    config.modResults['com.apple.developer.healthkit'] = true
 
-  // background is enabled by default, but possible to opt-out from
-  // (haven't seen any drawbacks from having it enabled)
-  if (props?.background !== false) {
-    config.modResults['com.apple.developer.healthkit.background-delivery'] = true
-  }
+    // background is enabled by default, but possible to opt-out from
+    // (haven't seen any drawbacks from having it enabled)
+    if (props?.background !== false) {
+      config.modResults['com.apple.developer.healthkit.background-delivery'] =
+        true
+    }
 
-  return config
-})
+    return config
+  })
 
 /**
  * @type {ConfigPlugin<InfoPlistConfig>}
  */
-const withInfoPlistPlugin = (config,
+const withInfoPlistPlugin = (
+  config,
   /**
-  * @type {{NSHealthShareUsageDescription: string | boolean, NSHealthUpdateUsageDescription: string | boolean} | undefined}
-  * */
-  props) => withInfoPlist(config, (config) => {
-  if (props?.NSHealthShareUsageDescription !== false) {
-    config.modResults.NSHealthShareUsageDescription = props.NSHealthShareUsageDescription ?? `${config.name} wants to read your health data`
-  }
+   * @type {{NSHealthShareUsageDescription: string | boolean, NSHealthUpdateUsageDescription: string | boolean} | undefined}
+   * */
+  props,
+) =>
+  withInfoPlist(config, (config) => {
+    if (props?.NSHealthShareUsageDescription !== false) {
+      config.modResults.NSHealthShareUsageDescription =
+        typeof props.NSHealthShareUsageDescription === 'string'
+          ? props.NSHealthShareUsageDescription
+          : `${config.name} wants to read your health data`
+    }
 
-  if (props?.NSHealthUpdateUsageDescription !== false) {
-    config.modResults.NSHealthUpdateUsageDescription = props.NSHealthUpdateUsageDescription ?? `${config.name} wants to update your health data`
-  }
+    if (props?.NSHealthUpdateUsageDescription !== false) {
+      config.modResults.NSHealthUpdateUsageDescription =
+        typeof props.NSHealthUpdateUsageDescription === 'string'
+          ? props.NSHealthUpdateUsageDescription
+          : `${config.name} wants to update your health data`
+    }
 
-  return config
-})
+    return config
+  })
 
 const pkg = require('./package.json')
 
 /**
  * @type {ConfigPlugin<AppPluginConfig>}
-*/
-const healthkitAppPlugin = (config, props) => withPlugins(config, [
-  [withEntitlementsPlugin, props],
-  [withInfoPlistPlugin, props],
-])
+ */
+const healthkitAppPlugin = (config, props) =>
+  withPlugins(config, [
+    [withEntitlementsPlugin, props],
+    [withInfoPlistPlugin, props],
+  ])
 
 /**
  * @type {ConfigPlugin<AppPluginConfig>}
-*/
+ */
 module.exports = createRunOncePlugin(healthkitAppPlugin, pkg.name, pkg.version)

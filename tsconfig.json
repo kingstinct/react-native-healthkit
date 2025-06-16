@@ -1,26 +1,18 @@
 {
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@kingstinct/react-native-healthkit": [ "./src/index" ],
-      "@kingstinct/react-native-healthkit/*": [ "./src/*" ]
-    },
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "react",
-    "lib": [ "esnext" ],
-    "module": "esnext",
-    "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noImplicitUseStrict": false,
-    "noUncheckedIndexedAccess": true,
-    "noStrictGenericChecks": false,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
     "strict": true,
-    "target": "esnext"
-  }
+    "noUncheckedIndexedAccess": true,
+    "strictNullChecks": true,
+    "paths": {
+      "@/*": ["./apps/example/*"],
+      "@kingstinct/react-native-healthkit": [
+        "./packages/react-native-healthkit/src/index.ts"
+      ],
+      "@kingstinct/react-native-healthkit/*": [
+        "./packages/react-native-healthkit/src/*"
+      ]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

@@ -1,0 +1,31 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "formatter": {
+    "indentWidth": 2,
+    "indentStyle": "space"
+  },
+  "javascript": {
+    "formatter": {
+      "semicolons": "asNeeded",
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "double"
+    }
+  },
+  "files": {
+    "ignore": [
+      "**/packages/react-native-healthkit/lib/**",
+      "apps/example/scripts/reset-project.js",
+      "**/node_modules/**",
+      "**/docs/scripts/prism.js",
+      "**/docs/styles/prism.css",
+      "**/docs/styles/style.css",
+      "**/ios/Podfile.lock",
+      "**/ios/Podfile",
+      "**/ios/*.xcworkspace/**",
+      "**/ios/*.xcodeproj/**",
+      "**/android/.gradle/**",
+      "**/android/build/**",
+      "**/android/app/build/**"
+    ]
+  }
+}
