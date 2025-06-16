@@ -9,5 +9,5 @@ interface Source {
  * @see {@link https://developer.apple.com/documentation/healthkit/hkobject/1615781-source Apple Docs }
  */
 export interface SourceProxy extends HybridObject<{ ios: 'swift' }>, Source {
-  toJSON(): Source
+  toJSON(key?: string): Source
 }

@@ -11,7 +11,6 @@ import type { SourceProxy } from './specs/SourceProxy.nitro'
 import type { WorkoutProxy } from './specs/WorkoutProxy.nitro'
 import { AuthorizationRequestStatus, AuthorizationStatus } from './types/Auth'
 import type {
-  CategorySample,
   CategorySampleTyped,
   CategorySamplesWithAnchorResponseTyped,
 } from './types/CategoryType'

@@ -100,8 +100,7 @@ func getRouteLocations(
 }
 
 func serializeLocation(location: CLLocation, previousLocation: CLLocation?)
-  -> WorkoutRouteLocation
-{
+  -> WorkoutRouteLocation {
   var distance: CLLocationDistance?
   if let previousLocation = previousLocation {
     distance = location.distance(from: previousLocation)
@@ -195,7 +194,11 @@ func saveWorkoutRouteInternal(
 }
 
 class WorkoutProxy: HybridWorkoutProxySpec {
-  func toJSON() throws -> WorkoutSample {
+  func toJSON(key: String?) throws -> WorkoutSample {
+    if key != nil && key?.isEmpty != true {
+      print("WorkoutProxy does not support toJSON with key: \(key!)")
+    }
+
     return WorkoutSample(
       uuid: self.uuid,
       device: self.device,
@@ -213,7 +216,7 @@ class WorkoutProxy: HybridWorkoutProxySpec {
       activities: self.activities
     )
   }
-  
+
   var uuid: String {
     get {
       return workout.uuid.uuidString
@@ -243,9 +246,9 @@ class WorkoutProxy: HybridWorkoutProxySpec {
       ) {
         return activityType
       }
-      
+
       print("Unknown workout activity type: \(workout.workoutActivityType.rawValue), falling back to 'other'")
-      
+
       return WorkoutActivityType.other
     }
   }
@@ -253,12 +256,12 @@ class WorkoutProxy: HybridWorkoutProxySpec {
   var duration: Quantity {
     get {
       let quantity = HKQuantity(unit: .second(), doubleValue: workout.duration)
-      
+
       let duration = serializeQuantityTyped(
         unit: .second(),
         quantity: quantity
       )
-      
+
       return duration
     }
   }
@@ -289,7 +292,7 @@ class WorkoutProxy: HybridWorkoutProxySpec {
       quantityNullable: workout.totalSwimmingStrokeCount
     )
     }
-    
+
   }
 
   var totalFlightsClimbed: Quantity? {
@@ -303,7 +306,7 @@ class WorkoutProxy: HybridWorkoutProxySpec {
     }
     return nil
   }
-  
+
   var energyUnit: HKUnit
 
   var startDate: Date {
@@ -366,10 +369,10 @@ class WorkoutProxy: HybridWorkoutProxySpec {
     }
     return nil
   }
-  
-  var distanceUnit: HKUnit
 
-  var workout: HKWorkout
+  let distanceUnit: HKUnit
+
+  private let workout: HKWorkout
 
   init(workout: HKWorkout, distanceUnit: HKUnit, energyUnit: HKUnit) {
     self.energyUnit = energyUnit
@@ -389,9 +392,8 @@ class WorkoutProxy: HybridWorkoutProxySpec {
       }
     }
   }
-  
-  func saveWorkoutRoute(locations: [LocationForSaving]) throws -> Promise<Bool>
-  {
+
+  func saveWorkoutRoute(locations: [LocationForSaving]) throws -> Promise<Bool> {
     return saveWorkoutRouteInternal(workout: self.workout, locations: locations)
   }
 

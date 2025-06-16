@@ -9,7 +9,7 @@ import type {
 export interface WorkoutProxy
   extends HybridObject<{ ios: 'swift' }>,
     WorkoutSample {
-  toJSON(): WorkoutSample
+  toJSON(key?: string): WorkoutSample
   saveWorkoutRoute(locations: readonly LocationForSaving[]): Promise<boolean>
   getWorkoutPlan(): Promise<WorkoutPlan | null>
   getWorkoutRoutes(): Promise<readonly WorkoutRoute[]>

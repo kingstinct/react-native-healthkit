@@ -8,20 +8,25 @@
 import HealthKit
 import NitroModules
 
-class SourceProxy : HybridSourceProxySpec {
-  func toJSON() throws -> Source {
+class SourceProxy: HybridSourceProxySpec {
+  func toJSON(key: String?) throws -> Source {
+    if key != nil && key?.isEmpty != true {
+      print("SourceProxy does not support toJSON with key: \(key!)")
+    }
+
     return Source(
       name: self.name,
       bundleIdentifier: self.bundleIdentifier
     )
+
   }
-  
-  let source: HKSource
-  
+
+  private let source: HKSource
+
   let name: String
-  
+
   let bundleIdentifier: String
-  
+
   init(source: HKSource) {
     self.source = source
     self.name = source.name

@@ -11,8 +11,11 @@ import {
 } from '@/constants/AllUsedIdentifiersInApp'
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import { enumKeyLookup } from '@/utils/enumKeyLookup'
 import { getRequestStatusForAuthorization } from '@kingstinct/react-native-healthkit'
 import { AuthorizationRequestStatus } from '@kingstinct/react-native-healthkit/types/Auth'
+
+const statusEnum = enumKeyLookup(AuthorizationRequestStatus)
 
 export default function TabLayout() {
   const colorScheme = useColorScheme()
@@ -25,7 +28,7 @@ export default function TabLayout() {
       console.log('checking auth status for', AllSampleTypesInApp)
       getRequestStatusForAuthorization(AllSampleTypesInApp, AllObjectTypesInApp)
         .then((status) => {
-          console.log('Authorization Status:', status)
+          console.log('Authorization Status:', statusEnum[status])
           setAuthStatus(status)
         })
         .catch((error) => {
