@@ -1,60 +1,64 @@
-import type { AnyMap, HybridObject } from "react-native-nitro-modules";
+import type { AnyMap, HybridObject } from 'react-native-nitro-modules'
 
-import type { CategoryTypeIdentifier } from "../types/CategoryTypeIdentifier";
 import type {
-	QueryOptionsWithAnchor,
-	QueryOptionsWithSortOrder,
-} from "../types/QueryOptions";
+  CategorySample,
+  CategorySampleTyped,
+  CategorySamplesWithAnchorResponse,
+  CategorySamplesWithAnchorResponseTyped,
+  CategoryValueForIdentifier,
+  MetadataForCategoryIdentifier,
+} from '../types/CategoryType'
+import type { CategoryTypeIdentifier } from '../types/CategoryTypeIdentifier'
+import type { InterfaceAssertion } from '../types/InterfaceVerification'
 import type {
-	CategorySample,
-	CategoryValueForIdentifier,
-	CategorySamplesWithAnchorResponse,
-	MetadataForCategoryIdentifier,
-	CategorySampleTyped,
-	CategorySamplesWithAnchorResponseTyped,
-} from "../types/CategoryType";
-import type { InterfaceAssertion } from "../types/InterfaceVerification";
+  QueryOptionsWithAnchor,
+  QueryOptionsWithSortOrder,
+} from '../types/QueryOptions'
 
-export interface CategoryTypeModule extends HybridObject<{ ios: "swift" }> {
-	saveCategorySample(
-		identifier: CategoryTypeIdentifier,
-		value: CategoryValueForIdentifier,
-		startDate: Date,
-		endDate: Date,
-		metadata: AnyMap,
-	): Promise<boolean>;
+export interface CategoryTypeModule extends HybridObject<{ ios: 'swift' }> {
+  saveCategorySample(
+    identifier: CategoryTypeIdentifier,
+    value: CategoryValueForIdentifier,
+    startDate: Date,
+    endDate: Date,
+    metadata: AnyMap,
+  ): Promise<boolean>
 
-	queryCategorySamples(
-		identifier: CategoryTypeIdentifier,
-		options?: QueryOptionsWithSortOrder,
-	): Promise<readonly CategorySample[]>;
+  queryCategorySamples(
+    identifier: CategoryTypeIdentifier,
+    options?: QueryOptionsWithSortOrder,
+  ): Promise<readonly CategorySample[]>
 
-	queryCategorySamplesWithAnchor(
-		identifier: CategoryTypeIdentifier,
-		options: QueryOptionsWithAnchor,
-	): Promise<CategorySamplesWithAnchorResponse>;
+  queryCategorySamplesWithAnchor(
+    identifier: CategoryTypeIdentifier,
+    options: QueryOptionsWithAnchor,
+  ): Promise<CategorySamplesWithAnchorResponse>
 }
 
 // Interface verification to ensure CategoryTypeModule and CategoryTypeModuleTyped stay in sync
 // This will cause a TypeScript compilation error if the interfaces have different method names or parameter counts
-const _interfaceVerification: InterfaceAssertion<CategoryTypeModule, CategoryTypeModuleTyped, keyof HybridObject> = true;
+const _interfaceVerification: InterfaceAssertion<
+  CategoryTypeModule,
+  CategoryTypeModuleTyped,
+  keyof HybridObject
+> = true
 
 export interface CategoryTypeModuleTyped {
-	saveCategorySample<T extends CategoryTypeIdentifier>(
-		identifier: T,
-		value: CategoryValueForIdentifier,
-		startDate: Date,
-		endDate: Date,
-		metadata: MetadataForCategoryIdentifier<T>,
-	): Promise<boolean>;
+  saveCategorySample<T extends CategoryTypeIdentifier>(
+    identifier: T,
+    value: CategoryValueForIdentifier,
+    startDate: Date,
+    endDate: Date,
+    metadata: MetadataForCategoryIdentifier<T>,
+  ): Promise<boolean>
 
-	queryCategorySamples<T extends CategoryTypeIdentifier>(
-		identifier: T,
-		options?: QueryOptionsWithSortOrder,
-	): Promise<readonly CategorySampleTyped<T>[]>;
+  queryCategorySamples<T extends CategoryTypeIdentifier>(
+    identifier: T,
+    options?: QueryOptionsWithSortOrder,
+  ): Promise<readonly CategorySampleTyped<T>[]>
 
-	queryCategorySamplesWithAnchor<T extends CategoryTypeIdentifier>(
-		identifier: T,
-		options: QueryOptionsWithAnchor,
-	): Promise<CategorySamplesWithAnchorResponseTyped<T>>;
+  queryCategorySamplesWithAnchor<T extends CategoryTypeIdentifier>(
+    identifier: T,
+    options: QueryOptionsWithAnchor,
+  ): Promise<CategorySamplesWithAnchorResponseTyped<T>>
 }

@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { Core } from '..'
+import type { SourceProxy } from '../specs/SourceProxy.nitro'
 import type { SampleTypeIdentifier } from '../types/Shared'
-import type { Source } from '../types/Source'
 
-export function useSources<
-  TIdentifier extends SampleTypeIdentifier
->(identifier: TIdentifier) {
-  const [result, setResult] = useState<readonly Source[] | null>(null)
+export function useSources<TIdentifier extends SampleTypeIdentifier>(
+  identifier: TIdentifier,
+) {
+  const [result, setResult] = useState<readonly SourceProxy[] | null>(null)
 
   const update = useCallback(async () => {
     const res = await Core.querySources(identifier)

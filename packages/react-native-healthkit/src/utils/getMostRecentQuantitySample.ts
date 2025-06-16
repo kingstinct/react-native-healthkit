@@ -1,5 +1,3 @@
-
-
 import { QuantityTypes } from '..'
 import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 

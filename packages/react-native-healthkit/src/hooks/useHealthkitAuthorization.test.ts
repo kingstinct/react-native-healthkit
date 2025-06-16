@@ -1,21 +1,30 @@
-import { describe, test, expect, beforeAll, jest } from 'bun:test'
+import { beforeAll, describe, expect, jest, test } from 'bun:test'
 
 import { act, renderHook } from '@testing-library/react-native'
 
+import { Core } from '..'
 import waitForNextUpdate from '../test-utils'
 import { AuthorizationRequestStatus } from '../types/Auth'
-import { Core } from '..'
+import type UseHealthkitAuthorization from './useHealthkitAuthorization'
 
 describe('useHealthkitAuthorization', () => {
-  let useHealthkitAuthorization: typeof import('./useHealthkitAuthorization').default
+  let useHealthkitAuthorization: typeof UseHealthkitAuthorization
+
   beforeAll(async () => {
-    useHealthkitAuthorization = (await import('./useHealthkitAuthorization')).default
+    useHealthkitAuthorization = (await import('./useHealthkitAuthorization'))
+      .default
   })
 
   test('should return shouldRequest', async () => {
-    jest.spyOn(Core, 'getRequestStatusForAuthorization').mockReturnValue(Promise.resolve(AuthorizationRequestStatus.shouldRequest))
+    jest
+      .spyOn(Core, 'getRequestStatusForAuthorization')
+      .mockReturnValue(
+        Promise.resolve(AuthorizationRequestStatus.shouldRequest),
+      )
 
-    const { result } = renderHook(() => useHealthkitAuthorization(['HKCategoryTypeIdentifierAbdominalCramps']))
+    const { result } = renderHook(() =>
+      useHealthkitAuthorization(['HKCategoryTypeIdentifierAbdominalCramps']),
+    )
 
     await waitForNextUpdate()
 
@@ -23,10 +32,18 @@ describe('useHealthkitAuthorization', () => {
   })
 
   test('should request permissions', async () => {
-    const spy = jest.spyOn(Core, 'getRequestStatusForAuthorization').mockReturnValue(Promise.resolve(AuthorizationRequestStatus.shouldRequest))
-    jest.spyOn(Core, 'requestAuthorization').mockReturnValue(Promise.resolve(true))
+    const spy = jest
+      .spyOn(Core, 'getRequestStatusForAuthorization')
+      .mockReturnValue(
+        Promise.resolve(AuthorizationRequestStatus.shouldRequest),
+      )
+    jest
+      .spyOn(Core, 'requestAuthorization')
+      .mockReturnValue(Promise.resolve(true))
 
-    const { result } = renderHook(() => useHealthkitAuthorization(['HKCategoryTypeIdentifierAbdominalCramps']))
+    const { result } = renderHook(() =>
+      useHealthkitAuthorization(['HKCategoryTypeIdentifierAbdominalCramps']),
+    )
 
     await waitForNextUpdate()
 
@@ -34,7 +51,8 @@ describe('useHealthkitAuthorization', () => {
 
     let retVal: AuthorizationRequestStatus | undefined
     await act(async () => {
-      const r = await result.current[1]() as unknown as AuthorizationRequestStatus
+      const r =
+        (await result.current[1]()) as unknown as AuthorizationRequestStatus
       retVal = r
     })
 
@@ -43,9 +61,13 @@ describe('useHealthkitAuthorization', () => {
   })
 
   test('should return unnecessary', async () => {
-    jest.spyOn(Core, 'getRequestStatusForAuthorization').mockReturnValue(Promise.resolve(AuthorizationRequestStatus.unnecessary))
+    jest
+      .spyOn(Core, 'getRequestStatusForAuthorization')
+      .mockReturnValue(Promise.resolve(AuthorizationRequestStatus.unnecessary))
 
-    const { result } = renderHook(() => useHealthkitAuthorization(['HKCategoryTypeIdentifierAbdominalCramps']))
+    const { result } = renderHook(() =>
+      useHealthkitAuthorization(['HKCategoryTypeIdentifierAbdominalCramps']),
+    )
 
     await waitForNextUpdate()
 
@@ -53,7 +75,9 @@ describe('useHealthkitAuthorization', () => {
   })
 
   test('should return null before initalizing', async () => {
-    const { result } = renderHook(() => useHealthkitAuthorization(['HKCategoryTypeIdentifierAbdominalCramps']))
+    const { result } = renderHook(() =>
+      useHealthkitAuthorization(['HKCategoryTypeIdentifierAbdominalCramps']),
+    )
 
     expect(result.current[0]).toBe(null)
 

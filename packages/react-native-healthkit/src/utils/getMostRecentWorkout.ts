@@ -1,8 +1,9 @@
+import { Workouts } from '..'
+import type { WorkoutQueryOptions } from '../types/Workouts'
 
-import { Workouts } from '..';
-import type { WorkoutQueryOptions } from '../types/Workouts';
-
-const getMostRecentWorkout = async (options: Pick<WorkoutQueryOptions, 'distanceUnit' | 'energyUnit'>) => {
+const getMostRecentWorkout = async (
+  options: Pick<WorkoutQueryOptions, 'distanceUnit' | 'energyUnit'>,
+) => {
   const workouts = await Workouts.queryWorkoutSamples({
     limit: 1,
     ascending: false,

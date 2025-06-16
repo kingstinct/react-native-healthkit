@@ -1,19 +1,19 @@
-import type { HybridObject } from "react-native-nitro-modules";
+import type { HybridObject } from 'react-native-nitro-modules'
 import type {
-	QueryOptionsWithAnchor,
-	QueryOptionsWithSortOrder,
-} from "../types/QueryOptions";
+  HeartbeatSeriesSample,
+  HeartbeatSeriesSamplesWithAnchorResponse,
+} from '../types/HeartbeatSeries'
 import type {
-	HeartbeatSeriesSample,
-	HeartbeatSeriesSamplesWithAnchorResponse,
-} from "../types/HeartbeatSeries";
+  QueryOptionsWithAnchor,
+  QueryOptionsWithSortOrder,
+} from '../types/QueryOptions'
 
-export interface HeartbeatSeriesModule extends HybridObject<{ ios: "swift" }> {
-	queryHeartbeatSeriesSamples(
-		options?: QueryOptionsWithSortOrder,
-	): Promise<readonly HeartbeatSeriesSample[]>;
+export interface HeartbeatSeriesModule extends HybridObject<{ ios: 'swift' }> {
+  queryHeartbeatSeriesSamples(
+    options?: QueryOptionsWithSortOrder,
+  ): Promise<readonly HeartbeatSeriesSample[]>
 
-	queryHeartbeatSeriesSamplesWithAnchor(
-		options: QueryOptionsWithAnchor,
-	): Promise<HeartbeatSeriesSamplesWithAnchorResponse>;
+  queryHeartbeatSeriesSamplesWithAnchor(
+    options: QueryOptionsWithAnchor,
+  ): Promise<HeartbeatSeriesSamplesWithAnchorResponse>
 }

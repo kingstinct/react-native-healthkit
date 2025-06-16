@@ -1,31 +1,31 @@
 {
-	"cli": {
-		"version": ">= 16.10.0",
-		"appVersionSource": "remote"
-	},
-	"build": {
-		"development": {
-			"developmentClient": true,
-			"distribution": "internal"
-		},
-		"development-appstore-connect": {
-			"developmentClient": true,
-			"distribution": "store",
-			"autoIncrement": true
-		},
-		"preview": {
-			"distribution": "internal"
-		},
-		"production": {
-			"autoIncrement": true
-		}
-	},
-	"submit": {
-		"production": {},
-		"development-appstore-connect": {
-			"ios": {
-				"ascAppId": "6747213346"
-			}
-		}
-	}
+  "cli": {
+    "version": ">= 16.10.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "development-appstore-connect": {
+      "developmentClient": true,
+      "distribution": "store",
+      "autoIncrement": true
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {},
+    "development-appstore-connect": {
+      "ios": {
+        "ascAppId": "6747213346"
+      }
+    }
+  }
 }

@@ -4,11 +4,13 @@ import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 import getMostRecentQuantitySample from '../utils/getMostRecentQuantitySample'
 import useSubscribeToChanges from './useSubscribeToChanges'
 
-
 /**
-   * @returns the most recent sample for the given quantity type.
-   */
-export function useMostRecentQuantitySample(identifier: QuantityTypeIdentifier, unit?: string) {
+ * @returns the most recent sample for the given quantity type.
+ */
+export function useMostRecentQuantitySample(
+  identifier: QuantityTypeIdentifier,
+  unit?: string,
+) {
   const [lastSample, setLastSample] = useState<QuantitySample>()
 
   const fetchMostRecentSample = useCallback(async () => {

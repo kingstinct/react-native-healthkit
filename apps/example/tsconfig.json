@@ -1,18 +1,18 @@
 {
-	"extends": "expo/tsconfig.base",
-	"compilerOptions": {
-		"strict": true,
-		"noUncheckedIndexedAccess": true,
-		"strictNullChecks": true,
-		"paths": {
-			"@/*": ["./*"],
-			"@kingstinct/react-native-healthkit": [
-				"../../packages/react-native-healthkit/src/index.ts"
-			],
-			"@kingstinct/react-native-healthkit/*": [
-				"../../packages/react-native-healthkit/src/*"
-			]
-		}
-	},
-	"include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "strictNullChecks": true,
+    "paths": {
+      "@/*": ["./*"],
+      "@kingstinct/react-native-healthkit": [
+        "../../packages/react-native-healthkit/src/index.ts"
+      ],
+      "@kingstinct/react-native-healthkit/*": [
+        "../../packages/react-native-healthkit/src/*"
+      ]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

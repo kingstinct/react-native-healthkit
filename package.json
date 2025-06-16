@@ -1,36 +1,44 @@
 {
-	"name": "react-native-healthkit-mono",
-	"version": "0.0.1",
-	"description": "react-native-healthkit-mono",
-	"scripts": {
-		"typecheck": "tsc --noEmit",
-		"lint": "bunx @biomejs/biome format --write",
-		"typescript": "tsc",
-		"codegen": "cd packages/react-native-healthkit && bun run nitro-codegen && cd ../../apps/example/ios && pod install",
-		"test": "cd packages/react-native-healthkit && bun run test",
-		"prepare": "husky",
-		"lint-staged": "bunx @biomejs/biome format --write --staged --no-errors-on-unmatched"
-	},
-	"keywords": ["react-native", "nitro", "healthkit"],
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/kingstinct/react-native-healthkit.git"
-	},
-	"workspaces": ["apps/*", "packages/*"],
-	"author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
-	"license": "MIT",
-	"private": true,
-	"commitlint": {
-		"extends": ["@commitlint/config-conventional"]
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
-		"@changesets/cli": "^2.29.4",
-		"@commitlint/config-conventional": "^19.8.1",
-		"@types/bun": "^1.2.16",
-		"commitlint": "^19.8.1",
-		"husky": "^9.1.7",
-		"pkg-pr-new": "^0.0.51",
-		"typescript": "~5.8.3"
-	}
+  "name": "react-native-healthkit-mono",
+  "version": "0.0.1",
+  "description": "react-native-healthkit-mono",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "bunx @biomejs/biome check --fix",
+    "typescript": "tsc",
+    "codegen": "cd packages/react-native-healthkit && bun run nitro-codegen && cd ../../apps/example/ios && pod install",
+    "test": "cd packages/react-native-healthkit && bun run test",
+    "prepare": "husky",
+    "lint-staged": "bunx @biomejs/biome check --fix --no-errors-on-unmatched"
+  },
+  "keywords": ["react-native", "nitro", "healthkit"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kingstinct/react-native-healthkit.git"
+  },
+  "lint-staged": {
+    "*.swift": "swiftlint ios --fix",
+    "*.ts": "bunx @biomejs/biome check --fix",
+    "*.tsx": "bunx @biomejs/biome check --fix",
+    "*.js": "bunx @biomejs/biome check --fix",
+    "*.json": "bunx @biomejs/biome check --fix"
+  },
+  "workspaces": ["apps/*", "packages/*"],
+  "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
+  "license": "MIT",
+  "private": true,
+  "commitlint": {
+    "extends": ["@commitlint/config-conventional"]
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@changesets/cli": "^2.29.4",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@types/bun": "^1.2.16",
+    "commitlint": "^19.8.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "pkg-pr-new": "^0.0.51",
+    "typescript": "~5.8.3"
+  }
 }

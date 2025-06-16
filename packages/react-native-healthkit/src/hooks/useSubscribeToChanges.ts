@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import type { SampleTypeIdentifier } from '../types/Shared'
-import {subscribeToChanges} from '../utils/subscribeToChanges'
 import type { OnChangeCallbackArgs } from '../types/Subscriptons'
+import { subscribeToChanges } from '../utils/subscribeToChanges'
 
 export function useSubscribeToChanges<TIdentifier extends SampleTypeIdentifier>(
   identifier: TIdentifier,
@@ -14,9 +14,8 @@ export function useSubscribeToChanges<TIdentifier extends SampleTypeIdentifier>(
   }, [onChange])
 
   useEffect(() => {
-
     const subscription = subscribeToChanges(identifier, (args) => {
-        onChangeRef.current(args)
+      onChangeRef.current(args)
     })
 
     return () => {

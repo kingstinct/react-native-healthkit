@@ -1,25 +1,25 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react'
 
-import useSubscribeToChanges from "./useSubscribeToChanges";
-import getMostRecentCategorySample from "../utils/getMostRecentCategorySample";
-import type { CategoryTypeIdentifier } from "../types/CategoryTypeIdentifier";
-import type { CategorySampleTyped } from "../types/CategoryType";
+import type { CategorySampleTyped } from '../types/CategoryType'
+import type { CategoryTypeIdentifier } from '../types/CategoryTypeIdentifier'
+import getMostRecentCategorySample from '../utils/getMostRecentCategorySample'
+import useSubscribeToChanges from './useSubscribeToChanges'
 
 /**
  * @returns the most recent sample for the given category type.
  */
 export function useMostRecentCategorySample<T extends CategoryTypeIdentifier>(
-	identifier: T,
+  identifier: T,
 ) {
-	const [category, setCategory] = useState<CategorySampleTyped<T>>();
+  const [category, setCategory] = useState<CategorySampleTyped<T>>()
 
-	const updater = useCallback(() => {
-		void getMostRecentCategorySample(identifier).then(setCategory);
-	}, [identifier]);
+  const updater = useCallback(() => {
+    void getMostRecentCategorySample(identifier).then(setCategory)
+  }, [identifier])
 
-	useSubscribeToChanges(identifier, updater);
+  useSubscribeToChanges(identifier, updater)
 
-	return category;
+  return category
 }
 
-export default useMostRecentCategorySample;
+export default useMostRecentCategorySample

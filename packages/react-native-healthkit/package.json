@@ -1,68 +1,68 @@
 {
-	"name": "@kingstinct/react-native-healthkit",
-	"version": "9.0.0",
-	"description": "React Native bindings for HealthKit",
-	"main": "lib/index",
-	"module": "lib/index",
-	"types": "lib/index.d.ts",
-	"react-native": "src/index",
-	"source": "src/index",
-	"files": [
-		"src",
-		"react-native.config.js",
-		"lib",
-		"nitrogen/**/*",
-		"android/build.gradle",
-		"android/gradle.properties",
-		"android/CMakeLists.txt",
-		"android/src",
-		"ios/**/*.h",
-		"ios/**/*.m",
-		"ios/**/*.mm",
-		"ios/**/*.cpp",
-		"ios/**/*.swift",
-		"app.plugin.js",
-		"*.podspec",
-		"README.md"
-	],
-	"scripts": {
-		"typecheck": "tsc --noEmit",
-		"lint": "bunx @biomejs/biome format --write",
-		"typescript": "tsc",
-		"codegen": "tsc && nitro-codegen --logLevel=\"debug\"",
-		"test": "bun test"
-	},
-	"keywords": ["react-native", "nitro", "healthkit", "ios", "typescript"],
-	"funding": {
-		"type": "github",
-		"url": "https://github.com/sponsors/kingstinct"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/kingstinct/react-native-healthkit.git"
-	},
-	"author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/kingstinct/react-native-healthkit/issues"
-	},
-	"homepage": "https://github.com/kingstinct/react-native-healthkit#readme",
-	"publishConfig": {
-		"registry": "https://registry.npmjs.org/",
-		"access": "public"
-	},
-	"devDependencies": {
-		"@testing-library/react-native": "^13.2.0",
-		"@types/react": "~19.0.14",
-		"nitro-codegen": "^0.26.2",
-		"react": "19.0.0",
-		"react-native": "^0.79.3",
-		"react-native-nitro-modules": "^0.26.2",
-		"typescript": "~5.8.3"
-	},
-	"peerDependencies": {
-		"react": "*",
-		"react-native": "*",
-		"react-native-nitro-modules": "*"
-	}
+  "name": "@kingstinct/react-native-healthkit",
+  "version": "9.0.0",
+  "description": "React Native bindings for HealthKit",
+  "main": "lib/index",
+  "module": "lib/index",
+  "types": "lib/index.d.ts",
+  "react-native": "src/index",
+  "source": "src/index",
+  "files": [
+    "src",
+    "react-native.config.js",
+    "lib",
+    "nitrogen/**/*",
+    "android/build.gradle",
+    "android/gradle.properties",
+    "android/CMakeLists.txt",
+    "android/src",
+    "ios/**/*.h",
+    "ios/**/*.m",
+    "ios/**/*.mm",
+    "ios/**/*.cpp",
+    "ios/**/*.swift",
+    "app.plugin.js",
+    "*.podspec",
+    "README.md"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "bunx @biomejs/biome format --write",
+    "typescript": "tsc",
+    "codegen": "tsc && nitro-codegen --logLevel=\"debug\"",
+    "test": "bun test"
+  },
+  "keywords": ["react-native", "nitro", "healthkit", "ios", "typescript"],
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/kingstinct"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kingstinct/react-native-healthkit.git"
+  },
+  "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kingstinct/react-native-healthkit/issues"
+  },
+  "homepage": "https://github.com/kingstinct/react-native-healthkit#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "devDependencies": {
+    "@testing-library/react-native": "^13.2.0",
+    "@types/react": "~19.0.14",
+    "nitro-codegen": "^0.26.2",
+    "react": "19.0.0",
+    "react-native": "^0.79.3",
+    "react-native-nitro-modules": "^0.26.2",
+    "typescript": "~5.8.3"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-nitro-modules": "*"
+  }
 }

@@ -1,13 +1,17 @@
-import { describe, expect, test, jest } from 'bun:test'
+import { describe, expect, jest, test } from 'bun:test'
 import { renderHook } from '@testing-library/react-native'
 
-import waitForNextUpdate from '../test-utils'
 import { Core } from '..'
+import waitForNextUpdate from '../test-utils'
 
 describe('useIsHealthDataAvailable', () => {
   test('should return false', async () => {
-    const useIsHealthDataAvailable = (await import('./useIsHealthDataAvailable')).default
-    jest.spyOn(Core, 'isHealthDataAvailableAsync').mockReturnValue(Promise.resolve(false))
+    const useIsHealthDataAvailable = (
+      await import('./useIsHealthDataAvailable')
+    ).default
+    jest
+      .spyOn(Core, 'isHealthDataAvailableAsync')
+      .mockReturnValue(Promise.resolve(false))
 
     const { result } = renderHook(useIsHealthDataAvailable)
 
@@ -17,8 +21,12 @@ describe('useIsHealthDataAvailable', () => {
   })
 
   test('should return true', async () => {
-    const useIsHealthDataAvailable = (await import('./useIsHealthDataAvailable')).default
-    jest.spyOn(Core, 'isHealthDataAvailableAsync').mockReturnValue(Promise.resolve(true))
+    const useIsHealthDataAvailable = (
+      await import('./useIsHealthDataAvailable')
+    ).default
+    jest
+      .spyOn(Core, 'isHealthDataAvailableAsync')
+      .mockReturnValue(Promise.resolve(true))
 
     const { result } = renderHook(useIsHealthDataAvailable)
 
@@ -28,7 +36,9 @@ describe('useIsHealthDataAvailable', () => {
   })
 
   test('should return null before initalizing', async () => {
-    const useIsHealthDataAvailable = (await import('./useIsHealthDataAvailable')).default
+    const useIsHealthDataAvailable = (
+      await import('./useIsHealthDataAvailable')
+    ).default
     const { result } = renderHook(useIsHealthDataAvailable)
 
     expect(result.current).toBe(null)

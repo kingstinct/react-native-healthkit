@@ -1,52 +1,52 @@
 {
-	"expo": {
-		"name": "RN HealthKit",
-		"slug": "react-native-healthkit-example",
-		"owner": "react-native-healthkit",
-		"version": "1.0.0",
-		"orientation": "portrait",
-		"icon": "./assets/images/icon.png",
-		"scheme": "reactnativehealthkitexample",
-		"userInterfaceStyle": "automatic",
-		"newArchEnabled": true,
-		"runtimeVersion": {
-			"policy": "fingerprint"
-		},
-		"ios": {
-			"supportsTablet": true,
-			"bundleIdentifier": "com.kingstinct.reactnativehealthkitexample",
-			"infoPlist": {
-				"ITSAppUsesNonExemptEncryption": false
-			}
-		},
-		"plugins": [
-			"expo-router",
-			[
-				"expo-splash-screen",
-				{
-					"image": "./assets/images/splash-icon.png",
-					"imageWidth": 200,
-					"resizeMode": "contain",
-					"backgroundColor": "#ffffff"
-				}
-			],
-			[
-				"../../packages/react-native-healthkit/app.plugin.js",
-				{
-					"NSHealthShareUsageDescription": "Your own custom usage description",
-					"NSHealthUpdateUsageDescription": "Your own custom usage description",
-					"background": true
-				}
-			]
-		],
-		"experiments": {
-			"typedRoutes": true
-		},
-		"extra": {
-			"router": {},
-			"eas": {
-				"projectId": "29e9f7d0-838e-4d60-9e40-cc2fbb947a2f"
-			}
-		}
-	}
+  "expo": {
+    "name": "RN HealthKit",
+    "slug": "react-native-healthkit-example",
+    "owner": "react-native-healthkit",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "reactnativehealthkitexample",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kingstinct.reactnativehealthkitexample",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "../../packages/react-native-healthkit/app.plugin.js",
+        {
+          "NSHealthShareUsageDescription": "Your own custom usage description",
+          "NSHealthUpdateUsageDescription": "Your own custom usage description",
+          "background": true
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "29e9f7d0-838e-4d60-9e40-cc2fbb947a2f"
+      }
+    }
+  }
 }

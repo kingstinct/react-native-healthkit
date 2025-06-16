@@ -1,6 +1,7 @@
 {
-	"recommendations": [
-		"swiftlang.swift-vscode",
-		"biomejs.biome"
-	]
+  "recommendations": [
+    "swiftlang.swift-vscode",
+    "biomejs.biome",
+    "vknabel.vscode-swiftlint"
+  ]
 }

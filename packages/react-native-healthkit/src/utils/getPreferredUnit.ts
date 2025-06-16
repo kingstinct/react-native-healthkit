@@ -1,18 +1,18 @@
-import { Core } from "..";
-import type { QuantityTypeIdentifier } from "../types/QuantityTypeIdentifier";
+import { Core } from '..'
+import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 
 const getPreferredUnit = async (
-	quantityType: QuantityTypeIdentifier,
+  quantityType: QuantityTypeIdentifier,
 ): Promise<string> => {
-	const units = await Core.getPreferredUnits([quantityType]);
-	const unit = units[0]?.unit;
+  const units = await Core.getPreferredUnits([quantityType])
+  const unit = units[0]?.unit
 
-	if (!unit) {
-		throw new Error(
-			`No preferred unit found for quantity type: ${quantityType}`,
-		);
-	}
+  if (!unit) {
+    throw new Error(
+      `No preferred unit found for quantity type: ${quantityType}`,
+    )
+  }
 
-	return unit;
-};
-export default getPreferredUnit;
+  return unit
+}
+export default getPreferredUnit

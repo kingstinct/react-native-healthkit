@@ -1,0 +1,4 @@
+{
+  "notebook.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true
+}
