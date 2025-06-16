@@ -108,6 +108,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.number }}/merge
       - uses: cardinalby/export-env-action@v2
         with:
           envFile: .env.github
