@@ -4,12 +4,12 @@
   "description": "react-native-healthkit-mono",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "lint": "bunx @biomejs/biome check --fix",
+    "lint": "bunx @biomejs/biome check",
+    "lint-fix": "bunx @biomejs/biome check --fix",
     "typescript": "tsc",
     "codegen": "cd packages/react-native-healthkit && bun run nitro-codegen && cd ../../apps/example/ios && pod install",
     "test": "cd packages/react-native-healthkit && bun run test",
-    "prepare": "husky",
-    "lint-staged": "bunx @biomejs/biome check --fix --no-errors-on-unmatched"
+    "prepare": "husky"
   },
   "keywords": ["react-native", "nitro", "healthkit"],
   "repository": {
