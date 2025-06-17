@@ -4,30 +4,29 @@ We want this community to be friendly and respectful to each other. Please follo
 
 ## Development workflow
 
-To get started with the project, run `bun bootstrap` in the root directory to install the required dependencies for each package:
-
+We're now using [Nitro Modules](https://nitro.margelo.com/docs/nitro-modules) and [Nitrogen](https://nitro.margelo.com/docs/nitrogen) to generate types that span both the TS and native implementations. When editing any of the types in the *.nitro.ts files or types used by those files. To regenerate the native types run
 ```sh
-bun bootstrap
+bun codegen
 ```
 
-While developing, you can run the [example app](/example/) to test your changes.
+While developing, you can run the [example app](/apps/example/) to test your changes.
 
 To start the packager:
 
 ```sh
-bun example start
+bun start
 ```
 
 To run the example app on iOS:
 
 ```sh
-bun example ios
+bun run ios
 ```
 
-Make sure your code passes TypeScript and ESLint. Run the following to verify:
+Make sure your code passes TypeScript and Biome. Run the following to verify:
 
 ```sh
-bun typescript
+bun typecheck
 bun lint
 ```
 
@@ -37,7 +36,7 @@ To fix formatting errors, run the following:
 bun lint --fix
 ```
 
-Remember to add tests for your change if possible. Run the unit tests by:
+Remember to add tests for your change when applicable. Run the unit tests by:
 
 ```sh
 bun run test
@@ -45,9 +44,9 @@ bun run test
 
 You can use `bunx solidarity` to make sure everything is set up correctly, for example [make sure you haft `swiftlint` installed](https://github.com/realm/SwiftLint#installation) since we use this as a pre-commit git hook.
 
-To edit the Objective-C files, open `example/ios/ReactNativeHealthkitExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > @kingstinct/react-native-healthkit`.
+To edit the native files, open `apps/example/ios/ReactNativeHealthkitExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > @kingstinct/react-native-healthkit`.
 
-To edit the Kotlin files, open `example/android` in Android studio and find the source files at `kingstinctreactnativehealthkit` under `Android`.
+We use [changesets](https://github.com/changesets/changesets) to handle releases. Either run `bun run create-changeset` locally to generate a changeset or do it in the PR UI. A changeset is required to generate changelogs and trigger the NPM publish.
 
 ### Commit message convention
 
@@ -64,9 +63,9 @@ Our pre-commit hooks verify that your commit message matches this format when co
 
 ### Linting and tests
 
-[ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [TypeScript](https://www.typescriptlang.org/)
+[Biome](https://biomejs.dev/guides/getting-started/), [TypeScript](https://www.typescriptlang.org/)
 
-We use [TypeScript](https://www.typescriptlang.org/) for type checking, [ESLint](https://eslint.org/) with [Prettier](https://prettier.io/) for linting and formatting the code, and [Jest](https://jestjs.io/) for testing.
+We use [TypeScript](https://www.typescriptlang.org/) for type checking, [Biome](https://biomejs.dev/guides/getting-started/) for linting and formatting the code, and [Bun test](https://bun.sh/docs/cli/test) for testing.
 
 Our pre-commit hooks verify that the linter and tests pass when committing.
 
@@ -74,12 +73,9 @@ Our pre-commit hooks verify that the linter and tests pass when committing.
 
 The `package.json` file contains various scripts for common tasks:
 
-- `bun bootstrap`: setup project by installing all dependencies and pods.
 - `bun typescript`: type-check files with TypeScript.
-- `bun lint`: lint files with ESLint.
-- `bun test`: run unit tests with Jest.
-- `bun example start`: start the Metro server for the example app.
-- `bun example ios`: run the example app on iOS.
+- `bun lint`: lint files with Biome.
+- `bun test`: run unit tests with bun.
 
 ### Sending a pull request
 

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies, functional/immutable-data, no-param-reassign, @typescript-eslint/no-var-requires */
 const {
   withPlugins,
   createRunOncePlugin,
