@@ -161,8 +161,8 @@ There are a lot of under-the-hood changes in version 9.0.0, some of them are bre
 - Flexible filters that map closer to the native constructs. This can easily be extended.
 - `deleteObjects` replaces all previous deletion methods, using the new flexible filters.
 - Workouts are returned as proxies containing not only data but also functions, for example `getWorkoutRoutes`.
-- Identifiers are now just strings, and more strictly typed.
-- Units are now just strings.
+- Object identifiers are now just strings (not enums), but more strictly typed for each use case.
+- Units are now just strings. There's a `isQuantityCompatibleWithUnit()` helper function. Also, units are never required when querying, it always defaults to the users preferred unit.
 
 ## A note on Apple Documentation
 
