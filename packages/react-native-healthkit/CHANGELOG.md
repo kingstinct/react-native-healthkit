@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 9.0.6
+### Patch Changes
+
+- b47544c: type improvs
+
 ## 9.0.5
 ### Patch Changes
 
