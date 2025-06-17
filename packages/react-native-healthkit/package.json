@@ -1,6 +1,6 @@
 {
   "name": "@kingstinct/react-native-healthkit",
-  "version": "9.0.2",
+  "version": "9.0.3",
   "description": "React Native bindings for HealthKit",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
@@ -48,7 +48,13 @@
     "test": "bun test",
     "prepublishOnly": "bun run build && bun run codegen"
   },
-  "keywords": ["react-native", "nitro", "healthkit", "ios", "typescript"],
+  "keywords": [
+    "react-native",
+    "nitro",
+    "healthkit",
+    "ios",
+    "typescript"
+  ],
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/kingstinct"

@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 9.0.3
+### Patch Changes
+
+- 6540d54: Remove type: module to make app.config.js work again
+
 ## 9.0.2
 ### Patch Changes
 
