@@ -280,11 +280,13 @@ export function getMostRecentCategorySample<T extends CategoryTypeIdentifier>(
 
 export const getMostRecentQuantitySample = UnavailableFnFromModule(
   'getMostRecentQuantitySample',
-  Promise.resolve(undefined),
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  Promise.resolve(undefined as any as QuantitySample),
 )
 export const getMostRecentWorkout = UnavailableFnFromModule(
   'getMostRecentWorkout',
-  Promise.resolve(undefined),
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  Promise.resolve(undefined as any as WorkoutProxy),
 )
 export const getPreferredUnit = UnavailableFnFromModule(
   'getPreferredUnit',

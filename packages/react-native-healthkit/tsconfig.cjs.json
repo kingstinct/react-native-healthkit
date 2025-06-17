@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    // Essential options for CJS output
+    "module": "CommonJS",
+    "outDir": "./lib/commonjs",
+    "moduleResolution": "node", // Classic Node resolution for CommonJS
+
+    // Core TypeScript settings (previously inherited or defaults)
+    "target": "es2020", // Or your desired JS target, ES2020 is a safe bet
+    "lib": ["es2020", "dom"], // Include necessary libs
+    "strict": true,
+    "esModuleInterop": true, // Recommended for CJS/ESM interop
+    "skipLibCheck": true, // Often useful in projects
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true, // Good practice, though might not be strictly needed here
+
+    // Settings specific to this build target
+    "noEmit": false,
+    "declaration": false,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "rootDir": "./src", // Assuming source is in src
+    "verbatimModuleSyntax": false // Set to false as it's more for ESM/bundler scenarios
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/test-utils.ts",
+    "src/**/test-setup.ts",
+    "src/index.ios.ts" // Exclude RN specific entry point for this build
+  ]
+}
