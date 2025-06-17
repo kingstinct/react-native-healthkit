@@ -13,6 +13,14 @@
   },
   "overrides": [
     {
+      "include": ["packages/react-native-healthkit/package.json"],
+      "json": {
+        "formatter": {
+          "lineWidth": 60
+        }
+      }
+    },
+    {
       "include": [
         "packages/react-native-healthkit/tsconfig.cjs.json",
         "packages/react-native-healthkit/tsconfig.esm.json",
