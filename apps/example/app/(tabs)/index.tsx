@@ -1,81 +1,132 @@
-import { Image } from 'expo-image'
-import { Platform, StyleSheet } from 'react-native'
+import { ListItem, type ListItemProps } from '@/components/SwiftListItem'
+import { enumKeyLookup } from '@/utils/enumKeyLookup'
+import { List } from '@expo/ui/swift-ui'
+import { Section } from '@expo/ui/swift-ui-primitives'
+import {
+  getBiologicalSex,
+  getBloodType,
+  getDateOfBirth,
+  getFitzpatrickSkinType,
+  getPreferredUnits,
+  getWheelchairUse,
+  isHealthDataAvailable,
+  isProtectedDataAvailable,
+} from '@kingstinct/react-native-healthkit'
+import {
+  BiologicalSex,
+  BloodType,
+  FitzpatrickSkinType,
+  WheelchairUse,
+} from '@kingstinct/react-native-healthkit/types/Characteristics'
+import { useEffect, useState } from 'react'
 
-import { HelloWave } from '@/components/HelloWave'
-import ParallaxScrollView from '@/components/ParallaxScrollView'
-import { ThemedText } from '@/components/ThemedText'
-import { ThemedView } from '@/components/ThemedView'
+const biologicalSexLookup = enumKeyLookup(BiologicalSex)
+const bloodTypeLookup = enumKeyLookup(BloodType)
+const wheelchairUseLookup = enumKeyLookup(WheelchairUse)
+const fitzpatrickSkinTypeLookup = enumKeyLookup(FitzpatrickSkinType)
+const coreStuffDefaults = [
+  {
+    title: 'Is health data available?',
+    subtitle: isHealthDataAvailable() ? '✅' : '❌',
+  },
+  {
+    title: 'Is protected data available?',
+    subtitle: isProtectedDataAvailable() ? '✅' : '❌',
+  },
+]
 
-const result = 12
+console.log('getDateOfBirth():', getDateOfBirth().toISOString())
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
+const CoreTab = () => {
+  const characteristics: ListItemProps[] = [
+    {
+      title: 'Biological Sex',
+      subtitle: biologicalSexLookup[getBiologicalSex()],
+    },
+    { title: 'Birthday', subtitle: getDateOfBirth().toDateString() },
+    {
+      title: 'Blood type',
+      subtitle: bloodTypeLookup[getBloodType()],
+    },
+    {
+      title: 'Fitzpatrick Skin Type',
+      subtitle: fitzpatrickSkinTypeLookup[getFitzpatrickSkinType()],
+    },
+    {
+      title: 'Wheelchair Use',
+      subtitle: wheelchairUseLookup[getWheelchairUse()],
+    },
+  ]
+
+  const [coreStuff, setCoreStuff] = useState<ListItemProps[]>([])
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const units = await getPreferredUnits([
+          'HKQuantityTypeIdentifierDistanceWalkingRunning',
+          'HKQuantityTypeIdentifierBodyMass',
+          'HKQuantityTypeIdentifierBloodGlucose',
+        ])
+        setCoreStuff([
+          ...units.map(({ typeIdentifier, unit }) => ({
+            title: `Unit for ${typeIdentifier}`,
+            subtitle: unit || 'N/A',
+          })),
+        ])
+      } catch (error) {
+        console.error('Error fetching preferred units:', error)
       }
+    }
+    init()
+  }, [])
+
+  return (
+    <List
+      scrollEnabled
+      // editModeEnabled={editModeEnabled}
+      onSelectionChange={(items) =>
+        alert(`indexes of selected items: ${items.join(', ')}`)
+      }
+      // moveEnabled={moveEnabled}
+      onMoveItem={(from, to) =>
+        alert(`moved item at index ${from} to index ${to}`)
+      }
+      onDeleteItem={(item) => alert(`deleted item at index: ${item}`)}
+      style={{ flex: 1, marginBottom: 100 }}
+      listStyle="automatic"
+      // deleteEnabled={deleteEnabled}
+      // selectEnabled={selectEnabled}
     >
-      <ThemedText>{result}</ThemedText>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{' '}
-          to see changes. Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText>{' '}
-          to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{' '}
-          directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      <Section title="Characteristics">
+        {characteristics.map((item) => (
+          <ListItem
+            key={item.title}
+            title={item.title}
+            subtitle={item.subtitle}
+          />
+        ))}
+      </Section>
+      <Section title="Device">
+        {coreStuffDefaults.map((item) => (
+          <ListItem
+            key={item.title}
+            title={item.title}
+            subtitle={item.subtitle}
+          />
+        ))}
+      </Section>
+      <Section title="Units">
+        {coreStuff.map((item) => (
+          <ListItem
+            key={item.title}
+            title={item.title}
+            subtitle={item.subtitle}
+          />
+        ))}
+      </Section>
+    </List>
   )
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-})
+export default CoreTab
