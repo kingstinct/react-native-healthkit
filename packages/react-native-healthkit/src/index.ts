@@ -6,8 +6,7 @@ import { Platform } from 'react-native'
 
 // This import is crucial for deriving the type of the default export `HealthkitModule`
 // It assumes that index.ios.ts exports a default object matching the Healthkit native module structure.
-import type * as ReactNativeHealthkit from './index.ios'
-import type { SourceProxy } from './specs/SourceProxy.nitro'
+import type ReactNativeHealthkit from './index.ios'
 import type { WorkoutProxy } from './specs/WorkoutProxy.nitro'
 import { AuthorizationRequestStatus, AuthorizationStatus } from './types/Auth'
 import type {
@@ -21,18 +20,8 @@ import {
   FitzpatrickSkinType,
   WheelchairUse,
 } from './types/Characteristics'
-import type { CorrelationSample } from './types/CorrelationType'
-import type {
-  HeartbeatSeriesSample,
-  HeartbeatSeriesSamplesWithAnchorResponse,
-} from './types/HeartbeatSeries'
 import type { QuantitySample } from './types/QuantitySample'
-import type {
-  QuantitySamplesWithAnchorResponse,
-  QueryStatisticsResponse,
-} from './types/QuantityType'
-import type { StateOfMindSample } from './types/StateOfMind'
-import type { QueryWorkoutSamplesWithAnchorResponse } from './types/Workouts'
+export * from './types'
 
 const notAvailableError = `[@kingstinct/react-native-healthkit] Platform "${Platform.OS}" not supported. HealthKit is only available on iOS.`
 

@@ -11,7 +11,7 @@ import type {
   SampleTypeIdentifier,
   SampleTypeIdentifierWriteable,
 } from '../types/Shared'
-import type { OnChangeCallbackArgs } from '../types/Subscriptons'
+import type { OnChangeCallbackArgs } from '../types/Subscriptions'
 import type { IdentifierWithUnit } from '../types/Units'
 import type { SourceProxy } from './SourceProxy.nitro'
 

@@ -1,6 +1,6 @@
 import { Core } from '../modules'
 import type { SampleTypeIdentifier } from '../types/Shared'
-import type { OnChangeCallbackArgs } from '../types/Subscriptons'
+import type { OnChangeCallbackArgs } from '../types/Subscriptions'
 
 export const subscribeToChanges = (
   identifier: SampleTypeIdentifier,

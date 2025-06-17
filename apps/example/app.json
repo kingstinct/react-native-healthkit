@@ -31,7 +31,7 @@
         }
       ],
       [
-        "../../packages/react-native-healthkit/app.plugin.js",
+        "@kingstinct/react-native-healthkit",
         {
           "NSHealthShareUsageDescription": "Your own custom usage description",
           "NSHealthUpdateUsageDescription": "Your own custom usage description",

@@ -14,6 +14,19 @@
       "require": "./lib/commonjs/index.js",
       "react-native": "./src/index.ts"
     },
+    "./types": {
+      "types": "./lib/typescript/types/index.d.ts",
+      "import": "./lib/module/types/index.js",
+      "require": "./lib/commonjs/types/index.js",
+      "react-native": "./src/types/index.ts"
+    },
+    "./modules": {
+      "types": "./lib/typescript/modules.d.ts",
+      "import": "./lib/module/modules.js",
+      "require": "./lib/commonjs/modules.js",
+      "react-native": "./src/modules.ts"
+    },
+    "./app.plugin.js": "./app.plugin.js",
     "./package.json": "./package.json"
   },
   "files": [
