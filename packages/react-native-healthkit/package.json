@@ -30,7 +30,8 @@
     "lint": "bunx @biomejs/biome format --write",
     "typescript": "tsc",
     "codegen": "tsc && nitro-codegen --logLevel=\"debug\"",
-    "test": "bun test"
+    "test": "bun test",
+    "prepublishOnly": "bun run codegen"
   },
   "keywords": ["react-native", "nitro", "healthkit", "ios", "typescript"],
   "funding": {

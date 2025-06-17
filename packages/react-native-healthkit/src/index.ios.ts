@@ -211,15 +211,7 @@ export default {
   isProtectedDataAvailable,
   queryStateOfMindSamples,
   saveStateOfMindSample,
-  // Modules
-  // Core,
-  // Workouts,
-  // Characteristics,
-  // QuantityTypes,
-  // CategoryTypes,
-  // CorrelationTypes,
-  // HeartbeatSeries,
-  // StateOfMind,
+
   // hooks
   useMostRecentCategorySample,
   useMostRecentQuantitySample,
