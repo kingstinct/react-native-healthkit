@@ -24,8 +24,8 @@ const {
 /**
  * @typedef InfoPlistConfig
  * @type {{
- *  NSHealthShareUsageDescription?: string | false,
- *  NSHealthUpdateUsageDescription?: string | false
+ *  NSHealthShareUsageDescription?: string | true,
+ *  NSHealthUpdateUsageDescription?: string | true
  * }}
 */
 
@@ -63,7 +63,7 @@ const withEntitlementsPlugin = (
 const withInfoPlistPlugin = (
   config,
   /**
-   * @type {{NSHealthShareUsageDescription: string | boolean, NSHealthUpdateUsageDescription: string | boolean} | undefined}
+   * @type {{NSHealthShareUsageDescription: string | true, NSHealthUpdateUsageDescription: string | true} | undefined}
    * */
   props,
 ) =>
