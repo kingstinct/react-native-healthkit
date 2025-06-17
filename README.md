@@ -26,7 +26,7 @@ This library is provided as-is without any warranty and is not affiliated with A
 ### Expo
 Usage with Expo is possible - just keep in mind it will not work in Expo Go and [you'll need to roll your own Dev Client](https://docs.expo.dev/development/getting-started/). 
 
-1. `yarn add @kingstinct/react-native-healthkit`
+1. `yarn add @kingstinct/react-native-healthkit react-native-nitro-modules`
 2. Update your app.json with the config plugin:
 ```json
 {
@@ -42,8 +42,8 @@ this will give you defaults that make the app build without any further configur
     "plugins": [
       ["@kingstinct/react-native-healthkit", {
         "NSHealthShareUsageDescription": "Your own custom usage description",
-        "NSHealthUpdateUsageDescription": false,  // if you have no plans to update data, you could skip adding it to your info.plist
-        "background": false // if you have no plans to use it in background mode, you could skip adding it to the entitlements
+        "NSHealthUpdateUsageDescription": "Your own custom usage description",
+        "background": true
       }]
     ]
   }
@@ -52,7 +52,7 @@ this will give you defaults that make the app build without any further configur
 3. Build a new Dev Client
 
 ### Native or Expo Bare Workflow
-1. `yarn add @kingstinct/react-native-healthkit`
+1. `yarn add @kingstinct/react-native-healthkit react-native-nitro-modules`
 2. `npx pod-install`
 3. Set `NSHealthUpdateUsageDescription` and `NSHealthShareUsageDescription` in your `Info.plist` 
 4. Enable the HealthKit capability for the project in Xcode.
@@ -155,10 +155,10 @@ Example:
 ## Migration to 9.0.0
 
 There are a lot of under-the-hood changes in version 9.0.0, some of them are breaking (although I've tried to reduce it as much as possible).
-- Most of all - the library has been migrated to use react-native-nitro-modules. This improves performance, type-safety and gets rid of a lot of boilerplate code that made it harder to maintain and add features to the library.
-- Naming conventions have changed - most of the HK-prefixed stuff has been removed to avoid conflicts on the native side and also make the library more beautiful to look at. As an example the type previously called HKQuantityTypeIdentifier is not just QuantityTypeIdentifier on the library level.
-- Less required params by default - making it easier to start using the library, for example calling `queryQuantitySamples('HKQuantityTypeIdentifierStepCount')` will simply return the last 20 samples.
-- Flexible filters that map closer to the native constructs. This can easily be extended.
+- The library has been migrated to react-native-nitro-modules. This improves performance, type-safety and gets rid of a lot of boilerplate code that made it harder to maintain and add features to the library.
+- Naming conventions have changed - most of the HK-prefixed stuff has been removed to avoid conflicts on the native side and also make the library more beautiful to look at. As an example the type previously called HKQuantityTypeIdentifier is now just QuantityTypeIdentifier.
+- Fewer required params - for example calling `queryQuantitySamples('HKQuantityTypeIdentifierStepCount')` without arguments will simply return the last 20 samples.
+- Flexible filters that map closer to the native constructs. For example this supports filtering by uuid, multiple uuids as well as on items related to a specific workout.
 - `deleteObjects` replaces all previous deletion methods, using the new flexible filters.
 - Workouts are returned as proxies containing not only data but also functions, for example `getWorkoutRoutes`.
 - Object identifiers are now just strings (not enums), but more strictly typed for each use case.
