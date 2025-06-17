@@ -11,25 +11,24 @@ import NitroModules
 
 func dateOrNilIfZero(_ timestamp: Double?) -> Date? {
     if let timestamp = timestamp {
-        if(timestamp == 0){
+        if timestamp == 0 {
            return nil
         }
         return Date.init(timeIntervalSince1970: timestamp)
     }
     return nil
-    
-    
+
 }
 
 func getQueryLimit(_ limit: Double?) -> Int {
     if let limit = limit {
-        if(limit == .infinity || limit <= 0){
+        if limit == .infinity || limit <= 0 {
             return HKObjectQueryNoLimit
         }
-        
+
         return Int(limit)
     }
-    
+
     return DEFAULT_QUERY_LIMIT
 }
 
@@ -45,7 +44,7 @@ func createPredicateForWorkout(filter: PredicateForWorkouts) throws -> NSPredica
             return createDatePredicate(dateFilter: dateFilter)
         case .fifth(let w):
           if let w = w.workout as? WorkoutProxy {
-            return HKQuery.predicateForObjects(from: w.workout)
+            return w.workoutPredicate
           }
           throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
         case .sixth(let activityType):
@@ -55,7 +54,7 @@ func createPredicateForWorkout(filter: PredicateForWorkouts) throws -> NSPredica
                 throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized workoutActivityType with identifier \(activityType.workoutActivityType.rawValue)")
             }
         case .seventh(let durationPredicate):
-            if let op = NSComparisonPredicate.Operator(rawValue: UInt(durationPredicate.predicateOperator.rawValue)){
+            if let op = NSComparisonPredicate.Operator(rawValue: UInt(durationPredicate.predicateOperator.rawValue)) {
                 return HKQuery.predicateForWorkouts(with: op, duration: durationPredicate.durationInSeconds)
             }
             throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized workout duration predicate operator \(durationPredicate.predicateOperator.rawValue)")
@@ -75,7 +74,7 @@ func createPredicateForWorkout(filter: Variant_PredicateWithUUID_PredicateWithUU
             return createDatePredicate(dateFilter: dateFilter)
         case .fifth(let w):
           if let w = w.workout as? WorkoutProxy {
-            return HKQuery.predicateForObjects(from: w.workout)
+            return w.workoutPredicate
           }
           throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
         case .sixth(let activityType):
@@ -85,11 +84,11 @@ func createPredicateForWorkout(filter: Variant_PredicateWithUUID_PredicateWithUU
                 throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized workoutActivityType with identifier \(activityType.workoutActivityType.rawValue)")
             }
         case .seventh(let durationPredicate):
-            if let op = NSComparisonPredicate.Operator(rawValue: UInt(durationPredicate.predicateOperator.rawValue)){
+            if let op = NSComparisonPredicate.Operator(rawValue: UInt(durationPredicate.predicateOperator.rawValue)) {
                 return HKQuery.predicateForWorkouts(with: op, duration: durationPredicate.durationInSeconds)
             }
             throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized workout duration predicate operator \(durationPredicate.predicateOperator.rawValue)")
-            
+
         case .eigth(let or):
             return NSCompoundPredicate.init(andPredicateWithSubpredicates: try or.OR.map { predicate in
                 return try createPredicateForWorkout(filter: predicate)
@@ -101,14 +100,14 @@ func createPredicateForWorkout(filter: Variant_PredicateWithUUID_PredicateWithUU
                 })
         }
     }
-    
+
     return nil
 }
 
 func createDatePredicate(dateFilter: PredicateWithStartAndEnd) -> NSPredicate {
     let strictStartDate = dateFilter.strictStartDate ?? false
     let strictEndDate = dateFilter.strictEndDate ?? false
-    
+
     let options: HKQueryOptions = strictStartDate && strictEndDate
         ? [.strictStartDate, .strictEndDate]
         : strictEndDate
@@ -116,7 +115,7 @@ func createDatePredicate(dateFilter: PredicateWithStartAndEnd) -> NSPredicate {
             : strictStartDate
                 ? .strictStartDate
                 : []
-    
+
     return HKQuery.predicateForSamples(
         withStart: dateFilter.startDate,
         end: dateFilter.endDate,
@@ -129,8 +128,7 @@ func createUUIDsPredicate(uuidsWrapper: PredicateWithUUIDs) -> NSPredicate {
         do {
             let uuid = try initializeUUID(uuidStr)
             return uuid
-        }
-        catch {
+        } catch {
             print(error.localizedDescription)
             return nil
         }
@@ -151,7 +149,7 @@ func createPredicate(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_Predic
                 return createDatePredicate(dateFilter: dateFilter)
             case .fifth(let w):
               if let w = w.workout as? WorkoutProxy {
-                return HKQuery.predicateForObjects(from: w.workout)
+                return w.workoutPredicate
               }
               throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
         }
@@ -172,7 +170,7 @@ func createPredicate(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_Predic
                 return createDatePredicate(dateFilter: dateFilter)
             case .fifth(let w):
               if let w = w.workout as? WorkoutProxy {
-                return HKQuery.predicateForObjects(from: w.workout)
+                return w.workoutPredicate
               }
               throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
             case .sixth(let and):
@@ -201,7 +199,7 @@ func createPredicateForSamples(filter: PredicateForSamples) throws -> NSPredicat
             return createDatePredicate(dateFilter: dateFilter)
         case .fifth(let w):
           if let w = w.workout as? WorkoutProxy {
-            return HKQuery.predicateForObjects(from: w.workout)
+            return w.workoutPredicate
           }
           throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
     }
@@ -219,7 +217,7 @@ func createPredicateForSamples(filter: FilterForSamples) throws -> NSPredicate {
         return createDatePredicate(dateFilter: dateFilter)
     case .fifth(let w):
       if let w = w.workout as? WorkoutProxy {
-        return HKQuery.predicateForObjects(from: w.workout)
+        return w.workoutPredicate
       }
       throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
     case .sixth(let and):
@@ -246,7 +244,7 @@ func createPredicateForSamples(filter: Variant_PredicateWithUUID_PredicateWithUU
         return createDatePredicate(dateFilter: dateFilter)
     case .fifth(let w):
       if let w = w.workout as? WorkoutProxy {
-        return HKQuery.predicateForObjects(from: w.workout)
+        return w.workoutPredicate
       }
       throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
     case .sixth(let and):
@@ -274,7 +272,7 @@ func deserializeHKQueryAnchor(base64String: String?) throws -> HKQueryAnchor? {
         if base64String.isEmpty {
             return nil
         }
-        
+
         // Step 1: Decode the base64 string to a Data object
         guard let data = Data(base64Encoded: base64String) else {
             throw RuntimeError.error(withMessage: "[react-native-healthkit] Invalid base64 string: \(base64String)")
@@ -294,13 +292,12 @@ func deserializeHKQueryAnchor(base64String: String?) throws -> HKQueryAnchor? {
     return nil
 }
 
-
 func initializeCategoryType(_ identifier: String) throws -> HKCategoryType {
     let identifier = HKCategoryTypeIdentifier(rawValue: identifier)
     if let sampleType = HKSampleType.categoryType(forIdentifier: identifier) {
         return sampleType
     }
-    
+
     throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized categoryType with identifier \(identifier)")
 }
 
@@ -308,7 +305,7 @@ func initializeWorkoutActivityType(_ typeIdentifier: UInt) throws -> HKWorkoutAc
     if let type = HKWorkoutActivityType.init(rawValue: typeIdentifier) {
         return type
     }
-    
+
     throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized quantityType with identifier \(typeIdentifier)")
 }
 
@@ -318,17 +315,17 @@ func initializeQuantityType(_ identifier: String) throws -> HKQuantityType {
     if let sampleType = HKSampleType.quantityType(forIdentifier: identifier) {
         return sampleType
     }
-    
+
     throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized quantityType with identifier \(identifier)")
 }
 
 func initializeCorrelationType(_ identifier: String) throws -> HKCorrelationType {
     let identifier = HKCorrelationTypeIdentifier(rawValue: identifier)
-    
+
     if let sampleType = HKSampleType.correlationType(forIdentifier: identifier) {
         return sampleType
     }
-    
+
     throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized correlationType with identifier \(identifier)")
 }
 
@@ -336,7 +333,7 @@ func initializeSeriesType(_ identifier: String) throws -> HKSeriesType {
     if let seriesType = HKObjectType.seriesType(forIdentifier: identifier) {
         return seriesType
     }
-    
+
     throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized seriesType with identifier \(identifier)")
 }
 
@@ -344,7 +341,7 @@ func sampleTypeFrom(sampleTypeIdentifier: SampleTypeIdentifier) throws -> HKSamp
     if let sampleType = try sampleTypeFromStringNullable(typeIdentifier: sampleTypeIdentifier.stringValue) {
         return sampleType
     }
-    
+
     throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized sampleType with identifier \(sampleTypeIdentifier.stringValue)")
 }
 
@@ -352,7 +349,7 @@ func sampleTypeFrom(sampleTypeIdentifierWriteable: SampleTypeIdentifierWriteable
     if let sampleType = try sampleTypeFromStringNullable(typeIdentifier: sampleTypeIdentifierWriteable.stringValue) {
         return sampleType
     }
-    
+
     throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized sampleType with identifier \(sampleTypeIdentifierWriteable.stringValue)")
 }
 
@@ -368,7 +365,7 @@ private func sampleTypeFromStringNullable(typeIdentifier: String) throws -> HKSa
     if typeIdentifier.starts(with: HKCorrelationTypeIdentifier_PREFIX) {
         return try initializeCorrelationType(typeIdentifier)
     }
-   
+
     if typeIdentifier == HKWorkoutTypeIdentifier {
         return HKSampleType.workoutType()
     }
@@ -387,12 +384,12 @@ private func sampleTypeFromStringNullable(typeIdentifier: String) throws -> HKSa
         if typeIdentifier == HKDataTypeIdentifierHeartbeatSeries {
             return try initializeSeriesType(typeIdentifier)
         }
-        
+
         if typeIdentifier == HKAudiogramTypeIdentifier {
             return HKSampleType.audiogramSampleType()
         }
     }
-    
+
     #if compiler(>=6)
         if #available(iOS 18, *) {
             if typeIdentifier == HKStateOfMindTypeIdentifier {
@@ -421,7 +418,7 @@ func initializeUUID(_ uuidString: String) throws -> UUID {
     if let uuid = UUID(uuidString: uuidString) {
        return uuid
     }
-    
+
     throw RuntimeError.error(withMessage: "[react-native-healthkit] Got invalid UUID: \(uuidString)")
 }
 
@@ -449,14 +446,13 @@ func sampleTypesFromArray(typeIdentifiersWriteable: [SampleTypeIdentifierWriteab
     })
 }
 
-
 // objectType is wider than sampleType, so it uses it under the hood
 func objectTypeFrom(objectTypeIdentifier: ObjectTypeIdentifier) throws -> HKObjectType {
     let typeIdentifier = objectTypeIdentifier.stringValue
     if let sampleType = try sampleTypeFromStringNullable(typeIdentifier: typeIdentifier) {
         return sampleType
     }
-    
+
     if typeIdentifier.starts(with: HKCharacteristicTypeIdentifier_PREFIX) {
         let identifier = HKCharacteristicTypeIdentifier.init(rawValue: typeIdentifier)
         if let type = HKObjectType.characteristicType(forIdentifier: identifier) as HKObjectType? {
