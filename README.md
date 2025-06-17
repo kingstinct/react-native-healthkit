@@ -64,60 +64,60 @@ During runtime check and request permissions with `requestAuthorization`. Failin
 
 Some hook examples:
 ```TypeScript
-import { HKQuantityTypeIdentifier, useHealthkitAuthorization } from '@kingstinct/react-native-healthkit';
+import { useHealthkitAuthorization, saveQuantitySample } from '@kingstinct/react-native-healthkit';
 
-const [authorizationStatus, requestAuthorization] = useHealthkitAuthorization([HKQuantityTypeIdentifier.bloodGlucose])
+const [authorizationStatus, requestAuthorization] = useHealthkitAuthorization(['HKQuantityTypeIdentifierBloodGlucose'])
 
 // make sure that you've requested authorization before requesting data, otherwise your app will crash
 import { useMostRecentQuantitySample, HKQuantityTypeIdentifier, useMostRecentCategorySample } from '@kingstinct/react-native-healthkit';
 
-const mostRecentBloodGlucoseSample = useMostRecentQuantitySample(HKQuantityTypeIdentifier.bloodGlucose)
-const lastBodyFatSample = useMostRecentQuantitySample(HKQuantityTypeIdentifier.bodyFatPercentage)
-const lastMindfulSession = useMostRecentCategorySample(HKCategoryTypeIdentifier.mindfulSession)
+const mostRecentBloodGlucoseSample = useMostRecentQuantitySample('HKQuantityTypeIdentifierBloodGlucose')
+const lastBodyFatSample = useMostRecentQuantitySample('HKQuantityTypeIdentifierBodyFatPercentage')
+const lastMindfulSession = useMostRecentCategorySample('HKCategoryTypeIdentifierMindfulSession')
 const lastWorkout = useMostRecentWorkout()
 ```
 
 Some imperative examples:
 ```TypeScript
-  import HealthKit, { HKUnit, HKQuantityTypeIdentifier, HKInsulinDeliveryReason, HKCategoryTypeIdentifier } from '@kingstinct/react-native-healthkit';
+  import { isHealthDataAvailable, requestAuthorization, subscribeToChanges, saveQuantitySample, getMostRecentQuantitySample } from '@kingstinct/react-native-healthkit';
 
-  const isAvailable = await HealthKit.isHealthDataAvailable();
+  const isAvailable = await isHealthDataAvailable();
 
   /* Read latest sample of any data */
-  await HealthKit.requestAuthorization([HKQuantityTypeIdentifier.bodyFatPercentage]); // request read permission for bodyFatPercentage
+  await requestAuthorization(['HKQuantityTypeIdentifierBodyFatPercentage']); // request read permission for bodyFatPercentage
 
-  const { quantity, unit, startDate, endDate } = await HealthKit.getMostRecentQuantitySample(HKQuantityTypeIdentifier.bodyFatPercentage); // read latest sample
+  const { quantity, unit, startDate, endDate } = await getMostRecentQuantitySample('HKQuantityTypeIdentifierBodyFatPercentage'); // read latest sample
   
   console.log(quantity) // 17.5
   console.log(unit) // %
 
-  await HealthKit.requestAuthorization([HKQuantityTypeIdentifier.heartRate]); // request read permission for heart rate
+  await requestAuthorization(['HKQuantityTypeIdentifierHeartRate']); // request read permission for heart rate
 
   /* Subscribe to data (Make sure to request permissions before subscribing to changes) */
   const [hasRequestedAuthorization, setHasRequestedAuthorization] = useState(false);
   
   useEffect(() => {
-    HealthKit.requestAuthorization([HKQuantityTypeIdentifier.heartRate]).then(() => {
+    requestAuthorization(['HKQuantityTypeIdentifierHeartRate']).then(() => {
       setHasRequestedAuthorization(true);
     });
   }, []);
   
   useEffect(() => {
     if (hasRequestedAuthorization) {
-      const unsubscribe = HealthKit.subscribeToChanges(HKQuantityTypeIdentifier.heartRate, () => {
+      const unsubscribe = subscribeToChanges(HKQuantityTypeIdentifier.heartRate, () => {
         // refetch data as needed
       });
-    }
 
-    return () => unsubscribe();
+      return () => unsubscribe();
+    }
   }, [hasRequestedAuthorization]);
 
   /* write data */
-  await HealthKit.requestAuthorization([], [HKQuantityTypeIdentifier.insulinDelivery]); // request write permission for insulin delivery
+  await requestAuthorization([], [HKQuantityTypeIdentifier.insulinDelivery]); // request write permission for insulin delivery
 
-  ReactNativeHealthkit.saveQuantitySample(
-      HKQuantityTypeIdentifier.insulinDelivery,
-      HKUnit.InternationalUnit,
+  saveQuantitySample(
+      'HKQuantityTypeIdentifierInsulinDelivery',
+      'IU',
       5.5,
       {
         metadata: {
@@ -130,7 +130,7 @@ Some imperative examples:
     );
 ```
 
-### HealthKit Anchors (breaking change in 6.0)
+### HealthKit Anchors
 In 6.0 you can use HealthKit anchors to get changes and deleted items which is very useful for syncing. This is a breaking change - but a very easy one to handle that TypeScript should help you with. Most queries now return an object containing samples which is what was returned as only an array before. 
 
 ```newAnchor``` is a base64-encoded string returned from HealthKit that contain sync information.  After each successful sync, store the anchor for the next time your anchor query is called to only return the values that have changed.
@@ -140,11 +140,11 @@ In 6.0 you can use HealthKit anchors to get changes and deleted items which is v
 Example:
 
 ```TypeScript
-  const { newAnchor, samples, deletedSamples } = await queryQuantitySamplesWithAnchor(HKQuantityTypeIdentifier.stepCount, {
+  const { newAnchor, samples, deletedSamples } = await queryQuantitySamplesWithAnchor('HKQuantityTypeIdentifierStepCount', {
     limit: 2,
   })
 
-  const nextResult = await queryQuantitySamplesWithAnchor(HKQuantityTypeIdentifier.stepCount, {
+  const nextResult = await queryQuantitySamplesWithAnchor('HKQuantityTypeIdentifierStepCount', {
     limit: 2,
     anchor: newAnchor,
   })
@@ -155,12 +155,14 @@ Example:
 ## Migration to 9.0.0
 
 There are a lot of under-the-hood changes in version 9.0.0, some of them are breaking (although I've tried to reduce it as much as possible).
-- Most of all - the library has been migrated to use react-native-nitro-modules. This improves performance, type-safety and gets rid of a lot of boilerplate.
-- Naming conventions have changed - most of the HK-prefixed stuff has been removed to avoid confusion on the native side and also make the library more beautiful to look at. As an example the type previously called HKQuantityTypeIdentifier is not just QuantityTypeIdentifier on the library level.
-- Less required params. Making it easier to start using.
-- Flexible filters.
+- Most of all - the library has been migrated to use react-native-nitro-modules. This improves performance, type-safety and gets rid of a lot of boilerplate code that made it harder to maintain and add features to the library.
+- Naming conventions have changed - most of the HK-prefixed stuff has been removed to avoid conflicts on the native side and also make the library more beautiful to look at. As an example the type previously called HKQuantityTypeIdentifier is not just QuantityTypeIdentifier on the library level.
+- Less required params by default - making it easier to start using the library, for example calling `queryQuantitySamples('HKQuantityTypeIdentifierStepCount')` will simply return the last 20 samples.
+- Flexible filters that map closer to the native constructs. This can easily be extended.
 - `deleteObjects` replaces all previous deletion methods, using the new flexible filters.
-- Workouts are delivered as proxies both containing follow-up functions for that workout together with the sample itself.
+- Workouts are returned as proxies containing not only data but also functions, for example `getWorkoutRoutes`.
+- Identifiers are now just strings, and more strictly typed.
+- Units are now just strings.
 
 ## A note on Apple Documentation
 

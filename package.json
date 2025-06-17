@@ -7,6 +7,7 @@
     "lint": "bunx @biomejs/biome check",
     "lint-fix": "bunx @biomejs/biome check --fix",
     "create-changeset": "bunx changeset",
+    "changeset-release": "bunx changeset publish",
     "typescript": "tsc",
     "codegen": "cd packages/react-native-healthkit && bun run nitro-codegen && cd ../../apps/example/ios && pod install",
     "test": "cd packages/react-native-healthkit && bun run test",
