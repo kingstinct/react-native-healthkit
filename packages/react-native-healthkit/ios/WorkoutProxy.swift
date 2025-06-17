@@ -217,6 +217,13 @@ class WorkoutProxy: HybridWorkoutProxySpec {
     )
   }
 
+  var workoutPredicate: NSPredicate {
+    get {
+      let predicate = HKQuery.predicateForObjects(from: self.workout)
+      return predicate
+    }
+  }
+
   var uuid: String {
     get {
       return workout.uuid.uuidString
