@@ -5,7 +5,8 @@
   "fixed": [],
   "linked": [],
   "access": "restricted",
-  "baseBranch": "main",
+  "baseBranch": "master",
+  "prettier": false,
   "updateInternalDependencies": "patch",
-  "ignore": ["react-native-healthkit-example", "react-native-healthkit-mono"]
+  "ignore": ["react-native-healthkit-mono"]
 }
