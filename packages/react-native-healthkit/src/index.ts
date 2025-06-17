@@ -32,25 +32,11 @@ import type {
   QueryStatisticsResponse,
 } from './types/QuantityType'
 import type { StateOfMindSample } from './types/StateOfMind'
-import type { IdentifierWithUnit } from './types/Units'
 import type { QueryWorkoutSamplesWithAnchorResponse } from './types/Workouts'
 
 const notAvailableError = `[@kingstinct/react-native-healthkit] Platform "${Platform.OS}" not supported. HealthKit is only available on iOS.`
 
 let hasWarned = false
-
-// @ts-ignore
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
-function UnavailableFnNew<T extends Function>(defaultValue: ReturnType<T>): T {
-  // @ts-ignore
-  return () => {
-    if (Platform.OS !== 'ios' && !hasWarned) {
-      console.warn(notAvailableError)
-      hasWarned = true
-    }
-    return defaultValue
-  }
-}
 
 // @ts-ignore
 function UnavailableFnFromModule<
@@ -294,11 +280,13 @@ export function getMostRecentCategorySample<T extends CategoryTypeIdentifier>(
 
 export const getMostRecentQuantitySample = UnavailableFnFromModule(
   'getMostRecentQuantitySample',
-  Promise.resolve(undefined),
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  Promise.resolve(undefined as any as QuantitySample),
 )
 export const getMostRecentWorkout = UnavailableFnFromModule(
   'getMostRecentWorkout',
-  Promise.resolve(undefined),
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  Promise.resolve(undefined as any as WorkoutProxy),
 )
 export const getPreferredUnit = UnavailableFnFromModule(
   'getPreferredUnit',

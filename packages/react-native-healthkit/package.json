@@ -2,15 +2,27 @@
   "name": "@kingstinct/react-native-healthkit",
   "version": "9.0.1",
   "description": "React Native bindings for HealthKit",
-  "main": "lib/index",
-  "module": "lib/index",
-  "types": "lib/index.d.ts",
-  "react-native": "src/index",
-  "source": "src/index",
+  "type": "module",
+  "main": "lib/commonjs/index.js",
+  "module": "lib/module/index.js",
+  "types": "lib/typescript/index.d.ts",
+  "react-native": "src/index.ts",
+  "source": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/typescript/index.d.ts",
+      "import": "./lib/module/index.js",
+      "require": "./lib/commonjs/index.js",
+      "react-native": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "src",
     "react-native.config.js",
-    "lib",
+    "lib/commonjs",
+    "lib/module",
+    "lib/typescript",
     "nitrogen/**/*",
     "android/build.gradle",
     "android/gradle.properties",
@@ -26,11 +38,16 @@
     "README.md"
   ],
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf lib",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:types": "tsc -p tsconfig.declarations.json",
+    "build": "bun run clean && bun run build:cjs && bun run build:esm && bun run build:types",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "bunx @biomejs/biome format --write",
-    "typescript": "tsc",
-    "codegen": "tsc && nitro-codegen --logLevel=\"debug\"",
-    "test": "bun test"
+    "codegen": "bun run build && nitro-codegen --logLevel=\"debug\"",
+    "test": "bun test",
+    "prepublishOnly": "bun run build && bun run codegen"
   },
   "keywords": ["react-native", "nitro", "healthkit", "ios", "typescript"],
   "funding": {

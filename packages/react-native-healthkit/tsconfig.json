@@ -1,29 +1,21 @@
 {
-  "include": ["src"],
+  "extends": "expo/tsconfig.base",
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/test-utils.ts",
+    "src/**/test-setup.ts"
+  ],
   "compilerOptions": {
-    "composite": true,
-    "outDir": "lib",
-    "rootDir": "src",
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "react",
-    "lib": ["esnext"],
-    "module": "esnext",
-    "moduleResolution": "node",
-    "noEmit": false,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noImplicitUseStrict": false,
-    "noStrictGenericChecks": false,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
     "strict": true,
-    "target": "esnext",
-    "verbatimModuleSyntax": true
+    "noUncheckedIndexedAccess": true,
+    "strictNullChecks": true,
+    // "outDir": "lib", // Handled by specific tsconfig files
+    "rootDir": "src",
+    // "allowUnreachableCode": true, // Set to false in specific configs
+    // "allowUnusedLabels": true, // Set to false in specific configs
+    "verbatimModuleSyntax": true,
+    // "declaration": true, // Handled by tsconfig.declarations.json
+    "noEmit": true // Base config should not emit, specific configs will override
   }
 }

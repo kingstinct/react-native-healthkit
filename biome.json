@@ -11,6 +11,21 @@
       "jsxQuoteStyle": "double"
     }
   },
+  "overrides": [
+    {
+      "include": [
+        "packages/react-native-healthkit/tsconfig.cjs.json",
+        "packages/react-native-healthkit/tsconfig.esm.json",
+        "packages/react-native-healthkit/tsconfig.declarations.json"
+      ],
+      "json": {
+        "parser": {
+          "allowComments": true,
+          "allowTrailingCommas": true
+        }
+      }
+    }
+  ],
   "files": {
     "ignore": [
       "**/packages/react-native-healthkit/lib/**",
