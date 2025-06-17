@@ -23,6 +23,8 @@ import getMostRecentQuantitySample from './utils/getMostRecentQuantitySample'
 import getMostRecentWorkout from './utils/getMostRecentWorkout'
 import getPreferredUnit from './utils/getPreferredUnit'
 
+export * from './types'
+
 const currentMajorVersionIOS =
   Platform.OS === 'ios' ? Number.parseInt(Platform.Version, 10) : 0
 
