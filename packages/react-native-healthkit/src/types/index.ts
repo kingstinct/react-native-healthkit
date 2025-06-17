@@ -1,6 +1,7 @@
 export * from './Auth'
 export * from './Background'
 export * from './CategoryType'
+export * from './CategoryTypeIdentifier'
 export * from './Characteristics'
 export * from './Constants'
 export * from './CorrelationType'

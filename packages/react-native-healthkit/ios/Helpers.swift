@@ -136,27 +136,6 @@ func createUUIDsPredicate(uuidsWrapper: PredicateWithUUIDs) -> NSPredicate {
     return HKQuery.predicateForObjects(with: Set(uuids))
 }
 
-func createPredicate(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_PredicateWithMetadataKey_PredicateWithStartAndEnd_PredicateFromWorkout?) throws -> NSPredicate? {
-    if let filter = filter {
-        switch filter {
-            case .first(let uuidWrapper):
-                return HKQuery.predicateForObject(with: try initializeUUID(uuidWrapper.uuid))
-            case .second(let uuidsWrapper):
-                return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
-            case .third(let metadataKey):
-                return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
-            case .fourth(let dateFilter):
-                return createDatePredicate(dateFilter: dateFilter)
-            case .fifth(let w):
-              if let w = w.workout as? WorkoutProxy {
-                return w.workoutPredicate
-              }
-              throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
-        }
-    }
-    return nil
-}
-
 func createPredicate(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_PredicateWithMetadataKey_PredicateWithStartAndEnd_PredicateFromWorkout_FilterForSamplesAnd_FilterForSamplesOr?) throws -> NSPredicate? {
     if let filter = filter {
         switch filter {

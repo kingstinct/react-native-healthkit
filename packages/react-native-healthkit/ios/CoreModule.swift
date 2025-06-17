@@ -9,102 +9,99 @@ import NitroModules
 
 var store = HKHealthStore.init()
 
-var quantityTypeUnitCache = Dictionary<HKQuantityType, HKUnit>()
+var quantityTypeUnitCache = [HKQuantityType: HKUnit]()
 
 func getUnitToUse(unitOverride: String?, quantityType: HKQuantityType) async throws -> HKUnit {
     if let unitOverride = unitOverride {
         let unit = HKUnit(from: unitOverride)
-        
-        if(!quantityType.is(compatibleWith: unit)){
+
+        if !quantityType.is(compatibleWith: unit) {
             throw RuntimeError.error(withMessage: "[react-native-healthkit] Unit \(unitOverride) is incompatible with \(quantityType.identifier)")
         }
-        
+
         return unit
     }
-    
+
     if let preferredUnit = try await getPreferredUnitsInternal(quantityTypes: [quantityType]).first?.value {
         return preferredUnit
     }
-    
+
     throw RuntimeError.error(withMessage: "[react-native-healthkit] Must specify a unit for \(quantityType.identifier)")
 }
 
 func getPreferredUnitsInternal(quantityTypes: [HKQuantityType], forceUpdate: Bool? = false) async throws -> [HKQuantityType: HKUnit] {
-    
-    if(forceUpdate != true){
-        let itemsInCache = quantityTypeUnitCache.filter { (quantityType: HKQuantityType, unit: HKUnit) in
+
+    if forceUpdate != true {
+        let itemsInCache = quantityTypeUnitCache.filter { (quantityType: HKQuantityType, _: HKUnit) in
             return quantityTypes.contains(where: { $0 == quantityType })
         }
-        if(itemsInCache.count == quantityTypes.count){
+        if itemsInCache.count == quantityTypes.count {
             return itemsInCache
         }
     }
-    
-    
+
     return try await withCheckedThrowingContinuation { continuation in
         store.preferredUnits(for: Set(quantityTypes)) {
             (typePerUnits: [HKQuantityType: HKUnit], error: Error?) in
             if let error = error {
                 return continuation.resume(throwing: error)
             }
-            
+
             typePerUnits.forEach { (type: HKQuantityType, unit: HKUnit) in
                 quantityTypeUnitCache.updateValue(unit, forKey: type)
             }
-            
+
             return continuation.resume(returning: typePerUnits)
         }
     }
 }
 
-class CoreModule : HybridCoreModuleSpec {
-    func areObjectTypesAvailable(objectTypeIdentifiers: [ObjectTypeIdentifier]) -> Dictionary<String, Bool> {
-        var dict = Dictionary<String, Bool>()
-        
+class CoreModule: HybridCoreModuleSpec {
+    func areObjectTypesAvailable(objectTypeIdentifiers: [ObjectTypeIdentifier]) -> [String: Bool] {
+        var dict = [String: Bool]()
+
         for objectTypeIdentifier in objectTypeIdentifiers {
             dict[objectTypeIdentifier.stringValue] = isObjectTypeAvailable(objectTypeIdentifier: objectTypeIdentifier)
         }
-        
+
         return dict
     }
-    
-    func areObjectTypesAvailableAsync(objectTypeIdentifiers: [ObjectTypeIdentifier]) -> Promise<Dictionary<String, Bool>> {
-        return Promise.resolved(withResult:  areObjectTypesAvailable(objectTypeIdentifiers: objectTypeIdentifiers))
+
+    func areObjectTypesAvailableAsync(objectTypeIdentifiers: [ObjectTypeIdentifier]) -> Promise<[String: Bool]> {
+        return Promise.resolved(withResult: areObjectTypesAvailable(objectTypeIdentifiers: objectTypeIdentifiers))
     }
-    
-    
-    
+
     func isObjectTypeAvailable(objectTypeIdentifier: ObjectTypeIdentifier) -> Bool {
         do {
-            let _ = try objectTypeFrom(objectTypeIdentifier: objectTypeIdentifier)
+            _ = try objectTypeFrom(objectTypeIdentifier: objectTypeIdentifier)
             return true
         } catch {
             return false
         }
     }
-    
+
     func isObjectTypeAvailableAsync(objectTypeIdentifier: ObjectTypeIdentifier) -> Promise<Bool> {
         return Promise.resolved(withResult: isObjectTypeAvailable(objectTypeIdentifier: objectTypeIdentifier))
     }
-    
+
     func authorizationStatusFor(
         type: ObjectTypeIdentifier
     ) throws -> AuthorizationStatus {
         let objectType = try objectTypeFrom(objectTypeIdentifier: type)
-        
+
         let authStatus = store.authorizationStatus(for: objectType)
-        
-        if let authStatus = AuthorizationStatus(rawValue: Int32(authStatus.rawValue)){
+
+        if let authStatus = AuthorizationStatus(rawValue: Int32(authStatus.rawValue)) {
             return authStatus
         }
-        
+
         throw RuntimeError.error(withMessage: "[react-native-healthkit] got unrecognized AuthorizationStatus with value \(authStatus.rawValue)")
     }
-    
+
     func getRequestStatusForAuthorization(toShare: [SampleTypeIdentifierWriteable], toRead: [ObjectTypeIdentifier]) throws -> Promise<AuthorizationRequestStatus> {
         let toShare = sampleTypesFromArray(typeIdentifiersWriteable: toShare)
         let toRead = objectTypesFromArray(typeIdentifiers: toRead)
-        
+
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
                 store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) { status, error in
@@ -116,17 +113,17 @@ class CoreModule : HybridCoreModuleSpec {
                         } else {
                             continuation.resume(throwing: RuntimeError.error(withMessage: "Unrecognized authStatus returned: \(status.rawValue)"))
                         }
-                        
+
                     }
                 }
             }
         }
     }
-    
+
     func requestAuthorization(toShare: [SampleTypeIdentifierWriteable], toRead: [ObjectTypeIdentifier]) throws -> Promise<Bool> {
         let share = sampleTypesFromArray(typeIdentifiersWriteable: toShare)
         let toRead = objectTypesFromArray(typeIdentifiers: toRead)
-        
+
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
                 store.requestAuthorization(toShare: share, read: toRead) { status, error in
@@ -139,10 +136,10 @@ class CoreModule : HybridCoreModuleSpec {
             }
         }
     }
-    
+
     func querySources(identifier: SampleTypeIdentifier) throws -> Promise<[HybridSourceProxySpec]> {
         let sampleType = try sampleTypeFrom(sampleTypeIdentifier: identifier)
-      
+
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
                 let query = HKSourceQuery(
@@ -153,26 +150,26 @@ class CoreModule : HybridCoreModuleSpec {
                         continuation.resume(throwing: error)
                         return
                     }
-                    
+
                     guard let sources = sources else {
                       return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response for sample type \(identifier.stringValue)"))
                     }
-                    
+
                     let serializedSources = sources.map { source -> SourceProxy in
-                      
+
                         return SourceProxy(
                             source: source
                         )
                     }
-                    
+
                     continuation.resume(returning: serializedSources)
                 }
-                
+
                 store.execute(query)
             }
         }
     }
-    
+
     func enableBackgroundDelivery(typeIdentifier: ObjectTypeIdentifier, updateFrequency: UpdateFrequency) throws -> Promise<Bool> {
         if let frequency = HKUpdateFrequency(rawValue: Int(updateFrequency.rawValue)) {
             let type = try objectTypeFrom(objectTypeIdentifier: typeIdentifier)
@@ -193,7 +190,7 @@ class CoreModule : HybridCoreModuleSpec {
             throw RuntimeError.error(withMessage: "Invalid update frequency value: \(updateFrequency)")
         }
     }
-    
+
     func disableBackgroundDelivery(
         typeIdentifier: ObjectTypeIdentifier
     ) throws -> Promise<Bool> {
@@ -211,7 +208,7 @@ class CoreModule : HybridCoreModuleSpec {
             }
         }
     }
-    
+
     func disableAllBackgroundDelivery() throws -> Promise<Bool> {
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
@@ -224,64 +221,65 @@ class CoreModule : HybridCoreModuleSpec {
             }
         }
     }
-    
+
     func unsubscribeQueryAsync(queryId: String) throws -> Promise<Bool> {
         let result = try self.unsubscribeQuery(queryId: queryId)
-        
+
         return Promise.resolved(withResult: result)
     }
-    
+
     func isHealthDataAvailableAsync() -> Promise<Bool> {
         return Promise.resolved(withResult: HKHealthStore.isHealthDataAvailable())
     }
-    
+
     func isProtectedDataAvailableAsync() -> Promise<Bool> {
         return Promise.resolved(withResult: UIApplication.shared.isProtectedDataAvailable)
     }
-    
+
     func isHealthDataAvailable() throws -> Bool {
         return HKHealthStore.isHealthDataAvailable()
     }
-    
+
     func isProtectedDataAvailable() throws -> Bool {
         return UIApplication.shared.isProtectedDataAvailable
     }
-    
+
     func getPreferredUnits(identifiers: [QuantityTypeIdentifier], forceUpdate: Bool?) throws -> Promise<[IdentifierWithUnit]> {
         return Promise.async {
-            
+
             let quantityTypes = identifiers.compactMap { identifier in
                 do {
                     let quantityType = try initializeQuantityType(identifier.stringValue)
+
                     return quantityType
                 } catch {
                     print(error.localizedDescription)
                     return nil
                 }
             }
-            
+
             let typePerUnits = try await getPreferredUnitsInternal(quantityTypes: quantityTypes, forceUpdate: forceUpdate)
-            
+
             let dic = typePerUnits.map { typePerUnit in
                 return IdentifierWithUnit(
                     typeIdentifier: typePerUnit.key.identifier,
                     unit: typePerUnit.value.unitString
                 )
             }
-            
+
             return dic
         }
     }
-    
+
     var _runningQueries: [String: HKQuery] = [:]
-    
+
     func deleteObjects(objectTypeIdentifier: ObjectTypeIdentifier, filter: FilterForSamples) throws -> Promise<Double> {
         let predicate = try createPredicateForSamples(filter: filter)
         let of = try objectTypeFrom(objectTypeIdentifier: objectTypeIdentifier)
-        
+
         return Promise.async {
             return try await withCheckedThrowingContinuation { continuation in
-                store.deleteObjects(of: of, predicate: predicate) { (success, count, error) in
+                store.deleteObjects(of: of, predicate: predicate) { (_, count, error) in
                     if let error = error {
                         continuation.resume(throwing: error)
                     } else {
@@ -291,21 +289,21 @@ class CoreModule : HybridCoreModuleSpec {
             }
         }
     }
-    
+
     func subscribeToObserverQuery(
         typeIdentifier: SampleTypeIdentifier,
         callback: @escaping (OnChangeCallbackArgs) -> Void
     ) throws -> String {
         let sampleType = try sampleTypeFrom(sampleTypeIdentifier: typeIdentifier)
-        
+
         let predicate = HKQuery.predicateForSamples(
             withStart: Date.init(),
             end: nil,
             options: HKQueryOptions.strictStartDate
         )
-        
+
         let queryId = UUID().uuidString
-        
+
         func responder(
             query: HKObserverQuery,
             handler: @escaping HKObserverQueryCompletionHandler,
@@ -316,42 +314,42 @@ class CoreModule : HybridCoreModuleSpec {
                 handler()
             }
         }
-        
+
         let query = HKObserverQuery(
             sampleType: sampleType,
             predicate: predicate
         ) {
             (query: HKObserverQuery, handler: @escaping HKObserverQueryCompletionHandler, error: Error?)
             in
-            
+
             return responder(query: query, handler: handler, error: error)
-            
+
         }
-        
+
         store.execute(query)
-        
+
         self._runningQueries.updateValue(query, forKey: queryId)
-        
-        //resolve(queryId)
-        
+
+        // resolve(queryId)
+
         return queryId
     }
-    
+
     func unsubscribeQuery(queryId: String) throws -> Bool {
         guard let query = self._runningQueries[queryId] else {
             throw RuntimeError.error(withMessage: "Query with id \(queryId) not found")
         }
-        
+
         store.stop(query)
-        
+
         self._runningQueries.removeValue(forKey: queryId)
-        
+
         return true
     }
-    
+
     func unsubscribeQueriesAsync(queryIds: [String]) throws -> Promise<Double> {
         let successCount = self.unsubscribeQueries(queryIds: queryIds)
-        
+
         return Promise.resolved(withResult: successCount)
     }
 
@@ -359,17 +357,17 @@ class CoreModule : HybridCoreModuleSpec {
         let successCounts = queryIds.map { queryId in
             if let query = self._runningQueries[queryId] {
                 store.stop(query)
-                
+
                 self._runningQueries.removeValue(forKey: queryId)
-                
+
                 return true
             }
-            
+
             print("Query with id \(queryId) not found, skipping unsubscribe")
-            
+
             return false
         }
-        
+
         return Double(successCounts.filter { $0 }.count)
     }
 

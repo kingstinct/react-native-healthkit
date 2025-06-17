@@ -20,16 +20,38 @@ type PredicateWithMetadataKey = {
 }
 
 export type FilterForSamplesAnd = {
-  AND: PredicateForSamples[]
+  readonly AND: PredicateForSamples[]
 }
 
 export type FilterForSamplesOr = {
-  OR: PredicateForSamples[]
+  readonly OR: PredicateForSamples[]
 }
 
 export type PredicateFromWorkout = {
-  workout: WorkoutProxy
+  readonly workout: WorkoutProxy
 }
+
+// Computes and flattens object types
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
+type ComputeRaw<A> = A extends Function ? A : { [K in keyof A]: A[K] } & {}
+
+// Gets all keys from a union of objects
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+type AllKeys<U> = U extends any ? keyof U : never
+
+// The core: for each member U in the union,
+// add `?: never` for any key that exists in other union members.
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+type _Strict<U, UAll extends U = U> = U extends any
+  ? ComputeRaw<
+      U & {
+        [K in Exclude<AllKeys<UAll>, keyof U>]?: never
+      }
+    >
+  : never
+
+// The exported type you can copy into your codebase
+export type StrictUnion<U extends object> = _Strict<U>
 
 export type FilterForSamples =
   | PredicateForSamples
@@ -42,7 +64,6 @@ export type PredicateForSamples =
   | PredicateWithMetadataKey
   | PredicateWithStartAndEnd
   | PredicateFromWorkout
-
 /**
  * Generic options for querying.
  */
