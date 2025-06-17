@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 9.0.2
+### Patch Changes
+
+- 97f00b0: fix: add missing prepublish
+
 ## 9.0.1
 
 ### Patch Changes
