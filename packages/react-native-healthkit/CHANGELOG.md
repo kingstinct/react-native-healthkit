@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 9.0.4
+### Patch Changes
+
+- d9e6bb6: migrate to ts app plugin
+
 ## 9.0.3
 ### Patch Changes
 
