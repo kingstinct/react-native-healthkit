@@ -2,7 +2,12 @@ import { QueryInfo } from '@/components/QueryInfo'
 import { ListItem } from '@/components/SwiftListItem'
 import { enumKeyLookup } from '@/utils/enumKeyLookup'
 import { List } from '@expo/ui/swift-ui'
-import { queryWorkoutSamplesWithAnchor } from '@kingstinct/react-native-healthkit'
+import {
+  deleteObjects,
+  queryCategorySamples,
+  queryWorkoutSamples,
+  queryWorkoutSamplesWithAnchor,
+} from '@kingstinct/react-native-healthkit'
 import {
   WorkoutActivityType,
   type WorkoutSample,
