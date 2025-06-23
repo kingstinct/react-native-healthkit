@@ -4,9 +4,10 @@
   "commit": false,
   "fixed": [],
   "linked": [],
-  "access": "restricted",
+  "access": "public",
   "baseBranch": "master",
   "prettier": false,
   "updateInternalDependencies": "patch",
+  "privatePackages": false,
   "ignore": ["react-native-healthkit-example"]
 }

@@ -36,6 +36,10 @@
   "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
   "license": "MIT",
   "private": true,
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/kingstinct"
+  },
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
