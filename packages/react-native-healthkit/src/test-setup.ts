@@ -1,5 +1,4 @@
 import { jest, mock } from 'bun:test'
-import { deleteObjects } from '.'
 
 const mockModule = {
   queryWorkoutSamplesWithAnchor: jest.fn(),

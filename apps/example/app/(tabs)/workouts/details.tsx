@@ -1,5 +1,3 @@
-import { ListItem } from '@/components/SwiftListItem'
-import { enumKeyLookup } from '@/utils/enumKeyLookup'
 import { List } from '@expo/ui/swift-ui'
 import { Section } from '@expo/ui/swift-ui-primitives'
 import { queryWorkoutSamples } from '@kingstinct/react-native-healthkit'
@@ -11,6 +9,8 @@ import {
 } from '@kingstinct/react-native-healthkit/types/Workouts'
 import { useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
+import { ListItem } from '@/components/SwiftListItem'
+import { enumKeyLookup } from '@/utils/enumKeyLookup'
 
 const workoutActivityTypeStrings = enumKeyLookup(WorkoutActivityType)
 
@@ -35,17 +35,18 @@ export default function WorkoutDetails() {
 
     queryWorkoutSamples({ filter: { uuid: workoutId }, limit: 1 })
       .then((ws) => {
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        const w = ws[0]!
-        setWorkout(w)
-        setQueryTime(Date.now() - startedAt)
-        const routeStartedAt = Date.now()
-        w?.getWorkoutRoutes()
-          .then((r) => {
-            setRoutes(r)
-            setRoutesQueryTime(Date.now() - routeStartedAt)
-          })
-          .catch(console.error)
+        const w = ws[0]
+        if (w) {
+          setWorkout(w)
+          setQueryTime(Date.now() - startedAt)
+          const routeStartedAt = Date.now()
+          w?.getWorkoutRoutes()
+            .then((r) => {
+              setRoutes(r)
+              setRoutesQueryTime(Date.now() - routeStartedAt)
+            })
+            .catch(console.error)
+        }
       })
       .catch(console.error)
   }, [workoutId])

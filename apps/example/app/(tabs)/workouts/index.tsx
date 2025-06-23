@@ -1,13 +1,5 @@
-import { QueryInfo } from '@/components/QueryInfo'
-import { ListItem } from '@/components/SwiftListItem'
-import { enumKeyLookup } from '@/utils/enumKeyLookup'
 import { List } from '@expo/ui/swift-ui'
-import {
-  deleteObjects,
-  queryCategorySamples,
-  queryWorkoutSamples,
-  queryWorkoutSamplesWithAnchor,
-} from '@kingstinct/react-native-healthkit'
+import { queryWorkoutSamplesWithAnchor } from '@kingstinct/react-native-healthkit'
 import {
   WorkoutActivityType,
   type WorkoutSample,
@@ -15,6 +7,9 @@ import {
 import { router } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
 import { View } from 'react-native'
+import { QueryInfo } from '@/components/QueryInfo'
+import { ListItem } from '@/components/SwiftListItem'
+import { enumKeyLookup } from '@/utils/enumKeyLookup'
 
 const workoutActivityTypeStrings = enumKeyLookup(WorkoutActivityType)
 
@@ -42,10 +37,9 @@ export default function WorkoutsScreen() {
     }
   }, [])
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    queryWorkoutSamples(anchor)
-  }, [])
+    queryWorkoutSamples()
+  }, [queryWorkoutSamples])
 
   return (
     <View style={{ flex: 1 }}>

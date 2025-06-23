@@ -75,15 +75,15 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/2994346-getrequeststatusforauthorization Apple Docs }
    */
   getRequestStatusForAuthorization(
-    toShare: SampleTypeIdentifierWriteable[],
-    toRead: ObjectTypeIdentifier[],
+    toShare: readonly SampleTypeIdentifierWriteable[],
+    toRead: readonly ObjectTypeIdentifier[],
   ): Promise<AuthorizationRequestStatus>
   /**
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614152-requestauthorization Apple Docs }
    */
   requestAuthorization(
-    toShare: SampleTypeIdentifierWriteable[],
-    toRead: ObjectTypeIdentifier[],
+    toShare: readonly SampleTypeIdentifierWriteable[],
+    toRead: readonly ObjectTypeIdentifier[],
   ): Promise<boolean>
 
   deleteObjects(
@@ -94,7 +94,7 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
   isObjectTypeAvailable(objectTypeIdentifier: ObjectTypeIdentifier): boolean
 
   areObjectTypesAvailable(
-    objectTypeIdentifiers: ObjectTypeIdentifier[],
+    objectTypeIdentifiers: readonly ObjectTypeIdentifier[],
   ): Record<string, boolean>
 
   areObjectTypesAvailableAsync(

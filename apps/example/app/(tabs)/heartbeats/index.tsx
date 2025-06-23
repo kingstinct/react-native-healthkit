@@ -1,4 +1,3 @@
-import { ListItem } from '@/components/SwiftListItem'
 import { Button, Host, List } from '@expo/ui/swift-ui'
 import { Text, VStack } from '@expo/ui/swift-ui-primitives'
 import { HeartbeatSeries } from '@kingstinct/react-native-healthkit/modules'
@@ -6,6 +5,7 @@ import type { HeartbeatSeriesSample } from '@kingstinct/react-native-healthkit/t
 import { router } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
 import { View } from 'react-native'
+import { ListItem } from '@/components/SwiftListItem'
 
 export default function HeartbeatSeriesScreen() {
   const [heartbeatSeries, setHeartbeatSeries] = useState<
@@ -44,10 +44,9 @@ export default function HeartbeatSeriesScreen() {
     }
   }, [])
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     queryHeartbeatSeries()
-  }, [])
+  }, [queryHeartbeatSeries])
 
   const formatDuration = (start: Date, end: Date) => {
     const durationMs = end.getTime() - start.getTime()

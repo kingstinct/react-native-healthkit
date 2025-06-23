@@ -1,7 +1,8 @@
+import { getRequestStatusForAuthorization } from '@kingstinct/react-native-healthkit'
+import { AuthorizationRequestStatus } from '@kingstinct/react-native-healthkit/types/Auth'
 import { Redirect, Tabs } from 'expo-router'
 import React, { useEffect } from 'react'
-import { Platform } from 'react-native'
-
+import { ActivityIndicator, Platform } from 'react-native'
 import { HapticTab } from '@/components/HapticTab'
 import { IconSymbol } from '@/components/ui/IconSymbol'
 import TabBarBackground from '@/components/ui/TabBarBackground'
@@ -12,8 +13,6 @@ import {
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { enumKeyLookup } from '@/utils/enumKeyLookup'
-import { getRequestStatusForAuthorization } from '@kingstinct/react-native-healthkit'
-import { AuthorizationRequestStatus } from '@kingstinct/react-native-healthkit/types/Auth'
 
 const statusEnum = enumKeyLookup(AuthorizationRequestStatus)
 
@@ -41,7 +40,17 @@ export default function TabLayout() {
     }
   }, [])
 
-  if (authStatus === AuthorizationRequestStatus.shouldRequest) {
+  if (authStatus === null) {
+    // If the auth status is still loading, you can show a loading state or return null
+    return (
+      <ActivityIndicator
+        size="large"
+        color={Colors[colorScheme ?? 'light'].tint}
+      />
+    )
+  }
+
+  if (authStatus !== AuthorizationRequestStatus.unnecessary) {
     // If the user has not granted permissions, redirect to the auth screen
     return <Redirect href="../auth" relativeToDirectory />
   }

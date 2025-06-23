@@ -8,8 +8,8 @@ import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import 'react-native-reanimated'
 
-import { useColorScheme } from '@/hooks/useColorScheme'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { useColorScheme } from '@/hooks/useColorScheme'
 
 export const unstable_settings = {
   anchor: '(tabs)',

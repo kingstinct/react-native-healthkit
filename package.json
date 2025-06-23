@@ -13,7 +13,11 @@
     "test": "cd packages/react-native-healthkit && bun run test",
     "prepare": "husky"
   },
-  "keywords": ["react-native", "nitro", "healthkit"],
+  "keywords": [
+    "react-native",
+    "nitro",
+    "healthkit"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kingstinct/react-native-healthkit.git"
@@ -25,15 +29,24 @@
     "*.js": "bunx @biomejs/biome check --fix",
     "*.json": "bunx @biomejs/biome check --fix"
   },
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
   "license": "MIT",
   "private": true,
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/kingstinct"
+  },
   "commitlint": {
-    "extends": ["@commitlint/config-conventional"]
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.0.0",
     "@changesets/cli": "^2.29.4",
     "@commitlint/config-conventional": "^19.8.1",
     "@types/bun": "^1.2.16",
