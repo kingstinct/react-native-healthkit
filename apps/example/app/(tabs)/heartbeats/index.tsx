@@ -44,10 +44,9 @@ export default function HeartbeatSeriesScreen() {
     }
   }, [])
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     queryHeartbeatSeries()
-  }, [])
+  }, [queryHeartbeatSeries])
 
   const formatDuration = (start: Date, end: Date) => {
     const durationMs = end.getTime() - start.getTime()

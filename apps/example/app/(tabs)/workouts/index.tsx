@@ -37,10 +37,9 @@ export default function WorkoutsScreen() {
     }
   }, [])
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    queryWorkoutSamples(anchor)
-  }, [])
+    queryWorkoutSamples()
+  }, [queryWorkoutSamples])
 
   return (
     <View style={{ flex: 1 }}>

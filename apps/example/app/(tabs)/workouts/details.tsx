@@ -35,17 +35,18 @@ export default function WorkoutDetails() {
 
     queryWorkoutSamples({ filter: { uuid: workoutId }, limit: 1 })
       .then((ws) => {
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        const w = ws[0]!
-        setWorkout(w)
-        setQueryTime(Date.now() - startedAt)
-        const routeStartedAt = Date.now()
-        w?.getWorkoutRoutes()
-          .then((r) => {
-            setRoutes(r)
-            setRoutesQueryTime(Date.now() - routeStartedAt)
-          })
-          .catch(console.error)
+        const w = ws[0]
+        if (w) {
+          setWorkout(w)
+          setQueryTime(Date.now() - startedAt)
+          const routeStartedAt = Date.now()
+          w?.getWorkoutRoutes()
+            .then((r) => {
+              setRoutes(r)
+              setRoutesQueryTime(Date.now() - routeStartedAt)
+            })
+            .catch(console.error)
+        }
       })
       .catch(console.error)
   }, [workoutId])

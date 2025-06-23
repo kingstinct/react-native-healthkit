@@ -32,16 +32,16 @@ export type PredicateFromWorkout = {
 }
 
 // Computes and flattens object types
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
+// biome-ignore lint/complexity/noBannedTypes: it works
 type ComputeRaw<A> = A extends Function ? A : { [K in keyof A]: A[K] } & {}
 
 // Gets all keys from a union of objects
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: it works
 type AllKeys<U> = U extends any ? keyof U : never
 
 // The core: for each member U in the union,
 // add `?: never` for any key that exists in other union members.
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: it works
 type _Strict<U, UAll extends U = U> = U extends any
   ? ComputeRaw<
       U & {

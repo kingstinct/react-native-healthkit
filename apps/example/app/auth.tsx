@@ -4,10 +4,7 @@ import {
   getRequestStatusForAuthorization,
   requestAuthorization,
 } from '@kingstinct/react-native-healthkit'
-import {
-  AuthorizationRequestStatus,
-  AuthorizationStatus,
-} from '@kingstinct/react-native-healthkit/types/Auth'
+import { AuthorizationRequestStatus } from '@kingstinct/react-native-healthkit/types/Auth'
 import { router } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
 import {
@@ -16,7 +13,7 @@ import {
 } from '@/constants/AllUsedIdentifiersInApp'
 import { enumKeyLookup } from '@/utils/enumKeyLookup'
 
-const authEnumLookup = enumKeyLookup(AuthorizationStatus)
+const authEnumLookup = enumKeyLookup(AuthorizationRequestStatus)
 
 export default function AuthScreen() {
   const requestAuth = useCallback(async () => {
@@ -60,16 +57,16 @@ export default function AuthScreen() {
   }, [])
 
   return (
-    <Host>
+    <Host style={{ paddingTop: 40 }}>
       <VStack>
-        <HStack spacing={16}>
+        <HStack spacing={32}>
           {status ? (
             <Text weight="bold">{authEnumLookup[status] as string}</Text>
           ) : (
             <CircularProgress />
           )}
         </HStack>
-        <HStack spacing={16}>
+        <HStack spacing={32}>
           <Button onPress={requestAuth} variant="borderedProminent">
             Request Permissions
           </Button>

@@ -1,9 +1,7 @@
 import { List } from '@expo/ui/swift-ui'
 import { Section } from '@expo/ui/swift-ui-primitives'
 import HealthKit, {
-  getBiologicalSex,
   getBloodType,
-  getDateOfBirth,
   getFitzpatrickSkinType,
   getPreferredUnits,
   getWheelchairUse,

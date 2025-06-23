@@ -90,10 +90,9 @@ export default function QuantitiesScreen() {
     }
   }, [selectedQuantityType, selectedOption, fromDate, toDate, anchor])
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     queryQuantitySamples()
-  }, [])
+  }, [queryQuantitySamples])
 
   return (
     <View style={{ flex: 1 }}>
@@ -125,7 +124,7 @@ export default function QuantitiesScreen() {
           options={PICKER_OPTIONS}
           selectedIndex={PICKER_OPTIONS.indexOf(selectedOption)}
           onOptionSelected={({ nativeEvent: { index } }) => {
-            // biome-ignore lint/style/noNonNullAssertion: <explanation>
+            // biome-ignore lint/style/noNonNullAssertion: index is always valid
             setSelectedOption(PICKER_OPTIONS[index]!)
           }}
           variant="segmented"

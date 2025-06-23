@@ -1,10 +1,22 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "linter": {
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "useHookAtTopLevel": "error",
+        "useExhaustiveDependencies": "error"
+      }
+    }
+  },
   "formatter": {
     "indentWidth": 2,
     "indentStyle": "space"
   },
   "javascript": {
+    "linter": {
+      "enabled": true
+    },
     "formatter": {
       "indentWidth": 2,
       "indentStyle": "space",
@@ -37,6 +49,10 @@
     }
   ],
   "vcs": {
-    "defaultBranch": "master"
+    "defaultBranch": "master",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "includes": ["**/*", "!**/docs/**", "!**/lib/**", "!**/.expo/**"]
   }
 }
