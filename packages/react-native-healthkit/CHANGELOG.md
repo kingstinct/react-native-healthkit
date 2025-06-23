@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 9.0.7
+### Patch Changes
+
+- ddebbcb: Fix imports
+
 ## 9.0.6
 ### Patch Changes
 
