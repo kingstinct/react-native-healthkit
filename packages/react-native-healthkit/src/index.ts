@@ -10,8 +10,8 @@ import type ReactNativeHealthkit from './index.ios'
 import type { WorkoutProxy } from './specs/WorkoutProxy.nitro'
 import { AuthorizationRequestStatus, AuthorizationStatus } from './types/Auth'
 import type {
-  CategorySampleTyped,
   CategorySamplesWithAnchorResponseTyped,
+  CategorySampleTyped,
 } from './types/CategoryType'
 import type { CategoryTypeIdentifier } from './types/CategoryTypeIdentifier'
 import {
@@ -21,6 +21,7 @@ import {
   WheelchairUse,
 } from './types/Characteristics'
 import type { QuantitySample } from './types/QuantitySample'
+
 export * from './types'
 
 const notAvailableError = `[@kingstinct/react-native-healthkit] Platform "${Platform.OS}" not supported. HealthKit is only available on iOS.`
@@ -34,7 +35,7 @@ function UnavailableFnFromModule<
   // biome-ignore lint/complexity/noBannedTypes: <explanation>
   T extends Function = (typeof ReactNativeHealthkit)[TKey],
   // @ts-ignore
->(fn: TKey, defaultValue: ReturnType<T>): T {
+>(_fn: TKey, defaultValue: ReturnType<T>): T {
   // @ts-ignore
   return () => {
     if (Platform.OS !== 'ios' && !hasWarned) {
@@ -171,7 +172,7 @@ export const isQuantityCompatibleWithUnit = UnavailableFnFromModule(
 
 // CategoryTypeModule functions
 export function queryCategorySamples<T extends CategoryTypeIdentifier>(
-  categoryTypeIdentifier: T,
+  _categoryTypeIdentifier: T,
 ): Promise<CategorySampleTyped<T>[]> {
   if (Platform.OS !== 'ios' && !hasWarned) {
     console.warn(notAvailableError)
@@ -183,7 +184,7 @@ export function queryCategorySamples<T extends CategoryTypeIdentifier>(
 export function queryCategorySamplesWithAnchor<
   T extends CategoryTypeIdentifier,
 >(
-  categoryTypeIdentifier: T,
+  _categoryTypeIdentifier: T,
 ): Promise<CategorySamplesWithAnchorResponseTyped<T>> {
   if (Platform.OS !== 'ios' && !hasWarned) {
     console.warn(notAvailableError)
@@ -258,7 +259,7 @@ export const saveStateOfMindSample = UnavailableFnFromModule(
 
 // Utility functions (from original export list)
 export function getMostRecentCategorySample<T extends CategoryTypeIdentifier>(
-  identifier: T,
+  _identifier: T,
 ): Promise<CategorySampleTyped<T> | undefined> {
   if (Platform.OS !== 'ios' && !hasWarned) {
     console.warn(notAvailableError)
@@ -284,7 +285,7 @@ export const getPreferredUnit = UnavailableFnFromModule(
 
 // Hooks (from original export list)
 export function useMostRecentCategorySample<T extends CategoryTypeIdentifier>(
-  categoryTypeIdentifier: T,
+  _categoryTypeIdentifier: T,
 ): CategorySampleTyped<T> | undefined {
   if (Platform.OS !== 'ios' && !hasWarned) {
     console.warn(notAvailableError)

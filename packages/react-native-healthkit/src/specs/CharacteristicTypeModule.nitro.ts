@@ -9,13 +9,13 @@ import type {
 export interface CharacteristicTypeModule
   extends HybridObject<{ ios: 'swift' }> {
   getBloodType(): BloodType
-  getDateOfBirth(): Date
+  getDateOfBirth(): Date | null
   getBiologicalSex(): BiologicalSex
   getFitzpatrickSkinType(): FitzpatrickSkinType
   getWheelchairUse(): WheelchairUse
 
   getBloodTypeAsync(): Promise<BloodType>
-  getDateOfBirthAsync(): Promise<Date>
+  getDateOfBirthAsync(): Promise<Date | null>
   getBiologicalSexAsync(): Promise<BiologicalSex>
   getFitzpatrickSkinTypeAsync(): Promise<FitzpatrickSkinType>
   getWheelchairUseAsync(): Promise<WheelchairUse>

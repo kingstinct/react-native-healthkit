@@ -1,5 +1,5 @@
 import { Button } from '@expo/ui/swift-ui'
-import { HStack, Host, Text } from '@expo/ui/swift-ui-primitives'
+import { HStack, Text } from '@expo/ui/swift-ui-primitives'
 import { Pressable, View } from 'react-native'
 import { Spacer } from './Spacer'
 import { ThemedText } from './ThemedText'

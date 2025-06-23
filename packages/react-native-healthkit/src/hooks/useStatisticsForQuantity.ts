@@ -1,13 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-
-import useSubscribeToChanges from './useSubscribeToChanges'
-
 import { QuantityTypes } from '../modules'
 import type {
   QueryStatisticsResponse,
   StatisticsOptions,
 } from '../types/QuantityType'
 import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
+import useSubscribeToChanges from './useSubscribeToChanges'
 
 export function useStatisticsForQuantity<
   TIdentifier extends QuantityTypeIdentifier,

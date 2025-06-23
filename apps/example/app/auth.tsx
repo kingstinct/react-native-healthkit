@@ -1,13 +1,5 @@
-import {
-  AllObjectTypesInApp,
-  AllSampleTypesInApp,
-} from '@/constants/AllUsedIdentifiersInApp'
-import { enumKeyLookup } from '@/utils/enumKeyLookup'
 import { Button, CircularProgress, Host } from '@expo/ui/swift-ui'
 import { HStack, Text, VStack } from '@expo/ui/swift-ui-primitives'
-import { router } from 'expo-router'
-import { useCallback, useEffect, useState } from 'react'
-
 import {
   getRequestStatusForAuthorization,
   requestAuthorization,
@@ -16,6 +8,13 @@ import {
   AuthorizationRequestStatus,
   AuthorizationStatus,
 } from '@kingstinct/react-native-healthkit/types/Auth'
+import { router } from 'expo-router'
+import { useCallback, useEffect, useState } from 'react'
+import {
+  AllObjectTypesInApp,
+  AllSampleTypesInApp,
+} from '@/constants/AllUsedIdentifiersInApp'
+import { enumKeyLookup } from '@/utils/enumKeyLookup'
 
 const authEnumLookup = enumKeyLookup(AuthorizationStatus)
 

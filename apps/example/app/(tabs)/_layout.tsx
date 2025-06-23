@@ -1,7 +1,8 @@
+import { getRequestStatusForAuthorization } from '@kingstinct/react-native-healthkit'
+import { AuthorizationRequestStatus } from '@kingstinct/react-native-healthkit/types/Auth'
 import { Redirect, Tabs } from 'expo-router'
 import React, { useEffect } from 'react'
 import { Platform } from 'react-native'
-
 import { HapticTab } from '@/components/HapticTab'
 import { IconSymbol } from '@/components/ui/IconSymbol'
 import TabBarBackground from '@/components/ui/TabBarBackground'
@@ -12,8 +13,6 @@ import {
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { enumKeyLookup } from '@/utils/enumKeyLookup'
-import { getRequestStatusForAuthorization } from '@kingstinct/react-native-healthkit'
-import { AuthorizationRequestStatus } from '@kingstinct/react-native-healthkit/types/Auth'
 
 const statusEnum = enumKeyLookup(AuthorizationRequestStatus)
 

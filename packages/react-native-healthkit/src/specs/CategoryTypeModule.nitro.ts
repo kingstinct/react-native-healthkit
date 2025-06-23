@@ -2,9 +2,9 @@ import type { AnyMap, HybridObject } from 'react-native-nitro-modules'
 
 import type {
   CategorySample,
-  CategorySampleTyped,
   CategorySamplesWithAnchorResponse,
   CategorySamplesWithAnchorResponseTyped,
+  CategorySampleTyped,
   CategoryValueForIdentifier,
   MetadataForCategoryIdentifier,
 } from '../types/CategoryType'

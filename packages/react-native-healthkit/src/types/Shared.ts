@@ -1,22 +1,20 @@
+import type { AnyMap } from 'react-native-nitro-modules'
 import type {
   CategoryTypeIdentifier,
   CategoryTypeIdentifierWriteable,
 } from './CategoryTypeIdentifier'
-import type {
-  QuantityTypeIdentifier,
-  QuantityTypeIdentifierWriteable,
-} from './QuantityTypeIdentifier'
-
+import type { CharacteristicTypeIdentifier } from './Characteristics'
 import type {
   HeartbeatSeriesTypeIdentifier,
   StateOfMindTypeIdentifier,
   WorkoutRouteTypeIdentifier,
   WorkoutTypeIdentifier,
 } from './Constants'
-
-import type { AnyMap } from 'react-native-nitro-modules'
-import type { CharacteristicTypeIdentifier } from './Characteristics'
 import type { CorrelationTypeIdentifier } from './CorrelationType'
+import type {
+  QuantityTypeIdentifier,
+  QuantityTypeIdentifierWriteable,
+} from './QuantityTypeIdentifier'
 
 export interface GenericMetadata {
   readonly HKExternalUUID?: string

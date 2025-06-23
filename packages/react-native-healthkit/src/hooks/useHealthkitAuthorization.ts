@@ -13,8 +13,8 @@ import type {
  * @see {@link https://developer.apple.com/documentation/healthkit/authorizing_access_to_health_data Apple Docs - Authorizing access to health data}
  */
 export const useHealthkitAuthorization = (
-  read: ObjectTypeIdentifier[],
-  write?: SampleTypeIdentifierWriteable[],
+  read: readonly ObjectTypeIdentifier[],
+  write?: readonly SampleTypeIdentifierWriteable[],
 ) => {
   const [status, setStatus] = useState<AuthorizationRequestStatus | null>(null)
 

@@ -1,5 +1,3 @@
-import { ListItem } from '@/components/SwiftListItem'
-import { enumKeyLookup } from '@/utils/enumKeyLookup'
 import { List } from '@expo/ui/swift-ui'
 import { Section } from '@expo/ui/swift-ui-primitives'
 import { queryWorkoutSamples } from '@kingstinct/react-native-healthkit'
@@ -11,6 +9,8 @@ import {
 } from '@kingstinct/react-native-healthkit/types/Workouts'
 import { useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
+import { ListItem } from '@/components/SwiftListItem'
+import { enumKeyLookup } from '@/utils/enumKeyLookup'
 
 const workoutActivityTypeStrings = enumKeyLookup(WorkoutActivityType)
 

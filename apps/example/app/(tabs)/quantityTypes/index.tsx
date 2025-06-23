@@ -1,6 +1,3 @@
-import { QueryInfo } from '@/components/QueryInfo'
-import { ListItem } from '@/components/SwiftListItem'
-import { AllQuantityTypeIdentifierInApp } from '@/constants/AllUsedIdentifiersInApp'
 import {
   Button,
   ContextMenu,
@@ -14,6 +11,9 @@ import type { QuantitySample } from '@kingstinct/react-native-healthkit/types/Qu
 import type { QuantityTypeIdentifier } from '@kingstinct/react-native-healthkit/types/QuantityTypeIdentifier'
 import { useCallback, useEffect, useState } from 'react'
 import { View } from 'react-native'
+import { QueryInfo } from '@/components/QueryInfo'
+import { ListItem } from '@/components/SwiftListItem'
+import { AllQuantityTypeIdentifierInApp } from '@/constants/AllUsedIdentifiersInApp'
 
 const transformQuantityIdentifierToName = (
   identifier: QuantityTypeIdentifier,

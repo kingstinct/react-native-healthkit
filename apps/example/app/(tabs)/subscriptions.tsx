@@ -1,5 +1,3 @@
-import { ListItem } from '@/components/SwiftListItem'
-import { AllSampleTypesInApp } from '@/constants/AllUsedIdentifiersInApp'
 import { List } from '@expo/ui/swift-ui'
 import { Section, Text } from '@expo/ui/swift-ui-primitives'
 import {
@@ -13,6 +11,8 @@ import { ImpactFeedbackStyle, impactAsync } from 'expo-haptics'
 import * as Notifications from 'expo-notifications'
 import { useEffect, useState } from 'react'
 import { AppState } from 'react-native'
+import { ListItem } from '@/components/SwiftListItem'
+import { AllSampleTypesInApp } from '@/constants/AllUsedIdentifiersInApp'
 
 const transformIdentifierToName = (identifier: SampleTypeIdentifier) => {
   return identifier
@@ -30,7 +30,7 @@ const Subscriptions = () => {
   useEffect(() => {
     let subscriptionIds: string[] = []
     const init = async () => {
-      const response = await Notifications.requestPermissionsAsync({
+      const _response = await Notifications.requestPermissionsAsync({
         ios: {
           provideAppNotificationSettings: true,
           allowAlert: true,
@@ -92,7 +92,7 @@ const Subscriptions = () => {
     <List scrollEnabled>
       <Text>Listening for new events..</Text>
       <Section title="Events">
-        {events.map((event, index) => (
+        {events.map((event, _index) => (
           <ListItem
             key={
               event.sampleTypeIdentifier + event.timestamp.toLocaleTimeString()

@@ -1,8 +1,6 @@
-import { ListItem, type ListItemProps } from '@/components/SwiftListItem'
-import { enumKeyLookup } from '@/utils/enumKeyLookup'
 import { List } from '@expo/ui/swift-ui'
 import { Section } from '@expo/ui/swift-ui-primitives'
-import {
+import HealthKit, {
   getBiologicalSex,
   getBloodType,
   getDateOfBirth,
@@ -19,6 +17,8 @@ import {
   WheelchairUse,
 } from '@kingstinct/react-native-healthkit/types/Characteristics'
 import { useEffect, useState } from 'react'
+import { ListItem, type ListItemProps } from '@/components/SwiftListItem'
+import { enumKeyLookup } from '@/utils/enumKeyLookup'
 
 const biologicalSexLookup = enumKeyLookup(BiologicalSex)
 const bloodTypeLookup = enumKeyLookup(BloodType)
@@ -35,15 +35,13 @@ const coreStuffDefaults = [
   },
 ]
 
-console.log('getDateOfBirth():', getDateOfBirth().toISOString())
-
 const CoreTab = () => {
   const characteristics: ListItemProps[] = [
     {
       title: 'Biological Sex',
-      subtitle: biologicalSexLookup[getBiologicalSex()],
+      subtitle: biologicalSexLookup[HealthKit.getBiologicalSex()],
     },
-    { title: 'Birthday', subtitle: getDateOfBirth().toDateString() },
+    { title: 'Birthday', subtitle: HealthKit.getDateOfBirth()?.toDateString() },
     {
       title: 'Blood type',
       subtitle: bloodTypeLookup[getBloodType()],
