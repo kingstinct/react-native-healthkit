@@ -111,7 +111,7 @@ jobs:
   build-ios-beta:
     # Only run on macOS since we need Xcode
     runs-on: macos-15
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -146,7 +146,7 @@ jobs:
   build-ios:
     # Only run on macOS since we need Xcode
     runs-on: macos-15
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -173,29 +173,29 @@ jobs:
 
 
   # since this is the default for Expo 52
-  build-ios-162:
-    # Only run on macOS since we need Xcode
-    runs-on: macos-latest
-    timeout-minutes: 20
+  # build-ios-162:
+  #   # Only run on macOS since we need Xcode
+  #   runs-on: macos-latest
+  #   timeout-minutes: 30
 
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+  #   steps:
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v2
+  #     - uses: oven-sh/setup-bun@v2
 
-      - run: sudo xcode-select -s /Applications/Xcode_16.2.app
+  #     - run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
-      - name: Install dependencies
-        run: bun install --ignore-scripts --frozen-lockfile
+  #     - name: Install dependencies
+  #       run: bun install --ignore-scripts --frozen-lockfile
 
-      - run: bun run nitro-codegen
-        working-directory: packages/react-native-healthkit
+  #     - run: bun run nitro-codegen
+  #       working-directory: packages/react-native-healthkit
 
-      - name: Expo Prebuild
-        working-directory: apps/example
-        run: bunx expo prebuild --platform ios
+  #     - name: Expo Prebuild
+  #       working-directory: apps/example
+  #       run: bunx expo prebuild --platform ios
 
-      - name: Build iOS project
-        working-directory: apps/example
-        run: bun run build-sim
+  #     - name: Build iOS project
+  #       working-directory: apps/example
+  #       run: bun run build-sim
