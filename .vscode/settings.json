@@ -5,10 +5,14 @@
     "bunx",
     "codegen",
     "healthkit",
+    "iphonesimulator",
     "lobanov",
     "prebuild",
     "reactnativehealthkitexample",
-    "swiftlint"
+    "simctl",
+    "swiftlint",
+    "xcrun",
+    "xcworkspace"
   ],
   "editor.defaultFormatter": "biomejs.biome",
   "editor.codeActionsOnSave": {

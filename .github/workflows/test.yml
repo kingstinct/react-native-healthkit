@@ -125,6 +125,12 @@ jobs:
       ## latest stable
       - run: sudo xcode-select -s /Applications/Xcode_26_beta.app
 
+      - name: Install iOS 26 simulator runtime
+        run: |
+          xcodebuild -downloadPlatform iOS
+          # optional but useful:
+          xcrun simctl list runtimes
+
       - run: bun run nitro-codegen
         working-directory: packages/react-native-healthkit
 
