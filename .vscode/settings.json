@@ -5,6 +5,8 @@
     "bunx",
     "codegen",
     "healthkit",
+    "lobanov",
+    "prebuild",
     "swiftlint"
   ],
   "editor.defaultFormatter": "biomejs.biome",

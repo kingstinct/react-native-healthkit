@@ -27,10 +27,10 @@
   },
   "lint-staged": {
     "*.swift": "swiftlint --fix",
-    "*.ts": "bunx @biomejs/biome check --fix",
-    "*.tsx": "bunx @biomejs/biome check --fix",
-    "*.js": "bunx @biomejs/biome check --fix",
-    "*.json": "bunx @biomejs/biome check --fix"
+    "*.ts": "bunx @biomejs/biome check --fix --no-errors-on-unmatched",
+    "*.tsx": "bunx @biomejs/biome check --fix --no-errors-on-unmatched",
+    "*.js": "bunx @biomejs/biome check --fix --no-errors-on-unmatched",
+    "*.json": "bunx @biomejs/biome check --fix --no-errors-on-unmatched"
   },
   "workspaces": [
     "apps/*",

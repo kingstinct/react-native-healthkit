@@ -7,7 +7,8 @@
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build-sim": "xcodebuild -workspace ios/RNHealthKit.xcworkspace -scheme RNHealthKit -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build"
   },
   "dependencies": {
     "@expo/ui": "~0.1.1-canary-20250701-6a945c5",
