@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 9.0.8
+### Patch Changes
+
+- ca2a033: CI improvements, remove all HKWorkoutSession references
+
 ## 9.0.7
 ### Patch Changes
 
