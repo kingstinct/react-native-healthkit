@@ -1,9 +1,7 @@
 import HealthKit
 import NitroModules
 
-
-
-class CategoryTypeModule : HybridCategoryTypeModuleSpec {
+class CategoryTypeModule: HybridCategoryTypeModuleSpec {
     func saveCategorySample(
         identifier: CategoryTypeIdentifier,
         value: Double,
@@ -12,7 +10,7 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
         metadata: AnyMapHolder
     ) throws -> Promise<Bool> {
         let type = try initializeCategoryType(identifier.stringValue)
-        
+
         let sample = HKCategorySample(
             type: type,
             value: Int(value),
@@ -20,7 +18,7 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
             end: endDate,
             metadata: anyMapToDictionary(metadata)
         )
-        
+
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
                 store.save(sample) { (success: Bool, error: Error?) in
@@ -33,15 +31,15 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
             }
         }
     }
-    
+
     func queryCategorySamples(
         identifier: CategoryTypeIdentifier,
-        options: QueryOptionsWithSortOrder?,
+        options: QueryOptionsWithSortOrder?
     ) throws -> Promise<[CategorySample]> {
         let sampleType = try initializeCategoryType(identifier.stringValue)
         let predicate = try createPredicate(filter: options?.filter)
         let queryLimit = getQueryLimit(options?.limit)
-        
+
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
                 let query = HKSampleQuery(
@@ -54,36 +52,35 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
                         continuation.resume(throwing: error)
                         return
                     }
-                    
+
                     guard let samples = samples else {
                         continuation.resume(returning: [])
                         return
                     }
-                    
+
                     let categorySamples = samples.compactMap { sample -> CategorySample? in
                         guard let categorySample = sample as? HKCategorySample else { return nil }
                         return serializeCategorySample(sample: categorySample)
                     }
-                    
+
                     continuation.resume(returning: categorySamples)
                 }
-                
+
                 store.execute(query)
             }
         }
     }
-    
-    
+
     func queryCategorySamplesWithAnchor(
         identifier: CategoryTypeIdentifier,
         options: QueryOptionsWithAnchor
     ) throws -> Promise<CategorySamplesWithAnchorResponse> {
         let sampleType = try initializeCategoryType(identifier.stringValue)
-        
+
         let predicate = try createPredicate(filter: options.filter)
         let queryLimit = getQueryLimit(options.limit)
         let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
-        
+
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
                 let query = HKAnchoredObjectQuery(
@@ -96,7 +93,7 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
                         continuation.resume(throwing: error)
                         return
                     }
-                    
+
                     guard let samples = samples else {
                         let response = CategorySamplesWithAnchorResponse(
                             samples: [],
@@ -106,21 +103,21 @@ class CategoryTypeModule : HybridCategoryTypeModuleSpec {
                         continuation.resume(returning: response)
                         return
                     }
-                    
+
                     let categorySamples = samples.compactMap { sample -> CategorySample? in
                         guard let categorySample = sample as? HKCategorySample else { return nil }
                         return serializeCategorySample(sample: categorySample)
                     }
-                    
+
                     let response = CategorySamplesWithAnchorResponse(
                         samples: categorySamples,
                         deletedSamples: deletedSamples?.map { serializeDeletedSample(sample: $0) } ?? [],
                         newAnchor: serializeAnchor(anchor: newAnchor) ?? ""
                     )
-                    
+
                     continuation.resume(returning: response)
                 }
-                
+
                 store.execute(query)
             }
         }

@@ -13,7 +13,7 @@ func serializeQuantityTyped(unit: HKUnit, quantityNullable: HKQuantity?) -> Quan
     guard let q = quantityNullable else {
         return nil
     }
-    
+
     return Quantity(
         unit: unit.unitString,
         quantity: q.doubleValue(for: unit)
@@ -38,7 +38,7 @@ func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) throws -> Q
             quantity: sample.quantity.doubleValue(for: unit),
             unit: unit.unitString,
             metadata: serializeMetadata(sample.metadata),
-            sourceRevision: serializeSourceRevision(sample.sourceRevision),
+            sourceRevision: serializeSourceRevision(sample.sourceRevision)
         )
     }
     throw RuntimeError.error(withMessage: "[react-native-healthkit] Unable to recognize quantityType: \(sample.quantityType.identifier)")
@@ -50,7 +50,6 @@ func serializeDeletedSample(sample: HKDeletedObject) -> DeletedSample {
     metadata: serializeMetadata(sample.metadata)
   )
 }
-
 
 func serializeCategorySample(sample: HKCategorySample) -> CategorySample {
     return CategorySample(
@@ -70,7 +69,6 @@ func serializeSource(_ source: HKSource) -> SourceProxy {
         source: source
     )
 }
-
 
 func getUnitForQuantityType(quantityType: HKQuantityType) -> HKUnit? {
     if quantityType.is(compatibleWith: HKUnit.percent()) {
@@ -92,7 +90,7 @@ func getUnitForQuantityType(quantityType: HKQuantityType) -> HKUnit? {
     if quantityType.is(compatibleWith: HKUnit.meter()) {
         return HKUnit.meter()
     }
-    
+
     if quantityType.is(compatibleWith: SpeedUnit) {
         return SpeedUnit
     }
@@ -130,7 +128,6 @@ func getUnitForQuantityType(quantityType: HKQuantityType) -> HKUnit? {
     }
 #endif
 
-
     return nil
 }
 
@@ -138,7 +135,7 @@ func serializeUnknownQuantityTyped(quantity: HKQuantity?) -> Quantity? {
     guard let quantity = quantity else {
         return nil
     }
-    
+
     if quantity.is(compatibleWith: HKUnit.percent()) {
         return serializeQuantityTyped(unit: HKUnit.percent(), quantity: quantity)
     }
@@ -199,14 +196,14 @@ func serializeUnknownQuantityTyped(quantity: HKQuantity?) -> Quantity? {
     return nil
 }
 
-func serializeUnknownQuantity(quantity: HKQuantity) -> Dictionary<String, AnyValue>? {
+func serializeUnknownQuantity(quantity: HKQuantity) -> [String: AnyValue]? {
     if let quantityTyped = serializeUnknownQuantityTyped(quantity: quantity) {
         return [
             "quantity": AnyValue.number(quantityTyped.quantity),
             "unit": AnyValue.string(quantityTyped.unit)
         ]
     }
-    
+
     return nil
 }
 
@@ -217,7 +214,7 @@ func serializeMetadata(_ metadata: [String: Any]?) -> AnyMapHolder {
             if let bool = item.value as? Bool {
                 serialized.setBoolean(key: item.key, value: bool)
             }
-            
+
             if let str = item.value as? String {
                 serialized.setString(key: item.key, value: str)
             }
@@ -225,14 +222,14 @@ func serializeMetadata(_ metadata: [String: Any]?) -> AnyMapHolder {
             if let double = item.value as? Double {
                 serialized.setDouble(key: item.key, value: double)
             }
-            
+
             if let quantity = item.value as? HKQuantity {
                 if let s = serializeUnknownQuantity(quantity: quantity) {
                     serialized.setObject(key: item.key, value: s)
                 }
             }
-            
-            if let dict = item.value as? Dictionary<String, AnyValue> {
+
+            if let dict = item.value as? [String: AnyValue] {
                 serialized.setObject(key: item.key, value: dict)
             }
         }
@@ -267,7 +264,7 @@ func serializeDevice(hkDevice: HKDevice?) -> Device? {
     guard let hkDevice = hkDevice else {
         return nil
     }
-    
+
     return Device(
         name: hkDevice.name,
         firmwareVersion: hkDevice.firmwareVersion,
@@ -295,7 +292,6 @@ func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision?) -> SourceRev
         return nil
     }
 
-    
     if #available(iOS 11, *) {
         return SourceRevision(
             source: serializeSource(hkSourceRevision.source),
@@ -304,7 +300,7 @@ func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision?) -> SourceRev
             productType: hkSourceRevision.productType
         )
     }
-    
+
     return SourceRevision(
         source: serializeSource(hkSourceRevision.source),
         version: hkSourceRevision.version,

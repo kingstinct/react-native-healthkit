@@ -8,7 +8,7 @@ func queryQuantitySamplesInternal(
     let quantityType = try initializeQuantityType(typeIdentifier.stringValue)
     let predicate = try createPredicate(filter: options?.filter)
     let limit = getQueryLimit(options?.limit)
-    
+
     return Promise.async {
         let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
         return try await withCheckedThrowingContinuation { continuation in
@@ -26,13 +26,13 @@ func queryQuantitySamplesInternal(
                                 sample: sample,
                                 unit: unit
                               )
-                              
+
                               return serialized
                           } catch {
                               print(error.localizedDescription)
                           }
                       }
-                      
+
                       return nil
                   }) {
                       return continuation.resume(returning: returnValue)
@@ -66,7 +66,7 @@ func saveQuantitySampleInternal(
     end: end,
     metadata: metadata
   )
-    
+
     return Promise.async {
         return try await withCheckedThrowingContinuation { continuation in
             store.save(sample) { (success: Bool, error: Error?) in
@@ -80,39 +80,39 @@ func saveQuantitySampleInternal(
 }
 
 func getAnyMapValue(_ anyMap: AnyMapHolder, key: String) -> Any? {
-    if(anyMap.isBool(key: key)){
+    if anyMap.isBool(key: key) {
         return anyMap.getBoolean(key: key)
     }
-    if(anyMap.isArray(key: key)){
+    if anyMap.isArray(key: key) {
         return anyMap.getArray(key: key)
     }
-    if(anyMap.isDouble(key: key)){
+    if anyMap.isDouble(key: key) {
         return anyMap.getDouble(key: key)
     }
-    if(anyMap.isObject(key: key)){
+    if anyMap.isObject(key: key) {
         return anyMap.getObject(key: key)
     }
-    if(anyMap.isString(key: key)){
+    if anyMap.isString(key: key) {
         return anyMap.getString(key: key)
     }
-    if(anyMap.isBigInt(key: key)){
+    if anyMap.isBigInt(key: key) {
         return anyMap.getBigInt(key: key)
     }
-    if(anyMap.isNull(key: key)){
+    if anyMap.isNull(key: key) {
         return nil
     }
     return nil
 }
 
 func anyMapToDictionary(_ anyMap: AnyMapHolder) -> [String: Any] {
-    var dict = Dictionary<String, Any>()
+    var dict = [String: Any]()
     anyMap.getAllKeys().forEach { key in
         dict[key] = getAnyMapValue(anyMap, key: key)
     }
     return dict
 }
 
-func buildStatisticsOptions(statistics: [StatisticsOptions]) -> HKStatisticsOptions{
+func buildStatisticsOptions(statistics: [StatisticsOptions]) -> HKStatisticsOptions {
     // Build statistics options
     var opts = HKStatisticsOptions()
     for statistic in statistics {
@@ -140,11 +140,11 @@ func buildStatisticsOptions(statistics: [StatisticsOptions]) -> HKStatisticsOpti
     return opts
 }
 
-class QuantityTypeModule : HybridQuantityTypeModuleSpec {
+class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     func deleteQuantitySamples(identifier: QuantityTypeIdentifier, filter: FilterForSamples) throws -> Promise<Bool> {
         let sampleType = try initializeQuantityType(identifier.stringValue)
         let samplePredicate = try createPredicateForSamples(filter: filter)
-        
+
         return Promise.async {
             return try await withCheckedThrowingContinuation { continuation in
                 store.deleteObjects(of: sampleType, predicate: samplePredicate) { (success: Bool, _: Int, error: Error?) in
@@ -156,21 +156,21 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                 }
             }
         }
-        
+
     }
-    
+
     func isQuantityCompatibleWithUnit(identifier: QuantityTypeIdentifier, unit: String) throws -> Bool {
         let sampleType = try initializeQuantityType(identifier.stringValue)
-        
+
         return sampleType.is(compatibleWith: HKUnit.init(from: unit))
     }
-    
+
     func queryStatisticsForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], options: StatisticsQueryOptions?) throws -> Promise<QueryStatisticsResponse> {
-        
+
         let quantityType = try initializeQuantityType(identifier.stringValue)
         let predicate = try createPredicate(filter: options?.filter)
         let unit = HKUnit.init(from: options?.unit ?? "count")
-        
+
         return Promise.async {
             return try await withCheckedThrowingContinuation { continuation in
                 let query = HKStatisticsQuery.init(
@@ -182,15 +182,15 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                         continuation.resume(throwing: error)
                         return
                     }
-                    
+
                     guard let gottenStats = stats else {
                         let emptyResponse = QueryStatisticsResponse()
                         continuation.resume(returning: emptyResponse)
                         return
                     }
-                    
+
                     var response = QueryStatisticsResponse()
-                    
+
                     if let averageQuantity = gottenStats.averageQuantity() {
                         response.averageQuantity = Quantity(
                             unit: unit.unitString,
@@ -215,7 +215,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                             quantity: sumQuantity.doubleValue(for: unit)
                         )
                     }
-                    
+
                     if #available(iOS 12, *) {
                         if let mostRecent = gottenStats.mostRecentQuantity() {
                             response.mostRecentQuantity = Quantity(
@@ -223,7 +223,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                                 quantity: mostRecent.doubleValue(for: unit)
                             )
                         }
-                        
+
                         if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
                             response.mostRecentQuantityDateInterval = QuantityDateInterval(
                                 from: mostRecentDateInterval.start,
@@ -231,7 +231,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                             )
                         }
                     }
-                    
+
                     if #available(iOS 13, *) {
                         if let duration = gottenStats.duration() {
                             let durationUnit = HKUnit.second()
@@ -241,27 +241,27 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                             )
                         }
                     }
-                    
+
                     continuation.resume(returning: response)
                 }
-                
+
                 store.execute(query)
             }
         }
     }
-    
+
     func queryStatisticsCollectionForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], anchorDate: String, intervalComponents: IntervalComponents, options: StatisticsQueryOptions?) throws -> Promise<[QueryStatisticsResponse]> {
         let quantityType = try initializeQuantityType(identifier.stringValue)
-        
+
         let predicate = try createPredicate(filter: options?.filter)
         let unit = HKUnit.init(from: options?.unit ?? "count")
-        
+
         // Convert the anchor date string to Date
         let dateFormatter = ISO8601DateFormatter()
         guard let anchor = dateFormatter.date(from: anchorDate) else {
             throw RuntimeError.error(withMessage: "Invalid anchor date format: " + anchorDate)
         }
-        
+
         // Create date components from interval
         var dateComponents = DateComponents()
         if let minute = intervalComponents.minute {
@@ -279,10 +279,10 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
         if let year = intervalComponents.year {
             dateComponents.year = Int(year)
         }
-        
+
         // Build statistics options
         let opts = buildStatisticsOptions(statistics: statistics)
-        
+
         return Promise.async {
             return try await withCheckedThrowingContinuation { continuation in
                 let query = HKStatisticsCollectionQuery.init(
@@ -292,24 +292,24 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                     anchorDate: anchor,
                     intervalComponents: dateComponents
                 )
-                
+
                 query.initialResultsHandler = { (_, results: HKStatisticsCollection?, error: Error?) in
                     if let error = error {
                         continuation.resume(throwing: error)
                         return
                     }
-                    
+
                     guard let statistics = results else {
                         continuation.resume(returning: [])
                         return
                     }
-                    
+
                     var responseArray: [QueryStatisticsResponse] = []
-                    
+
                     // todo: handle from/to here?
                     statistics.enumerateStatistics(from: Date.distantPast, to: Date()) { stats, _ in
                         var response = QueryStatisticsResponse()
-                        
+
                         if let averageQuantity = stats.averageQuantity() {
                             response.averageQuantity = Quantity(
                                 unit: unit.unitString,
@@ -334,7 +334,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                                 quantity: sumQuantity.doubleValue(for: unit)
                             )
                         }
-                        
+
                         if #available(iOS 12, *) {
                             if let mostRecent = stats.mostRecentQuantity() {
                                 response.mostRecentQuantity = Quantity(
@@ -342,7 +342,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                                     quantity: mostRecent.doubleValue(for: unit)
                                 )
                             }
-                            
+
                             if let mostRecentDateInterval = stats.mostRecentQuantityDateInterval() {
                                 response.mostRecentQuantityDateInterval = QuantityDateInterval(
                                     from: mostRecentDateInterval.start,
@@ -350,7 +350,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                                 )
                             }
                         }
-                        
+
                         if #available(iOS 13, *) {
                             if let duration = stats.duration() {
                                 let durationUnit = HKUnit.second()
@@ -360,30 +360,30 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                                 )
                             }
                         }
-                        
+
                         responseArray.append(response)
                     }
-                    
+
                     continuation.resume(returning: responseArray)
                 }
-                
+
                 store.execute(query)
             }
         }
     }
-    
+
     func queryQuantitySamplesWithAnchor(identifier: QuantityTypeIdentifier, options: QueryOptionsWithAnchorAndUnit) throws -> Promise<QuantitySamplesWithAnchorResponse> {
         let quantityType = try initializeQuantityType(identifier.stringValue)
         let predicate = try createPredicate(filter: options.filter)
         let limit = getQueryLimit(options.limit)
         let actualAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
-        
+
         return Promise.async {
             let unit = try await getUnitToUse(
                 unitOverride: options.unit,
                 quantityType: quantityType
             )
-            
+
             return try await withCheckedThrowingContinuation { continuation in
                 let query = HKAnchoredObjectQuery(
                     type: quantityType,
@@ -401,7 +401,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                         continuation.resume(throwing: error)
                         return
                     }
-                    
+
                     guard let samples = samples else {
                         let response = QuantitySamplesWithAnchorResponse(
                             samples: [],
@@ -411,7 +411,7 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                         continuation.resume(returning: response)
                         return
                     }
-                    
+
                     let quantitySamples = samples.compactMap { sample in
                         if let quantitySample = sample as? HKQuantitySample {
                             do {
@@ -425,21 +425,21 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
                         }
                         return nil
                     }
-                    
+
                     let response = QuantitySamplesWithAnchorResponse(
                         samples: quantitySamples,
                         deletedSamples: deletedSamples?.map { serializeDeletedSample(sample: $0) } ?? [],
                         newAnchor: serializeAnchor(anchor: newAnchor) ?? ""
                     )
-                    
+
                     continuation.resume(returning: response)
                 }
-                
+
                 store.execute(query)
             }
         }
     }
-    
+
     func saveQuantitySample(identifier: QuantityTypeIdentifier, unit: String, value: Double, start: Date, end: Date, metadata: AnyMapHolder) throws -> Promise<Bool> {
         return saveQuantitySampleInternal(
             typeIdentifier: HKQuantityType(
@@ -456,6 +456,5 @@ class QuantityTypeModule : HybridQuantityTypeModuleSpec {
     func queryQuantitySamples(identifier: QuantityTypeIdentifier, options: QueryOptionsWithSortOrderAndUnit?) throws -> Promise<[QuantitySample]> {
         return try queryQuantitySamplesInternal(typeIdentifier: identifier, options: options)
     }
-    
-    
+
 }

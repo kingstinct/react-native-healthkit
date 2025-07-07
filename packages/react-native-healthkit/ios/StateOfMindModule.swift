@@ -9,20 +9,20 @@ func serializeStateOfMindSample(sample: HKStateOfMind) -> StateOfMindSample {
             return association
         }
         print("[react-native-healthkit] Unknown StateOfMindAssociation raw value: \(association.rawValue)")
-        
+
         return nil
     }
-    
+
     // todo: warn if we get unknown labels??
     let labels = sample.labels.compactMap { label in
-        if let label = StateOfMindLabel(rawValue: Int32(label.rawValue)){
+        if let label = StateOfMindLabel(rawValue: Int32(label.rawValue)) {
             return label
         }
-        
+
         print("[react-native-healthkit] Unknown StateOfMindLabel raw value: \(label.rawValue)")
         return nil
     }
-    
+
     return StateOfMindSample(
         uuid: sample.uuid.uuidString,
         device: serializeDevice(hkDevice: sample.device),
@@ -41,18 +41,18 @@ func serializeStateOfMindSample(sample: HKStateOfMind) -> StateOfMindSample {
 }
 
 #if compiler(>=6)
-class StateOfMindModule : HybridStateOfMindModuleSpec {    
+class StateOfMindModule: HybridStateOfMindModuleSpec {
     func queryStateOfMindSamples(
         options: QueryOptionsWithSortOrder?
     ) throws -> Promise<[StateOfMindSample]> {
         if #available(iOS 18.0, *) {
             let predicate = try createPredicate(filter: options?.filter)
             let queryLimit = getQueryLimit(options?.limit)
-            
+
             return Promise.async {
                 try await withCheckedThrowingContinuation { continuation in
                     let type = HKStateOfMindType.stateOfMindType()
-                    
+
                     let query = HKSampleQuery(
                         sampleType: type,
                         predicate: predicate,
@@ -65,18 +65,18 @@ class StateOfMindModule : HybridStateOfMindModuleSpec {
                             continuation.resume(throwing: error)
                             return
                         }
-                        
+
                         guard let samples = samples as? [HKStateOfMind] else {
                             return continuation.resume(throwing: RuntimeError.error(withMessage: "[react-native-healthkit] Unexpected empty response"))
                         }
-                        
+
                         let serializedSamples = samples.map { sample -> StateOfMindSample in
                             return serializeStateOfMindSample(sample: sample)
                         }
-                        
+
                         continuation.resume(returning: serializedSamples)
                     }
-                    
+
                     store.execute(query)
                 }
             }
@@ -84,7 +84,7 @@ class StateOfMindModule : HybridStateOfMindModuleSpec {
             throw RuntimeError.error(withMessage: "StateOfMind is only available on iOS 18 and later")
         }
     }
-    
+
     func saveStateOfMindSample(
         date: Date,
         kind: StateOfMindKind,
@@ -112,7 +112,7 @@ class StateOfMindModule : HybridStateOfMindModuleSpec {
                             print("[react-native-healthkit] Unknown StateOfMindAssociation raw value: \($0.rawValue)")
                             return nil
                         }
-                        
+
                         let sample = HKStateOfMind(
                             date: date,
                             kind: hkKind,
@@ -121,7 +121,7 @@ class StateOfMindModule : HybridStateOfMindModuleSpec {
                             associations: hkAssociations,
                             metadata: anyMapToDictionary(metadata ?? AnyMapHolder())
                         )
-                        
+
                         store.save(sample) { (success: Bool, error: Error?) in
                             if let error = error {
                                 continuation.resume(throwing: error)
@@ -139,13 +139,13 @@ class StateOfMindModule : HybridStateOfMindModuleSpec {
 }
 #else
 // Fallback for older Xcode versions
-class StateOfMind : HybridStateOfMindModuleSpec {
+class StateOfMind: HybridStateOfMindModuleSpec {
     func queryStateOfMindSamples(
         options: QueryOptionsWithSortOrder?
     ) throws -> Promise<[StateOfMindSample]> {
         throw RuntimeError.error(withMessage: "State of Mind features require iOS 18.0 or later and Xcode 16 or later to compile")
     }
-    
+
     func saveStateOfMindSample(
         date: Date,
         kind: StateOfMindKind,
