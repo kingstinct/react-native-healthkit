@@ -7,11 +7,14 @@
     "lint": "bunx @biomejs/biome check",
     "lint-fix": "bunx @biomejs/biome check --fix",
     "create-changeset": "bunx changeset",
+    "swiftlint": "swiftlint",
     "changeset-release": "cp README.md packages/react-native-healthkit && bunx changeset publish",
     "typescript": "tsc",
     "codegen": "cd packages/react-native-healthkit && bun run nitro-codegen && cd ../../apps/example/ios && pod install",
     "test": "cd packages/react-native-healthkit && bun run test",
-    "prepare": "husky"
+    "prepare": "husky",
+    "reinstall": "rm -rf node_modules/ && find . -name 'node_modules' -type d -prune -exec rm -rf '{}' + && bun install",
+    "reinstall-with-nuked-lockfile": "rm -rf node_modules/ && rm bun.lock && find . -name 'node_modules' -type d -prune -exec rm -rf '{}' + && bun install"
   },
   "keywords": [
     "react-native",
@@ -23,11 +26,11 @@
     "url": "git+https://github.com/kingstinct/react-native-healthkit.git"
   },
   "lint-staged": {
-    "*.swift": "swiftlint ios --fix",
-    "*.ts": "bunx @biomejs/biome check --fix",
-    "*.tsx": "bunx @biomejs/biome check --fix",
-    "*.js": "bunx @biomejs/biome check --fix",
-    "*.json": "bunx @biomejs/biome check --fix"
+    "*.swift": "swiftlint --fix",
+    "*.ts": "bunx @biomejs/biome check --fix --no-errors-on-unmatched",
+    "*.tsx": "bunx @biomejs/biome check --fix --no-errors-on-unmatched",
+    "*.js": "bunx @biomejs/biome check --fix --no-errors-on-unmatched",
+    "*.json": "bunx @biomejs/biome check --fix --no-errors-on-unmatched"
   },
   "workspaces": [
     "apps/*",
@@ -46,10 +49,10 @@
     ]
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.0",
-    "@changesets/cli": "^2.29.4",
+    "@biomejs/biome": "^2.0.6",
+    "@changesets/cli": "^2.29.5",
     "@commitlint/config-conventional": "^19.8.1",
-    "@types/bun": "^1.2.16",
+    "@types/bun": "^1.2.18",
     "commitlint": "^19.8.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",

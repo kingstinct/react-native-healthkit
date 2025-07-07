@@ -24,7 +24,11 @@
     "production": {},
     "development-appstore-connect": {
       "ios": {
-        "ascAppId": "6747213346"
+        "ascAppId": "6747213346",
+        "appleId": "robert@herber.me",
+        "ascApiKeyId": "HVBURM9NPC",
+        "appleTeamId": "34SE8X7Q58",
+        "ascApiKeyIssuerId": "69a6de78-2ea9-47e3-e053-5b8c7c11a4d1"
       }
     }
   }

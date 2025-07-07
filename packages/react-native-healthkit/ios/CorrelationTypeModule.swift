@@ -1,7 +1,7 @@
 import HealthKit
 import NitroModules
 
-class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
+class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
     func saveCorrelationSample(
         typeIdentifier: CorrelationTypeIdentifier,
         samples: [SampleForSaving],
@@ -10,16 +10,16 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
         metadata: AnyMapHolder
     ) throws -> Promise<Bool> {
         let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
-        
+
         var initializedSamples = Set<HKSample>()
-        
+
         for sample in samples {
             if let quantitySample = sample as? QuantitySampleForSaving {
                 let quantityTypeId = HKQuantityTypeIdentifier(rawValue: quantitySample.quantityType.stringValue)
                 guard let quantityType = HKSampleType.quantityType(forIdentifier: quantityTypeId) else {
                     continue
                 }
-                
+
                 let unit = HKUnit(from: quantitySample.unit)
                 let quantity = HKQuantity(unit: unit, doubleValue: quantitySample.quantity)
                 let hkQuantitySample = HKQuantitySample(
@@ -30,10 +30,10 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
                     metadata: anyMapToDictionary(quantitySample.metadata)
                 )
                 initializedSamples.insert(hkQuantitySample)
-                
+
             } else if let categorySample = sample as? CategorySampleForSaving {
                 let categoryType = try initializeCategoryType(categorySample.categoryType.stringValue)
-                
+
                 let hkCategorySample = HKCategorySample(
                     type: categoryType,
                     value: Int(categorySample.value),
@@ -44,7 +44,7 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
                 initializedSamples.insert(hkCategorySample)
             }
         }
-        
+
         let correlation = HKCorrelation(
             type: correlationType,
             start: start,
@@ -52,7 +52,7 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
             objects: initializedSamples,
             metadata: anyMapToDictionary(metadata)
         )
-        
+
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
                 store.save(correlation) { (success: Bool, error: Error?) in
@@ -65,7 +65,7 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
             }
         }
     }
-    
+
     func queryCorrelationSamples(
         typeIdentifier: CorrelationTypeIdentifier,
         from: Date,
@@ -82,7 +82,7 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
             )
           )
         )
-        
+
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
                 let query = HKCorrelationQuery(
@@ -94,12 +94,12 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
                         continuation.resume(throwing: error)
                         return
                     }
-                    
+
                     guard let correlations = correlations else {
                         continuation.resume(returning: [])
                         return
                     }
-                    
+
                     // Collect all quantity types to get preferred units
                     var quantityTypes = Set<HKQuantityType>()
                     for correlation in correlations {
@@ -109,13 +109,13 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
                             }
                         }
                     }
-                    
+
                     store.preferredUnits(for: quantityTypes) { (unitMap: [HKQuantityType: HKUnit], error: Error?) in
                         if let error = error {
                             continuation.resume(throwing: error)
                             return
                         }
-                        
+
                         let serializedCorrelations = correlations.map { correlation -> CorrelationSample in
                             let objects = correlation.objects.compactMap { object -> CorrelationObject? in
                                 if let quantitySample = object as? HKQuantitySample,
@@ -126,13 +126,13 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
                                     } catch {
                                         print(error.localizedDescription)
                                     }
-                                    
+
                                 } else if let categorySample = object as? HKCategorySample {
                                     return CorrelationObject.first(serializeCategorySample(sample: categorySample))
                                 }
                                 return nil
                             }
-                            
+
                             return CorrelationSample(
                                 correlationType: CorrelationTypeIdentifier(fromString: correlation.correlationType.identifier)!,
                                 objects: objects,
@@ -141,11 +141,11 @@ class CorrelationTypeModule : HybridCorrelationTypeModuleSpec {
                                 endDate: correlation.endDate
                             )
                         }
-                        
+
                         continuation.resume(returning: serializedCorrelations)
                     }
                 }
-                
+
                 store.execute(query)
             }
         }

@@ -1,0 +1,15 @@
+excluded:
+  - "**/*.generated.*"
+  - "**/node_modules"
+
+disabled_rules:
+  - trailing_comma
+  - identifier_name
+  - line_length
+  - type_body_length
+  - large_tuple
+  - function_body_length
+  - type_name
+  - cyclomatic_complexity
+  - force_cast
+  - force_try

@@ -92,7 +92,7 @@
     "@types/react": "~19.0.14",
     "nitro-codegen": "^0.26.2",
     "react": "19.0.0",
-    "react-native": "^0.79.3",
+    "react-native": "*",
     "react-native-nitro-modules": "^0.26.2",
     "typescript": "~5.8.3"
   },

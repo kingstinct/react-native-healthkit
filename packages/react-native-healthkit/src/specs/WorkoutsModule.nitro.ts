@@ -26,6 +26,9 @@ export interface WorkoutsModule extends HybridObject<{ ios: 'swift' }> {
 
   queryWorkoutSamples(options: WorkoutQueryOptions): Promise<WorkoutProxy[]>
 
+  /**
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1648358-startwatchapp Apple Docs }
+   */
   startWatchAppWithWorkoutConfiguration(
     workoutConfiguration: WorkoutConfiguration,
   ): Promise<boolean>

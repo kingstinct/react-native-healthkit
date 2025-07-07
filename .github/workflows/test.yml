@@ -37,9 +37,6 @@ on:
       - "**" # matches every branch
       # - "!main" # matches every branch except main
 
-env:
-  RUNS_ON: ${{ inputs.os || 'ubuntu-latest' }}
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   test:
@@ -70,7 +67,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
 
-      - run: bun install --ignore-scripts
+      - run: bun install --ignore-scripts --frozen-lockfile
 
       - name: Typecheck
         run: bun run typecheck
@@ -87,15 +84,99 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
 
-      - run: bun install --ignore-scripts
+      - run: bun install --ignore-scripts --frozen-lockfile
 
       - name: Lint
         run: bun run lint
+    
+  swiftlint:
+    # The type of runner that the job will run on
+    runs-on: ${{ inputs.os || 'macos-latest' }}
+    timeout-minutes: 10
 
-  # build-ios:
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --ignore-scripts --frozen-lockfile
+
+      - run: brew install swiftlint
+
+      - name: Lint
+        run: bun run swiftlint
+  
+  build-ios-beta:
+    # Only run on macOS since we need Xcode
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --ignore-scripts --frozen-lockfile
+
+      ## latest stable
+      - run: sudo xcode-select -s /Applications/Xcode_26_beta.app
+
+      - name: Install iOS 26 simulator runtime
+        run: |
+          xcodebuild -downloadPlatform iOS
+          # optional but useful:
+          xcrun simctl list runtimes
+
+      - run: bun run nitro-codegen
+        working-directory: packages/react-native-healthkit
+
+      - name: Expo Prebuild
+        working-directory: apps/example
+        run: bunx expo prebuild --platform ios
+
+      - name: Build iOS project
+        working-directory: apps/example
+        run: bun run build-sim
+
+
+  build-ios:
+    # Only run on macOS since we need Xcode
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --ignore-scripts --frozen-lockfile
+
+      ## latest stable
+      - run: sudo xcode-select -s /Applications/Xcode_16.4.app
+
+      - run: bun run nitro-codegen
+        working-directory: packages/react-native-healthkit
+
+      - name: Expo Prebuild
+        working-directory: apps/example
+        run: bunx expo prebuild --platform ios
+
+      - name: Build iOS project
+        working-directory: apps/example
+        run: bun run build-sim
+
+
+  # since this is the default for Expo 52
+  # build-ios-162:
   #   # Only run on macOS since we need Xcode
   #   runs-on: macos-latest
-  #   timeout-minutes: 20
+  #   timeout-minutes: 30
 
   #   steps:
   #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -103,8 +184,10 @@ jobs:
 
   #     - uses: oven-sh/setup-bun@v2
 
+  #     - run: sudo xcode-select -s /Applications/Xcode_16.2.app
+
   #     - name: Install dependencies
-  #       run: bun install
+  #       run: bun install --ignore-scripts --frozen-lockfile
 
   #     - run: bun run nitro-codegen
   #       working-directory: packages/react-native-healthkit
@@ -113,18 +196,6 @@ jobs:
   #       working-directory: apps/example
   #       run: bunx expo prebuild --platform ios
 
-      # - name: Install CocoaPods dependencies
-      #   working-directory: apps/example/ios
-      #   run: pod install
-
-      # - name: Build iOS project
-      #   working-directory: apps/example/ios
-      #   run: |
-      #     xcodebuild -workspace RNHealthKit.xcworkspace \
-      #       -scheme RNHealthKit \
-      #       -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
-      #       -configuration Debug \
-      #       clean build \
-      #       CODE_SIGN_IDENTITY="" \
-      #       CODE_SIGNING_REQUIRED=NO \
-      #       CODE_SIGNING_ALLOWED=NO
+  #     - name: Build iOS project
+  #       working-directory: apps/example
+  #       run: bun run build-sim
