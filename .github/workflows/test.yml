@@ -37,9 +37,6 @@ on:
       - "**" # matches every branch
       # - "!main" # matches every branch except main
 
-env:
-  RUNS_ON: ${{ inputs.os || 'ubuntu-latest' }}
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   test:
@@ -124,6 +121,9 @@ jobs:
 
       - name: Install dependencies
         run: bun install --ignore-scripts --frozen-lockfile
+
+      ## latest stable
+      - run: sudo xcode-select -s /Applications/Xcode_16.4.app
 
       - run: bun run nitro-codegen
         working-directory: packages/react-native-healthkit

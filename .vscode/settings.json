@@ -7,6 +7,7 @@
     "healthkit",
     "lobanov",
     "prebuild",
+    "reactnativehealthkitexample",
     "swiftlint"
   ],
   "editor.defaultFormatter": "biomejs.biome",
