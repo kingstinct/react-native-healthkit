@@ -53,6 +53,14 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**/*", "!**/docs/**", "!**/lib/**", "!**/.expo/**"]
+    "includes": [
+      "**/*",
+      "!**/docs/**",
+      "!**/lib/**",
+      "!**/.expo/**",
+      "!**/ios/**",
+      "!.vscode/*",
+      "!.claude/*"
+    ]
   }
 }

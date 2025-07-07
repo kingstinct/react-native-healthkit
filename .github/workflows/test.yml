@@ -70,7 +70,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
 
-      - run: bun install --ignore-scripts
+      - run: bun install --ignore-scripts --frozen-lockfile
 
       - name: Typecheck
         run: bun run typecheck
@@ -87,10 +87,29 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
 
-      - run: bun install --ignore-scripts
+      - run: bun install --ignore-scripts --frozen-lockfile
 
       - name: Lint
         run: bun run lint
+    
+  swiftlint:
+    # The type of runner that the job will run on
+    runs-on: ${{ inputs.os || 'macos-latest' }}
+    timeout-minutes: 10
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --ignore-scripts --frozen-lockfile
+
+      - run: brew install swiftlint
+
+      - name: Lint
+        run: bun run swiftlint
 
   # build-ios:
   #   # Only run on macOS since we need Xcode

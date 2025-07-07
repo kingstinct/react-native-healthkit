@@ -37,7 +37,9 @@
           "NSHealthUpdateUsageDescription": "Your own custom usage description",
           "background": true
         }
-      ]
+      ],
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
