@@ -21,6 +21,7 @@ import {
   WheelchairUse,
 } from './types/Characteristics'
 import type { QuantitySample } from './types/QuantitySample'
+import type { QueryOptionsWithAnchor } from './types/QueryOptions'
 
 export * from './types'
 
@@ -185,6 +186,7 @@ export function queryCategorySamplesWithAnchor<
   T extends CategoryTypeIdentifier,
 >(
   _categoryTypeIdentifier: T,
+  _options: QueryOptionsWithAnchor,
 ): Promise<CategorySamplesWithAnchorResponseTyped<T>> {
   if (Platform.OS !== 'ios' && !hasWarned) {
     console.warn(notAvailableError)
