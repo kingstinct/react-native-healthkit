@@ -306,8 +306,21 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
 
                     var responseArray: [QueryStatisticsResponse] = []
 
-                    // todo: handle from/to here?
-                    statistics.enumerateStatistics(from: Date.distantPast, to: Date()) { stats, _ in
+                    // Limit enumeration to the range in the provided filter if possible
+                    var enumerateFrom = Date.distantPast
+                    var enumerateTo = Date()
+
+                    if let filter = options?.filter {
+                        switch filter {
+                        case .fourth(let dateFilter):
+                            enumerateFrom = dateFilter.startDate ?? enumerateFrom
+                            enumerateTo = dateFilter.endDate ?? enumerateTo
+                        default:
+                            break
+                        }
+                    }
+
+                    statistics.enumerateStatistics(from: enumerateFrom, to: enumerateTo) { stats, _ in
                         var response = QueryStatisticsResponse()
 
                         if let averageQuantity = stats.averageQuantity() {
