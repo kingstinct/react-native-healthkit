@@ -1,5 +1,11 @@
 # @kingstinct/react-native-healthkit
 
+## 9.0.9
+### Patch Changes
+
+- 52f5a90: - Fix anchor filtering for statistic collection
+  - Fix queryCategorySamplesWithAnchor type
+
 ## 9.0.8
 ### Patch Changes
 
