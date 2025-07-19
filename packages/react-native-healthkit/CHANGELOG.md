@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 9.0.10
+### Patch Changes
+
+- 70cce7b: fix: use proper units in queryStatisticsForQuantity to prevent crashes
+
 ## 9.0.9
 ### Patch Changes
 
