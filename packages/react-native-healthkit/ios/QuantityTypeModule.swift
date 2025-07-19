@@ -169,9 +169,9 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
 
         let quantityType = try initializeQuantityType(identifier.stringValue)
         let predicate = try createPredicate(filter: options?.filter)
-        let unit = HKUnit.init(from: options?.unit ?? "count")
 
         return Promise.async {
+            let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
             return try await withCheckedThrowingContinuation { continuation in
                 let query = HKStatisticsQuery.init(
                     quantityType: quantityType,
@@ -254,7 +254,6 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
         let quantityType = try initializeQuantityType(identifier.stringValue)
 
         let predicate = try createPredicate(filter: options?.filter)
-        let unit = HKUnit.init(from: options?.unit ?? "count")
 
         // Convert the anchor date string to Date
         let dateFormatter = ISO8601DateFormatter()
@@ -284,6 +283,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
         let opts = buildStatisticsOptions(statistics: statistics)
 
         return Promise.async {
+            let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
             return try await withCheckedThrowingContinuation { continuation in
                 let query = HKStatisticsCollectionQuery.init(
                     quantityType: quantityType,
