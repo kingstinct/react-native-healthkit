@@ -184,7 +184,7 @@ See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the 
 
 If you're using @kingstinct/react-native-healthkit to build your production app [please consider funding its continued development](https://github.com/sponsors/Kingstinct). It helps us spend more time on keeping this library as good as it can be.
 
-At Kingstinct we're also able to provide enterprise-grade support for this package, [find us here](https://kingstinct.com) or [drop an email](mailto:healthkit@kingstinct.com) for more information. Also feel free to join our [Discord community](https://discord.gg/EHScS93v).
+At Kingstinct we're also able to provide enterprise-grade support for this package, [find us here](https://kingstinct.com) or [drop an email](mailto:healthkit@kingstinct.com) for more information. Also feel free to join our [Discord community](https://discord.gg/hrgnETpsJA).
 
 ## License
 
