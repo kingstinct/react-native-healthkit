@@ -79,7 +79,7 @@ func saveQuantitySampleInternal(
     }
 }
 
-func getAnyMapValue(_ anyMap: AnyMapHolder, key: String) -> Any? {
+func getAnyMapValue(_ anyMap: AnyMap, key: String) -> Any? {
     if anyMap.isBool(key: key) {
         return anyMap.getBoolean(key: key)
     }
@@ -104,7 +104,7 @@ func getAnyMapValue(_ anyMap: AnyMapHolder, key: String) -> Any? {
     return nil
 }
 
-func anyMapToDictionary(_ anyMap: AnyMapHolder) -> [String: Any] {
+func anyMapToDictionary(_ anyMap: AnyMap) -> [String: Any] {
     var dict = [String: Any]()
     anyMap.getAllKeys().forEach { key in
         dict[key] = getAnyMapValue(anyMap, key: key)
@@ -453,7 +453,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
         }
     }
 
-    func saveQuantitySample(identifier: QuantityTypeIdentifier, unit: String, value: Double, start: Date, end: Date, metadata: AnyMapHolder) throws -> Promise<Bool> {
+    func saveQuantitySample(identifier: QuantityTypeIdentifier, unit: String, value: Double, start: Date, end: Date, metadata: AnyMap) throws -> Promise<Bool> {
         return saveQuantitySampleInternal(
             typeIdentifier: HKQuantityType(
                 HKQuantityTypeIdentifier(rawValue: identifier.stringValue)

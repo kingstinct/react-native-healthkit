@@ -7,7 +7,7 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
         samples: [SampleForSaving],
         start: Date,
         end: Date,
-        metadata: AnyMapHolder
+        metadata: AnyMap
     ) throws -> Promise<Bool> {
         let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
 

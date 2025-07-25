@@ -91,7 +91,7 @@ class StateOfMindModule: HybridStateOfMindModuleSpec {
         valence: Double,
         labels: [StateOfMindLabel],
         associations: [StateOfMindAssociation],
-        metadata: AnyMapHolder?
+        metadata: AnyMap?
     ) throws -> Promise<Bool> {
         if #available(iOS 18, *) {
             return Promise.async {
@@ -119,7 +119,7 @@ class StateOfMindModule: HybridStateOfMindModuleSpec {
                             valence: valence,
                             labels: hkLabels,
                             associations: hkAssociations,
-                            metadata: anyMapToDictionary(metadata ?? AnyMapHolder())
+                            metadata: anyMapToDictionary(metadata ?? AnyMap())
                         )
 
                         store.save(sample) { (success: Bool, error: Error?) in
