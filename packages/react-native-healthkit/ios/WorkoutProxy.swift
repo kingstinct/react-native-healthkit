@@ -328,7 +328,7 @@ class WorkoutProxy: HybridWorkoutProxySpec {
     }
   }
 
-  var metadata: AnyMapHolder? {
+  var metadata: AnyMap? {
     get {
       return serializeMetadata(workout.metadata)
     }

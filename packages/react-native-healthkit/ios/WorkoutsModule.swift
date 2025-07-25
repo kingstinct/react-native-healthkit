@@ -101,7 +101,7 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
         startDate: Date,
         endDate: Date,
         totals: WorkoutTotals,
-        metadata: AnyMapHolder
+        metadata: AnyMap
     ) throws -> Promise<String> {
 
         let type = try initializeWorkoutActivityType(UInt(workoutActivityType.rawValue))

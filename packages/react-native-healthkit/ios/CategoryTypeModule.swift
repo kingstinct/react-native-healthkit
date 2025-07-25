@@ -7,7 +7,7 @@ class CategoryTypeModule: HybridCategoryTypeModuleSpec {
         value: Double,
         startDate: Date,
         endDate: Date,
-        metadata: AnyMapHolder
+        metadata: AnyMap
     ) throws -> Promise<Bool> {
         let type = try initializeCategoryType(identifier.stringValue)
 

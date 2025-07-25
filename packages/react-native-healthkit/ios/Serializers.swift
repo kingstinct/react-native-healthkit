@@ -207,8 +207,8 @@ func serializeUnknownQuantity(quantity: HKQuantity) -> [String: AnyValue]? {
     return nil
 }
 
-func serializeMetadata(_ metadata: [String: Any]?) -> AnyMapHolder {
-    let serialized = AnyMapHolder()
+func serializeMetadata(_ metadata: [String: Any]?) -> AnyMap {
+    let serialized = AnyMap()
     if let m = metadata {
         for item in m {
             if let bool = item.value as? Bool {
