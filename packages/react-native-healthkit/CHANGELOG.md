@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 9.0.11
+### Patch Changes
+
+- a8020de: Update nitro modules
+
 ## 9.0.10
 ### Patch Changes
 
