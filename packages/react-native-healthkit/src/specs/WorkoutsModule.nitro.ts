@@ -18,7 +18,7 @@ export interface WorkoutsModule extends HybridObject<{ ios: 'swift' }> {
     endDate: Date,
     totals: WorkoutTotals,
     metadata: AnyMap,
-  ): Promise<string>
+  ): Promise<WorkoutProxy>
 
   queryWorkoutSamplesWithAnchor(
     options: WorkoutQueryOptionsWithAnchor,

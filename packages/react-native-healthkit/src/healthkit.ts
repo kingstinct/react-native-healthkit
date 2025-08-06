@@ -242,7 +242,8 @@ export const queryWorkoutSamplesWithAnchor = UnavailableFnFromModule(
 )
 export const saveWorkoutSample = UnavailableFnFromModule(
   'saveWorkoutSample',
-  Promise.resolve(''),
+  // biome-ignore lint/suspicious/noExplicitAny: it works
+  Promise.resolve(undefined as any as WorkoutProxy),
 )
 export const startWatchApp = UnavailableFnFromModule(
   'startWatchApp',
