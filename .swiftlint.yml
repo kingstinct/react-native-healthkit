@@ -1,6 +1,7 @@
 excluded:
   - "**/*.generated.*"
   - "**/node_modules"
+  - "**/generated/**"
 
 disabled_rules:
   - trailing_comma

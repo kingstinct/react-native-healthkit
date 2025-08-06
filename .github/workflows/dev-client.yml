@@ -1,13 +1,11 @@
 name: Dev Client
 
 on:
-  pull_request:
+  pull_request_target:
   push:
     branches:
       - master
       - main
-      - nitro-modules
-      - nitro-modules-merged
 
 jobs:
   eas-build:

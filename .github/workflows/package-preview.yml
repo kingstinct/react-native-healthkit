@@ -1,11 +1,7 @@
 name: Package Preview
 
 on:
-  pull_request:
-  push:
-    branches:
-      - nitro-modules
-      - nitro-modules-merged
+  pull_request_target:
 
 jobs:
   preview:
