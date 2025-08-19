@@ -102,7 +102,7 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
         endDate: Date,
         totals: WorkoutTotals,
         metadata: AnyMap
-    ) throws -> Promise<String> {
+    ) throws -> Promise<HybridWorkoutProxySpec> {
 
         let type = try initializeWorkoutActivityType(UInt(workoutActivityType.rawValue))
 
@@ -215,25 +215,26 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
         }
 
         return Promise.async {
-            try await withCheckedThrowingContinuation { continuation in
+            try await withCheckedThrowingContinuation({ continuation in
                 // saving workout, samples and route
                 store.save(workout) { (_: Bool, error: Error?) in
                     if let error = error {
                         return continuation.resume(throwing: error)
                     }
-
-                    if initializedSamples.isEmpty {
-                        return continuation.resume(returning: workout.uuid.uuidString)
-                    }
-
                     store.add(initializedSamples, to: workout) { (_, error: Error?) in
                         if let error = error {
                             return continuation.resume(throwing: error)
                         }
-                        return continuation.resume(returning: workout.uuid.uuidString)
                     }
+                    return continuation.resume()
                 }
-            }
+            }) as Void
+
+            return WorkoutProxy.init(
+                workout: workout,
+                distanceUnit: .meter(),
+                energyUnit: .kilocalorie()
+            )
         }
     }
 
