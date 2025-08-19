@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 10.0.0
+### Major Changes
+
+- 016ed18: chore: saveWorkoutSample return workout proxy
+
 ## 9.0.11
 ### Patch Changes
 
