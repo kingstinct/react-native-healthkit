@@ -28,6 +28,8 @@ export interface QueryStatisticsResponse {
   readonly mostRecentQuantity?: Quantity
   readonly mostRecentQuantityDateInterval?: QuantityDateInterval
   readonly duration?: Quantity
+  readonly startDate?: Date
+  readonly endDate?: Date
 }
 
 export interface QuantitySamplesWithAnchorResponse {
