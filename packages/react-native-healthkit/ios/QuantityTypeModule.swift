@@ -191,6 +191,9 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
 
                     var response = QueryStatisticsResponse()
 
+                    response.startDate = gottenStats.startDate
+                    response.endDate = gottenStats.endDate
+
                     if let averageQuantity = gottenStats.averageQuantity() {
                         response.averageQuantity = Quantity(
                             unit: unit.unitString,
@@ -322,6 +325,9 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
 
                     statistics.enumerateStatistics(from: enumerateFrom, to: enumerateTo) { stats, _ in
                         var response = QueryStatisticsResponse()
+
+                        response.startDate = stats.startDate
+                        response.endDate = stats.endDate
 
                         if let averageQuantity = stats.averageQuantity() {
                             response.averageQuantity = Quantity(
