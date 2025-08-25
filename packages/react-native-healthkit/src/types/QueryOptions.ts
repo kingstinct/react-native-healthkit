@@ -15,8 +15,18 @@ type PredicateWithStartAndEnd = {
   readonly strictStartDate?: boolean
 }
 
+type PredicateWithMetadataOperator =
+  | 'equalTo'
+  | 'notEqualTo'
+  | 'greaterThan'
+  | 'lessThan'
+
+type PredicateWithMetadataValue = string | number | Date | boolean
+
 type PredicateWithMetadataKey = {
   readonly withMetadataKey: string
+  readonly operatorType?: PredicateWithMetadataOperator
+  readonly value?: PredicateWithMetadataValue
 }
 
 export type FilterForSamplesAnd = {

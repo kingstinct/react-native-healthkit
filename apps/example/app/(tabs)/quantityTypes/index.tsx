@@ -4,8 +4,12 @@ import {
   DateTimePicker,
   List,
   Picker,
+  Switch,
 } from '@expo/ui/swift-ui'
-import { queryQuantitySamplesWithAnchor } from '@kingstinct/react-native-healthkit'
+import {
+  type FilterForSamples,
+  queryQuantitySamplesWithAnchor,
+} from '@kingstinct/react-native-healthkit'
 import { QuantityTypes } from '@kingstinct/react-native-healthkit/modules'
 import type { QuantitySample } from '@kingstinct/react-native-healthkit/types/QuantitySample'
 import type { QuantityTypeIdentifier } from '@kingstinct/react-native-healthkit/types/QuantityTypeIdentifier'
@@ -41,6 +45,7 @@ export default function QuantitiesScreen() {
     new Date(Date.now() - 1000 * 60 * 60 * 24 * 30 * 6),
   )
   const [toDate, setToDate] = useState<Date>(new Date())
+  const [includeUserEntered, setIncludeUserEntered] = useState(true)
 
   const [selectedQuantityType, setSelectedQuantityType] =
     useState<QuantityTypeIdentifier>(
@@ -74,12 +79,23 @@ export default function QuantitiesScreen() {
         })
     } else {
       setAnchor(undefined)
+
+      const userEnteredFilters: FilterForSamples =
+        includeUserEntered === false
+          ? {
+              withMetadataKey: 'HKWasUserEntered',
+              operatorType: 'notEqualTo',
+              value: true,
+            }
+          : {}
+
       const samples = await QuantityTypes.queryQuantitySamples(
         selectedQuantityType,
         {
           filter: {
             startDate: fromDate,
             endDate: toDate,
+            ...userEnteredFilters,
           },
           ascending: selectedOption === 'Ascending',
         },
@@ -88,7 +104,14 @@ export default function QuantitiesScreen() {
 
       setQuantitySamples(samples)
     }
-  }, [selectedQuantityType, selectedOption, fromDate, toDate, anchor])
+  }, [
+    selectedQuantityType,
+    selectedOption,
+    fromDate,
+    toDate,
+    anchor,
+    includeUserEntered,
+  ])
 
   useEffect(() => {
     queryQuantitySamples()
@@ -161,6 +184,14 @@ export default function QuantitiesScreen() {
             </Button>
           </ContextMenu.Trigger>
         </ContextMenu>
+      </View>
+      <View style={{ marginHorizontal: 16 }}>
+        <Switch
+          value={includeUserEntered}
+          onValueChange={setIncludeUserEntered}
+          label="Include user entered"
+          variant="switch"
+        />
       </View>
       <List scrollEnabled>
         {quantitySamples.map((item) => {

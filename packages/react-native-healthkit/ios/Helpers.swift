@@ -39,7 +39,7 @@ func createPredicateForWorkout(filter: PredicateForWorkouts) throws -> NSPredica
         case .second(let uuidsWrapper):
             return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
         case .third(let metadataKey):
-            return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
+            return try createMetadataPredicate(metadataKey: metadataKey)
         case .fourth(let dateFilter):
             return createDatePredicate(dateFilter: dateFilter)
         case .fifth(let w):
@@ -69,7 +69,7 @@ func createPredicateForWorkout(filter: Variant_PredicateWithUUID_PredicateWithUU
         case .second(let uuidsWrapper):
             return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
         case .third(let metadataKey):
-            return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
+            return try createMetadataPredicate(metadataKey: metadataKey)
         case .fourth(let dateFilter):
             return createDatePredicate(dateFilter: dateFilter)
         case .fifth(let w):
@@ -136,6 +136,50 @@ func createUUIDsPredicate(uuidsWrapper: PredicateWithUUIDs) -> NSPredicate {
     return HKQuery.predicateForObjects(with: Set(uuids))
 }
 
+func createMetadataPredicate(metadataKey: PredicateWithMetadataKey) throws -> NSPredicate {
+    guard let valueVariant = metadataKey.value else {
+        return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
+    }
+
+    let actualValue: Any
+
+    switch valueVariant {
+      case .first(let stringValue):
+          actualValue = stringValue
+      case .second(let doubleValue):
+          actualValue = NSNumber(value: doubleValue)
+      case .third(let boolValue):
+          actualValue = NSNumber(value: boolValue ? 1 : 0)
+      case .fourth(let dateValue):
+          actualValue = dateValue
+    }
+
+    let operatorType: NSComparisonPredicate.Operator
+
+    if let operatorTypeValue = metadataKey.operatorType {
+        switch operatorTypeValue {
+          case PredicateWithMetadataOperator.equalto:
+              operatorType = .equalTo
+          case PredicateWithMetadataOperator.notequalto:
+              operatorType = .notEqualTo
+          case PredicateWithMetadataOperator.greaterthan:
+              operatorType = .greaterThan
+          case PredicateWithMetadataOperator.lessthan:
+              operatorType = .lessThan
+          default:
+              throw RuntimeError.error(withMessage: "Unsupported operator: \(operatorTypeValue)")
+        }
+    } else {
+        operatorType = .equalTo
+    }
+
+    return HKQuery.predicateForObjects(
+        withMetadataKey: metadataKey.withMetadataKey,
+        operatorType: operatorType,
+        value: actualValue
+    )
+}
+
 func createPredicate(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_PredicateWithMetadataKey_PredicateWithStartAndEnd_PredicateFromWorkout_FilterForSamplesAnd_FilterForSamplesOr?) throws -> NSPredicate? {
     if let filter = filter {
         switch filter {
@@ -144,7 +188,7 @@ func createPredicate(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_Predic
             case .second(let uuidsWrapper):
                 return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
             case .third(let metadataKey):
-                return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
+                return try createMetadataPredicate(metadataKey: metadataKey)
             case .fourth(let dateFilter):
                 return createDatePredicate(dateFilter: dateFilter)
             case .fifth(let w):
@@ -173,7 +217,7 @@ func createPredicateForSamples(filter: PredicateForSamples) throws -> NSPredicat
         case .second(let uuidsWrapper):
             return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
         case .third(let metadataKey):
-            return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
+            return try createMetadataPredicate(metadataKey: metadataKey)
         case .fourth(let dateFilter):
             return createDatePredicate(dateFilter: dateFilter)
         case .fifth(let w):
@@ -191,7 +235,7 @@ func createPredicateForSamples(filter: FilterForSamples) throws -> NSPredicate {
     case .second(let uuidsWrapper):
         return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
     case .third(let metadataKey):
-        return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
+        return try createMetadataPredicate(metadataKey: metadataKey)
     case .fourth(let dateFilter):
         return createDatePredicate(dateFilter: dateFilter)
     case .fifth(let w):
@@ -218,7 +262,7 @@ func createPredicateForSamples(filter: Variant_PredicateWithUUID_PredicateWithUU
     case .second(let uuidsWrapper):
         return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
     case .third(let metadataKey):
-        return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
+        return try createMetadataPredicate(metadataKey: metadataKey)
     case .fourth(let dateFilter):
         return createDatePredicate(dateFilter: dateFilter)
     case .fifth(let w):
