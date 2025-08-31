@@ -13,6 +13,7 @@ export type CorrelationTypeIdentifier =
 type CorrelationObject = CategorySample | QuantitySample
 
 export interface CorrelationSample {
+  readonly uuid: string
   readonly correlationType: CorrelationTypeIdentifier
   readonly objects: readonly CorrelationObject[]
   readonly metadata: AnyMap

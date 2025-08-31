@@ -134,6 +134,7 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
                             }
 
                             return CorrelationSample(
+                                uuid: correlation.uuid.uuidString,
                                 correlationType: CorrelationTypeIdentifier(fromString: correlation.correlationType.identifier)!,
                                 objects: objects,
                                 metadata: serializeMetadata(correlation.metadata),
