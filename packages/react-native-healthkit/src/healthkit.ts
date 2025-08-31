@@ -21,7 +21,10 @@ import {
   WheelchairUse,
 } from './types/Characteristics'
 import type { QuantitySample } from './types/QuantitySample'
-import type { QueryOptionsWithAnchor } from './types/QueryOptions'
+import type {
+  QueryOptionsWithAnchor,
+  QueryOptionsWithSortOrder,
+} from './types/QueryOptions'
 
 export * from './types'
 
@@ -174,6 +177,7 @@ export const isQuantityCompatibleWithUnit = UnavailableFnFromModule(
 // CategoryTypeModule functions
 export function queryCategorySamples<T extends CategoryTypeIdentifier>(
   _categoryTypeIdentifier: T,
+  _options?: QueryOptionsWithSortOrder,
 ): Promise<CategorySampleTyped<T>[]> {
   if (Platform.OS !== 'ios' && !hasWarned) {
     console.warn(notAvailableError)
