@@ -1,5 +1,17 @@
 # @kingstinct/react-native-healthkit
 
+## 10.1.0
+### Minor Changes
+
+- f6ec2b0: Add metadata filtering with comparision operators
+
+### Patch Changes
+
+- 5030450: queryCategorySamples doesn't accept options parameter
+- 13d151c: Correlation uuids are not exposed
+- 2ab152c: queryStatisticsForQuantity doesn't resolve if no data is present in timeframe
+- dc0fef2: Add startDate and endDate to QueryStatisticsResponse
+
 ## 10.0.0
 ### Major Changes
 
