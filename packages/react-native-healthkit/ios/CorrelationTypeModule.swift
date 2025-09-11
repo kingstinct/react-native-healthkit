@@ -110,31 +110,6 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
                         }
                     }
 
-                    // If there are no quantity samples, serialize without asking for preferred units
-                    if quantityTypes.isEmpty {
-                        let serialized = correlations.map { correlation -> CorrelationSample in
-                            let objects = correlation.objects.compactMap { object -> CorrelationObject? in
-                                if let categorySample = object as? HKCategorySample {
-                                    return CorrelationObject.first(serializeCategorySample(sample: categorySample))
-                                }
-                                // no quantity samples in this branch
-                                return nil
-                            }
-
-                            return CorrelationSample(
-                                uuid: correlation.uuid.uuidString,
-                                correlationType: CorrelationTypeIdentifier(fromString: correlation.correlationType.identifier)!,
-                                objects: objects,
-                                metadata: serializeMetadata(correlation.metadata),
-                                startDate: correlation.startDate,
-                                endDate: correlation.endDate
-                            )
-                        }
-
-                        continuation.resume(returning: serialized)
-                        return
-                    }
-
                     store.preferredUnits(for: quantityTypes) { (unitMap: [HKQuantityType: HKUnit], error: Error?) in
                         if let error = error {
                             continuation.resume(throwing: error)
