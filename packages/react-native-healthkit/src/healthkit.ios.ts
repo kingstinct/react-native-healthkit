@@ -17,7 +17,10 @@ import {
   StateOfMind,
   Workouts,
 } from './modules'
+import type { CategorySampleTyped } from './types/CategoryType'
+import type { CategoryTypeIdentifier } from './types/CategoryTypeIdentifier'
 import type { QuantityTypeIdentifier } from './types/QuantityTypeIdentifier'
+import type { QueryOptionsWithSortOrder } from './types/QueryOptions'
 import getMostRecentCategorySample from './utils/getMostRecentCategorySample'
 import getMostRecentQuantitySample from './utils/getMostRecentQuantitySample'
 import getMostRecentWorkout from './utils/getMostRecentWorkout'
@@ -100,8 +103,30 @@ export const getWheelchairUse =
 export const isHealthDataAvailable = Core.isHealthDataAvailable.bind(Core)
 export const isHealthDataAvailableAsync =
   Core.isHealthDataAvailableAsync.bind(Core)
-export const queryCategorySamples =
-  CategoryTypes.queryCategorySamples.bind(CategoryTypes)
+
+/**
+ * Query category samples with improved defaults for comprehensive data retrieval.
+ *
+ * By default, returns unlimited samples (instead of just 20) to better support
+ * use cases like sleep analysis where a full night's sleep can generate many samples.
+ *
+ * @param identifier - The category type identifier to query
+ * @param options - Query options. If no limit is specified, returns unlimited samples.
+ * @returns Promise resolving to an array of category samples
+ */
+export function queryCategorySamples<T extends CategoryTypeIdentifier>(
+  identifier: T,
+  options?: QueryOptionsWithSortOrder,
+): Promise<readonly CategorySampleTyped<T>[]> {
+  const enhancedOptions: QueryOptionsWithSortOrder = {
+    // Default to unlimited samples for better user experience, especially for sleep analysis
+    limit: Number.POSITIVE_INFINITY,
+    ...options,
+  }
+
+  return CategoryTypes.queryCategorySamples(identifier, enhancedOptions)
+}
+
 export const queryCategorySamplesWithAnchor =
   CategoryTypes.queryCategorySamplesWithAnchor.bind(CategoryTypes)
 export const queryCorrelationSamples =
