@@ -221,9 +221,11 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
                     if let error = error {
                         return continuation.resume(throwing: error)
                     }
-                    store.add(initializedSamples, to: workout) { (_, error: Error?) in
-                        if let error = error {
-                            return continuation.resume(throwing: error)
+                    if !initializedSamples.isEmpty {
+                        store.add(initializedSamples, to: workout) { (_, error: Error?) in
+                            if let error = error {
+                                return continuation.resume(throwing: error)
+                            }
                         }
                     }
                     return continuation.resume()
