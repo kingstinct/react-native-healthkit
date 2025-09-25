@@ -88,7 +88,7 @@ const Subscriptions = () => {
   }, [])
 
   return (
-    <Host>
+    <Host style={{ flex: 1 }}>
       <List scrollEnabled>
         <Text>Listening for new events..</Text>
         <Section title="Events">

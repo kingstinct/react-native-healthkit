@@ -61,7 +61,7 @@ export default function WorkoutDetails() {
   }
 
   return (
-    <Host>
+    <Host style={{ flex: 1 }}>
       <List scrollEnabled>
         {queryTime ? (
           <Section title="Query Information">

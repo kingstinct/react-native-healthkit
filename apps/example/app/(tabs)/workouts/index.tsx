@@ -49,7 +49,7 @@ export default function WorkoutsScreen() {
         deletedSamples={deletedSamples}
         onFetchMore={() => queryWorkoutSamples(anchor)}
       />
-      <Host>
+      <Host style={{ flex: 1 }}>
         <List scrollEnabled>
           {workouts.map((item) => (
             <ListItem

@@ -77,7 +77,7 @@ const CoreTab = () => {
   }, [])
 
   return (
-    <Host>
+    <Host style={{ flex: 1 }}>
       <List
         scrollEnabled
         // editModeEnabled={editModeEnabled}

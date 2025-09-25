@@ -3,10 +3,13 @@ import {
   ContextMenu,
   DateTimePicker,
   Host,
+  HStack,
   List,
   Picker,
   Switch,
+  VStack,
 } from '@expo/ui/swift-ui'
+import { frame } from '@expo/ui/swift-ui/modifiers'
 import {
   type FilterForSamples,
   queryQuantitySamplesWithAnchor,
@@ -120,96 +123,99 @@ export default function QuantitiesScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Host style={{ marginHorizontal: 16, marginTop: 16 }}>
-        <DateTimePicker
-          onDateSelected={(date) => {
-            setFromDate(date)
-          }}
-          displayedComponents="dateAndTime"
-          initialDate={fromDate.toISOString()}
-          variant="automatic"
-          title="From"
-        />
-      </Host>
-      <Host style={{ marginHorizontal: 16 }}>
-        <DateTimePicker
-          onDateSelected={(date) => {
-            setToDate(date)
-          }}
-          displayedComponents="dateAndTime"
-          initialDate={toDate.toISOString()}
-          variant="automatic"
-          title="To"
-        />
-      </Host>
-      <Host style={{ marginHorizontal: 16, marginTop: 16 }}>
-        <Picker
-          options={PICKER_OPTIONS}
-          selectedIndex={PICKER_OPTIONS.indexOf(selectedOption)}
-          onOptionSelected={({ nativeEvent: { index } }) => {
-            // biome-ignore lint/style/noNonNullAssertion: index is always valid
-            setSelectedOption(PICKER_OPTIONS[index]!)
-          }}
-          variant="segmented"
-        />
-      </Host>
-      <QueryInfo
-        queryTime={queryTime}
-        anchor={anchor}
-        onFetchMore={queryQuantitySamples}
-      />
-      <Host>
-        <ContextMenu style={{ margin: 16 }}>
-          <ContextMenu.Items>
-            {AllQuantityTypeIdentifierInApp.map((quantityType) => (
-              <Button
-                key={quantityType}
-                variant="bordered"
-                systemImage={
-                  quantityType === selectedQuantityType
-                    ? 'checkmark.circle'
-                    : undefined
-                }
-                onPress={() => {
-                  setSelectedQuantityType(quantityType)
-                }}
-              >
-                {transformQuantityIdentifierToName(quantityType)}
+      <Host style={{ marginHorizontal: 16, marginTop: 16, flex: 1 }}>
+        <VStack
+          spacing={16}
+          modifiers={[frame({ height: 200, width: 200, alignment: 'center' })]}
+        >
+          <DateTimePicker
+            onDateSelected={(date) => {
+              setFromDate(date)
+            }}
+            displayedComponents="dateAndTime"
+            initialDate={fromDate.toISOString()}
+            modifiers={[frame({ height: 100 })]}
+            variant="automatic"
+            title="From"
+          />
+          <DateTimePicker
+            onDateSelected={(date) => {
+              setToDate(date)
+            }}
+            displayedComponents="dateAndTime"
+            initialDate={toDate.toISOString()}
+            variant="automatic"
+            title="To"
+          />
+        </VStack>
+        <VStack>
+          <Picker
+            options={PICKER_OPTIONS}
+            selectedIndex={PICKER_OPTIONS.indexOf(selectedOption)}
+            onOptionSelected={({ nativeEvent: { index } }) => {
+              // biome-ignore lint/style/noNonNullAssertion: index is always valid
+              setSelectedOption(PICKER_OPTIONS[index]!)
+            }}
+            variant="segmented"
+          />
+
+          <QueryInfo
+            queryTime={queryTime}
+            anchor={anchor}
+            onFetchMore={queryQuantitySamples}
+          />
+          <ContextMenu>
+            <ContextMenu.Items>
+              {AllQuantityTypeIdentifierInApp.map((quantityType) => (
+                <Button
+                  key={quantityType}
+                  variant="bordered"
+                  systemImage={
+                    quantityType === selectedQuantityType
+                      ? 'checkmark.circle'
+                      : undefined
+                  }
+                  onPress={() => {
+                    setSelectedQuantityType(quantityType)
+                  }}
+                >
+                  {transformQuantityIdentifierToName(quantityType)}
+                </Button>
+              ))}
+            </ContextMenu.Items>
+            <ContextMenu.Trigger>
+              <Button variant="bordered">
+                {transformQuantityIdentifierToName(selectedQuantityType)}
               </Button>
-            ))}
-          </ContextMenu.Items>
-          <ContextMenu.Trigger>
-            <Button variant="bordered">
-              {transformQuantityIdentifierToName(selectedQuantityType)}
-            </Button>
-          </ContextMenu.Trigger>
-        </ContextMenu>
-      </Host>
-      <Host style={{ marginHorizontal: 16 }}>
-        <Switch
-          value={includeUserEntered}
-          onValueChange={setIncludeUserEntered}
-          label="Include user entered"
-          variant="switch"
-        />
-      </Host>
-      <Host>
-        <List scrollEnabled>
-          {quantitySamples.map((item) => {
-            const quantityStr = item.quantity
-              ? `${Math.round(item.quantity * 100) / 100} ${item.unit}`
-              : 'Unknown Quantity'
-            console.log('quantityStr', quantityStr)
-            return (
-              <ListItem
-                key={item.uuid}
-                title={quantityStr}
-                subtitle={item.startDate.toLocaleString()}
-              />
-            )
-          })}
-          <View style={{ height: 100 }} />
-        </List>
+            </ContextMenu.Trigger>
+          </ContextMenu>
+
+          <Switch
+            value={includeUserEntered}
+            onValueChange={setIncludeUserEntered}
+            label="Include user entered"
+            variant="switch"
+          />
+        </VStack>
+
+        <VStack>
+          <List scrollEnabled>
+            {quantitySamples.map((item) => {
+              const quantityStr = item.quantity
+                ? `${Math.round(item.quantity * 100) / 100} ${item.unit}`
+                : 'Unknown Quantity'
+              console.log('quantityStr', quantityStr)
+              return (
+                <ListItem
+                  key={item.uuid}
+                  title={quantityStr}
+                  subtitle={item.startDate.toLocaleString()}
+                />
+              )
+            })}
+            <View style={{ height: 100 }} />
+          </List>
+        </VStack>
       </Host>
     </View>
   )

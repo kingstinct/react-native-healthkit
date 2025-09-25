@@ -57,6 +57,10 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.0",
     "pkg-pr-new": "^0.0.60",
+    "react-test-renderer": "19.1.0",
     "typescript": "~5.9.2"
+  },
+  "resolutions": {
+    "react-test-renderer": "19.1.0"
   }
 }
