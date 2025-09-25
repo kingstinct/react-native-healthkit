@@ -1,4 +1,4 @@
-import { List } from '@expo/ui/swift-ui'
+import { Host, List } from '@expo/ui/swift-ui'
 import { queryWorkoutSamplesWithAnchor } from '@kingstinct/react-native-healthkit'
 import {
   WorkoutActivityType,
@@ -49,21 +49,23 @@ export default function WorkoutsScreen() {
         deletedSamples={deletedSamples}
         onFetchMore={() => queryWorkoutSamples(anchor)}
       />
-
-      <List scrollEnabled>
-        {workouts.map((item) => (
-          <ListItem
-            key={item.uuid}
-            title={
-              workoutActivityTypeStrings[item.workoutActivityType] || 'Unknown'
-            }
-            subtitle={item.startDate.toLocaleString()}
-            onPress={() =>
-              router.push(`/workouts/details?workoutId=${item.uuid}`)
-            }
-          />
-        ))}
-      </List>
+      <Host>
+        <List scrollEnabled>
+          {workouts.map((item) => (
+            <ListItem
+              key={item.uuid}
+              title={
+                workoutActivityTypeStrings[item.workoutActivityType] ||
+                'Unknown'
+              }
+              subtitle={item.startDate.toLocaleString()}
+              onPress={() =>
+                router.push(`/workouts/details?workoutId=${item.uuid}`)
+              }
+            />
+          ))}
+        </List>
+      </Host>
     </View>
   )
 }

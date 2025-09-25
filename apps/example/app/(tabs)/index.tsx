@@ -1,5 +1,4 @@
-import { List } from '@expo/ui/swift-ui'
-import { Section } from '@expo/ui/swift-ui-primitives'
+import { Host, List, Section } from '@expo/ui/swift-ui'
 import HealthKit, {
   getBloodType,
   getFitzpatrickSkinType,
@@ -78,50 +77,51 @@ const CoreTab = () => {
   }, [])
 
   return (
-    <List
-      scrollEnabled
-      // editModeEnabled={editModeEnabled}
-      onSelectionChange={(items) =>
-        alert(`indexes of selected items: ${items.join(', ')}`)
-      }
-      // moveEnabled={moveEnabled}
-      onMoveItem={(from, to) =>
-        alert(`moved item at index ${from} to index ${to}`)
-      }
-      onDeleteItem={(item) => alert(`deleted item at index: ${item}`)}
-      style={{ flex: 1, marginBottom: 100 }}
-      listStyle="automatic"
-      // deleteEnabled={deleteEnabled}
-      // selectEnabled={selectEnabled}
-    >
-      <Section title="Characteristics">
-        {characteristics.map((item) => (
-          <ListItem
-            key={item.title}
-            title={item.title}
-            subtitle={item.subtitle}
-          />
-        ))}
-      </Section>
-      <Section title="Device">
-        {coreStuffDefaults.map((item) => (
-          <ListItem
-            key={item.title}
-            title={item.title}
-            subtitle={item.subtitle}
-          />
-        ))}
-      </Section>
-      <Section title="Units">
-        {coreStuff.map((item) => (
-          <ListItem
-            key={item.title}
-            title={item.title}
-            subtitle={item.subtitle}
-          />
-        ))}
-      </Section>
-    </List>
+    <Host>
+      <List
+        scrollEnabled
+        // editModeEnabled={editModeEnabled}
+        onSelectionChange={(items) =>
+          alert(`indexes of selected items: ${items.join(', ')}`)
+        }
+        // moveEnabled={moveEnabled}
+        onMoveItem={(from, to) =>
+          alert(`moved item at index ${from} to index ${to}`)
+        }
+        onDeleteItem={(item) => alert(`deleted item at index: ${item}`)}
+        listStyle="automatic"
+        // deleteEnabled={deleteEnabled}
+        // selectEnabled={selectEnabled}
+      >
+        <Section title="Characteristics">
+          {characteristics.map((item) => (
+            <ListItem
+              key={item.title}
+              title={item.title}
+              subtitle={item.subtitle}
+            />
+          ))}
+        </Section>
+        <Section title="Device">
+          {coreStuffDefaults.map((item) => (
+            <ListItem
+              key={item.title}
+              title={item.title}
+              subtitle={item.subtitle}
+            />
+          ))}
+        </Section>
+        <Section title="Units">
+          {coreStuff.map((item) => (
+            <ListItem
+              key={item.title}
+              title={item.title}
+              subtitle={item.subtitle}
+            />
+          ))}
+        </Section>
+      </List>
+    </Host>
   )
 }
 

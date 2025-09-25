@@ -49,14 +49,14 @@
     ]
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.6",
-    "@changesets/cli": "^2.29.5",
+    "@biomejs/biome": "^2.2.4",
+    "@changesets/cli": "^2.29.7",
     "@commitlint/config-conventional": "^19.8.1",
-    "@types/bun": "^1.2.18",
+    "@types/bun": "^1.2.22",
     "commitlint": "^19.8.1",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.2",
-    "pkg-pr-new": "^0.0.51",
-    "typescript": "~5.8.3"
+    "lint-staged": "^16.2.0",
+    "pkg-pr-new": "^0.0.60",
+    "typescript": "~5.9.2"
   }
 }

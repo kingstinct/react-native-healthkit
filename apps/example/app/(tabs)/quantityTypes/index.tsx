@@ -2,6 +2,7 @@ import {
   Button,
   ContextMenu,
   DateTimePicker,
+  Host,
   List,
   Picker,
   Switch,
@@ -119,7 +120,7 @@ export default function QuantitiesScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ marginHorizontal: 16, marginTop: 16 }}>
+      <Host style={{ marginHorizontal: 16, marginTop: 16 }}>
         <DateTimePicker
           onDateSelected={(date) => {
             setFromDate(date)
@@ -129,8 +130,8 @@ export default function QuantitiesScreen() {
           variant="automatic"
           title="From"
         />
-      </View>
-      <View style={{ marginHorizontal: 16 }}>
+      </Host>
+      <Host style={{ marginHorizontal: 16 }}>
         <DateTimePicker
           onDateSelected={(date) => {
             setToDate(date)
@@ -139,10 +140,9 @@ export default function QuantitiesScreen() {
           initialDate={toDate.toISOString()}
           variant="automatic"
           title="To"
-          style={{ marginTop: 16 }}
         />
-      </View>
-      <View style={{ marginHorizontal: 16, marginTop: 16 }}>
+      </Host>
+      <Host style={{ marginHorizontal: 16, marginTop: 16 }}>
         <Picker
           options={PICKER_OPTIONS}
           selectedIndex={PICKER_OPTIONS.indexOf(selectedOption)}
@@ -152,13 +152,13 @@ export default function QuantitiesScreen() {
           }}
           variant="segmented"
         />
-      </View>
+      </Host>
       <QueryInfo
         queryTime={queryTime}
         anchor={anchor}
         onFetchMore={queryQuantitySamples}
       />
-      <View>
+      <Host>
         <ContextMenu style={{ margin: 16 }}>
           <ContextMenu.Items>
             {AllQuantityTypeIdentifierInApp.map((quantityType) => (
@@ -179,36 +179,38 @@ export default function QuantitiesScreen() {
             ))}
           </ContextMenu.Items>
           <ContextMenu.Trigger>
-            <Button variant="bordered" style={{ width: 200, height: 10 }}>
+            <Button variant="bordered">
               {transformQuantityIdentifierToName(selectedQuantityType)}
             </Button>
           </ContextMenu.Trigger>
         </ContextMenu>
-      </View>
-      <View style={{ marginHorizontal: 16 }}>
+      </Host>
+      <Host style={{ marginHorizontal: 16 }}>
         <Switch
           value={includeUserEntered}
           onValueChange={setIncludeUserEntered}
           label="Include user entered"
           variant="switch"
         />
-      </View>
-      <List scrollEnabled>
-        {quantitySamples.map((item) => {
-          const quantityStr = item.quantity
-            ? `${Math.round(item.quantity * 100) / 100} ${item.unit}`
-            : 'Unknown Quantity'
-          console.log('quantityStr', quantityStr)
-          return (
-            <ListItem
-              key={item.uuid}
-              title={quantityStr}
-              subtitle={item.startDate.toLocaleString()}
-            />
-          )
-        })}
-        <View style={{ height: 100 }} />
-      </List>
+      </Host>
+      <Host>
+        <List scrollEnabled>
+          {quantitySamples.map((item) => {
+            const quantityStr = item.quantity
+              ? `${Math.round(item.quantity * 100) / 100} ${item.unit}`
+              : 'Unknown Quantity'
+            console.log('quantityStr', quantityStr)
+            return (
+              <ListItem
+                key={item.uuid}
+                title={quantityStr}
+                subtitle={item.startDate.toLocaleString()}
+              />
+            )
+          })}
+          <View style={{ height: 100 }} />
+        </List>
+      </Host>
     </View>
   )
 }

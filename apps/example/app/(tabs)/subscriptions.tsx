@@ -1,5 +1,4 @@
-import { List } from '@expo/ui/swift-ui'
-import { Section, Text } from '@expo/ui/swift-ui-primitives'
+import { Host, List, Section, Text } from '@expo/ui/swift-ui'
 import {
   enableBackgroundDelivery,
   subscribeToChanges,
@@ -89,20 +88,23 @@ const Subscriptions = () => {
   }, [])
 
   return (
-    <List scrollEnabled>
-      <Text>Listening for new events..</Text>
-      <Section title="Events">
-        {events.map((event, _index) => (
-          <ListItem
-            key={
-              event.sampleTypeIdentifier + event.timestamp.toLocaleTimeString()
-            }
-            title={transformIdentifierToName(event.sampleTypeIdentifier)}
-            subtitle={`${event.timestamp.toLocaleTimeString()}`}
-          />
-        ))}
-      </Section>
-    </List>
+    <Host>
+      <List scrollEnabled>
+        <Text>Listening for new events..</Text>
+        <Section title="Events">
+          {events.map((event, _index) => (
+            <ListItem
+              key={
+                event.sampleTypeIdentifier +
+                event.timestamp.toLocaleTimeString()
+              }
+              title={transformIdentifierToName(event.sampleTypeIdentifier)}
+              subtitle={`${event.timestamp.toLocaleTimeString()}`}
+            />
+          ))}
+        </Section>
+      </List>
+    </Host>
   )
 }
 

@@ -1,5 +1,11 @@
-import { Button, CircularProgress, Host } from '@expo/ui/swift-ui'
-import { HStack, Text, VStack } from '@expo/ui/swift-ui-primitives'
+import {
+  Button,
+  CircularProgress,
+  Host,
+  HStack,
+  Text,
+  VStack,
+} from '@expo/ui/swift-ui'
 import {
   getRequestStatusForAuthorization,
   requestAuthorization,
