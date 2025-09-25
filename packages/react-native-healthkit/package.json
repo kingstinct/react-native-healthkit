@@ -58,7 +58,7 @@
     "build": "bun run clean && bun run build:cjs && bun run build:esm && bun run build:types",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "bunx @biomejs/biome format --write",
-    "codegen": "bun run build && nitro-codegen --logLevel=\"debug\"",
+    "codegen": "bun run build && nitrogen --logLevel=\"debug\"",
     "test": "bun test",
     "prepublishOnly": "bun run build && bun run codegen"
   },
@@ -90,7 +90,7 @@
   "devDependencies": {
     "@testing-library/react-native": "^13.3.3",
     "@types/react": "~19.0.14",
-    "nitro-codegen": "^0.29.4",
+    "nitrogen": "^0.29.4",
     "react": "19.1.0",
     "react-native": "0.81.4",
     "react-native-nitro-modules": "^0.29.6",

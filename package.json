@@ -10,7 +10,7 @@
     "swiftlint": "swiftlint",
     "changeset-release": "cp README.md packages/react-native-healthkit && bunx changeset publish",
     "typescript": "tsc",
-    "codegen": "cd packages/react-native-healthkit && bun run nitro-codegen && cd ../../apps/example/ios && pod install",
+    "codegen": "cd packages/react-native-healthkit && bun run nitrogen && cd ../../apps/example/ios && pod install",
     "test": "cd packages/react-native-healthkit && bun run test",
     "prepare": "husky",
     "reinstall": "rm -rf node_modules/ && find . -name 'node_modules' -type d -prune -exec rm -rf '{}' + && bun install",

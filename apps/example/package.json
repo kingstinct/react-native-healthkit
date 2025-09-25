@@ -50,7 +50,7 @@
   "devDependencies": {
     "@babel/core": "^7.28.4",
     "@types/react": "~19.1.10",
-    "nitro-codegen": "^0.29.4",
+    "nitrogen": "^0.29.4",
     "typescript": "~5.9.2"
   },
   "private": true
