@@ -1,17 +1,19 @@
 import { Host, List, Section, Text } from '@expo/ui/swift-ui'
 import {
   enableBackgroundDelivery,
-  subscribeToChanges,
-  unsubscribeQueries,
+  UpdateFrequency,
 } from '@kingstinct/react-native-healthkit'
-import { UpdateFrequency } from '@kingstinct/react-native-healthkit/types/Background'
 import type { SampleTypeIdentifier } from '@kingstinct/react-native-healthkit/types/Shared'
-import { ImpactFeedbackStyle, impactAsync } from 'expo-haptics'
-import * as Notifications from 'expo-notifications'
-import { useEffect, useState } from 'react'
-import { AppState } from 'react-native'
+import {
+  getPermissionsAsync,
+  requestPermissionsAsync,
+} from 'expo-notifications'
+import { useAtom } from 'jotai'
+import { useEffect, useMemo } from 'react'
 import { ListItem } from '@/components/SwiftListItem'
 import { AllSampleTypesInApp } from '@/constants/AllUsedIdentifiersInApp'
+import { appStateEvents } from '@/state/appStateEvents'
+import { subscriptionEvents } from '@/state/subscriptionEvents'
 
 const transformIdentifierToName = (identifier: SampleTypeIdentifier) => {
   return identifier
@@ -22,69 +24,37 @@ const transformIdentifierToName = (identifier: SampleTypeIdentifier) => {
 }
 
 const Subscriptions = () => {
-  const [events, setEvents] = useState<
-    { sampleTypeIdentifier: SampleTypeIdentifier; timestamp: Date }[]
-  >([])
+  const [subscriptionEventss] = useAtom(subscriptionEvents)
+  const [eventsWithAppState] = useAtom(appStateEvents)
+
+  const allEvents = useMemo(
+    () =>
+      [...subscriptionEventss, ...eventsWithAppState].sort(
+        (a, b) => b.timestamp - a.timestamp,
+      ),
+    [subscriptionEventss, eventsWithAppState],
+  )
 
   useEffect(() => {
-    let subscriptionIds: string[] = []
     const init = async () => {
-      const _response = await Notifications.requestPermissionsAsync({
-        ios: {
-          provideAppNotificationSettings: true,
-          allowAlert: true,
-          allowSound: true,
-          allowBadge: true,
-        },
-      })
-
-      subscriptionIds = AllSampleTypesInApp.map((sampleType) => {
-        enableBackgroundDelivery(sampleType, UpdateFrequency.immediate)
-
-        return subscribeToChanges(sampleType, (args) => {
-          if (args.errorMessage) {
-            if (AppState.currentState === 'active') {
-              alert(
-                `Error in observer query for ${sampleType}: ${args.errorMessage}`,
-              )
-            } else {
-              Notifications.scheduleNotificationAsync({
-                content: {
-                  title: 'Error in observer query!',
-                  body: sampleType,
-                },
-                trigger: null,
-              })
-            }
-            return
-          }
-          if (AppState.currentState === 'active') {
-            impactAsync(ImpactFeedbackStyle.Light)
-          } else {
-            Notifications.scheduleNotificationAsync({
-              content: {
-                title: 'Got a new event!',
-                body: sampleType,
-              },
-              trigger: null,
-            })
-          }
-
-          setEvents((prevEvents) => [
-            {
-              sampleTypeIdentifier: args.typeIdentifier,
-              timestamp: new Date(),
-            },
-            ...prevEvents,
-          ])
+      const { status } = await getPermissionsAsync()
+      if (status !== 'granted') {
+        /*let subscriptionIds: string[] = [];*/
+        const _response = await requestPermissionsAsync({
+          ios: {
+            provideAppNotificationSettings: true,
+            allowAlert: true,
+            allowSound: true,
+            allowBadge: true,
+          },
         })
+      }
+
+      /*subscriptionIds =*/ AllSampleTypesInApp.forEach((sampleType) => {
+        enableBackgroundDelivery(sampleType, UpdateFrequency.immediate)
       })
     }
-    void init()
-
-    return () => {
-      unsubscribeQueries(subscriptionIds)
-    }
+    init()
   }, [])
 
   return (
@@ -92,14 +62,22 @@ const Subscriptions = () => {
       <List scrollEnabled>
         <Text>Listening for new events..</Text>
         <Section title="Events">
-          {events.map((event, _index) => (
+          {allEvents.map((event, _index) => (
             <ListItem
               key={
-                event.sampleTypeIdentifier +
-                event.timestamp.toLocaleTimeString()
+                ('sampleTypeIdentifier' in event
+                  ? event.sampleTypeIdentifier
+                  : event.appState) +
+                new Date(event.timestamp).valueOf().toString()
               }
-              title={transformIdentifierToName(event.sampleTypeIdentifier)}
-              subtitle={`${event.timestamp.toLocaleTimeString()}`}
+              title={
+                'sampleTypeIdentifier' in event
+                  ? transformIdentifierToName(
+                      event.sampleTypeIdentifier as SampleTypeIdentifier,
+                    )
+                  : event.appState
+              }
+              subtitle={`${new Date(event.timestamp).toLocaleTimeString()}`}
             />
           ))}
         </Section>
