@@ -49,6 +49,66 @@ func queryQuantitySamplesInternal(
 
 }
 
+func serializeStatistics(gottenStats: HKStatistics, unit: HKUnit) -> QueryStatisticsResponse {
+  var response = QueryStatisticsResponse()
+
+  response.startDate = gottenStats.startDate
+  response.endDate = gottenStats.endDate
+
+  if let averageQuantity = gottenStats.averageQuantity() {
+      response.averageQuantity = Quantity(
+          unit: unit.unitString,
+          quantity: averageQuantity.doubleValue(for: unit)
+      )
+  }
+  if let maximumQuantity = gottenStats.maximumQuantity() {
+      response.maximumQuantity = Quantity(
+          unit: unit.unitString,
+          quantity: maximumQuantity.doubleValue(for: unit)
+      )
+  }
+  if let minimumQuantity = gottenStats.minimumQuantity() {
+      response.minimumQuantity = Quantity(
+          unit: unit.unitString,
+          quantity: minimumQuantity.doubleValue(for: unit)
+      )
+  }
+  if let sumQuantity = gottenStats.sumQuantity() {
+      response.sumQuantity = Quantity(
+          unit: unit.unitString,
+          quantity: sumQuantity.doubleValue(for: unit)
+      )
+  }
+
+  if #available(iOS 12, *) {
+      if let mostRecent = gottenStats.mostRecentQuantity() {
+          response.mostRecentQuantity = Quantity(
+              unit: unit.unitString,
+              quantity: mostRecent.doubleValue(for: unit)
+          )
+      }
+
+      if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
+          response.mostRecentQuantityDateInterval = QuantityDateInterval(
+              from: mostRecentDateInterval.start,
+              to: mostRecentDateInterval.end
+          )
+      }
+  }
+
+  if #available(iOS 13, *) {
+      if let duration = gottenStats.duration() {
+          let durationUnit = HKUnit.second()
+          response.duration = Quantity(
+              unit: durationUnit.unitString,
+              quantity: duration.doubleValue(for: durationUnit)
+          )
+      }
+  }
+
+  return response
+}
+
 func saveQuantitySampleInternal(
   typeIdentifier: HKQuantityType,
   unitString: String,
@@ -190,61 +250,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
                             return
                         }
 
-                        var response = QueryStatisticsResponse()
-
-                        response.startDate = gottenStats.startDate
-                        response.endDate = gottenStats.endDate
-
-                        if let averageQuantity = gottenStats.averageQuantity() {
-                            response.averageQuantity = Quantity(
-                                unit: unit.unitString,
-                                quantity: averageQuantity.doubleValue(for: unit)
-                            )
-                        }
-                        if let maximumQuantity = gottenStats.maximumQuantity() {
-                            response.maximumQuantity = Quantity(
-                                unit: unit.unitString,
-                                quantity: maximumQuantity.doubleValue(for: unit)
-                            )
-                        }
-                        if let minimumQuantity = gottenStats.minimumQuantity() {
-                            response.minimumQuantity = Quantity(
-                                unit: unit.unitString,
-                                quantity: minimumQuantity.doubleValue(for: unit)
-                            )
-                        }
-                        if let sumQuantity = gottenStats.sumQuantity() {
-                            response.sumQuantity = Quantity(
-                                unit: unit.unitString,
-                                quantity: sumQuantity.doubleValue(for: unit)
-                            )
-                        }
-
-                        if #available(iOS 12, *) {
-                            if let mostRecent = gottenStats.mostRecentQuantity() {
-                                response.mostRecentQuantity = Quantity(
-                                    unit: unit.unitString,
-                                    quantity: mostRecent.doubleValue(for: unit)
-                                )
-                            }
-
-                            if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
-                                response.mostRecentQuantityDateInterval = QuantityDateInterval(
-                                    from: mostRecentDateInterval.start,
-                                    to: mostRecentDateInterval.end
-                                )
-                            }
-                        }
-
-                        if #available(iOS 13, *) {
-                            if let duration = gottenStats.duration() {
-                                let durationUnit = HKUnit.second()
-                                response.duration = Quantity(
-                                    unit: durationUnit.unitString,
-                                    quantity: duration.doubleValue(for: durationUnit)
-                                )
-                            }
-                        }
+                        var response = serializeStatistics(gottenStats: gottenStats, unit: unit)
 
                         continuation.resume(returning: response)
                     }
@@ -326,61 +332,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
                     }
 
                     statistics.enumerateStatistics(from: enumerateFrom, to: enumerateTo) { stats, _ in
-                        var response = QueryStatisticsResponse()
-
-                        response.startDate = stats.startDate
-                        response.endDate = stats.endDate
-
-                        if let averageQuantity = stats.averageQuantity() {
-                            response.averageQuantity = Quantity(
-                                unit: unit.unitString,
-                                quantity: averageQuantity.doubleValue(for: unit)
-                            )
-                        }
-                        if let maximumQuantity = stats.maximumQuantity() {
-                            response.maximumQuantity = Quantity(
-                                unit: unit.unitString,
-                                quantity: maximumQuantity.doubleValue(for: unit)
-                            )
-                        }
-                        if let minimumQuantity = stats.minimumQuantity() {
-                            response.minimumQuantity = Quantity(
-                                unit: unit.unitString,
-                                quantity: minimumQuantity.doubleValue(for: unit)
-                            )
-                        }
-                        if let sumQuantity = stats.sumQuantity() {
-                            response.sumQuantity = Quantity(
-                                unit: unit.unitString,
-                                quantity: sumQuantity.doubleValue(for: unit)
-                            )
-                        }
-
-                        if #available(iOS 12, *) {
-                            if let mostRecent = stats.mostRecentQuantity() {
-                                response.mostRecentQuantity = Quantity(
-                                    unit: unit.unitString,
-                                    quantity: mostRecent.doubleValue(for: unit)
-                                )
-                            }
-
-                            if let mostRecentDateInterval = stats.mostRecentQuantityDateInterval() {
-                                response.mostRecentQuantityDateInterval = QuantityDateInterval(
-                                    from: mostRecentDateInterval.start,
-                                    to: mostRecentDateInterval.end
-                                )
-                            }
-                        }
-
-                        if #available(iOS 13, *) {
-                            if let duration = stats.duration() {
-                                let durationUnit = HKUnit.second()
-                                response.duration = Quantity(
-                                    unit: durationUnit.unitString,
-                                    quantity: duration.doubleValue(for: durationUnit)
-                                )
-                            }
-                        }
+                        var response = serializeStatistics(gottenStats: stats, unit: unit)
 
                         responseArray.append(response)
                     }

@@ -1,4 +1,4 @@
-import { Host, List } from '@expo/ui/swift-ui'
+import { Host, List, VStack } from '@expo/ui/swift-ui'
 import { queryWorkoutSamplesWithAnchor } from '@kingstinct/react-native-healthkit'
 import {
   WorkoutActivityType,
@@ -42,14 +42,15 @@ export default function WorkoutsScreen() {
   }, [queryWorkoutSamples])
 
   return (
-    <View style={{ flex: 1 }}>
-      <QueryInfo
-        queryTime={queryTime}
-        anchor={anchor}
-        deletedSamples={deletedSamples}
-        onFetchMore={() => queryWorkoutSamples(anchor)}
-      />
-      <Host style={{ flex: 1 }}>
+    <Host style={{ flex: 1 }}>
+      <VStack>
+        <QueryInfo
+          queryTime={queryTime}
+          anchor={anchor}
+          deletedSamples={deletedSamples}
+          onFetchMore={() => queryWorkoutSamples(anchor)}
+        />
+
         <List scrollEnabled>
           {workouts.map((item) => (
             <ListItem
@@ -65,7 +66,7 @@ export default function WorkoutsScreen() {
             />
           ))}
         </List>
-      </Host>
-    </View>
+      </VStack>
+    </Host>
   )
 }

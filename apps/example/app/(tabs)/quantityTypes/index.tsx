@@ -21,15 +21,7 @@ import { View } from 'react-native'
 import { QueryInfo } from '@/components/QueryInfo'
 import { ListItem } from '@/components/SwiftListItem'
 import { AllQuantityTypeIdentifierInApp } from '@/constants/AllUsedIdentifiersInApp'
-
-const transformQuantityIdentifierToName = (
-  identifier: QuantityTypeIdentifier,
-) => {
-  return identifier
-    .replace('HKQuantityTypeIdentifier', '')
-    .replace(/([A-Z])/g, ' $1')
-    .trim()
-}
+import { transformQuantityIdentifierToName } from '@/utils/transformQuantityIdentifierToName'
 
 const PICKER_OPTIONS: ['Descending', 'Ascending', 'Anchor'] = [
   'Descending',

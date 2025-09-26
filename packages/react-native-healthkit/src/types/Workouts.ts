@@ -215,16 +215,12 @@ export type FilterForWorkouts =
   | PredicateForWorkoutsAnd
 
 export interface WorkoutQueryOptionsWithAnchor {
-  energyUnit?: string
-  distanceUnit?: string
   filter?: FilterForWorkouts
   limit?: number
   anchor?: string
 }
 
 export interface WorkoutQueryOptions {
-  energyUnit?: string
-  distanceUnit?: string
   filter?: FilterForWorkouts
   limit?: number
   ascending?: boolean
@@ -269,10 +265,6 @@ export interface WorkoutSample {
   readonly device?: Device
   readonly workoutActivityType: WorkoutActivityType
   readonly duration: Quantity
-  readonly totalDistance?: Quantity
-  readonly totalEnergyBurned?: Quantity
-  readonly totalSwimmingStrokeCount?: Quantity
-  readonly totalFlightsClimbed?: Quantity
   readonly startDate: Date
   readonly endDate: Date
   readonly metadata?: AnyMap

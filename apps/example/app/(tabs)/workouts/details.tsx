@@ -1,5 +1,8 @@
 import { Host, List, Section } from '@expo/ui/swift-ui'
-import { queryWorkoutSamples } from '@kingstinct/react-native-healthkit'
+import {
+  type QueryStatisticsResponse,
+  queryWorkoutSamples,
+} from '@kingstinct/react-native-healthkit'
 import type { WorkoutProxy } from '@kingstinct/react-native-healthkit/specs/WorkoutProxy.nitro'
 import {
   WorkoutActivityType,
@@ -10,6 +13,7 @@ import { useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { ListItem } from '@/components/SwiftListItem'
 import { enumKeyLookup } from '@/utils/enumKeyLookup'
+import { transformQuantityIdentifierToName } from '@/utils/transformQuantityIdentifierToName'
 
 const workoutActivityTypeStrings = enumKeyLookup(WorkoutActivityType)
 
@@ -24,6 +28,15 @@ export default function WorkoutDetails() {
 
   const [queryTime, setQueryTime] = useState<number>()
   const [routesQueryTime, setRoutesQueryTime] = useState<number>()
+  const [allStatistics, setAllStatistics] = useState<
+    Record<string, QueryStatisticsResponse>
+  >({})
+
+  useEffect(() => {
+    workout?.getAllStatistics().then((stats) => {
+      setAllStatistics(stats)
+    })
+  }, [workout])
 
   useEffect(() => {
     if (!workoutId) {
@@ -141,6 +154,18 @@ export default function WorkoutDetails() {
             ) : null}
           </Section>
         ) : null}
+
+        {allStatistics && Object.keys(allStatistics).length > 0 && (
+          <Section title="Statistics">
+            {Object.entries(allStatistics).map(([key, value]) => (
+              <ListItem
+                key={key}
+                title={transformQuantityIdentifierToName(key as any)}
+                subtitle={JSON.stringify(value, null, 2)}
+              />
+            ))}
+          </Section>
+        )}
 
         {workout.metadata && Object.keys(workout.metadata).length > 0 && (
           <Section title="Metadata">

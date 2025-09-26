@@ -57,10 +57,6 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
         let limit = getQueryLimit(options.limit)
 
         return Promise.async {
-            let energyUnit = try await getUnitToUse(unitOverride: options.energyUnit, quantityType: HKQuantityType(.activeEnergyBurned))
-
-            let distanceUnit = try await getUnitToUse(unitOverride: options.distanceUnit, quantityType: HKQuantityType(.distanceWalkingRunning))
-
             return try await withCheckedThrowingContinuation { continuation in
                 let q = HKSampleQuery(
                     sampleType: .workoutType(),
@@ -79,9 +75,7 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
                     let workoutProxies = samples.compactMap { s in
                         if let workout = s as? HKWorkout {
                             return WorkoutProxy.init(
-                                workout: workout,
-                                distanceUnit: distanceUnit,
-                                energyUnit: energyUnit
+                                workout: workout
                             )
                         }
                         return nil
@@ -233,9 +227,7 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
             }) as Void
 
             return WorkoutProxy.init(
-                workout: workout,
-                distanceUnit: .meter(),
-                energyUnit: .kilocalorie()
+                workout: workout
             )
         }
     }
@@ -248,9 +240,6 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
         let actualAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
 
         return Promise.async {
-            let energyUnit = try await getUnitToUse(unitOverride: options.energyUnit, quantityType: HKQuantityType(.activeEnergyBurned))
-
-            let distanceUnit = try await getUnitToUse(unitOverride: options.energyUnit, quantityType: HKQuantityType(.distanceWalkingRunning))
 
             return try await withCheckedThrowingContinuation { continuation in
                 let q = HKAnchoredObjectQuery(
@@ -282,8 +271,6 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
                         if let workout = s as? HKWorkout {
                             return WorkoutProxy.init(
                                 workout: workout,
-                                distanceUnit: distanceUnit,
-                                energyUnit: energyUnit
                             )
                         }
                         return nil

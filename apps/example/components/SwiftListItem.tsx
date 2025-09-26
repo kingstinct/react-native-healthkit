@@ -1,6 +1,6 @@
 import { Button, HStack, Text } from '@expo/ui/swift-ui'
+import { frame, padding } from '@expo/ui/swift-ui/modifiers'
 import { Pressable, View } from 'react-native'
-import { Spacer } from './Spacer'
 import { ThemedText } from './ThemedText'
 
 export type ListItemProps = {
@@ -11,10 +11,17 @@ export type ListItemProps = {
 
 export const ListItem = ({ title, subtitle, onPress }: ListItemProps) => (
   <HStack>
-    <Text>{title}</Text>
-    {onPress ? <Button onPress={onPress}> </Button> : <Spacer />}
+    <Text modifiers={[frame({ minWidth: 0 }), padding({ trailing: 6 })]}>
+      {title}
+    </Text>
+    {onPress ? <Button onPress={onPress}> </Button> : null}
     {subtitle && (
-      <Text size={12} weight="light" design="monospaced">
+      <Text
+        size={12}
+        weight="light"
+        design="monospaced"
+        modifiers={[frame({ maxWidth: Infinity, alignment: 'trailing' })]}
+      >
         {subtitle}
       </Text>
     )}
