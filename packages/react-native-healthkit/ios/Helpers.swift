@@ -20,7 +20,7 @@ func dateOrNilIfZero(_ timestamp: Double?) -> Date? {
 
 }
 
-func getQueryLimit(_ limit: Double?, defaultToNoLimit: Bool = false) -> Int {
+func getQueryLimit(_ limit: Double?) -> Int {
     if let limit = limit {
         if limit == .infinity || limit <= 0 {
             return HKObjectQueryNoLimit

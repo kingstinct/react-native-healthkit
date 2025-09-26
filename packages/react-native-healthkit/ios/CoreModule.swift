@@ -290,15 +290,6 @@ class CoreModule: HybridCoreModuleSpec {
         }
     }
 
-    /*func responder(
-      typeIdentifier: String
-      query: HKObserverQuery,
-      handler: @escaping HKObserverQueryCompletionHandler,
-      error: Error?,
-    ) {
-        
-    }*/
-
     func subscribeToObserverQuery(
         typeIdentifier: SampleTypeIdentifier,
         callback: @escaping (OnChangeCallbackArgs) -> Void
