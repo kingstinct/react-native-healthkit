@@ -3,7 +3,6 @@ import {
   ContextMenu,
   DateTimePicker,
   Host,
-  HStack,
   List,
   Picker,
   Switch,
@@ -123,11 +122,8 @@ export default function QuantitiesScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Host style={{ marginHorizontal: 16, marginTop: 16, flex: 1 }}>
-        <VStack
-          spacing={16}
-          modifiers={[frame({ height: 200, width: 200, alignment: 'center' })]}
-        >
+      <Host style={{ flex: 1 }}>
+        <VStack spacing={6}>
           <DateTimePicker
             onDateSelected={(date) => {
               setFromDate(date)
@@ -147,8 +143,7 @@ export default function QuantitiesScreen() {
             variant="automatic"
             title="To"
           />
-        </VStack>
-        <VStack>
+
           <Picker
             options={PICKER_OPTIONS}
             selectedIndex={PICKER_OPTIONS.indexOf(selectedOption)}
@@ -196,9 +191,7 @@ export default function QuantitiesScreen() {
             label="Include user entered"
             variant="switch"
           />
-        </VStack>
 
-        <VStack>
           <List scrollEnabled>
             {quantitySamples.map((item) => {
               const quantityStr = item.quantity
