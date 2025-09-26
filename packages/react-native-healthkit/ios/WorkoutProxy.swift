@@ -149,17 +149,16 @@ func getSerializedWorkoutLocations(
         previousLocation: i == 0 ? nil : routeCLLocations[i - 1]
       )
     }
-    // let routeInfos: WorkoutRoute = ["locations": routeLocations]
 
     allRoutes.append(
       WorkoutRoute(
         locations: routeLocations,
-        HKMetadataKeySyncIdentifier: routeMetadata.getString(
+        HKMetadataKeySyncIdentifier: routeMetadata.isString(key: "HKMetadataKeySyncIdentifier") ?  routeMetadata.getString(
           key: "HKMetadataKeySyncIdentifier"
-        ),
-        HKMetadataKeySyncVersion: routeMetadata.getDouble(
+        ) : nil,
+        HKMetadataKeySyncVersion: routeMetadata.isDouble(key: "HKMetadataKeySyncVersion") ? routeMetadata.getDouble(
           key: "HKMetadataKeySyncVersion"
-        )
+        ) : nil
       )
     )
   }
