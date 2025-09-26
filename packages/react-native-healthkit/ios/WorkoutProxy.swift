@@ -311,9 +311,8 @@ class WorkoutProxy: HybridWorkoutProxySpec {
 
   var totalEnergyBurned: Quantity? {
     get {
-      let energyUnit = getUnitForQuantityType(quantityType: HKQuantityType(HKQuantityTypeIdentifier.activeEnergyBurned))
       return serializeQuantityTyped(
-        unit: energyUnit!,
+        unit: HKUnit.kilocalorie(),
         quantityNullable: workout.totalEnergyBurned
       )
     }
