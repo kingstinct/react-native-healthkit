@@ -91,6 +91,10 @@ func getUnitForQuantityType(quantityType: HKQuantityType) -> HKUnit? {
         return HKUnit.meter()
     }
 
+    if quantityType.is(compatibleWith: HKUnit.degreeCelsius()) {
+        return HKUnit.degreeCelsius()
+    }
+
     if quantityType.is(compatibleWith: SpeedUnit) {
         return SpeedUnit
     }
@@ -154,6 +158,10 @@ func serializeUnknownQuantityTyped(quantity: HKQuantity?) -> Quantity? {
 
     if quantity.is(compatibleWith: HKUnit.meter()) {
         return serializeQuantityTyped(unit: HKUnit.meter(), quantity: quantity)
+    }
+
+    if quantity.is(compatibleWith: HKUnit.degreeCelsius()) {
+        return serializeQuantityTyped(unit: HKUnit.degreeCelsius(), quantity: quantity)
     }
 
     if #available(iOS 11, *) {
