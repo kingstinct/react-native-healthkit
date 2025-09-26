@@ -1,5 +1,19 @@
 # @kingstinct/react-native-healthkit
 
+## 11.0.0
+### Major Changes
+
+- 0d2f969: - Clean up subscription logic (fixing #207)
+  - Using new workout statistics API, decoupling energy/distance units from workout (fixing #223 #180)
+  - Add null check for some Workout Route metadata preventing crashes for samples missing these (fixing #198)
+  - Expose temperature in workout metadata (fixing #181)
+  - Fix correlation sample saving issue (fixes #230)
+  - Upgrade example project to make sure everything works with latest stable Expo version
+
+### Patch Changes
+
+- 107d584: fix: saveWorkoutSample crash with empty quantities
+
 ## 10.1.0
 ### Minor Changes
 
