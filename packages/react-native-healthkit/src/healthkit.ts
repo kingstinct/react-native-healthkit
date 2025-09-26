@@ -231,6 +231,20 @@ export const queryHeartbeatSeriesSamplesWithAnchor = UnavailableFnFromModule(
   }),
 )
 
+export const queryElectrocardiogramSamples = UnavailableFnFromModule(
+  'queryElectrocardiogramSamples',
+  Promise.resolve([]),
+)
+
+export const queryElectrocardiogramSamplesWithAnchor = UnavailableFnFromModule(
+  'queryElectrocardiogramSamplesWithAnchor',
+  Promise.resolve({
+    samples: [],
+    deletedSamples: [],
+    newAnchor: '',
+  }),
+)
+
 // WorkoutsModule functions
 export const queryWorkoutSamples = UnavailableFnFromModule(
   'queryWorkoutSamples',
@@ -388,6 +402,8 @@ const HealthkitModule = {
   queryCorrelationSamples,
   queryHeartbeatSeriesSamples,
   queryHeartbeatSeriesSamplesWithAnchor,
+  queryElectrocardiogramSamples,
+  queryElectrocardiogramSamplesWithAnchor,
   queryQuantitySamples,
   queryQuantitySamplesWithAnchor,
   queryStatisticsForQuantity,

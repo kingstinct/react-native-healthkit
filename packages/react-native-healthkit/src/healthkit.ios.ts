@@ -12,6 +12,7 @@ import {
   Characteristics,
   Core,
   CorrelationTypes,
+  Electrocardiograms,
   HeartbeatSeries,
   QuantityTypes,
   StateOfMind,
@@ -110,6 +111,12 @@ export const queryHeartbeatSeriesSamples =
   HeartbeatSeries.queryHeartbeatSeriesSamples.bind(HeartbeatSeries)
 export const queryHeartbeatSeriesSamplesWithAnchor =
   HeartbeatSeries.queryHeartbeatSeriesSamplesWithAnchor.bind(HeartbeatSeries)
+export const queryElectrocardiogramSamples =
+  Electrocardiograms.queryElectrocardiogramSamples.bind(Electrocardiograms)
+export const queryElectrocardiogramSamplesWithAnchor =
+  Electrocardiograms.queryElectrocardiogramSamplesWithAnchor.bind(
+    Electrocardiograms,
+  )
 export const queryQuantitySamples =
   QuantityTypes.queryQuantitySamples.bind(QuantityTypes)
 export const queryQuantitySamplesWithAnchor =
@@ -194,6 +201,8 @@ export default {
   queryCorrelationSamples,
   queryHeartbeatSeriesSamples,
   queryHeartbeatSeriesSamplesWithAnchor,
+  queryElectrocardiogramSamples,
+  queryElectrocardiogramSamplesWithAnchor,
   queryQuantitySamples,
   queryQuantitySamplesWithAnchor,
   queryStatisticsForQuantity,
