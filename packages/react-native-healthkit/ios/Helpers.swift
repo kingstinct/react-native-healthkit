@@ -29,7 +29,7 @@ func getQueryLimit(_ limit: Double?) -> Int {
         return Int(limit)
     }
 
-    return DEFAULT_QUERY_LIMIT
+    return HKObjectQueryNoLimit
 }
 
 func createPredicateForWorkout(filter: PredicateForWorkouts) throws -> NSPredicate {
