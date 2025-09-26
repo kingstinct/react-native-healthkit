@@ -149,17 +149,16 @@ func getSerializedWorkoutLocations(
         previousLocation: i == 0 ? nil : routeCLLocations[i - 1]
       )
     }
-    // let routeInfos: WorkoutRoute = ["locations": routeLocations]
 
     allRoutes.append(
       WorkoutRoute(
         locations: routeLocations,
-        HKMetadataKeySyncIdentifier: routeMetadata.getString(
+        HKMetadataKeySyncIdentifier: routeMetadata.isString(key: "HKMetadataKeySyncIdentifier") ?  routeMetadata.getString(
           key: "HKMetadataKeySyncIdentifier"
-        ),
-        HKMetadataKeySyncVersion: routeMetadata.getDouble(
+        ) : nil,
+        HKMetadataKeySyncVersion: routeMetadata.isDouble(key: "HKMetadataKeySyncVersion") ? routeMetadata.getDouble(
           key: "HKMetadataKeySyncVersion"
-        )
+        ) : nil
       )
     )
   }
@@ -194,9 +193,39 @@ func saveWorkoutRouteInternal(
 }
 
 class WorkoutProxy: HybridWorkoutProxySpec {
+
+  // Return a Promise instead of directly returning the value; wrap async logic.
+  func getStatistic(quantityType: QuantityTypeIdentifier, unitOverride: String?) throws -> Promise<QueryStatisticsResponse?> {
+    return Promise.async {
+      if #available(iOS 16.0, *) {
+        let type = try initializeQuantityType(quantityType.stringValue)
+        if let stats = self.workout.statistics(for: type) {
+          let unit = try await getUnitToUse(unitOverride: unitOverride, quantityType: type)
+          return serializeStatistics(gottenStats: stats, unit: unit)
+        }
+      }
+      return nil
+    }
+  }
+
+  func getAllStatistics() throws -> Promise<[String: QueryStatisticsResponse]> {
+    return Promise.async {
+      var result: [String: QueryStatisticsResponse] = [:]
+      if #available(iOS 16.0, *) {
+        let statsMap = self.workout.allStatistics
+        for (quantityType, stats) in statsMap {
+          let unit = try await getUnitToUse(unitOverride: nil, quantityType: quantityType)
+          let serialized = serializeStatistics(gottenStats: stats, unit: unit)
+          result[quantityType.identifier] = serialized
+        }
+      }
+      return result
+    }
+  }
+
   func toJSON(key: String?) throws -> WorkoutSample {
-    if key != nil && key?.isEmpty != true {
-      print("WorkoutProxy does not support toJSON with key: \(key!)")
+    if let key = key, !key.isEmpty {
+      print("WorkoutProxy does not support toJSON with key: \(key)")
     }
 
     return WorkoutSample(
@@ -204,10 +233,6 @@ class WorkoutProxy: HybridWorkoutProxySpec {
       device: self.device,
       workoutActivityType: self.workoutActivityType,
       duration: self.duration,
-      totalDistance: self.totalDistance,
-      totalEnergyBurned: self.totalEnergyBurned,
-      totalSwimmingStrokeCount: self.totalSwimmingStrokeCount,
-      totalFlightsClimbed: self.totalFlightsClimbed,
       startDate: self.startDate,
       endDate: self.endDate,
       metadata: self.metadata,
@@ -286,7 +311,7 @@ class WorkoutProxy: HybridWorkoutProxySpec {
   var totalEnergyBurned: Quantity? {
     get {
       return serializeQuantityTyped(
-        unit: energyUnit,
+        unit: HKUnit.kilocalorie(),
         quantityNullable: workout.totalEnergyBurned
       )
     }
@@ -313,8 +338,6 @@ class WorkoutProxy: HybridWorkoutProxySpec {
     }
     return nil
   }
-
-  var energyUnit: HKUnit
 
   var startDate: Date {
     get {
@@ -377,14 +400,9 @@ class WorkoutProxy: HybridWorkoutProxySpec {
     return nil
   }
 
-  let distanceUnit: HKUnit
-
   private let workout: HKWorkout
 
-  init(workout: HKWorkout, distanceUnit: HKUnit, energyUnit: HKUnit) {
-    self.energyUnit = energyUnit
-    self.distanceUnit = distanceUnit
-
+  init(workout: HKWorkout) {
     self.workout = workout
   }
 

@@ -2,10 +2,13 @@ import {
   Button,
   ContextMenu,
   DateTimePicker,
+  Host,
   List,
   Picker,
   Switch,
+  VStack,
 } from '@expo/ui/swift-ui'
+import { frame } from '@expo/ui/swift-ui/modifiers'
 import {
   type FilterForSamples,
   queryQuantitySamplesWithAnchor,
@@ -18,15 +21,7 @@ import { View } from 'react-native'
 import { QueryInfo } from '@/components/QueryInfo'
 import { ListItem } from '@/components/SwiftListItem'
 import { AllQuantityTypeIdentifierInApp } from '@/constants/AllUsedIdentifiersInApp'
-
-const transformQuantityIdentifierToName = (
-  identifier: QuantityTypeIdentifier,
-) => {
-  return identifier
-    .replace('HKQuantityTypeIdentifier', '')
-    .replace(/([A-Z])/g, ' $1')
-    .trim()
-}
+import { transformQuantityIdentifierToName } from '@/utils/transformQuantityIdentifierToName'
 
 const PICKER_OPTIONS: ['Descending', 'Ascending', 'Anchor'] = [
   'Descending',
@@ -119,96 +114,94 @@ export default function QuantitiesScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ marginHorizontal: 16, marginTop: 16 }}>
-        <DateTimePicker
-          onDateSelected={(date) => {
-            setFromDate(date)
-          }}
-          displayedComponents="dateAndTime"
-          initialDate={fromDate.toISOString()}
-          variant="automatic"
-          title="From"
-        />
-      </View>
-      <View style={{ marginHorizontal: 16 }}>
-        <DateTimePicker
-          onDateSelected={(date) => {
-            setToDate(date)
-          }}
-          displayedComponents="dateAndTime"
-          initialDate={toDate.toISOString()}
-          variant="automatic"
-          title="To"
-          style={{ marginTop: 16 }}
-        />
-      </View>
-      <View style={{ marginHorizontal: 16, marginTop: 16 }}>
-        <Picker
-          options={PICKER_OPTIONS}
-          selectedIndex={PICKER_OPTIONS.indexOf(selectedOption)}
-          onOptionSelected={({ nativeEvent: { index } }) => {
-            // biome-ignore lint/style/noNonNullAssertion: index is always valid
-            setSelectedOption(PICKER_OPTIONS[index]!)
-          }}
-          variant="segmented"
-        />
-      </View>
-      <QueryInfo
-        queryTime={queryTime}
-        anchor={anchor}
-        onFetchMore={queryQuantitySamples}
-      />
-      <View>
-        <ContextMenu style={{ margin: 16 }}>
-          <ContextMenu.Items>
-            {AllQuantityTypeIdentifierInApp.map((quantityType) => (
-              <Button
-                key={quantityType}
-                variant="bordered"
-                systemImage={
-                  quantityType === selectedQuantityType
-                    ? 'checkmark.circle'
-                    : undefined
-                }
-                onPress={() => {
-                  setSelectedQuantityType(quantityType)
-                }}
-              >
-                {transformQuantityIdentifierToName(quantityType)}
+      <Host style={{ flex: 1 }}>
+        <VStack spacing={6}>
+          <DateTimePicker
+            onDateSelected={(date) => {
+              setFromDate(date)
+            }}
+            displayedComponents="dateAndTime"
+            initialDate={fromDate.toISOString()}
+            modifiers={[frame({ height: 100 })]}
+            variant="automatic"
+            title="From"
+          />
+          <DateTimePicker
+            onDateSelected={(date) => {
+              setToDate(date)
+            }}
+            displayedComponents="dateAndTime"
+            initialDate={toDate.toISOString()}
+            variant="automatic"
+            title="To"
+          />
+
+          <Picker
+            options={PICKER_OPTIONS}
+            selectedIndex={PICKER_OPTIONS.indexOf(selectedOption)}
+            onOptionSelected={({ nativeEvent: { index } }) => {
+              // biome-ignore lint/style/noNonNullAssertion: index is always valid
+              setSelectedOption(PICKER_OPTIONS[index]!)
+            }}
+            variant="segmented"
+          />
+
+          <QueryInfo
+            queryTime={queryTime}
+            anchor={anchor}
+            onFetchMore={queryQuantitySamples}
+          />
+          <ContextMenu>
+            <ContextMenu.Items>
+              {AllQuantityTypeIdentifierInApp.map((quantityType) => (
+                <Button
+                  key={quantityType}
+                  variant="bordered"
+                  systemImage={
+                    quantityType === selectedQuantityType
+                      ? 'checkmark.circle'
+                      : undefined
+                  }
+                  onPress={() => {
+                    setSelectedQuantityType(quantityType)
+                  }}
+                >
+                  {transformQuantityIdentifierToName(quantityType)}
+                </Button>
+              ))}
+            </ContextMenu.Items>
+            <ContextMenu.Trigger>
+              <Button variant="bordered">
+                {transformQuantityIdentifierToName(selectedQuantityType)}
               </Button>
-            ))}
-          </ContextMenu.Items>
-          <ContextMenu.Trigger>
-            <Button variant="bordered" style={{ width: 200, height: 10 }}>
-              {transformQuantityIdentifierToName(selectedQuantityType)}
-            </Button>
-          </ContextMenu.Trigger>
-        </ContextMenu>
-      </View>
-      <View style={{ marginHorizontal: 16 }}>
-        <Switch
-          value={includeUserEntered}
-          onValueChange={setIncludeUserEntered}
-          label="Include user entered"
-          variant="switch"
-        />
-      </View>
-      <List scrollEnabled>
-        {quantitySamples.map((item) => {
-          const quantityStr = item.quantity
-            ? `${Math.round(item.quantity * 100) / 100} ${item.unit}`
-            : 'Unknown Quantity'
-          console.log('quantityStr', quantityStr)
-          return (
-            <ListItem
-              key={item.uuid}
-              title={quantityStr}
-              subtitle={item.startDate.toLocaleString()}
-            />
-          )
-        })}
-        <View style={{ height: 100 }} />
-      </List>
+            </ContextMenu.Trigger>
+          </ContextMenu>
+
+          <Switch
+            value={includeUserEntered}
+            onValueChange={setIncludeUserEntered}
+            label="Include user entered"
+            variant="switch"
+          />
+
+          <List scrollEnabled>
+            {quantitySamples.map((item) => {
+              const quantityStr = item.quantity
+                ? `${Math.round(item.quantity * 100) / 100} ${item.unit}`
+                : 'Unknown Quantity'
+              console.log('quantityStr', quantityStr)
+              return (
+                <ListItem
+                  key={item.uuid}
+                  title={quantityStr}
+                  subtitle={item.startDate.toLocaleString()}
+                />
+              )
+            })}
+            <View style={{ height: 100 }} />
+          </List>
+        </VStack>
+      </Host>
     </View>
   )
 }

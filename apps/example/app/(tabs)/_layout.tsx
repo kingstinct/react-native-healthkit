@@ -84,6 +84,19 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="correlations"
+        options={{
+          title: 'Correlations',
+          tabBarIcon: ({ color, focused }) => (
+            <IconSymbol
+              size={28}
+              name={focused ? 'person.fill' : 'person'}
+              color={color}
+            />
+          ),
+        }}
+      />
 
       <Tabs.Screen
         name="quantityTypes"

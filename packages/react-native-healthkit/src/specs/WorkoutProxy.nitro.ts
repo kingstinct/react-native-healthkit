@@ -1,5 +1,10 @@
 import type { HybridObject } from 'react-native-nitro-modules'
 import type {
+  Quantity,
+  QuantityTypeIdentifier,
+  QueryStatisticsResponse,
+} from '../types'
+import type {
   LocationForSaving,
   WorkoutPlan,
   WorkoutRoute,
@@ -13,6 +18,18 @@ export interface WorkoutProxy
   saveWorkoutRoute(locations: readonly LocationForSaving[]): Promise<boolean>
   getWorkoutPlan(): Promise<WorkoutPlan | null>
   getWorkoutRoutes(): Promise<readonly WorkoutRoute[]>
+  getStatistic(
+    quantityType: QuantityTypeIdentifier,
+    unitOverride?: string,
+  ): Promise<QueryStatisticsResponse | null>
+  getAllStatistics(): Promise<Record<string, QueryStatisticsResponse>>
 
-  // nice to have here: getAllStatistics and getStatisticsForQuantityType
+  /** @deprecated Use allStatistics or statistic() method instead */
+  readonly totalDistance?: Quantity
+  /** @deprecated Use allStatistics or statistic() method instead */
+  readonly totalEnergyBurned?: Quantity
+  /** @deprecated Use allStatistics or statistic() method instead */
+  readonly totalSwimmingStrokeCount?: Quantity
+  /** @deprecated Use allStatistics or statistic() method instead */
+  readonly totalFlightsClimbed?: Quantity
 }

@@ -304,33 +304,23 @@ class CoreModule: HybridCoreModuleSpec {
 
         let queryId = UUID().uuidString
 
-        func responder(
-            query: HKObserverQuery,
-            handler: @escaping HKObserverQueryCompletionHandler,
-            error: Error?
-        ) {
-            DispatchQueue.main.async {
-                callback(OnChangeCallbackArgs(typeIdentifier: typeIdentifier, errorMessage: error?.localizedDescription))
-                handler()
-            }
-        }
-
         let query = HKObserverQuery(
             sampleType: sampleType,
             predicate: predicate
         ) {
-            (query: HKObserverQuery, handler: @escaping HKObserverQueryCompletionHandler, error: Error?)
+            (_: HKObserverQuery, handler: @escaping HKObserverQueryCompletionHandler, error: Error?)
             in
 
-            return responder(query: query, handler: handler, error: error)
+            DispatchQueue.main.async {
+                callback(OnChangeCallbackArgs(typeIdentifier: typeIdentifier, errorMessage: error?.localizedDescription))
+                handler()
+            }
 
         }
 
         store.execute(query)
 
         self._runningQueries.updateValue(query, forKey: queryId)
-
-        // resolve(queryId)
 
         return queryId
     }

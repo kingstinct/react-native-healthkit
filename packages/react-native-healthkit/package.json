@@ -58,7 +58,7 @@
     "build": "bun run clean && bun run build:cjs && bun run build:esm && bun run build:types",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "bunx @biomejs/biome format --write",
-    "codegen": "bun run build && nitro-codegen --logLevel=\"debug\"",
+    "codegen": "bun run build && nitrogen --logLevel=\"debug\"",
     "test": "bun test",
     "prepublishOnly": "bun run build && bun run codegen"
   },
@@ -88,17 +88,17 @@
     "access": "public"
   },
   "devDependencies": {
-    "@testing-library/react-native": "^13.2.0",
+    "@testing-library/react-native": "^13.3.3",
     "@types/react": "~19.0.14",
-    "nitro-codegen": "^0.26.4",
-    "react": "19.0.0",
-    "react-native": "*",
-    "react-native-nitro-modules": "^0.26.4",
-    "typescript": "~5.8.3"
+    "nitrogen": "^0.29.4",
+    "react": "19.1.0",
+    "react-native": "0.81.4",
+    "react-native-nitro-modules": "^0.29.6",
+    "typescript": "~5.9.2"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*",
-    "react-native-nitro-modules": "*"
+    "react": "19.1.0",
+    "react-native": "0.81.4",
+    "react-native-nitro-modules": "0.29.6"
   }
 }

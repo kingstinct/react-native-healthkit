@@ -132,7 +132,7 @@ jobs:
           # optional but useful:
           xcrun simctl list runtimes
 
-      - run: bun run nitro-codegen
+      - run: bun run codegen
         working-directory: packages/react-native-healthkit
 
       - name: Expo Prebuild
@@ -161,7 +161,7 @@ jobs:
       ## latest stable
       - run: sudo xcode-select -s /Applications/Xcode_16.4.app
 
-      - run: bun run nitro-codegen
+      - run: bun run codegen
         working-directory: packages/react-native-healthkit
 
       - name: Expo Prebuild
@@ -171,32 +171,3 @@ jobs:
       - name: Build iOS project
         working-directory: apps/example
         run: bun run build-sim
-
-
-  # since this is the default for Expo 52
-  # build-ios-162:
-  #   # Only run on macOS since we need Xcode
-  #   runs-on: macos-latest
-  #   timeout-minutes: 30
-
-  #   steps:
-  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-  #     - uses: actions/checkout@v4
-
-  #     - uses: oven-sh/setup-bun@v2
-
-  #     - run: sudo xcode-select -s /Applications/Xcode_16.2.app
-
-  #     - name: Install dependencies
-  #       run: bun install --ignore-scripts --frozen-lockfile
-
-  #     - run: bun run nitro-codegen
-  #       working-directory: packages/react-native-healthkit
-
-  #     - name: Expo Prebuild
-  #       working-directory: apps/example
-  #       run: bunx expo prebuild --platform ios
-
-  #     - name: Build iOS project
-  #       working-directory: apps/example
-  #       run: bun run build-sim

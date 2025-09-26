@@ -14,7 +14,8 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
         var initializedSamples = Set<HKSample>()
 
         for sample in samples {
-            if let quantitySample = sample as? QuantitySampleForSaving {
+            switch sample {
+            case .second(let quantitySample):
                 let quantityTypeId = HKQuantityTypeIdentifier(rawValue: quantitySample.quantityType.stringValue)
                 guard let quantityType = HKSampleType.quantityType(forIdentifier: quantityTypeId) else {
                     continue
@@ -31,7 +32,7 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
                 )
                 initializedSamples.insert(hkQuantitySample)
 
-            } else if let categorySample = sample as? CategorySampleForSaving {
+            case .first(let categorySample):
                 let categoryType = try initializeCategoryType(categorySample.categoryType.stringValue)
 
                 let hkCategorySample = HKCategorySample(
@@ -44,6 +45,10 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
                 initializedSamples.insert(hkCategorySample)
             }
         }
+
+      if initializedSamples.isEmpty {
+          throw RuntimeError.error(withMessage: "[react-native-healthkit] No valid samples to create correlation sample")
+      }
 
         let correlation = HKCorrelation(
             type: correlationType,

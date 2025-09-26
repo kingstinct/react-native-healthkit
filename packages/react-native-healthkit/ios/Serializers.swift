@@ -70,67 +70,6 @@ func serializeSource(_ source: HKSource) -> SourceProxy {
     )
 }
 
-func getUnitForQuantityType(quantityType: HKQuantityType) -> HKUnit? {
-    if quantityType.is(compatibleWith: HKUnit.percent()) {
-        return HKUnit.percent()
-    }
-
-    if quantityType.is(compatibleWith: HKUnit.second()) {
-        return HKUnit.second()
-    }
-
-    if quantityType.is(compatibleWith: HKUnit.kilocalorie()) {
-        return HKUnit.kilocalorie()
-    }
-
-    if quantityType.is(compatibleWith: HKUnit.count()) {
-        return HKUnit.count()
-    }
-
-    if quantityType.is(compatibleWith: HKUnit.meter()) {
-        return HKUnit.meter()
-    }
-
-    if quantityType.is(compatibleWith: SpeedUnit) {
-        return SpeedUnit
-    }
-
-    if quantityType.is(compatibleWith: METUnit) {
-        return METUnit
-    }
-
-    if #available(iOS 11, *) {
-        if quantityType.is(compatibleWith: HKUnit.internationalUnit()) {
-            return HKUnit.internationalUnit()
-        }
-    }
-
-    if #available(iOS 13, *) {
-        if quantityType.is(compatibleWith: HKUnit.hertz()) {
-            return HKUnit.hertz()
-        }
-        if quantityType.is(compatibleWith: HKUnit.decibelHearingLevel()) {
-            return HKUnit.decibelHearingLevel()
-        }
-    }
-
-    if #available(iOS 17.0, *) {
-        if quantityType.is(compatibleWith: HKUnit.lux()) {
-            return HKUnit.lux()
-        }
-    }
-
-#if compiler(>=6)
-    if #available(iOS 18.0, *) {
-        if quantityType.is(compatibleWith: HKUnit.appleEffortScore()) {
-            return HKUnit.appleEffortScore()
-        }
-    }
-#endif
-
-    return nil
-}
-
 func serializeUnknownQuantityTyped(quantity: HKQuantity?) -> Quantity? {
     guard let quantity = quantity else {
         return nil
@@ -156,6 +95,38 @@ func serializeUnknownQuantityTyped(quantity: HKQuantity?) -> Quantity? {
         return serializeQuantityTyped(unit: HKUnit.meter(), quantity: quantity)
     }
 
+    if quantity.is(compatibleWith: HKUnit.degreeCelsius()) {
+        return serializeQuantityTyped(unit: HKUnit.degreeCelsius(), quantity: quantity)
+    }
+
+    if quantity.is(compatibleWith: HKUnit.atmosphere()) {
+        return serializeQuantityTyped(unit: HKUnit.atmosphere(), quantity: quantity)
+    }
+
+    if quantity.is(compatibleWith: HKUnit.gram()) {
+        return serializeQuantityTyped(unit: HKUnit.gram(), quantity: quantity)
+    }
+
+    if quantity.is(compatibleWith: HKUnit.liter()) {
+        return serializeQuantityTyped(unit: HKUnit.liter(), quantity: quantity)
+    }
+
+    if quantity.is(compatibleWith: HKUnit.volt()) {
+        return serializeQuantityTyped(unit: HKUnit.volt(), quantity: quantity)
+    }
+
+    if quantity.is(compatibleWith: HKUnit.hertz()) {
+        return serializeQuantityTyped(unit: HKUnit.hertz(), quantity: quantity)
+    }
+
+    if quantity.is(compatibleWith: SpeedUnit) {
+        return serializeQuantityTyped(unit: SpeedUnit, quantity: quantity)
+    }
+
+    if quantity.is(compatibleWith: METUnit) {
+        return serializeQuantityTyped(unit: METUnit, quantity: quantity)
+    }
+
     if #available(iOS 11, *) {
         if quantity.is(compatibleWith: HKUnit.internationalUnit()) {
             return serializeQuantityTyped(unit: HKUnit.internationalUnit(), quantity: quantity)
@@ -171,6 +142,16 @@ func serializeUnknownQuantityTyped(quantity: HKQuantity?) -> Quantity? {
         }
     }
 
+    if #available(iOS 16.0, *) {
+      if quantity.is(compatibleWith: HKUnit.watt()) {
+          return serializeQuantityTyped(unit: HKUnit.watt(), quantity: quantity)
+      }
+
+      if quantity.is(compatibleWith: HKUnit.degreeAngle()) {
+        return serializeQuantityTyped(unit: HKUnit.degreeAngle(), quantity: quantity)
+      }
+    }
+
     if #available(iOS 17.0, *) {
         if quantity.is(compatibleWith: HKUnit.lux()) {
             return serializeQuantityTyped(unit: HKUnit.lux(), quantity: quantity)
@@ -184,14 +165,6 @@ func serializeUnknownQuantityTyped(quantity: HKQuantity?) -> Quantity? {
         }
     }
 #endif
-
-    if quantity.is(compatibleWith: SpeedUnit) {
-        return serializeQuantityTyped(unit: SpeedUnit, quantity: quantity)
-    }
-
-    if quantity.is(compatibleWith: METUnit) {
-        return serializeQuantityTyped(unit: METUnit, quantity: quantity)
-    }
 
     return nil
 }

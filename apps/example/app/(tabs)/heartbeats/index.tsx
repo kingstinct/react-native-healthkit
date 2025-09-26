@@ -1,5 +1,4 @@
-import { Button, Host, List } from '@expo/ui/swift-ui'
-import { Text, VStack } from '@expo/ui/swift-ui-primitives'
+import { Button, Host, List, Text, VStack } from '@expo/ui/swift-ui'
 import { HeartbeatSeries } from '@kingstinct/react-native-healthkit/modules'
 import type { HeartbeatSeriesSample } from '@kingstinct/react-native-healthkit/types/HeartbeatSeries'
 import { router } from 'expo-router'
@@ -56,7 +55,7 @@ export default function HeartbeatSeriesScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Host style={{ padding: 16 }}>
+      <Host style={{ padding: 16, flex: 1 }}>
         <VStack>
           <Text>
             {queryTime !== null ? `Query time: ${queryTime}ms` : 'Loading...'}
@@ -78,20 +77,19 @@ export default function HeartbeatSeriesScreen() {
             </Button>
           ) : null}
         </VStack>
+        <List scrollEnabled>
+          {heartbeatSeries.map((item) => (
+            <ListItem
+              key={item.uuid}
+              title={`${item.heartbeats.length} heartbeats`}
+              subtitle={`${item.startDate.toLocaleString()} • Duration: ${formatDuration(item.startDate, item.endDate)}`}
+              onPress={() =>
+                router.push(`/heartbeats/details?seriesId=${item.uuid}`)
+              }
+            />
+          ))}
+        </List>
       </Host>
-
-      <List scrollEnabled>
-        {heartbeatSeries.map((item) => (
-          <ListItem
-            key={item.uuid}
-            title={`${item.heartbeats.length} heartbeats`}
-            subtitle={`${item.startDate.toLocaleString()} • Duration: ${formatDuration(item.startDate, item.endDate)}`}
-            onPress={() =>
-              router.push(`/heartbeats/details?seriesId=${item.uuid}`)
-            }
-          />
-        ))}
-      </List>
     </View>
   )
 }

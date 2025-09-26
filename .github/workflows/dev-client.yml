@@ -17,7 +17,7 @@ jobs:
 
       - run: bun install
 
-      - run: bun run nitro-codegen
+      - run: bun run codegen
         working-directory: packages/react-native-healthkit
       
       - name: 🏗 Setup EAS
