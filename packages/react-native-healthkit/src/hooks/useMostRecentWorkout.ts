@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { WorkoutProxy } from '../specs/WorkoutProxy.nitro'
 import getMostRecentWorkout from '../utils/getMostRecentWorkout'
 import useSubscribeToChanges from './useSubscribeToChanges'
@@ -6,25 +6,11 @@ import useSubscribeToChanges from './useSubscribeToChanges'
 /**
  * @returns the most recent workout sample.
  */
-export function useMostRecentWorkout(options?: {
-  readonly energyUnit?: string
-  readonly distanceUnit?: string
-}) {
+export function useMostRecentWorkout() {
   const [workout, setWorkout] = useState<WorkoutProxy>()
 
-  const optionsRef = useRef(options)
-
-  useEffect(() => {
-    optionsRef.current = options
-  }, [options])
-
   const update = useCallback(async () => {
-    setWorkout(
-      await getMostRecentWorkout({
-        energyUnit: optionsRef.current?.energyUnit,
-        distanceUnit: optionsRef.current?.distanceUnit,
-      }),
-    )
+    setWorkout(await getMostRecentWorkout())
   }, [])
 
   useEffect(() => {

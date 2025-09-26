@@ -27,10 +27,7 @@ export function useWorkoutById(
     setIsLoading(true)
     setError(null)
     try {
-      const fetchedWorkout = await getWorkoutById(uuid, {
-        energyUnit: optionsRef.current?.energyUnit,
-        distanceUnit: optionsRef.current?.distanceUnit,
-      })
+      const fetchedWorkout = await getWorkoutById(uuid)
       setWorkout(fetchedWorkout)
     } catch (err) {
       setError(
