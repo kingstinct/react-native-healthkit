@@ -117,43 +117,6 @@ jobs:
       - name: Lint
         run: bun run swiftlint
   
-  build-ios-beta:
-    # Only run on macOS since we need Xcode
-    runs-on: macos-15
-    timeout-minutes: 50
-
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: ".bun-version"
-
-      - name: Install dependencies
-        run: bun install --ignore-scripts --frozen-lockfile
-
-      ## latest stable
-      - run: sudo xcode-select -s /Applications/Xcode_26.0.app
-
-      - name: Install iOS 26 simulator runtime
-        run: |
-          xcodebuild -downloadPlatform iOS
-          # optional but useful:
-          xcrun simctl list runtimes
-
-      - run: bun run codegen
-        working-directory: packages/react-native-healthkit
-
-      - name: Expo Prebuild
-        working-directory: apps/example
-        run: bunx expo prebuild --platform ios
-
-      - name: Build iOS project
-        working-directory: apps/example
-        run: bun run build-sim
-
-
   build-ios:
     # Only run on macOS since we need Xcode
     runs-on: macos-15
