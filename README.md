@@ -104,7 +104,7 @@ Some imperative examples:
   
   useEffect(() => {
     if (hasRequestedAuthorization) {
-      const unsubscribe = subscribeToChanges(HKQuantityTypeIdentifier.heartRate, () => {
+      const unsubscribe = subscribeToChanges('HKQuantityTypeIdentifierHeartRate', () => {
         // refetch data as needed
       });
 
@@ -113,7 +113,7 @@ Some imperative examples:
   }, [hasRequestedAuthorization]);
 
   /* write data */
-  await requestAuthorization([], [HKQuantityTypeIdentifier.insulinDelivery]); // request write permission for insulin delivery
+  await requestAuthorization([], ['HKQuantityTypeIdentifierInsulinDelivery']); // request write permission for insulin delivery
 
   saveQuantitySample(
       'HKQuantityTypeIdentifierInsulinDelivery',
