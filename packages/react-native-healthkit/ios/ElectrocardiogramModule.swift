@@ -146,7 +146,7 @@ class ElectrocardiogramModule: HybridElectrocardiogramModuleSpec {
             symptomsStatus: serializeSymptomsStatus(sample.symptomsStatus),
             averageHeartRateBpm: avgHR,
             samplingFrequencyHz: freqHz,
-            numberOfVoltageMeasurements: Double(sample.numberOfVoltageMeasurements),
+            numberOfVoltageMeasurements: sample.numberOfVoltageMeasurements,
             algorithmVersion: algorithmVersion,
             voltages: voltages,
             metadata: serializeMetadata(sample.metadata),
