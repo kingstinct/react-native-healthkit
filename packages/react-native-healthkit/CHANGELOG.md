@@ -1,5 +1,14 @@
 # @kingstinct/react-native-healthkit
 
+## 11.1.0
+### Minor Changes
+
+- e116042: feat: add query electrocardiograms
+
+### Patch Changes
+
+- 4378817: fix: handleHKNoDataOrThrow to provide empty statistics instead of throwing
+
 ## 11.0.0
 ### Major Changes
 
