@@ -12,10 +12,12 @@ jobs:
         #  ref: refs/pull/${{ github.event.number }}/merge
 
       - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
 
       - run: bun install
 
       - run: bun run codegen
         working-directory: packages/react-native-healthkit
-      
+
       - run: bunx pkg-pr-new publish './packages/*'

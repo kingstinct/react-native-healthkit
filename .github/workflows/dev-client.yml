@@ -14,12 +14,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
 
       - run: bun install
 
       - run: bun run codegen
         working-directory: packages/react-native-healthkit
-      
+
       - name: 🏗 Setup EAS
         uses: expo/expo-github-action@v8
         with:
@@ -35,4 +37,3 @@ jobs:
           working-directory: ./apps/example
           profile: development-appstore-connect
           branch: ${{ github.ref_name }}
-          
