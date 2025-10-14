@@ -133,7 +133,6 @@ import {
   View
 } from 'react-native';
 import { 
-  HKQuantityTypeIdentifier, 
   useHealthkitAuthorization 
 } from '@kingstinct/react-native-healthkit';
 
@@ -142,7 +141,7 @@ export default () => {
     authorizationStatus, 
     requestAuthorization
   ] = useHealthkitAuthorization([
-    HKQuantityTypeIdentifier.bloodGlucose
+    'HKQuantityTypeIdentifierBloodGlucose'
   ])
 
   return &lt;View>
@@ -165,13 +164,12 @@ import {
   View
 } from 'react-native';
 import { 
-  useMostRecentQuantitySample, 
-  HKQuantityTypeIdentifier,
+  useMostRecentQuantitySample
 } from '@kingstinct/react-native-healthkit';
 
 export default () => {
   const sample = useMostRecentQuantitySample(
-    HKQuantityTypeIdentifier.bloodGlucose
+    'HKQuantityTypeIdentifierBloodGlucose'
   )
 
   return &lt;View>

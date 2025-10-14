@@ -52,7 +52,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version-file: .bun-version
+          bun-version-file: ".bun-version"
 
       - run: bun install
 
@@ -70,7 +70,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version-file: .bun-version
+          bun-version-file: ".bun-version"
 
       - run: bun install --ignore-scripts --frozen-lockfile
 
@@ -89,7 +89,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version-file: .bun-version
+          bun-version-file: ".bun-version"
 
       - run: bun install --ignore-scripts --frozen-lockfile
 
@@ -108,7 +108,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version-file: .bun-version
+          bun-version-file: ".bun-version"
 
       - run: bun install --ignore-scripts --frozen-lockfile
 
@@ -140,19 +140,6 @@ jobs:
   #       run: |
   #         xcodebuild -downloadPlatform iOS
   #         # optional but useful:
-  #         xcrun simctl list runtimes
-
-  #     - run: bun run codegen
-  #       working-directory: packages/react-native-healthkit
-
-  #     - name: Expo Prebuild
-  #       working-directory: apps/example
-  #       run: bunx expo prebuild --platform ios
-
-  #     - name: Build iOS project
-  #       working-directory: apps/example
-  #       run: bun run build-sim
-
   build-ios:
     # Only run on macOS since we need Xcode
     runs-on: macos-15
@@ -164,7 +151,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version-file: .bun-version
+          bun-version-file: ".bun-version"
 
       - name: Install dependencies
         run: bun install --ignore-scripts --frozen-lockfile
