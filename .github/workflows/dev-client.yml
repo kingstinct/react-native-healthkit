@@ -21,7 +21,7 @@ jobs:
 
       - run: bun run codegen
         working-directory: packages/react-native-healthkit
-      
+
       - name: 🏗 Setup EAS
         uses: expo/expo-github-action@v8
         with:
@@ -37,4 +37,3 @@ jobs:
           working-directory: ./apps/example
           profile: development-appstore-connect
           branch: ${{ github.ref_name }}
-          

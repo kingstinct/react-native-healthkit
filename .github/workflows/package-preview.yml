@@ -19,5 +19,5 @@ jobs:
 
       - run: bun run codegen
         working-directory: packages/react-native-healthkit
-      
+
       - run: bunx pkg-pr-new publish './packages/*'

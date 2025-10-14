@@ -49,6 +49,15 @@ func queryQuantitySamplesInternal(
 
 }
 
+func emptyStatisticsResponse(from: Date, to: Date) -> QueryStatisticsResponse {
+    var response = QueryStatisticsResponse()
+
+    response.startDate = from
+    response.endDate = to
+
+    return response
+}
+
 func serializeStatistics(gottenStats: HKStatistics, unit: HKUnit) -> QueryStatisticsResponse {
   var response = QueryStatisticsResponse()
 
@@ -200,6 +209,26 @@ func buildStatisticsOptions(statistics: [StatisticsOptions]) -> HKStatisticsOpti
     return opts
 }
 
+/// Handles HealthKit's `errorNoData` by resuming the continuation with a fallback value if provided,
+/// otherwise resumes with `nil` for Optional result types. For other errors, resumes by throwing.
+/// - Parameters:
+///   - error: The error returned by HealthKit.
+///   - continuation: The continuation to resume.
+///   - noDataFallback: Optional closure producing a fallback value to use when the error is `errorNoData`.
+func handleHKNoDataOrThrow<T>(
+    error: Error,
+    continuation: CheckedContinuation<T, Error>,
+    noDataFallback: (() -> T)
+) {
+    let nsError = error as NSError
+    if nsError.domain == HKError.errorDomain,
+       nsError.code == HKError.Code.errorNoData.rawValue {
+       continuation.resume(returning: noDataFallback())
+    } else {
+        continuation.resume(throwing: error)
+    }
+}
+
 class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     func deleteQuantitySamples(identifier: QuantityTypeIdentifier, filter: FilterForSamples) throws -> Promise<Bool> {
         let sampleType = try initializeQuantityType(identifier.stringValue)
@@ -240,17 +269,17 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
                 ) { (_, stats: HKStatistics?, error: Error?) in
                     DispatchQueue.main.async {
                         if let error = error {
-                            continuation.resume(throwing: error)
-                            return
+                            return handleHKNoDataOrThrow(error: error, continuation: continuation) {
+                                QueryStatisticsResponse()
+                            }
                         }
 
                         guard let gottenStats = stats else {
                             let emptyResponse = QueryStatisticsResponse()
-                            continuation.resume(returning: emptyResponse)
-                            return
+                            return continuation.resume(returning: emptyResponse)
                         }
 
-                        var response = serializeStatistics(gottenStats: gottenStats, unit: unit)
+                        let response = serializeStatistics(gottenStats: gottenStats, unit: unit)
 
                         continuation.resume(returning: response)
                     }
@@ -306,8 +335,9 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
 
                 query.initialResultsHandler = { (_, results: HKStatisticsCollection?, error: Error?) in
                     if let error = error {
-                        continuation.resume(throwing: error)
-                        return
+                        return handleHKNoDataOrThrow(error: error, continuation: continuation) {
+                            []
+                        }
                     }
 
                     guard let statistics = results else {
@@ -371,18 +401,25 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
                     error: Error?
                 ) in
                     if let error = error {
-                        continuation.resume(throwing: error)
-                        return
+                        return handleHKNoDataOrThrow(error: error, continuation: continuation) {
+                            QuantitySamplesWithAnchorResponse(
+                                samples: [],
+                                deletedSamples: [],
+                                newAnchor: ""
+                            )
+                        }
                     }
+
+                    let deletedSamples = deletedSamples?.map { serializeDeletedSample(sample: $0) } ?? []
+                    let newAnchor = serializeAnchor(anchor: newAnchor) ?? ""
 
                     guard let samples = samples else {
                         let response = QuantitySamplesWithAnchorResponse(
                             samples: [],
-                            deletedSamples: deletedSamples?.map { serializeDeletedSample(sample: $0) } ?? [],
-                            newAnchor: serializeAnchor(anchor: newAnchor) ?? ""
+                            deletedSamples: deletedSamples,
+                            newAnchor: newAnchor
                         )
-                        continuation.resume(returning: response)
-                        return
+                        return continuation.resume(returning: response)
                     }
 
                     let quantitySamples = samples.compactMap { sample in
@@ -401,8 +438,8 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
 
                     let response = QuantitySamplesWithAnchorResponse(
                         samples: quantitySamples,
-                        deletedSamples: deletedSamples?.map { serializeDeletedSample(sample: $0) } ?? [],
-                        newAnchor: serializeAnchor(anchor: newAnchor) ?? ""
+                        deletedSamples: deletedSamples,
+                        newAnchor: newAnchor,
                     )
 
                     continuation.resume(returning: response)
