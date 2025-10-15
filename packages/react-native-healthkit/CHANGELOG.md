@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 11.1.1
+### Patch Changes
+
+- 954dcd5: fix native type error
+
 ## 11.1.0
 ### Minor Changes
 
