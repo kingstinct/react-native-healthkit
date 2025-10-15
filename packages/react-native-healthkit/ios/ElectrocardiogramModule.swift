@@ -146,7 +146,7 @@ class ElectrocardiogramModule: HybridElectrocardiogramModuleSpec {
             symptomsStatus: serializeSymptomsStatus(sample.symptomsStatus),
             averageHeartRateBpm: avgHR,
             samplingFrequencyHz: freqHz,
-            numberOfVoltageMeasurements: sample.numberOfVoltageMeasurements,
+            numberOfVoltageMeasurements: Double(sample.numberOfVoltageMeasurements),
             algorithmVersion: algorithmVersion,
             voltages: voltages,
             metadata: serializeMetadata(sample.metadata),
@@ -178,6 +178,8 @@ class ElectrocardiogramModule: HybridElectrocardiogramModuleSpec {
 
                 case .done:
                     continuation.resume(returning: all)
+                @unknown default:
+                  continuation.resume(throwing: RuntimeError.error(withMessage: "HKElectrocardiogramQuery received unknown result type"))
                 }
             }
             store.execute(q)
