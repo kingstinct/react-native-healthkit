@@ -32,10 +32,8 @@ const notAvailableError = `[@kingstinct/react-native-healthkit] Platform "${Plat
 
 let hasWarned = false
 
-// @ts-expect-error
 function UnavailableFnFromModule<
   TKey extends keyof typeof ReactNativeHealthkit,
-  // @ts-expect-error
   // biome-ignore lint/complexity/noBannedTypes: it works
   T extends Function = (typeof ReactNativeHealthkit)[TKey],
   // @ts-expect-error
