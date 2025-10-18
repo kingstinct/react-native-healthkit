@@ -3,6 +3,7 @@ import type { CharacteristicTypeIdentifier } from '@kingstinct/react-native-heal
 import type { QuantityTypeIdentifierWriteable } from '@kingstinct/react-native-healthkit/types/QuantityTypeIdentifier'
 import type {
   ObjectTypeIdentifier,
+  SampleTypeIdentifier,
   SampleTypeIdentifierWriteable,
 } from '@kingstinct/react-native-healthkit/types/Shared'
 
@@ -113,6 +114,7 @@ export const AllSampleTypesInApp: SampleTypeIdentifierWriteable[] = [
 export const AllObjectTypesInApp: ObjectTypeIdentifier[] = [
   ...AllSampleTypesInApp,
   ...AllCharacteristicTypeIdentifierInApp,
+  'HKElectrocardiogramType',
   // 'HKQuantityTypeIdentifierHeartRateVariabilitySDNN',
   /*'HKQuantityTypeIdentifierRespiratoryRate',
     'HKQuantityTypeIdentifierVO2Max',

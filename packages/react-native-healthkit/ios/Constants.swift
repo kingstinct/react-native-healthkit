@@ -24,6 +24,7 @@ let HKWorkoutTypeIdentifier = "HKWorkoutTypeIdentifier"
 let HKWorkoutRouteTypeIdentifier = "HKWorkoutRouteTypeIdentifier"
 let HKDataTypeIdentifierHeartbeatSeries = "HKDataTypeIdentifierHeartbeatSeries"
 let HKStateOfMindTypeIdentifier = "HKStateOfMindTypeIdentifier"
+let HKElectrocardiogramType = "HKElectrocardiogramType"
 
 let HKWorkoutActivityTypePropertyName = "activityType"
 let HKWorkoutSessionLocationTypePropertyName = "locationType"

@@ -5,6 +5,7 @@ import type {
 } from './CategoryTypeIdentifier'
 import type { CharacteristicTypeIdentifier } from './Characteristics'
 import type {
+  ElectrocardiogramTypeIdentifier,
   HeartbeatSeriesTypeIdentifier,
   StateOfMindTypeIdentifier,
   WorkoutRouteTypeIdentifier,
@@ -52,6 +53,7 @@ export type SampleTypeIdentifier =
   | typeof HeartbeatSeriesTypeIdentifier
   | typeof WorkoutRouteTypeIdentifier
   | typeof WorkoutTypeIdentifier
+  | typeof ElectrocardiogramTypeIdentifier
 
 export type SampleTypeIdentifierWriteable =
   | CategoryTypeIdentifierWriteable

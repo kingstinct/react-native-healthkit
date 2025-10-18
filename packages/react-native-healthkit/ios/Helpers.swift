@@ -413,6 +413,12 @@ private func sampleTypeFromStringNullable(typeIdentifier: String) throws -> HKSa
         }
     }
 
+    if #available(iOS 14, *) {
+        if typeIdentifier == HKElectrocardiogramType {
+            return HKSampleType.electrocardiogramType()
+        }
+    }
+
     #if compiler(>=6)
         if #available(iOS 18, *) {
             if typeIdentifier == HKStateOfMindTypeIdentifier {
