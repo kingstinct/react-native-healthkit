@@ -32,15 +32,13 @@ const notAvailableError = `[@kingstinct/react-native-healthkit] Platform "${Plat
 
 let hasWarned = false
 
-// @ts-ignore
 function UnavailableFnFromModule<
   TKey extends keyof typeof ReactNativeHealthkit,
-  // @ts-ignore
   // biome-ignore lint/complexity/noBannedTypes: it works
   T extends Function = (typeof ReactNativeHealthkit)[TKey],
-  // @ts-ignore
+  // @ts-expect-error
 >(_fn: TKey, defaultValue: ReturnType<T>): T {
-  // @ts-ignore
+  // @ts-expect-error
   return () => {
     if (Platform.OS !== 'ios' && !hasWarned) {
       console.warn(notAvailableError)

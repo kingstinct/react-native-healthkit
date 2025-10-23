@@ -146,6 +146,24 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
+        name="electrocardiograms"
+        options={{
+          title: 'ECGs',
+          tabBarIcon: ({ color, focused }) => (
+            <IconSymbol
+              size={28}
+              name={
+                focused
+                  ? 'waveform.path.ecg.rectangle.fill'
+                  : 'waveform.path.ecg.rectangle'
+              }
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
         name="subscriptions"
         options={{
           title: 'Subscriptions',
