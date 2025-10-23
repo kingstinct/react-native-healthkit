@@ -1,5 +1,11 @@
 # @kingstinct/react-native-healthkit
 
+## 11.1.2
+### Patch Changes
+
+- 6d60778: fix: add thread-safe synchronization to quantityTypeUnitCache
+- 0215f05: Fix: Expose `HKElectrocardiogramType` for authorization requests
+
 ## 11.1.1
 ### Patch Changes
 
