@@ -9,7 +9,12 @@ import NitroModules
 
 var store = HKHealthStore.init()
 
-var quantityTypeUnitCache = [HKQuantityType: HKUnit]()
+// Thread-safe cache with concurrent read/exclusive write access
+private let quantityTypeCacheQueue = DispatchQueue(
+    label: "com.kingstinct.healthkit.cache",
+    attributes: .concurrent
+)
+private var quantityTypeUnitCache = [HKQuantityType: HKUnit]()
 
 func getUnitToUse(unitOverride: String?, quantityType: HKQuantityType) async throws -> HKUnit {
     if let unitOverride = unitOverride {
@@ -32,8 +37,11 @@ func getUnitToUse(unitOverride: String?, quantityType: HKQuantityType) async thr
 func getPreferredUnitsInternal(quantityTypes: [HKQuantityType], forceUpdate: Bool? = false) async throws -> [HKQuantityType: HKUnit] {
 
     if forceUpdate != true {
-        let itemsInCache = quantityTypeUnitCache.filter { (quantityType: HKQuantityType, _: HKUnit) in
-            return quantityTypes.contains(where: { $0 == quantityType })
+        // Thread-safe read: concurrent reads are allowed
+        let itemsInCache = quantityTypeCacheQueue.sync {
+            return quantityTypeUnitCache.filter {
+                quantityTypes.contains($0.key)
+            }
         }
         if itemsInCache.count == quantityTypes.count {
             return itemsInCache
@@ -47,8 +55,11 @@ func getPreferredUnitsInternal(quantityTypes: [HKQuantityType], forceUpdate: Boo
                 return continuation.resume(throwing: error)
             }
 
-            typePerUnits.forEach { (type: HKQuantityType, unit: HKUnit) in
-                quantityTypeUnitCache.updateValue(unit, forKey: type)
+            // Thread-safe write: barrier ensures exclusive access
+            quantityTypeCacheQueue.sync(flags: .barrier) {
+                typePerUnits.forEach { (type: HKQuantityType, unit: HKUnit) in
+                    quantityTypeUnitCache.updateValue(unit, forKey: type)
+                }
             }
 
             return continuation.resume(returning: typePerUnits)
