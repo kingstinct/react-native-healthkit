@@ -296,15 +296,17 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
         let predicate = try createPredicate(filter: options?.filter)
 
         // Convert the anchor date string to Date
-        let dateFormatter = ISO8601DateFormatter()
-        // Try parsing with fractional seconds first (e.g., "2025-10-29T04:30:03.172Z")
-        dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        var anchor = dateFormatter.date(from: anchorDate)
-        // If that fails, try without fractional seconds (e.g., "2025-10-29T04:30:03Z")
-        if anchor == nil {
-            dateFormatter.formatOptions = [.withInternetDateTime]
-            anchor = dateFormatter.date(from: anchorDate)
-        }
+        // Support both date formats: with fractional seconds (e.g., "2025-10-29T04:30:03.172Z")
+        // and without (e.g., "2025-10-29T04:30:03Z")
+        let dateFormatterWithFractionalSeconds = ISO8601DateFormatter()
+        dateFormatterWithFractionalSeconds.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        
+        let dateFormatterWithoutFractionalSeconds = ISO8601DateFormatter()
+        dateFormatterWithoutFractionalSeconds.formatOptions = [.withInternetDateTime]
+        
+        let anchor = dateFormatterWithFractionalSeconds.date(from: anchorDate) 
+            ?? dateFormatterWithoutFractionalSeconds.date(from: anchorDate)
+        
         guard let anchor = anchor else {
             throw RuntimeError.error(withMessage: "Invalid anchor date format: " + anchorDate)
         }
