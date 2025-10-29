@@ -297,7 +297,15 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
 
         // Convert the anchor date string to Date
         let dateFormatter = ISO8601DateFormatter()
-        guard let anchor = dateFormatter.date(from: anchorDate) else {
+        // Try parsing with fractional seconds first (e.g., "2025-10-29T04:30:03.172Z")
+        dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        var anchor = dateFormatter.date(from: anchorDate)
+        // If that fails, try without fractional seconds (e.g., "2025-10-29T04:30:03Z")
+        if anchor == nil {
+            dateFormatter.formatOptions = [.withInternetDateTime]
+            anchor = dateFormatter.date(from: anchorDate)
+        }
+        guard let anchor = anchor else {
             throw RuntimeError.error(withMessage: "Invalid anchor date format: " + anchorDate)
         }
 
