@@ -220,9 +220,13 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
                             if let error = error {
                                 return continuation.resume(throwing: error)
                             }
+                            // Resume after samples are added
+                            return continuation.resume()
                         }
+                    } else {
+                        // Resume immediately if no samples to add
+                        return continuation.resume()
                     }
-                    return continuation.resume()
                 }
             }) as Void
 
