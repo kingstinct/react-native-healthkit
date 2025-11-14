@@ -48,7 +48,7 @@ export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
   queryStatisticsCollectionForQuantity(
     identifier: QuantityTypeIdentifier,
     statistics: readonly StatisticsOptions[],
-    anchorDate: string,
+    anchorDate: Date,
     intervalComponents: IntervalComponents,
     options?: StatisticsQueryOptions,
   ): Promise<readonly QueryStatisticsResponse[]>
