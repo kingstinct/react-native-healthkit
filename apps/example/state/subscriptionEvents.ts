@@ -1,4 +1,6 @@
 import {
+  AuthorizationRequestStatus,
+  getRequestStatusForAuthorization,
   type OnChangeCallbackArgs,
   type SampleTypeIdentifier,
   subscribeToChanges,
@@ -63,10 +65,17 @@ const callback = (args: OnChangeCallbackArgs) => {
   ])
 }
 
-//let subscriptionIds: string[] = []
-const init = async () => {
-  /*subscriptionIds =*/ AllSampleTypesInApp.map((sampleType) => {
-    return subscribeToChanges(sampleType, callback)
+let subscriptionIds: string[] = []
+export const initSubscriptions = async () => {
+  const status = await getRequestStatusForAuthorization({
+    toRead: AllSampleTypesInApp,
+    toShare: AllSampleTypesInApp,
   })
+  if (status === AuthorizationRequestStatus.unnecessary) {
+    subscriptionIds = AllSampleTypesInApp.map((sampleType) => {
+      return subscribeToChanges(sampleType, callback)
+    })
+  }
 }
-void init()
+
+void initSubscriptions()

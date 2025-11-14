@@ -17,6 +17,7 @@ import {
   AllObjectTypesInApp,
   AllSampleTypesInApp,
 } from '@/constants/AllUsedIdentifiersInApp'
+import { initSubscriptions } from '@/state/subscriptionEvents'
 import { enumKeyLookup } from '@/utils/enumKeyLookup'
 
 const authEnumLookup = enumKeyLookup(AuthorizationRequestStatus)
@@ -28,6 +29,7 @@ export default function AuthScreen() {
         toRead: AllObjectTypesInApp,
         toShare: AllSampleTypesInApp,
       })
+      initSubscriptions()
       alert(`response: ${res}`)
 
       router.replace('/')
