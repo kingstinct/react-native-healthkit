@@ -1,5 +1,8 @@
-import { Host, List, VStack } from '@expo/ui/swift-ui'
-import { queryWorkoutSamplesWithAnchor } from '@kingstinct/react-native-healthkit'
+import { Button, Host, List, VStack } from '@expo/ui/swift-ui'
+import {
+  queryWorkoutSamplesWithAnchor,
+  saveWorkoutSample,
+} from '@kingstinct/react-native-healthkit'
 import {
   WorkoutActivityType,
   type WorkoutSample,
@@ -52,6 +55,38 @@ export default function WorkoutsScreen() {
         />
 
         <List scrollEnabled>
+          <Button
+            onPress={async () => {
+              const workout = await saveWorkoutSample(
+                WorkoutActivityType.americanFootball,
+                [
+                  {
+                    endDate: new Date(),
+                    startDate: new Date(Date.now() - 60 * 60 * 1000),
+                    metadata: {
+                      sdfdfg: 'dsfdfg',
+                    },
+                    quantity: 100,
+                    quantityType:
+                      'HKQuantityTypeIdentifierDistanceWalkingRunning',
+                    unit: 'm',
+                  },
+                ],
+                new Date(Date.now() - 60 * 60 * 1000),
+                new Date(),
+                {
+                  distance: 1000,
+                  energyBurned: 500,
+                },
+                {
+                  something: 'dsfdfg',
+                },
+              )
+              console.log('Created workout:', workout)
+            }}
+          >
+            Create workout
+          </Button>
           {workouts.map((item) => (
             <ListItem
               key={item.uuid}
