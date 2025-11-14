@@ -94,20 +94,18 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
         quantities: [QuantitySampleForSaving],
         startDate: Date,
         endDate: Date,
-        totals: WorkoutTotals,
-        metadata: AnyMap
+        totals: WorkoutTotals?,
+        metadata: AnyMap?
     ) throws -> Promise<HybridWorkoutProxySpec> {
 
         let type = try initializeWorkoutActivityType(UInt(workoutActivityType.rawValue))
 
-        // if start and end both exist,  ensure that start date is before end date
-        if let startDate = startDate as Date?, let endDate = endDate as Date? {
-            if startDate > endDate {
-                throw RuntimeError.error(withMessage: "endDate must not be less than startDate")
-            }
+        // ensure that start date is before end date
+        if startDate > endDate {
+            throw RuntimeError.error(withMessage: "endDate must not be less than startDate")
         }
 
-        let metadataDeserialized = anyMapToDictionary(metadata)
+        let metadataDeserialized = metadata != nil ? anyMapToDictionary(metadata!) : nil
 
         var totalEnergyBurned: HKQuantity?
         var totalDistance: HKQuantity?
@@ -149,8 +147,8 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
         }
 
         // if totals are provided override samples
-        let rawTotalDistance = totals.distance ?? 0.0
-        let rawTotalEnergy = totals.energyBurned ?? 0.0
+        let rawTotalDistance = totals?.distance ?? 0.0
+        let rawTotalEnergy = totals?.energyBurned ?? 0.0
 
         if rawTotalDistance != 0.0 {
             totalDistance = HKQuantity(unit: .meter(), doubleValue: rawTotalDistance)
@@ -176,7 +174,7 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
             )
         } else {
             if #available(iOS 11, *) {
-                if totalFlightsClimbed != nil {
+                if let totalFlightsClimbed = totalFlightsClimbed {
                     workout = HKWorkout.init(
                         activityType: type,
                         start: startDate,
