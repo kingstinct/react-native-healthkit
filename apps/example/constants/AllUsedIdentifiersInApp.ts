@@ -112,9 +112,10 @@ export const AllSampleTypesInApp: SampleTypeIdentifierWriteable[] = [
 ]
 
 export const AllObjectTypesInApp: ObjectTypeIdentifier[] = [
-  ...AllSampleTypesInApp,
-  ...AllCharacteristicTypeIdentifierInApp,
-  'HKElectrocardiogramType',
+  // comment out to get auth errors from healthkit
+  // ...AllSampleTypesInApp,
+  // ...AllCharacteristicTypeIdentifierInApp,
+  // 'HKElectrocardiogramType',
   // 'HKQuantityTypeIdentifierHeartRateVariabilitySDNN',
   /*'HKQuantityTypeIdentifierRespiratoryRate',
     'HKQuantityTypeIdentifierVO2Max',

@@ -17,6 +17,7 @@
     "@react-navigation/bottom-tabs": "^7.4.9",
     "@react-navigation/elements": "^2.6.5",
     "@react-navigation/native": "^7.1.18",
+    "@shopify/react-native-skia": "2.2.12",
     "expo": "54.0.13",
     "expo-blur": "~15.0.7",
     "expo-constants": "~18.0.9",
