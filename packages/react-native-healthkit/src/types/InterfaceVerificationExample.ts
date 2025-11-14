@@ -26,7 +26,7 @@ export interface ExampleModuleTyped {
 const _exampleVerification: InterfaceAssertion<
   ExampleModule,
   ExampleModuleTyped,
-  keyof HybridObject
+  keyof HybridObject<{ ios: 'swift' }>
 > = true
 
 // Example: Interface with optional parameters
@@ -48,7 +48,7 @@ export interface ConfigModuleTyped {
 const _configVerification: InterfaceAssertion<
   ConfigModule,
   ConfigModuleTyped,
-  keyof HybridObject
+  keyof HybridObject<{ ios: 'swift' }>
 > = true
 
 // Example: What happens when there's a mismatch

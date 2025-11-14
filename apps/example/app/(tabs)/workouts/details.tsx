@@ -101,30 +101,6 @@ export default function WorkoutDetails() {
             title="Duration"
             subtitle={`${Math.round((workout.endDate.valueOf() - workout.startDate.valueOf()) / 60 / 1000)} minutes`}
           />
-          {workout.totalDistance ? (
-            <ListItem
-              title="Total Distance"
-              subtitle={`${Math.round(workout.totalDistance.quantity)} ${workout.totalDistance.unit}`}
-            />
-          ) : null}
-          {workout.totalEnergyBurned ? (
-            <ListItem
-              title="Total Energy Burned"
-              subtitle={`${Math.round(workout.totalEnergyBurned.quantity)} ${workout.totalEnergyBurned.unit}`}
-            />
-          ) : null}
-          {workout.totalFlightsClimbed ? (
-            <ListItem
-              title="Total Flights Climbed"
-              subtitle={`${Math.round(workout.totalFlightsClimbed.quantity)} ${workout.totalFlightsClimbed.unit}`}
-            />
-          ) : null}
-          {workout.totalSwimmingStrokeCount ? (
-            <ListItem
-              title="Total Swimming Stroke Count"
-              subtitle={`${Math.round(workout.totalSwimmingStrokeCount.quantity)} ${workout.totalSwimmingStrokeCount.unit}`}
-            />
-          ) : null}
         </Section>
         {workout.device ? (
           <Section title="Device">
