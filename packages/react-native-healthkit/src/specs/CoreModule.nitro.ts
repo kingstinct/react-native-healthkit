@@ -15,7 +15,7 @@ import type { OnChangeCallbackArgs } from '../types/Subscriptions'
 import type { IdentifierWithUnit } from '../types/Units'
 import type { SourceProxy } from './SourceProxy.nitro'
 
-interface AuthDataTypes {
+export interface AuthDataTypes {
   toShare?: readonly SampleTypeIdentifierWriteable[]
   toRead?: readonly ObjectTypeIdentifier[]
 }
