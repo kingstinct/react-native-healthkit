@@ -1,8 +1,12 @@
 import { Host, List, Section } from '@expo/ui/swift-ui'
 import HealthKit, {
+  AuthorizationRequestStatus,
+  AuthorizationStatus,
+  authorizationStatusFor,
   getBloodType,
   getFitzpatrickSkinType,
   getPreferredUnits,
+  getRequestStatusForAuthorization,
   getWheelchairUse,
   isHealthDataAvailable,
   isProtectedDataAvailable,
@@ -13,7 +17,7 @@ import {
   FitzpatrickSkinType,
   WheelchairUse,
 } from '@kingstinct/react-native-healthkit/types/Characteristics'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ListItem, type ListItemProps } from '@/components/SwiftListItem'
 import { enumKeyLookup } from '@/utils/enumKeyLookup'
 
@@ -21,7 +25,12 @@ const biologicalSexLookup = enumKeyLookup(BiologicalSex)
 const bloodTypeLookup = enumKeyLookup(BloodType)
 const wheelchairUseLookup = enumKeyLookup(WheelchairUse)
 const fitzpatrickSkinTypeLookup = enumKeyLookup(FitzpatrickSkinType)
-const coreStuffDefaults = [
+const authorizationStatusLookup = enumKeyLookup(AuthorizationStatus)
+const AuthorizationRequestStatusLookup = enumKeyLookup(
+  AuthorizationRequestStatus,
+)
+
+const deviceStuff = [
   {
     title: 'Is health data available?',
     subtitle: isHealthDataAvailable() ? '✅' : '❌',
@@ -33,27 +42,33 @@ const coreStuffDefaults = [
 ]
 
 const CoreTab = () => {
-  const characteristics: ListItemProps[] = [
-    {
-      title: 'Biological Sex',
-      subtitle: biologicalSexLookup[HealthKit.getBiologicalSex()],
-    },
-    { title: 'Birthday', subtitle: HealthKit.getDateOfBirth()?.toDateString() },
-    {
-      title: 'Blood type',
-      subtitle: bloodTypeLookup[getBloodType()],
-    },
-    {
-      title: 'Fitzpatrick Skin Type',
-      subtitle: fitzpatrickSkinTypeLookup[getFitzpatrickSkinType()],
-    },
-    {
-      title: 'Wheelchair Use',
-      subtitle: wheelchairUseLookup[getWheelchairUse()],
-    },
-  ]
+  const characteristics: ListItemProps[] = useMemo(
+    () => [
+      {
+        title: 'Biological Sex',
+        subtitle: biologicalSexLookup[HealthKit.getBiologicalSex()],
+      },
+      {
+        title: 'Birthday',
+        subtitle: HealthKit.getDateOfBirth()?.toLocaleDateString(),
+      },
+      {
+        title: 'Blood type',
+        subtitle: bloodTypeLookup[getBloodType()],
+      },
+      {
+        title: 'Fitzpatrick Skin Type',
+        subtitle: fitzpatrickSkinTypeLookup[getFitzpatrickSkinType()],
+      },
+      {
+        title: 'Wheelchair Use',
+        subtitle: wheelchairUseLookup[getWheelchairUse()],
+      },
+    ],
+    [],
+  )
 
-  const [coreStuff, setCoreStuff] = useState<ListItemProps[]>([])
+  const [unitStuff, setUnitStuff] = useState<ListItemProps[]>([])
 
   useEffect(() => {
     const init = async () => {
@@ -63,11 +78,42 @@ const CoreTab = () => {
           'HKQuantityTypeIdentifierBodyMass',
           'HKQuantityTypeIdentifierBloodGlucose',
         ])
-        setCoreStuff([
+        setUnitStuff([
           ...units.map(({ typeIdentifier, unit }) => ({
             title: `Unit for ${typeIdentifier}`,
             subtitle: unit || 'N/A',
           })),
+        ])
+      } catch (error) {
+        console.error('Error fetching preferred units:', error)
+      }
+    }
+    init()
+  }, [])
+
+  const [authStuff, setAuthStuff] = useState<ListItemProps[]>([])
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        setAuthStuff([
+          {
+            title: `authorizationStatusFor`,
+            subtitle:
+              authorizationStatusLookup[
+                authorizationStatusFor('HKQuantityTypeIdentifierStepCount')
+              ] || 'N/A',
+          },
+          {
+            title: `getRequestStatusForAuthorization`,
+            subtitle:
+              AuthorizationRequestStatusLookup[
+                await getRequestStatusForAuthorization({
+                  toRead: ['HKQuantityTypeIdentifierStepCount'],
+                  toShare: ['HKQuantityTypeIdentifierStepCount'],
+                })
+              ],
+          },
         ])
       } catch (error) {
         console.error('Error fetching preferred units:', error)
@@ -93,6 +139,15 @@ const CoreTab = () => {
         // deleteEnabled={deleteEnabled}
         // selectEnabled={selectEnabled}
       >
+        <Section title="Auth (stepCount)">
+          {authStuff.map((item) => (
+            <ListItem
+              key={item.title}
+              title={item.title}
+              subtitle={item.subtitle}
+            />
+          ))}
+        </Section>
         <Section title="Characteristics">
           {characteristics.map((item) => (
             <ListItem
@@ -103,7 +158,7 @@ const CoreTab = () => {
           ))}
         </Section>
         <Section title="Device">
-          {coreStuffDefaults.map((item) => (
+          {deviceStuff.map((item) => (
             <ListItem
               key={item.title}
               title={item.title}
@@ -112,7 +167,7 @@ const CoreTab = () => {
           ))}
         </Section>
         <Section title="Units">
-          {coreStuff.map((item) => (
+          {unitStuff.map((item) => (
             <ListItem
               key={item.title}
               title={item.title}

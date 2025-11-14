@@ -15,6 +15,11 @@ import type { OnChangeCallbackArgs } from '../types/Subscriptions'
 import type { IdentifierWithUnit } from '../types/Units'
 import type { SourceProxy } from './SourceProxy.nitro'
 
+export interface AuthDataTypes {
+  toShare?: readonly SampleTypeIdentifierWriteable[]
+  toRead?: readonly ObjectTypeIdentifier[]
+}
+
 export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
   /**
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614175-enablebackgrounddelivery Apple Docs }
@@ -68,6 +73,7 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
   unsubscribeQueriesAsync(queryIds: string[]): Promise<number>
 
   /**
+   * Returns the app’s authorization status for sharing the specified data type.
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614154-authorizationstatus Apple Docs }
    */
   authorizationStatusFor(type: ObjectTypeIdentifier): AuthorizationStatus
@@ -75,16 +81,12 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/2994346-getrequeststatusforauthorization Apple Docs }
    */
   getRequestStatusForAuthorization(
-    toShare: readonly SampleTypeIdentifierWriteable[],
-    toRead: readonly ObjectTypeIdentifier[],
+    toCheck: AuthDataTypes,
   ): Promise<AuthorizationRequestStatus>
   /**
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614152-requestauthorization Apple Docs }
    */
-  requestAuthorization(
-    toShare: readonly SampleTypeIdentifierWriteable[],
-    toRead: readonly ObjectTypeIdentifier[],
-  ): Promise<boolean>
+  requestAuthorization(toRequest: AuthDataTypes): Promise<boolean>
 
   deleteObjects(
     objectTypeIdentifier: ObjectTypeIdentifier,

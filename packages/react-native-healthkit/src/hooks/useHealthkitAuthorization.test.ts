@@ -23,7 +23,9 @@ describe('useHealthkitAuthorization', () => {
       )
 
     const { result } = renderHook(() =>
-      useHealthkitAuthorization(['HKCategoryTypeIdentifierAbdominalCramps']),
+      useHealthkitAuthorization({
+        toRead: ['HKCategoryTypeIdentifierAbdominalCramps'],
+      }),
     )
 
     await waitForNextUpdate()
@@ -42,7 +44,9 @@ describe('useHealthkitAuthorization', () => {
       .mockReturnValue(Promise.resolve(true))
 
     const { result } = renderHook(() =>
-      useHealthkitAuthorization(['HKCategoryTypeIdentifierAbdominalCramps']),
+      useHealthkitAuthorization({
+        toRead: ['HKCategoryTypeIdentifierAbdominalCramps'],
+      }),
     )
 
     await waitForNextUpdate()
@@ -66,7 +70,9 @@ describe('useHealthkitAuthorization', () => {
       .mockReturnValue(Promise.resolve(AuthorizationRequestStatus.unnecessary))
 
     const { result } = renderHook(() =>
-      useHealthkitAuthorization(['HKCategoryTypeIdentifierAbdominalCramps']),
+      useHealthkitAuthorization({
+        toWrite: ['HKCategoryTypeIdentifierAbdominalCramps'],
+      }),
     )
 
     await waitForNextUpdate()
@@ -76,7 +82,9 @@ describe('useHealthkitAuthorization', () => {
 
   test('should return null before initalizing', async () => {
     const { result } = renderHook(() =>
-      useHealthkitAuthorization(['HKCategoryTypeIdentifierAbdominalCramps']),
+      useHealthkitAuthorization({
+        toRead: ['HKCategoryTypeIdentifierAbdominalCramps'],
+      }),
     )
 
     expect(result.current[0]).toBe(null)

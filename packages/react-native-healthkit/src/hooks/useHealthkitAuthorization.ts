@@ -12,32 +12,38 @@ import type {
  * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614152-requestauthorization Apple Docs - requestAuthorization}
  * @see {@link https://developer.apple.com/documentation/healthkit/authorizing_access_to_health_data Apple Docs - Authorizing access to health data}
  */
-export const useHealthkitAuthorization = (
-  read: readonly ObjectTypeIdentifier[],
-  write?: readonly SampleTypeIdentifierWriteable[],
-) => {
+export const useHealthkitAuthorization = ({
+  toWrite,
+  toRead,
+}: {
+  toRead?: readonly ObjectTypeIdentifier[]
+  toWrite?: readonly SampleTypeIdentifierWriteable[]
+}) => {
   const [status, setStatus] = useState<AuthorizationRequestStatus | null>(null)
 
-  const readMemo = useRef(read)
-  const writeMemo = useRef(write)
+  const readMemo = useRef(toRead)
+  const writeMemo = useRef(toWrite)
 
   useEffect(() => {
-    readMemo.current = read
-    writeMemo.current = write
-  }, [read, write])
+    readMemo.current = toRead
+    writeMemo.current = toWrite
+  }, [toRead, toWrite])
 
   const refreshAuthStatus = useCallback(async () => {
-    const auth = await Core.getRequestStatusForAuthorization(
-      writeMemo.current ?? [],
-      readMemo.current,
-    )
+    const auth = await Core.getRequestStatusForAuthorization({
+      toShare: writeMemo.current,
+      toRead: readMemo.current,
+    })
 
     setStatus(auth)
     return auth
   }, [])
 
   const request = useCallback(async () => {
-    await Core.requestAuthorization(writeMemo.current ?? [], readMemo.current)
+    await Core.requestAuthorization({
+      toShare: writeMemo.current,
+      toRead: readMemo.current,
+    })
     return refreshAuthStatus()
   }, [refreshAuthStatus])
 
