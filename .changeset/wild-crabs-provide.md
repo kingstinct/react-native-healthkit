@@ -1,5 +1,4 @@
 ---
-"react-native-healthkit-example": major
 "@kingstinct/react-native-healthkit": major
 ---
 
