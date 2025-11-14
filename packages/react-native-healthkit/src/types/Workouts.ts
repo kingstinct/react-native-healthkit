@@ -230,7 +230,7 @@ export interface WorkoutRouteLocation {
   readonly altitude: number
   readonly course: number
   readonly date: Date
-  readonly distance: number | null
+  readonly distance?: number
   readonly horizontalAccuracy: number
   readonly latitude: number
   readonly longitude: number

@@ -6,6 +6,6 @@ import type { SourceProxy } from '../specs/SourceProxy.nitro'
 export interface SourceRevision {
   readonly source?: SourceProxy
   readonly version?: string
-  readonly operatingSystemVersion?: string | null
-  readonly productType?: string | null
+  readonly operatingSystemVersion?: string
+  readonly productType?: string
 }
