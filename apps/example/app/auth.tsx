@@ -24,11 +24,10 @@ const authEnumLookup = enumKeyLookup(AuthorizationRequestStatus)
 export default function AuthScreen() {
   const requestAuth = useCallback(async () => {
     try {
-      const res = await requestAuthorization(
-        AllSampleTypesInApp,
-        AllObjectTypesInApp,
-      )
-
+      const res = await requestAuthorization({
+        toRead: AllObjectTypesInApp,
+        toShare: AllSampleTypesInApp,
+      })
       alert(`response: ${res}`)
 
       router.replace('/')
@@ -42,10 +41,10 @@ export default function AuthScreen() {
   useEffect(() => {
     const updateStatus = async () => {
       try {
-        const status = await getRequestStatusForAuthorization(
-          AllSampleTypesInApp,
-          AllObjectTypesInApp,
-        )
+        const status = await getRequestStatusForAuthorization({
+          toShare: AllSampleTypesInApp,
+          toRead: AllObjectTypesInApp,
+        })
         setStatus(status)
       } catch (error) {
         setStatus(AuthorizationRequestStatus.unknown)

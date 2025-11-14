@@ -109,9 +109,9 @@ class CoreModule: HybridCoreModuleSpec {
         throw RuntimeError.error(withMessage: "[react-native-healthkit] got unrecognized AuthorizationStatus with value \(authStatus.rawValue)")
     }
 
-    func getRequestStatusForAuthorization(toShare: [SampleTypeIdentifierWriteable], toRead: [ObjectTypeIdentifier]) throws -> Promise<AuthorizationRequestStatus> {
-        let toShare = sampleTypesFromArray(typeIdentifiersWriteable: toShare)
-        let toRead = objectTypesFromArray(typeIdentifiers: toRead)
+    func getRequestStatusForAuthorization(toCheck: AuthDataTypes) throws -> Promise<AuthorizationRequestStatus> {
+        let toShare = sampleTypesFromArray(typeIdentifiersWriteable: toCheck.toShare ?? [])
+        let toRead = objectTypesFromArray(typeIdentifiers: toCheck.toRead ?? [])
 
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
@@ -131,9 +131,9 @@ class CoreModule: HybridCoreModuleSpec {
         }
     }
 
-    func requestAuthorization(toShare: [SampleTypeIdentifierWriteable], toRead: [ObjectTypeIdentifier]) throws -> Promise<Bool> {
-        let share = sampleTypesFromArray(typeIdentifiersWriteable: toShare)
-        let toRead = objectTypesFromArray(typeIdentifiers: toRead)
+    func requestAuthorization(toRequest: AuthDataTypes) throws -> Promise<Bool> {
+        let share = sampleTypesFromArray(typeIdentifiersWriteable: toRequest.toShare ?? [])
+        let toRead = objectTypesFromArray(typeIdentifiers: toRequest.toRead ?? [])
 
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
