@@ -19,6 +19,7 @@ import {
   Workouts,
 } from './modules'
 import type { QuantityTypeIdentifier } from './types/QuantityTypeIdentifier'
+import generateQuantityTypeSamples from './utils/generateQuantityTypeSamples'
 import getMostRecentCategorySample from './utils/getMostRecentCategorySample'
 import getMostRecentQuantitySample from './utils/getMostRecentQuantitySample'
 import getMostRecentWorkout from './utils/getMostRecentWorkout'
@@ -49,6 +50,7 @@ export type AvailableQuantityTypesBeforeIOS17 = Exclude<
 >
 
 export {
+  generateQuantityTypeSamples,
   getMostRecentCategorySample,
   getMostRecentQuantitySample,
   getMostRecentWorkout,
@@ -222,6 +224,7 @@ export default {
   isProtectedDataAvailable,
   queryStateOfMindSamples,
   saveStateOfMindSample,
+  generateQuantityTypeSamples,
 
   // hooks
   useMostRecentCategorySample,
