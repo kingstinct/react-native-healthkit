@@ -7,6 +7,7 @@ import useMostRecentWorkout from './hooks/useMostRecentWorkout'
 import useSources from './hooks/useSources'
 import useStatisticsForQuantity from './hooks/useStatisticsForQuantity'
 import useSubscribeToChanges from './hooks/useSubscribeToChanges'
+import useSubscribeToQuantitySamples from './hooks/useSubscribeToQuantitySamples'
 import {
   CategoryTypes,
   Characteristics,
@@ -23,6 +24,8 @@ import getMostRecentCategorySample from './utils/getMostRecentCategorySample'
 import getMostRecentQuantitySample from './utils/getMostRecentQuantitySample'
 import getMostRecentWorkout from './utils/getMostRecentWorkout'
 import getPreferredUnit from './utils/getPreferredUnit'
+import { subscribeToChanges } from './utils/subscribeToChanges'
+import { subscribeToQuantitySamples } from './utils/subscribeToQuantitySamples'
 
 export * from './types'
 
@@ -138,7 +141,6 @@ export const saveCorrelationSample =
 export const saveQuantitySample =
   QuantityTypes.saveQuantitySample.bind(QuantityTypes)
 export const saveWorkoutSample = Workouts.saveWorkoutSample.bind(Workouts)
-export const subscribeToChanges = Core.subscribeToObserverQuery.bind(Core)
 export const startWatchApp =
   Workouts.startWatchAppWithWorkoutConfiguration.bind(Workouts)
 export const isProtectedDataAvailable = Core.isProtectedDataAvailable.bind(Core)
@@ -217,7 +219,7 @@ export default {
   saveQuantitySample,
   saveWorkoutSample,
   subscribeToChanges,
-  unsubscribeQueries,
+  subscribeToQuantitySamples,
   startWatchApp,
   isProtectedDataAvailable,
   queryStateOfMindSamples,
@@ -228,6 +230,7 @@ export default {
   useMostRecentQuantitySample,
   useMostRecentWorkout,
   useSubscribeToChanges,
+  useSubscribeToQuantitySamples,
   useHealthkitAuthorization,
   useIsHealthDataAvailable,
   useSources,

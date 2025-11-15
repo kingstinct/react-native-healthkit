@@ -2,14 +2,21 @@ import {
   AuthorizationRequestStatus,
   getRequestStatusForAuthorization,
   type OnChangeCallbackArgs,
+  type OnQuantitySamplesCallback,
+  type QuantityTypeIdentifier,
+  type QuantityTypeIdentifierWriteable,
   type SampleTypeIdentifier,
   subscribeToChanges,
 } from '@kingstinct/react-native-healthkit'
+import { subscribeToQuantitySamples } from '@kingstinct/react-native-healthkit/utils/subscribeToQuantitySamples'
 import { ImpactFeedbackStyle, impactAsync } from 'expo-haptics'
 import { scheduleNotificationAsync } from 'expo-notifications'
 import { getDefaultStore } from 'jotai'
 import { AppState } from 'react-native'
-import { AllSampleTypesInApp } from '@/constants/AllUsedIdentifiersInApp'
+import {
+  AllQuantityTypeIdentifierInApp,
+  AllSampleTypesInApp,
+} from '@/constants/AllUsedIdentifiersInApp'
 import { atomWithMMKV } from '@/utils/atomWithMMKV'
 
 type SubscriptionEvent = {
@@ -25,9 +32,9 @@ export const subscriptionEvents = atomWithMMKV<SubscriptionEvent[]>(
   [],
 )
 
-const callback = (args: OnChangeCallbackArgs) => {
+const callback = (args: OnChangeCallbackArgs | OnQuantitySamplesCallback) => {
   const { typeIdentifier } = args
-  if (args.errorMessage) {
+  if ('errorMessage' in args && args.errorMessage) {
     if (AppState.currentState === 'active') {
       alert(
         `Error in observer query for ${typeIdentifier}: ${args.errorMessage}`,
@@ -48,8 +55,8 @@ const callback = (args: OnChangeCallbackArgs) => {
   } else {
     scheduleNotificationAsync({
       content: {
-        title: 'Got a new event!',
-        body: typeIdentifier,
+        title: `Got a new ${typeIdentifier} update!`,
+        body: 'samples' in args ? String(args.samples.length) : '',
       },
       trigger: null,
     })
@@ -65,15 +72,25 @@ const callback = (args: OnChangeCallbackArgs) => {
   ])
 }
 
-let subscriptionIds: string[] = []
 export const initSubscriptions = async () => {
   const status = await getRequestStatusForAuthorization({
     toRead: AllSampleTypesInApp,
     toShare: AllSampleTypesInApp,
   })
   if (status === AuthorizationRequestStatus.unnecessary) {
-    subscriptionIds = AllSampleTypesInApp.map((sampleType) => {
-      return subscribeToChanges(sampleType, callback)
+    AllSampleTypesInApp.forEach((sampleType) => {
+      if (
+        AllQuantityTypeIdentifierInApp.includes(
+          sampleType as QuantityTypeIdentifierWriteable,
+        )
+      ) {
+        subscribeToQuantitySamples(
+          sampleType as QuantityTypeIdentifier,
+          callback,
+        )
+      } else {
+        subscribeToChanges(sampleType, callback)
+      }
     })
   }
 }
