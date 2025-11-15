@@ -408,16 +408,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
                     let deletedSamples = deletedSamples?.map { serializeDeletedSample(sample: $0) } ?? []
                     let newAnchor = serializeAnchor(anchor: newAnchor) ?? ""
 
-                    guard let samples = samples else {
-                        let response = QuantitySamplesWithAnchorResponse(
-                            samples: [],
-                            deletedSamples: deletedSamples,
-                            newAnchor: newAnchor
-                        )
-                        return continuation.resume(returning: response)
-                    }
-
-                    let quantitySamples = samples.compactMap { sample in
+                    let quantitySamples = samples?.compactMap { sample in
                         if let quantitySample = sample as? HKQuantitySample {
                             do {
                                 return try serializeQuantitySample(
@@ -432,7 +423,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
                     }
 
                     let response = QuantitySamplesWithAnchorResponse(
-                        samples: quantitySamples,
+                        samples: quantitySamples ?? [],
                         deletedSamples: deletedSamples,
                         newAnchor: newAnchor,
                     )

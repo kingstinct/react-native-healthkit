@@ -11,6 +11,21 @@ export const subscribeToQuantitySamples = (
   let anchor: string | undefined
   const afterDate = after ?? new Date()
 
+  const init = async () => {
+    // we need to do an initial query to get a handle for the deletedSamples
+    const { newAnchor } = await QuantityTypes.queryQuantitySamplesWithAnchor(
+      identifier,
+      {
+        filter: {
+          startDate: afterDate,
+        },
+      },
+    )
+    anchor = newAnchor
+  }
+
+  init()
+
   return subscribeToChanges(identifier, async ({ errorMessage }) => {
     if (errorMessage) {
       return callback({
@@ -18,6 +33,9 @@ export const subscribeToQuantitySamples = (
         errorMessage,
       })
     }
+
+    // seems like all deletedSamples are included when no anchor is provided, so we don't want to return those for the first query
+    const hadAnchorWhenDoingQuery = !!anchor
 
     const { samples, newAnchor, deletedSamples } =
       await QuantityTypes.queryQuantitySamplesWithAnchor(identifier, {
@@ -29,12 +47,19 @@ export const subscribeToQuantitySamples = (
 
     anchor = newAnchor
 
-    if (samples.length > 0 || deletedSamples.length > 0) {
+    const hasNewSamples =
+      samples.length > 0 ||
+      (deletedSamples.length > 0 && hadAnchorWhenDoingQuery)
+
+    if (hasNewSamples) {
+      console.log(
+        `subscribeToQuantitySamples: Detected ${samples.length} new samples and ${deletedSamples.length} deleted samples for ${identifier}`,
+      )
       callback({
         typeIdentifier: identifier,
         samples: samples,
         anchor: newAnchor,
-        deletedSamples: deletedSamples,
+        deletedSamples: hadAnchorWhenDoingQuery ? deletedSamples : [],
       })
     }
   })

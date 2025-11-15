@@ -22,6 +22,7 @@ import { atomWithMMKV } from '@/utils/atomWithMMKV'
 type SubscriptionEvent = {
   sampleTypeIdentifier: SampleTypeIdentifier
   timestamp: number
+  description?: string
   appState: AppState['currentState']
 }
 
@@ -56,7 +57,10 @@ const callback = (args: OnChangeCallbackArgs | OnQuantitySamplesCallback) => {
     scheduleNotificationAsync({
       content: {
         title: `Got a new ${typeIdentifier} update!`,
-        body: 'samples' in args ? String(args.samples.length) : '',
+        body:
+          'samples' in args
+            ? `+${args.samples.length}, -${args.deletedSamples.length} samples`
+            : '',
       },
       trigger: null,
     })
@@ -67,6 +71,10 @@ const callback = (args: OnChangeCallbackArgs | OnQuantitySamplesCallback) => {
       sampleTypeIdentifier: args.typeIdentifier,
       timestamp: Date.now(),
       appState: AppState.currentState,
+      description:
+        'samples' in args
+          ? `+${args.samples.length}, -${args.deletedSamples.length}`
+          : '',
     },
     ...prevEvents,
   ])
@@ -77,6 +85,7 @@ export const initSubscriptions = async () => {
     toRead: AllSampleTypesInApp,
     toShare: AllSampleTypesInApp,
   })
+  console.log('Subscription init authorization status:', status)
   if (status === AuthorizationRequestStatus.unnecessary) {
     AllSampleTypesInApp.forEach((sampleType) => {
       if (

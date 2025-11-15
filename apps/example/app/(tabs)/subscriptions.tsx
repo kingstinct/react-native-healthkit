@@ -82,7 +82,7 @@ const Subscriptions = () => {
                 'sampleTypeIdentifier' in event
                   ? transformIdentifierToName(
                       event.sampleTypeIdentifier as SampleTypeIdentifier,
-                    )
+                    ) + (event.description ? ` (${event.description})` : '')
                   : event.appState
               }
               subtitle={`${new Date(event.timestamp).toLocaleTimeString()}`}

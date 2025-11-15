@@ -4,6 +4,7 @@ import { atomWithMMKV } from '@/utils/atomWithMMKV'
 
 type SubscriptionEvent = {
   timestamp: number
+  description?: string
   appState: AppState['currentState'] | 'cold-start'
 }
 
