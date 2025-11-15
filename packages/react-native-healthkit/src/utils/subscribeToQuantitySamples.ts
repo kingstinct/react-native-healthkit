@@ -57,7 +57,7 @@ export const subscribeToQuantitySamples = (
       )
       callback({
         typeIdentifier: identifier,
-        samples: samples,
+        samples,
         anchor: newAnchor,
         deletedSamples: hadAnchorWhenDoingQuery ? deletedSamples : [],
       })
