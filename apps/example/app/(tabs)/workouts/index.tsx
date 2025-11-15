@@ -9,7 +9,6 @@ import {
 } from '@kingstinct/react-native-healthkit/types/Workouts'
 import { router } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
-import { View } from 'react-native'
 import { QueryInfo } from '@/components/QueryInfo'
 import { ListItem } from '@/components/SwiftListItem'
 import { enumKeyLookup } from '@/utils/enumKeyLookup'

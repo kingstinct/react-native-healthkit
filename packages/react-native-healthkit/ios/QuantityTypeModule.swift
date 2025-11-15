@@ -290,16 +290,10 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
         }
     }
 
-    func queryStatisticsCollectionForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], anchorDate: String, intervalComponents: IntervalComponents, options: StatisticsQueryOptions?) throws -> Promise<[QueryStatisticsResponse]> {
+    func queryStatisticsCollectionForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], anchorDate: Date, intervalComponents: IntervalComponents, options: StatisticsQueryOptions?) throws -> Promise<[QueryStatisticsResponse]> {
         let quantityType = try initializeQuantityType(identifier.stringValue)
 
         let predicate = try createPredicate(filter: options?.filter)
-
-        // Convert the anchor date string to Date
-        let dateFormatter = ISO8601DateFormatter()
-        guard let anchor = dateFormatter.date(from: anchorDate) else {
-            throw RuntimeError.error(withMessage: "Invalid anchor date format: " + anchorDate)
-        }
 
         // Create date components from interval
         var dateComponents = DateComponents()
@@ -324,12 +318,13 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
 
         return Promise.async {
             let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
+
             return try await withCheckedThrowingContinuation { continuation in
                 let query = HKStatisticsCollectionQuery.init(
                     quantityType: quantityType,
                     quantitySamplePredicate: predicate,
                     options: opts,
-                    anchorDate: anchor,
+                    anchorDate: anchorDate,
                     intervalComponents: dateComponents
                 )
 

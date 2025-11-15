@@ -40,7 +40,7 @@ export interface CategoryTypeModule extends HybridObject<{ ios: 'swift' }> {
 const _interfaceVerification: InterfaceAssertion<
   CategoryTypeModule,
   CategoryTypeModuleTyped,
-  keyof HybridObject
+  keyof HybridObject<{ ios: 'swift' }>
 > = true
 
 export interface CategoryTypeModuleTyped {

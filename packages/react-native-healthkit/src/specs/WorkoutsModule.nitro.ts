@@ -16,8 +16,8 @@ export interface WorkoutsModule extends HybridObject<{ ios: 'swift' }> {
     quantities: readonly QuantitySampleForSaving[],
     startDate: Date,
     endDate: Date,
-    totals: WorkoutTotals,
-    metadata: AnyMap,
+    totals?: WorkoutTotals,
+    metadata?: AnyMap,
   ): Promise<WorkoutProxy>
 
   queryWorkoutSamplesWithAnchor(

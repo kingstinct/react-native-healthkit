@@ -144,12 +144,12 @@ func createMetadataPredicate(metadataKey: PredicateWithMetadataKey) throws -> NS
     let actualValue: Any
 
     switch valueVariant {
-      case .first(let stringValue):
-          actualValue = stringValue
-      case .second(let doubleValue):
-          actualValue = NSNumber(value: doubleValue)
-      case .third(let boolValue):
+      case .first(let boolValue):
           actualValue = NSNumber(value: boolValue ? 1 : 0)
+      case .second(let stringValue):
+          actualValue = stringValue
+      case .third(let doubleValue):
+          actualValue = NSNumber(value: doubleValue)
       case .fourth(let dateValue):
           actualValue = dateValue
     }
