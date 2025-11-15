@@ -190,8 +190,6 @@ func createPredicate(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_Predic
             case .third(let metadataKey):
                 return try createMetadataPredicate(metadataKey: metadataKey)
             case .fourth(let dateFilter):
-                let timeIntervalStart: TimeInterval? = dateFilter.startDate?.timeIntervalSince1970
-                let timeIntervalEnd: TimeInterval? = dateFilter.endDate?.timeIntervalSince1970
                 return createDatePredicate(dateFilter: dateFilter)
             case .fifth(let w):
               if let w = w.workout as? WorkoutProxy {
