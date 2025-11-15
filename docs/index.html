@@ -140,9 +140,9 @@ export default () => {
   const [
     authorizationStatus, 
     requestAuthorization
-  ] = useHealthkitAuthorization([
-    'HKQuantityTypeIdentifierBloodGlucose'
-  ])
+  ] = useHealthkitAuthorization({
+    toRead: [ 'HKQuantityTypeIdentifierBloodGlucose' ]
+  })
 
   return &lt;View>
     &lt;Text>Authorization Status: {authorizationStatus}&lt;/Text>

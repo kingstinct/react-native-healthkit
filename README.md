@@ -84,14 +84,16 @@ Some imperative examples:
   const isAvailable = await isHealthDataAvailable();
 
   /* Read latest sample of any data */
-  await requestAuthorization(['HKQuantityTypeIdentifierBodyFatPercentage']); // request read permission for bodyFatPercentage
+  await requestAuthorization({ toRead: ['HKQuantityTypeIdentifierBodyFatPercentage'] }); // request read permission for bodyFatPercentage
 
   const { quantity, unit, startDate, endDate } = await getMostRecentQuantitySample('HKQuantityTypeIdentifierBodyFatPercentage'); // read latest sample
   
   console.log(quantity) // 17.5
   console.log(unit) // %
 
-  await requestAuthorization(['HKQuantityTypeIdentifierHeartRate']); // request read permission for heart rate
+  await requestAuthorization({
+    toRead: ['HKQuantityTypeIdentifierHeartRate']
+  }); // request read permission for heart rate
 
   /* Subscribe to data (Make sure to request permissions before subscribing to changes) */
   const [hasRequestedAuthorization, setHasRequestedAuthorization] = useState(false);
@@ -113,7 +115,7 @@ Some imperative examples:
   }, [hasRequestedAuthorization]);
 
   /* write data */
-  await requestAuthorization([], ['HKQuantityTypeIdentifierInsulinDelivery']); // request write permission for insulin delivery
+  await requestAuthorization({ toShare: ['HKQuantityTypeIdentifierInsulinDelivery'] }); // request write permission for insulin delivery
 
   saveQuantitySample(
       'HKQuantityTypeIdentifierInsulinDelivery',
