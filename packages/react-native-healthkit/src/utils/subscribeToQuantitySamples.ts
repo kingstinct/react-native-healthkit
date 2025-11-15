@@ -39,7 +39,7 @@ export const subscribeToQuantitySamples = (
 
     const { samples, newAnchor, deletedSamples } =
       await QuantityTypes.queryQuantitySamplesWithAnchor(identifier, {
-        anchor: anchor,
+        anchor,
         filter: {
           startDate: afterDate,
         },
