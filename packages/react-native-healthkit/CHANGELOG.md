@@ -1,5 +1,11 @@
 # @kingstinct/react-native-healthkit
 
+## 12.0.0
+### Major Changes
+
+- a60af40: use date for anchorDate
+- f10749f: feat: make auth arguments as clear as can be
+
 ## 11.1.2
 ### Patch Changes
 
