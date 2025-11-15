@@ -379,6 +379,7 @@ const useSubscribeToQuantitySamples = UnavailableFnFromModule(
   undefined,
 ) // Mocking callback structure
 
+export { useSubscribeToQuantitySamples }
 // --- Default Export ---
 // This attempts to match the structure of the default export from index.ios.ts
 const HealthkitModule = {
