@@ -119,7 +119,9 @@ describe('generateQuantityTypeSamples', () => {
       .mockRejectedValue(new Error('Save failed'))
     jest.spyOn(QuantityTypes, 'queryQuantitySamples').mockResolvedValue([])
 
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
 
     const result = await generateQuantityTypeSamples(
       'HKQuantityTypeIdentifierStepCount',
