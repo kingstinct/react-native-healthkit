@@ -302,6 +302,11 @@ export const getPreferredUnit = UnavailableFnFromModule(
   Promise.resolve('count'),
 ) // Defaulting to 'count'
 
+export const generateQuantityTypeSamples = UnavailableFnFromModule(
+  'generateQuantityTypeSamples',
+  Promise.resolve(false),
+)
+
 // Hooks (from original export list)
 export function useMostRecentCategorySample<T extends CategoryTypeIdentifier>(
   _categoryTypeIdentifier: T,
@@ -420,6 +425,7 @@ const HealthkitModule = {
   isProtectedDataAvailable,
   queryStateOfMindSamples,
   saveStateOfMindSample,
+  generateQuantityTypeSamples,
 
   // Hooks
   useMostRecentCategorySample,
