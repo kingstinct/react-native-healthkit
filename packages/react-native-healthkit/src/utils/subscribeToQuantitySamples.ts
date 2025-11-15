@@ -52,9 +52,6 @@ export const subscribeToQuantitySamples = (
       (deletedSamples.length > 0 && hadAnchorWhenDoingQuery)
 
     if (hasNewSamples) {
-      console.log(
-        `subscribeToQuantitySamples: Detected ${samples.length} new samples and ${deletedSamples.length} deleted samples for ${identifier}`,
-      )
       callback({
         typeIdentifier: identifier,
         samples,
