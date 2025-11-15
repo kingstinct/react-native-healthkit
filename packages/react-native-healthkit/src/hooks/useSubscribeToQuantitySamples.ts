@@ -1,13 +1,15 @@
 import { useEffect, useRef } from 'react'
-import type { QuantityTypeIdentifier } from '../types'
-import type { OnQuantitySamplesCallbackArgs } from '../types/Subscriptions'
+import type {
+  OnQuantitySamplesCallback,
+  QuantityTypeIdentifier,
+} from '../types'
 import { subscribeToQuantitySamples } from '../utils/subscribeToQuantitySamples'
 
 export function useSubscribeToQuantitySamples<
   TIdentifier extends QuantityTypeIdentifier,
 >(
   identifier: TIdentifier,
-  onChange: (args: OnQuantitySamplesCallbackArgs) => void,
+  onChange: (args: OnQuantitySamplesCallback) => void,
 ): void {
   const onChangeRef = useRef(onChange)
 

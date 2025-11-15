@@ -56,14 +56,17 @@ export {
   getMostRecentQuantitySample,
   getMostRecentWorkout,
   getPreferredUnit,
+  subscribeToChanges,
+  subscribeToQuantitySamples,
+  useHealthkitAuthorization,
+  useIsHealthDataAvailable,
   useMostRecentCategorySample,
   useMostRecentQuantitySample,
   useMostRecentWorkout,
-  useSubscribeToChanges,
-  useHealthkitAuthorization,
-  useIsHealthDataAvailable,
   useSources,
   useStatisticsForQuantity,
+  useSubscribeToChanges,
+  useSubscribeToQuantitySamples,
 }
 
 /**
@@ -150,7 +153,6 @@ export const saveStateOfMindSample =
   StateOfMind.saveStateOfMindSample.bind(StateOfMind)
 export const isQuantityCompatibleWithUnit =
   QuantityTypes.isQuantityCompatibleWithUnit.bind(QuantityTypes)
-export const unsubscribeQueries = Core.unsubscribeQueries.bind(Core)
 
 export const isObjectTypeAvailable = Core.isObjectTypeAvailable.bind(Core)
 export const isObjectTypeAvailableAsync =

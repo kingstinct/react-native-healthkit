@@ -97,7 +97,9 @@ export const deleteObjects = UnavailableFnFromModule(
 )
 export const subscribeToChanges = UnavailableFnFromModule(
   'subscribeToChanges',
-  'dummy-query-uuid',
+  {
+    remove: () => false,
+  },
 ) // Mocking the observer query UUID
 export const isProtectedDataAvailable = UnavailableFnFromModule(
   'isProtectedDataAvailable',
