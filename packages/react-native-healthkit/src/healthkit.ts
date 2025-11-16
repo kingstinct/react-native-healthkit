@@ -97,7 +97,9 @@ export const deleteObjects = UnavailableFnFromModule(
 )
 export const subscribeToChanges = UnavailableFnFromModule(
   'subscribeToChanges',
-  'dummy-query-uuid',
+  {
+    remove: () => false,
+  },
 ) // Mocking the observer query UUID
 export const isProtectedDataAvailable = UnavailableFnFromModule(
   'isProtectedDataAvailable',
@@ -363,18 +365,27 @@ export const getWheelchairUseAsync = UnavailableFnFromModule(
   Promise.resolve(WheelchairUse.notSet),
 )
 
-export const unsubscribeQueries = UnavailableFnFromModule(
-  'unsubscribeQueries',
-  0,
-)
+const subscribeToQuantitySamples = UnavailableFnFromModule(
+  'subscribeToQuantitySamples',
+  {
+    remove: () => false,
+  },
+) // Mocking the observer query UUID
 
+export { subscribeToQuantitySamples }
+
+const useSubscribeToQuantitySamples = UnavailableFnFromModule(
+  'useSubscribeToQuantitySamples',
+  undefined,
+) // Mocking callback structure
+
+export { useSubscribeToQuantitySamples }
 // --- Default Export ---
 // This attempts to match the structure of the default export from index.ios.ts
 const HealthkitModule = {
   // All named exports are also part of the default export object
   authorizationStatusFor,
   isObjectTypeAvailable,
-  unsubscribeQueries,
   isObjectTypeAvailableAsync,
   areObjectTypesAvailable,
   areObjectTypesAvailableAsync,
@@ -420,6 +431,8 @@ const HealthkitModule = {
   isProtectedDataAvailable,
   queryStateOfMindSamples,
   saveStateOfMindSample,
+  subscribeToQuantitySamples,
+  useSubscribeToQuantitySamples,
 
   // Hooks
   useMostRecentCategorySample,

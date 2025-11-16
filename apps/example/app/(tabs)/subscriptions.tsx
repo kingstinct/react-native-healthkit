@@ -1,4 +1,4 @@
-import { Host, List, Section, Text } from '@expo/ui/swift-ui'
+import { Button, Host, List, Section, Text } from '@expo/ui/swift-ui'
 import {
   enableBackgroundDelivery,
   UpdateFrequency,
@@ -8,7 +8,7 @@ import {
   getPermissionsAsync,
   requestPermissionsAsync,
 } from 'expo-notifications'
-import { useAtom } from 'jotai'
+import { getDefaultStore, useAtom } from 'jotai'
 import { useEffect, useMemo } from 'react'
 import { ListItem } from '@/components/SwiftListItem'
 import { AllSampleTypesInApp } from '@/constants/AllUsedIdentifiersInApp'
@@ -61,6 +61,14 @@ const Subscriptions = () => {
     <Host style={{ flex: 1 }}>
       <List scrollEnabled>
         <Text>Listening for new events..</Text>
+        <Button
+          onPress={() => {
+            getDefaultStore().set(subscriptionEvents, [])
+            getDefaultStore().set(appStateEvents, [])
+          }}
+        >
+          Clear Events
+        </Button>
         <Section title="Events">
           {allEvents.map((event, _index) => (
             <ListItem
@@ -74,7 +82,7 @@ const Subscriptions = () => {
                 'sampleTypeIdentifier' in event
                   ? transformIdentifierToName(
                       event.sampleTypeIdentifier as SampleTypeIdentifier,
-                    )
+                    ) + (event.description ? ` (${event.description})` : '')
                   : event.appState
               }
               subtitle={`${new Date(event.timestamp).toLocaleTimeString()}`}
