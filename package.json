@@ -61,6 +61,7 @@
     "typescript": "~5.9.3"
   },
   "resolutions": {
-    "react-test-renderer": "19.1.0"
+    "react-test-renderer": "19.1.0",
+    "expo": "54.0.21"
   }
 }
