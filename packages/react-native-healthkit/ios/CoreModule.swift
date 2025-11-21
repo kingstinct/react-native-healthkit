@@ -115,6 +115,9 @@ class CoreModule: HybridCoreModuleSpec {
 
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
+                if toShare.isEmpty && toRead.isEmpty {
+                  return continuation.resume(throwing: RuntimeError.error(withMessage: "[react-native-healthkit] Both toRead and toShare are empty, at least one data type must be specified to check authorization status"))
+                }
                 store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) { status, error in
                     if let error = error {
                         continuation.resume(throwing: error)
@@ -163,7 +166,7 @@ class CoreModule: HybridCoreModuleSpec {
                     }
 
                     guard let sources = sources else {
-                      return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response for sample type \(identifier.stringValue)"))
+                      return continuation.resume(throwing: RuntimeError.error(withMessage: "[react-native-healthkit] Empty response for sample type \(identifier.stringValue)"))
                     }
 
                     let serializedSources = sources.map { source -> SourceProxy in
@@ -338,7 +341,7 @@ class CoreModule: HybridCoreModuleSpec {
 
     func unsubscribeQuery(queryId: String) throws -> Bool {
         guard let query = self._runningQueries[queryId] else {
-            throw RuntimeError.error(withMessage: "Query with id \(queryId) not found")
+            throw RuntimeError.error(withMessage: "[react-native-healthkit] Query with id \(queryId) not found")
         }
 
         store.stop(query)
