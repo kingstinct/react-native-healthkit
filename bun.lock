@@ -83,6 +83,7 @@
     },
   },
   "overrides": {
+    "expo": "54.0.21",
     "react-test-renderer": "19.1.0",
   },
   "packages": {

@@ -212,15 +212,17 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
                 store.save(workout) { (_: Bool, error: Error?) in
                     if let error = error {
                         return continuation.resume(throwing: error)
-                    }
-                    if !initializedSamples.isEmpty {
+                    } else if !initializedSamples.isEmpty {
                         store.add(initializedSamples, to: workout) { (_, error: Error?) in
                             if let error = error {
                                 return continuation.resume(throwing: error)
                             }
+                            return continuation.resume()
                         }
+                    } else {
+                      return continuation.resume()
                     }
-                    return continuation.resume()
+
                 }
             }) as Void
 
