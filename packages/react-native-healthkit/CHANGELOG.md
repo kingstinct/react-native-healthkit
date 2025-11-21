@@ -1,5 +1,14 @@
 # @kingstinct/react-native-healthkit
 
+## 12.1.0
+### Minor Changes
+
+- e56fbd6: add subscribeToQuantitySamples and useSubscribeToQuantitySamples for convenience
+
+### Patch Changes
+
+- f9138e3: fix: crash on errors when saving workout sample
+
 ## 12.0.0
 ### Major Changes
 
