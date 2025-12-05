@@ -100,7 +100,7 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
                         return
                     }
 
-                    guard let correlations = correlations else {
+                    guard let correlations = correlations, !correlations.isEmpty else {
                         continuation.resume(returning: [])
                         return
                     }
