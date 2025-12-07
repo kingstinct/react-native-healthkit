@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 12.1.2
+### Patch Changes
+
+- 6678bcb: Fix native error on queryCorrelationSamples when no data available
+
 ## 12.1.1
 ### Patch Changes
 
