@@ -1,0 +1,60 @@
+{
+  "project_name": "react-native-healthkit",
+  "auto_install_extensions": {
+    "biome": true
+  },
+  "lsp": {
+    "biome": {
+      "settings": {
+        "config_path": "./biome.json"
+      }
+    }
+  },
+  "languages": {
+    "JavaScript": {
+      "language_servers": [
+        "typescript-language-server",
+        "biome",
+        "!vtsls",
+        "!eslint",
+        "!tailwindcss-language-server"
+      ],
+      "use_on_type_format": false,
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      }
+    },
+    "TypeScript": {
+      "language_servers": [
+        "typescript-language-server",
+        "biome",
+        "!vtsls",
+        "!eslint",
+        "!tailwindcss-language-server"
+      ],
+      "use_on_type_format": false,
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      }
+    },
+    "TSX": {
+      "language_servers": [
+        "typescript-language-server",
+        "biome",
+        "!vtsls",
+        "!eslint",
+        "!tailwindcss-language-server"
+      ],
+      "use_on_type_format": false,
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      }
+    }
+  }
+}
