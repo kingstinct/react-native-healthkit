@@ -62,6 +62,7 @@ export default function QuantitiesScreen() {
           startDate: fromDate,
           endDate: toDate,
         },
+        limit: 20,
         anchor: anchor,
       })
         .then((result) => {
@@ -78,9 +79,13 @@ export default function QuantitiesScreen() {
       const userEnteredFilters: FilterForSamples =
         includeUserEntered === false
           ? {
-              withMetadataKey: 'HKWasUserEntered',
-              operatorType: 'notEqualTo',
-              value: true,
+              metadata: [
+                {
+                  withMetadataKey: 'HKWasUserEntered',
+                  operatorType: 'notEqualTo',
+                  value: true,
+                },
+              ],
             }
           : {}
 
@@ -93,6 +98,7 @@ export default function QuantitiesScreen() {
             ...userEnteredFilters,
           },
           ascending: selectedOption === 'Ascending',
+          limit: 20,
         },
       )
       setQueryTime(Date.now() - startedAt)

@@ -32,81 +32,36 @@ func getQueryLimit(_ limit: Double?) -> Int {
     return HKObjectQueryNoLimit
 }
 
-func createPredicateForWorkout(filter: PredicateForWorkouts) throws -> NSPredicate {
-    switch filter {
-        case .first(let uuidWrapper):
-            return HKQuery.predicateForObject(with: try initializeUUID(uuidWrapper.uuid))
-        case .second(let uuidsWrapper):
-            return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
-        case .third(let metadataKey):
-            return try createMetadataPredicate(metadataKey: metadataKey)
-        case .fourth(let dateFilter):
-            return createDatePredicate(dateFilter: dateFilter)
-        case .fifth(let w):
-          if let w = w.workout as? WorkoutProxy {
-            return w.workoutPredicate
-          }
-          throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
-        case .sixth(let activityType):
-            if let activityType = HKWorkoutActivityType.init(rawValue: UInt(activityType.workoutActivityType.rawValue)) {
-                return HKQuery.predicateForWorkouts(with: activityType)
-            } else {
-                throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized workoutActivityType with identifier \(activityType.workoutActivityType.rawValue)")
-            }
-        case .seventh(let durationPredicate):
-            if let op = NSComparisonPredicate.Operator(rawValue: UInt(durationPredicate.predicateOperator.rawValue)) {
-                return HKQuery.predicateForWorkouts(with: op, duration: durationPredicate.durationInSeconds)
-            }
-            throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized workout duration predicate operator \(durationPredicate.predicateOperator.rawValue)")
-    }
+func createPredicateForWorkout(filter: FilterForWorkouts?) throws -> NSPredicate? {
+  if let filter = filter {
+
+  let metadataFilters = try filter.metadata?.compactMap({ metadataKey in
+    return try createMetadataPredicate(metadataKey: metadataKey)
+  }) ?? []
+
+  let otherFilters = [
+    createUUIDsPredicate(uuids: filter.uuids),
+    createDatePredicate(startDate: filter.startDate, endDate: filter.endDate, strictStartDate: filter.strictStartDate, strictEndDate: filter.strictEndDate),
+    filter.workoutActivityType != nil ? HKQuery.predicateForWorkouts(with: HKWorkoutActivityType.init(rawValue: UInt(filter.workoutActivityType!.rawValue))!) : nil,
+    filter.duration != nil ? HKQuery.predicateForWorkouts(with: NSComparisonPredicate.Operator(rawValue: UInt(filter.duration!.predicateOperator.rawValue))!, duration: filter.duration!.durationInSeconds) : nil,
+  ].compactMap { $0 }
+
+  let allFilters = otherFilters + metadataFilters
+
+  return allFilters.count > 1
+    ? NSCompoundPredicate.init(andPredicateWithSubpredicates: allFilters)
+    : allFilters.first
+  }
+  return nil
 }
 
-func createPredicateForWorkout(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_PredicateWithMetadataKey_PredicateWithStartAndEnd_PredicateFromWorkout_WorkoutActivityTypePredicate_WorkoutDurationPredicate_PredicateForWorkoutsOr_PredicateForWorkoutsAnd?) throws -> NSPredicate? {
-    if let filter = filter {
-        switch filter {
-        case .first(let uuidWrapper):
-            return HKQuery.predicateForObject(with: try initializeUUID(uuidWrapper.uuid))
-        case .second(let uuidsWrapper):
-            return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
-        case .third(let metadataKey):
-            return try createMetadataPredicate(metadataKey: metadataKey)
-        case .fourth(let dateFilter):
-            return createDatePredicate(dateFilter: dateFilter)
-        case .fifth(let w):
-          if let w = w.workout as? WorkoutProxy {
-            return w.workoutPredicate
-          }
-          throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
-        case .sixth(let activityType):
-            if let activityType = HKWorkoutActivityType.init(rawValue: UInt(activityType.workoutActivityType.rawValue)) {
-                return HKQuery.predicateForWorkouts(with: activityType)
-            } else {
-                throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized workoutActivityType with identifier \(activityType.workoutActivityType.rawValue)")
-            }
-        case .seventh(let durationPredicate):
-            if let op = NSComparisonPredicate.Operator(rawValue: UInt(durationPredicate.predicateOperator.rawValue)) {
-                return HKQuery.predicateForWorkouts(with: op, duration: durationPredicate.durationInSeconds)
-            }
-            throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized workout duration predicate operator \(durationPredicate.predicateOperator.rawValue)")
-
-        case .eigth(let or):
-            return NSCompoundPredicate.init(andPredicateWithSubpredicates: try or.OR.map { predicate in
-                return try createPredicateForWorkout(filter: predicate)
-            })
-        case .ninth(let and):
-            return NSCompoundPredicate.init(orPredicateWithSubpredicates: try and.AND
-                .map { predicate in
-                    return try createPredicateForWorkout(filter: predicate)
-                })
-        }
-    }
-
+func createDatePredicate(startDate: Date?, endDate: Date?, strictStartDate: Bool?, strictEndDate: Bool?) -> NSPredicate? {
+  if startDate == nil && endDate == nil {
     return nil
-}
+  }
 
-func createDatePredicate(dateFilter: PredicateWithStartAndEnd) -> NSPredicate {
-    let strictStartDate = dateFilter.strictStartDate ?? false
-    let strictEndDate = dateFilter.strictEndDate ?? false
+    let strictStartDate = strictStartDate ?? false
+    let strictEndDate = strictEndDate ?? false
 
     let options: HKQueryOptions = strictStartDate && strictEndDate
         ? [.strictStartDate, .strictEndDate]
@@ -117,14 +72,15 @@ func createDatePredicate(dateFilter: PredicateWithStartAndEnd) -> NSPredicate {
                 : []
 
     return HKQuery.predicateForSamples(
-        withStart: dateFilter.startDate,
-        end: dateFilter.endDate,
+        withStart: startDate,
+        end: endDate,
         options: options
     )
 }
 
-func createUUIDsPredicate(uuidsWrapper: PredicateWithUUIDs) -> NSPredicate {
-    let uuids = uuidsWrapper.uuids.compactMap { uuidStr -> UUID? in
+func createUUIDsPredicate(uuids: [String]?) -> NSPredicate? {
+  if let uuids = uuids {
+    let uuids = uuids.compactMap { uuidStr -> UUID? in
         do {
             let uuid = try initializeUUID(uuidStr)
             return uuid
@@ -134,9 +90,13 @@ func createUUIDsPredicate(uuidsWrapper: PredicateWithUUIDs) -> NSPredicate {
         }
     }
     return HKQuery.predicateForObjects(with: Set(uuids))
+  }
+  return nil
 }
 
-func createMetadataPredicate(metadataKey: PredicateWithMetadataKey) throws -> NSPredicate {
+func createMetadataPredicate(metadataKey: PredicateWithMetadataKey?) throws -> NSPredicate? {
+  if let metadataKey = metadataKey {
+
     guard let valueVariant = metadataKey.value else {
         return HKQuery.predicateForObjects(withMetadataKey: metadataKey.withMetadataKey)
     }
@@ -178,108 +138,31 @@ func createMetadataPredicate(metadataKey: PredicateWithMetadataKey) throws -> NS
         operatorType: operatorType,
         value: actualValue
     )
+  }
+  return nil
 }
 
-func createPredicate(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_PredicateWithMetadataKey_PredicateWithStartAndEnd_PredicateFromWorkout_FilterForSamplesAnd_FilterForSamplesOr?) throws -> NSPredicate? {
-    if let filter = filter {
-        switch filter {
-            case .first(let uuidWrapper):
-                return HKQuery.predicateForObject(with: try initializeUUID(uuidWrapper.uuid))
-            case .second(let uuidsWrapper):
-                return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
-            case .third(let metadataKey):
-                return try createMetadataPredicate(metadataKey: metadataKey)
-            case .fourth(let dateFilter):
-                return createDatePredicate(dateFilter: dateFilter)
-            case .fifth(let w):
-              if let w = w.workout as? WorkoutProxy {
-                return w.workoutPredicate
-              }
-              throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
-            case .sixth(let and):
-                return NSCompoundPredicate.init(andPredicateWithSubpredicates: try and.AND.map { predicate in
-                    return try createPredicateForSamples(filter: predicate)
-                })
-            case .seventh(let or):
-                return NSCompoundPredicate.init(orPredicateWithSubpredicates: try or.OR
-                    .map { predicate in
-                    return try createPredicateForSamples(filter: predicate)
-                })
-        }
-    }
-    return nil
-}
+func createPredicate(filter: FilterForSamples?) throws -> NSPredicate? {
+  if let filter = filter {
+    let metadataFilters = try filter.metadata?.compactMap({ metadataKey in
+      return try createMetadataPredicate(metadataKey: metadataKey)
+    }) ?? []
 
-func createPredicateForSamples(filter: PredicateForSamples) throws -> NSPredicate {
-    switch filter {
-        case .first(let uuidWrapper):
-            return HKQuery.predicateForObject(with: try initializeUUID(uuidWrapper.uuid))
-        case .second(let uuidsWrapper):
-            return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
-        case .third(let metadataKey):
-            return try createMetadataPredicate(metadataKey: metadataKey)
-        case .fourth(let dateFilter):
-            return createDatePredicate(dateFilter: dateFilter)
-        case .fifth(let w):
-          if let w = w.workout as? WorkoutProxy {
-            return w.workoutPredicate
-          }
-          throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
-    }
-}
+    let w = filter.workout as? WorkoutProxy
+    let otherFilters = [
+      createUUIDsPredicate(uuids: filter.uuids),
+      createDatePredicate(startDate: filter.startDate, endDate: filter.endDate, strictStartDate: filter.strictStartDate, strictEndDate: filter.strictEndDate),
+      w?.workoutPredicate,
+    ].compactMap { $0 }
 
-func createPredicateForSamples(filter: FilterForSamples) throws -> NSPredicate {
-    switch filter {
-    case .first(let uuidWrapper):
-        return HKQuery.predicateForObject(with: try initializeUUID(uuidWrapper.uuid))
-    case .second(let uuidsWrapper):
-        return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
-    case .third(let metadataKey):
-        return try createMetadataPredicate(metadataKey: metadataKey)
-    case .fourth(let dateFilter):
-        return createDatePredicate(dateFilter: dateFilter)
-    case .fifth(let w):
-      if let w = w.workout as? WorkoutProxy {
-        return w.workoutPredicate
-      }
-      throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
-    case .sixth(let and):
-        return NSCompoundPredicate.init(andPredicateWithSubpredicates: try and.AND.map { predicate in
-            return try createPredicateForSamples(filter: predicate)
-        })
-    case .seventh(let or):
-        return NSCompoundPredicate.init(orPredicateWithSubpredicates: try or.OR
-            .map { predicate in
-            return try createPredicateForSamples(filter: predicate)
-        })
-    }
-}
+    let allFilters = otherFilters + metadataFilters
 
-func createPredicateForSamples(filter: Variant_PredicateWithUUID_PredicateWithUUIDs_PredicateWithMetadataKey_PredicateWithStartAndEnd_PredicateFromWorkout_FilterForSamplesAnd_FilterForSamplesOr) throws -> NSPredicate {
-    switch filter {
-    case .first(let uuidWrapper):
-        return HKQuery.predicateForObject(with: try initializeUUID(uuidWrapper.uuid))
-    case .second(let uuidsWrapper):
-        return createUUIDsPredicate(uuidsWrapper: uuidsWrapper)
-    case .third(let metadataKey):
-        return try createMetadataPredicate(metadataKey: metadataKey)
-    case .fourth(let dateFilter):
-        return createDatePredicate(dateFilter: dateFilter)
-    case .fifth(let w):
-      if let w = w.workout as? WorkoutProxy {
-        return w.workoutPredicate
-      }
-      throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize workout for filter")
-    case .sixth(let and):
-        return NSCompoundPredicate.init(andPredicateWithSubpredicates: try and.AND.map { predicate in
-            return try createPredicateForSamples(filter: predicate)
-        })
-    case .seventh(let or):
-        return NSCompoundPredicate.init(orPredicateWithSubpredicates: try or.OR
-            .map { predicate in
-            return try createPredicateForSamples(filter: predicate)
-        })
-    }
+    return allFilters.count > 1
+      ? NSCompoundPredicate.init(andPredicateWithSubpredicates: allFilters)
+      : allFilters.first
+
+  }
+  return nil
 }
 
 func getSortDescriptors(ascending: Bool?) -> [NSSortDescriptor] {

@@ -1,6 +1,7 @@
 import type { AnyMap, HybridObject } from 'react-native-nitro-modules'
 import type { QuantitySample } from '../types/QuantitySample'
 import type {
+  AggregationStyle,
   IntervalComponents,
   QuantitySamplesWithAnchorResponse,
   QueryStatisticsResponse,
@@ -20,6 +21,8 @@ export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
     unit: string,
   ): boolean
 
+  aggregationStyle(identifier: QuantityTypeIdentifier): AggregationStyle
+
   saveQuantitySample(
     identifier: QuantityTypeIdentifier,
     unit: string,
@@ -32,7 +35,7 @@ export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
   deleteQuantitySamples(
     identifier: QuantityTypeIdentifier,
     filter: FilterForSamples,
-  ): Promise<boolean>
+  ): Promise<number>
 
   queryQuantitySamples(
     identifier: QuantityTypeIdentifier,

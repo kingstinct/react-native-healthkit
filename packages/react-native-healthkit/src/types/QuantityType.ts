@@ -32,6 +32,13 @@ export interface QueryStatisticsResponse {
   readonly endDate?: Date
 }
 
+export enum AggregationStyle {
+  cumulative = 0,
+  discreteArithmetic = 1,
+  discreteTemporallyWeighted = 2,
+  discreteEquivalentContinuousLevel = 3,
+}
+
 export interface QuantitySamplesWithAnchorResponse {
   readonly samples: readonly QuantitySample[]
   readonly deletedSamples: readonly DeletedSample[]

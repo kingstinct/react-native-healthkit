@@ -1,20 +1,5 @@
 import type { WorkoutProxy } from '../specs/WorkoutProxy.nitro'
 
-type PredicateWithUUID = {
-  readonly uuid: string
-}
-
-type PredicateWithUUIDs = {
-  readonly uuids: readonly string[]
-}
-
-type PredicateWithStartAndEnd = {
-  readonly startDate?: Date
-  readonly endDate?: Date
-  readonly strictEndDate?: boolean
-  readonly strictStartDate?: boolean
-}
-
 type PredicateWithMetadataOperator =
   | 'equalTo'
   | 'notEqualTo'
@@ -23,22 +8,10 @@ type PredicateWithMetadataOperator =
 
 type PredicateWithMetadataValue = string | number | Date | boolean
 
-type PredicateWithMetadataKey = {
+export interface PredicateWithMetadataKey {
   readonly withMetadataKey: string
   readonly operatorType?: PredicateWithMetadataOperator
   readonly value?: PredicateWithMetadataValue
-}
-
-export type FilterForSamplesAnd = {
-  readonly AND: PredicateForSamples[]
-}
-
-export type FilterForSamplesOr = {
-  readonly OR: PredicateForSamples[]
-}
-
-export type PredicateFromWorkout = {
-  readonly workout: WorkoutProxy
 }
 
 // Computes and flattens object types
@@ -63,23 +36,25 @@ type _Strict<U, UAll extends U = U> = U extends any
 // The exported type you can copy into your codebase
 export type StrictUnion<U extends object> = _Strict<U>
 
-export type FilterForSamples =
-  | PredicateForSamples
-  | FilterForSamplesAnd
-  | FilterForSamplesOr
+export interface FilterForSamples {
+  readonly uuids?: string[]
+  readonly metadata?: PredicateWithMetadataKey[]
+  readonly startDate?: Date
+  readonly endDate?: Date
+  readonly strictEndDate?: boolean
+  readonly strictStartDate?: boolean
+  readonly workout?: WorkoutProxy
+}
 
-export type PredicateForSamples =
-  | PredicateWithUUID
-  | PredicateWithUUIDs
-  | PredicateWithMetadataKey
-  | PredicateWithStartAndEnd
-  | PredicateFromWorkout
 /**
  * Generic options for querying.
  */
 export interface GenericQueryOptions {
   filter?: FilterForSamples
-  readonly limit?: number
+  /**
+   * Specify -1, 0 or any non-positive number for fetching all samples
+   * */
+  readonly limit: number
 }
 
 export interface QueryOptionsWithAnchor extends GenericQueryOptions {

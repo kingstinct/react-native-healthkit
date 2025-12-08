@@ -45,7 +45,7 @@ export default function WorkoutDetails() {
 
     const startedAt = Date.now()
 
-    queryWorkoutSamples({ filter: { uuid: workoutId }, limit: 1 })
+    queryWorkoutSamples({ filter: { uuids: [workoutId] }, limit: 1 })
       .then((ws) => {
         const w = ws[0]
         if (w) {

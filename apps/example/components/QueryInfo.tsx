@@ -1,4 +1,4 @@
-import { Button, Host, HStack, Text, VStack } from '@expo/ui/swift-ui'
+import { Button, HStack, Text } from '@expo/ui/swift-ui'
 
 export const QueryInfo = ({
   queryTime,

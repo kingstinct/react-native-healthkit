@@ -1,54 +1,6 @@
 import HealthKit
 import NitroModules
 
-func queryQuantitySamplesInternal(
-  typeIdentifier: QuantityTypeIdentifier,
-  options: QueryOptionsWithSortOrderAndUnit?
-) throws -> Promise<[QuantitySample]> {
-    let quantityType = try initializeQuantityType(typeIdentifier.stringValue)
-    let predicate = try createPredicate(filter: options?.filter)
-    let limit = getQueryLimit(options?.limit)
-
-    return Promise.async {
-        let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
-        return try await withCheckedThrowingContinuation { continuation in
-            let q = HKSampleQuery(
-              sampleType: quantityType,
-              predicate: predicate,
-              limit: limit,
-              sortDescriptors: getSortDescriptors(ascending: options?.ascending)
-            ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
-              guard let err = error else {
-                  if let returnValue = samples?.compactMap({ sample in
-                      if let sample = sample as? HKQuantitySample {
-                          do {
-                              let serialized = try serializeQuantitySample(
-                                sample: sample,
-                                unit: unit
-                              )
-
-                              return serialized
-                          } catch {
-                              print(error.localizedDescription)
-                          }
-                      }
-
-                      return nil
-                  }) {
-                      return continuation.resume(returning: returnValue)
-                  }
-                  return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response returned")
-                  )
-              }
-              return continuation.resume(throwing: err)
-            }
-
-            store.execute(q)
-        }
-    }
-
-}
-
 func emptyStatisticsResponse(from: Date, to: Date) -> QueryStatisticsResponse {
     var response = QueryStatisticsResponse()
 
@@ -230,22 +182,34 @@ func handleHKNoDataOrThrow<T>(
 }
 
 class QuantityTypeModule: HybridQuantityTypeModuleSpec {
-    func deleteQuantitySamples(identifier: QuantityTypeIdentifier, filter: FilterForSamples) throws -> Promise<Bool> {
-        let sampleType = try initializeQuantityType(identifier.stringValue)
-        let samplePredicate = try createPredicateForSamples(filter: filter)
 
+    func deleteQuantitySamples(identifier: QuantityTypeIdentifier, filter: FilterForSamples) throws -> Promise<Double> {
+        let sampleType = try initializeQuantityType(identifier.stringValue)
+      if let samplePredicate = try createPredicate(filter: filter) {
         return Promise.async {
             return try await withCheckedThrowingContinuation { continuation in
-                store.deleteObjects(of: sampleType, predicate: samplePredicate) { (success: Bool, _: Int, error: Error?) in
+                store.deleteObjects(of: sampleType, predicate: samplePredicate) { (_: Bool, deleted: Int, error: Error?) in
                     if let error = error {
                         continuation.resume(throwing: error)
                     } else {
-                        continuation.resume(returning: success)
+                        continuation.resume(returning: Double(deleted))
                     }
                 }
             }
         }
+      }
 
+      throw RuntimeError.error(withMessage: "Failed to create predicate for deleting quantity samples")
+    }
+
+    func aggregationStyle(identifier: QuantityTypeIdentifier) throws -> AggregationStyle {
+      let sampleType = try initializeQuantityType(identifier.stringValue)
+
+      if let aggregationStyle = AggregationStyle(rawValue: Int32(sampleType.aggregationStyle.rawValue)) {
+          return aggregationStyle
+      }
+
+      throw RuntimeError.error(withMessage: "Got unknown aggregation style value: \(sampleType.aggregationStyle.rawValue)")
     }
 
     func isQuantityCompatibleWithUnit(identifier: QuantityTypeIdentifier, unit: String) throws -> Bool {
@@ -347,13 +311,8 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
                     var enumerateTo = Date()
 
                     if let filter = options?.filter {
-                        switch filter {
-                        case .fourth(let dateFilter):
-                            enumerateFrom = dateFilter.startDate ?? enumerateFrom
-                            enumerateTo = dateFilter.endDate ?? enumerateTo
-                        default:
-                            break
-                        }
+                      enumerateFrom = filter.startDate ?? enumerateFrom
+                      enumerateTo = filter.endDate ?? enumerateTo
                     }
 
                     statistics.enumerateStatistics(from: enumerateFrom, to: enumerateTo) { stats, _ in
@@ -450,7 +409,47 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     }
 
     func queryQuantitySamples(identifier: QuantityTypeIdentifier, options: QueryOptionsWithSortOrderAndUnit?) throws -> Promise<[QuantitySample]> {
-        return try queryQuantitySamplesInternal(typeIdentifier: identifier, options: options)
+      let quantityType = try initializeQuantityType(identifier.stringValue)
+      let predicate = try createPredicate(filter: options?.filter)
+      let limit = getQueryLimit(options?.limit)
+
+      return Promise.async {
+          let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
+          return try await withCheckedThrowingContinuation { continuation in
+              let q = HKSampleQuery(
+                sampleType: quantityType,
+                predicate: predicate,
+                limit: limit,
+                sortDescriptors: getSortDescriptors(ascending: options?.ascending)
+              ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
+                guard let err = error else {
+                    if let returnValue = samples?.compactMap({ sample in
+                        if let sample = sample as? HKQuantitySample {
+                            do {
+                                let serialized = try serializeQuantitySample(
+                                  sample: sample,
+                                  unit: unit
+                                )
+
+                                return serialized
+                            } catch {
+                                print(error.localizedDescription)
+                            }
+                        }
+
+                        return nil
+                    }) {
+                        return continuation.resume(returning: returnValue)
+                    }
+                    return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response returned")
+                    )
+                }
+                return continuation.resume(throwing: err)
+              }
+
+              store.execute(q)
+          }
+      }
     }
 
 }

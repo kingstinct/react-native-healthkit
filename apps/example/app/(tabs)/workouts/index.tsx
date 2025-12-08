@@ -4,6 +4,7 @@ import {
   saveWorkoutSample,
 } from '@kingstinct/react-native-healthkit'
 import {
+  ComparisonPredicateOperator,
   WorkoutActivityType,
   type WorkoutSample,
 } from '@kingstinct/react-native-healthkit/types/Workouts'
@@ -25,7 +26,19 @@ export default function WorkoutsScreen() {
     try {
       const startedAt = Date.now()
       const { workouts, deletedSamples, newAnchor } =
-        await queryWorkoutSamplesWithAnchor({ anchor })
+        await queryWorkoutSamplesWithAnchor({
+          anchor,
+          limit: 20,
+          filter: {
+            workoutActivityType: WorkoutActivityType.running,
+            endDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30 * 6), // 6 months
+            duration: {
+              durationInSeconds: 60,
+              predicateOperator:
+                ComparisonPredicateOperator.greaterThanOrEqualTo,
+            },
+          },
+        })
       setQueryTime(Date.now() - startedAt)
 
       console.log(workouts[0])
