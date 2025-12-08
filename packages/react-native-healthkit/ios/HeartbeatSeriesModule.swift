@@ -1,96 +1,39 @@
 import HealthKit
 import NitroModules
 
-func getHeartbeatSeriesByID(
-    seriesUUID: UUID
-) async -> HKHeartbeatSeriesSample? {
-    let seriesPredicate = HKQuery.predicateForObject(with: seriesUUID)
-
-    let samples = try! await withCheckedThrowingContinuation {
-        (continuation: CheckedContinuation<[HKSample], Error>) in
-        let query = HKSampleQuery(
-            sampleType: HKSeriesType.heartbeat(),
-            predicate: seriesPredicate,
-            limit: 1,
-            sortDescriptors: nil
-        ) { (_, results, error) in
-
-            if let hasError = error {
-                continuation.resume(throwing: hasError)
-                return
-            }
-
-            guard let samples = results else {
-                return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response"))
-            }
-
-            continuation.resume(returning: samples)
-        }
-        store.execute(query)
-    }
-
-    guard let heartbeatSeries = samples as? [HKHeartbeatSeriesSample] else {
-        return nil
-    }
-
-    return heartbeatSeries.first ?? nil
-}
-
 @available(iOS 13.0.0, *)
 class HeartbeatSeriesModule: HybridHeartbeatSeriesModuleSpec {
     func queryHeartbeatSeriesSamples(
         options: QueryOptionsWithSortOrder
-    ) throws -> Promise<[HeartbeatSeriesSample]> {
-        let predicate = try createPredicate(filter: options.filter)
-        let queryLimit = getQueryLimit(options.limit)
+    ) -> Promise<[HeartbeatSeriesSample]> {
 
         return Promise.async {
-            try await withCheckedThrowingContinuation { continuation in
-                let query = HKSampleQuery(
-                    sampleType: HKSeriesType.heartbeat(),
-                    predicate: predicate,
-                    limit: queryLimit,
-                    sortDescriptors: [
-                        NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: options.ascending ?? false)
-                    ]
-                ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                        return
-                    }
+          let predicate = try createPredicate(options.filter)
+          let queryLimit = getQueryLimit(options.limit)
 
-                    guard let samples = samples else {
-                        continuation.resume(returning: [])
-                        return
-                    }
+          let samples = try await sampleQueryAsync(
+            sampleType: HKSeriesType.heartbeat(),
+            limit: options.limit,
+            predicate: try createPredicate(options.filter),
+            sortDescriptors: getSortDescriptors(ascending: options.ascending)
+          )
+          var serializedSamples: [HeartbeatSeriesSample] = []
 
-                    Task {
-                        do {
-                            var serializedSamples: [HeartbeatSeriesSample] = []
+          for sample in samples {
+              guard let heartbeatSample = sample as? HKHeartbeatSeriesSample else { continue }
 
-                            for sample in samples {
-                                guard let heartbeatSample = sample as? HKHeartbeatSeriesSample else { continue }
+              let serialized = try await self.serializeHeartbeatSeriesSample(sample: heartbeatSample)
+              serializedSamples.append(serialized)
+          }
 
-                                let serialized = try await self.serializeHeartbeatSeriesSample(sample: heartbeatSample)
-                                serializedSamples.append(serialized)
-                            }
-
-                            continuation.resume(returning: serializedSamples)
-                        } catch {
-                            continuation.resume(throwing: error)
-                        }
-                    }
-                }
-
-                store.execute(query)
-            }
+          return serializedSamples
         }
     }
 
     func queryHeartbeatSeriesSamplesWithAnchor(
         options: QueryOptionsWithAnchor
     ) throws -> Promise<HeartbeatSeriesSamplesWithAnchorResponse> {
-        let predicate = try createPredicate(filter: options.filter)
+        let predicate = try createPredicate(options.filter)
         let queryLimit = getQueryLimit(options.limit)
         let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
 

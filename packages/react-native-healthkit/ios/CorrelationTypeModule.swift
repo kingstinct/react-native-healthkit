@@ -117,92 +117,27 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
     }
   }
 
-  /*
-    the previous implementation use a specific function for correlationSamples that didn't really fit the use case
-   func queryCorrelationSamples(
-    typeIdentifier: CorrelationTypeIdentifier,
-    options: QueryOptionsWithSortOrder?,
-  ) throws -> Promise<[CorrelationSample]> {
-    let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
-    let predicate = try createPredicate(filter: options.filter)
+  func queryCorrelationSamples(typeIdentifier: CorrelationTypeIdentifier, options: QueryOptionsWithSortOrder) -> Promise<[CorrelationSample]> {
     return Promise.async {
-      try await withCheckedThrowingContinuation { continuation in
-        let query = HKCorrelationQuery(
-          type: correlationType,
-          predicate: predicate,
-          samplePredicates: nil
-        ) { (_: HKCorrelationQuery, correlations: [HKCorrelation]?, error: Error?) in
-          if let error = error {
-            continuation.resume(throwing: error)
-            return
-          }
-          
-          guard let correlations = correlations else {
-            continuation.resume(returning: [])
-            return
-          }
-          
-          Task {
-            do {
-              let unitMap = try await getUnitMap(correlations: correlations)
-              
-              let serializedCorrelations = correlations.map { correlation -> CorrelationSample in
-                return serializeCorrelationSample(correlation: correlation, unitMap: unitMap)
-              }
-              
-              continuation.resume(returning: serializedCorrelations)
-            } catch {
-              continuation.resume(throwing: error)
-            }
-          }
-          
-        }
-        
-        store.execute(query)
-      }
-    }
-  }*/
+      let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
 
-  func queryCorrelationSamples(typeIdentifier: CorrelationTypeIdentifier, options: QueryOptionsWithSortOrder) throws -> Promise<[CorrelationSample]> {
-    let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
-    let predicate = try createPredicate(filter: options.filter)
-    let limit = getQueryLimit(options.limit)
+      let samples = try await sampleQueryAsync(
+        sampleType: correlationType,
+        limit: options.limit,
+        predicate: createPredicate(options.filter),
+        sortDescriptors: getSortDescriptors(ascending: options.ascending)
+      )
 
-    return Promise.async {
-      return try await withCheckedThrowingContinuation { continuation in
-        let q = HKSampleQuery(
-          sampleType: correlationType,
-          predicate: predicate,
-          limit: limit,
-          sortDescriptors: getSortDescriptors(ascending: options.ascending)
-        ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
-          if let err = error {
-            return continuation.resume(throwing: err)
-          }
+      let correlationSamples = samples.compactMap({ sample in
+        return sample as? HKCorrelation
+      })
 
-          if let correlationSamples = samples?.compactMap({ sample in
-            return sample as? HKCorrelation
-          }) {
-            Task {
-              do {
-                let unitMap = try await getUnitMap(correlations: correlationSamples)
-                let returnValue = correlationSamples.map { correlation in
-                  let serialized = serializeCorrelationSample(correlation: correlation, unitMap: unitMap)
+      let unitMap = try await getUnitMap(correlations: correlationSamples)
 
-                  return serialized
-                }
+      return correlationSamples.map { correlation in
+        let serialized = serializeCorrelationSample(correlation: correlation, unitMap: unitMap)
 
-                return continuation.resume(returning: returnValue)
-              } catch {
-                return continuation.resume(throwing: error)
-              }
-            }
-          } else {
-            return continuation.resume(throwing: RuntimeError.error(withMessage: "[react-native-healthkit] Unexpected empty response"))
-          }
-        }
-
-        store.execute(q)
+        return serialized
       }
     }
   }

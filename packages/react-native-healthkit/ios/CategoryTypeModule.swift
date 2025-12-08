@@ -35,39 +35,24 @@ class CategoryTypeModule: HybridCategoryTypeModuleSpec {
     func queryCategorySamples(
         identifier: CategoryTypeIdentifier,
         options: QueryOptionsWithSortOrder
-    ) throws -> Promise<[CategorySample]> {
-        let sampleType = try initializeCategoryType(identifier.stringValue)
-        let predicate = try createPredicate(filter: options.filter)
-        let queryLimit = getQueryLimit(options.limit)
-
+    ) -> Promise<[CategorySample]> {
         return Promise.async {
-            try await withCheckedThrowingContinuation { continuation in
-                let query = HKSampleQuery(
-                    sampleType: sampleType,
-                    predicate: predicate,
-                    limit: queryLimit,
-                    sortDescriptors: getSortDescriptors(ascending: options.ascending)
-                ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                        return
-                    }
+          let sampleType = try initializeCategoryType(identifier.stringValue)
+          let predicate = try createPredicate(options.filter)
+          let queryLimit = getQueryLimit(options.limit)
+          let sortDescriptors = getSortDescriptors(ascending: options.ascending)
 
-                    guard let samples = samples else {
-                        continuation.resume(returning: [])
-                        return
-                    }
+          let samples = try await sampleQueryAsync(
+            sampleType: sampleType,
+            limit: options.limit,
+            predicate: predicate,
+            sortDescriptors: sortDescriptors
+          )
 
-                    let categorySamples = samples.compactMap { sample -> CategorySample? in
-                        guard let categorySample = sample as? HKCategorySample else { return nil }
-                        return serializeCategorySample(sample: categorySample)
-                    }
-
-                    continuation.resume(returning: categorySamples)
-                }
-
-                store.execute(query)
-            }
+          return samples.compactMap { sample -> CategorySample? in
+              guard let categorySample = sample as? HKCategorySample else { return nil }
+              return serializeCategorySample(sample: categorySample)
+          }
         }
     }
 
@@ -77,7 +62,7 @@ class CategoryTypeModule: HybridCategoryTypeModuleSpec {
     ) throws -> Promise<CategorySamplesWithAnchorResponse> {
         let sampleType = try initializeCategoryType(identifier.stringValue)
 
-        let predicate = try createPredicate(filter: options.filter)
+        let predicate = try createPredicate(options.filter)
         let queryLimit = getQueryLimit(options.limit)
         let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
 

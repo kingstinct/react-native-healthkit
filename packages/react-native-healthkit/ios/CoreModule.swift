@@ -292,7 +292,7 @@ class CoreModule: HybridCoreModuleSpec {
   var _runningQueries: [String: HKQuery] = [:]
 
   func deleteObjects(objectTypeIdentifier: ObjectTypeIdentifier, filter: FilterForSamples) throws -> Promise<Double> {
-    if let predicate = try createPredicate(filter: filter) {
+    if let predicate = try createPredicate(filter) {
 
       let of = try objectTypeFrom(objectTypeIdentifier: objectTypeIdentifier)
 

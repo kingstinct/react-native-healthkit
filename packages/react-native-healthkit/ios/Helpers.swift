@@ -28,7 +28,7 @@ func getQueryLimit(_ limit: Double) -> Int {
   return Int(limit)
 }
 
-func createPredicateForWorkout(filter: FilterForWorkouts?) throws -> NSPredicate? {
+func createPredicateForWorkout(_ filter: FilterForWorkouts?) throws -> NSPredicate? {
   if let filter = filter {
 
   let metadataFilters = try filter.metadata?.compactMap({ metadataKey in
@@ -49,6 +49,35 @@ func createPredicateForWorkout(filter: FilterForWorkouts?) throws -> NSPredicate
     : allFilters.first
   }
   return nil
+}
+
+func sampleQueryAsync(
+  sampleType: HKSampleType,
+  limit: Double,
+  predicate: NSPredicate?,
+  sortDescriptors: [NSSortDescriptor]?
+) async throws -> [HKSample] {
+  let limit = getQueryLimit(limit)
+  return try await withCheckedThrowingContinuation { continuation in
+    let q = HKSampleQuery(
+      sampleType: sampleType,
+      predicate: predicate,
+      limit: limit,
+      sortDescriptors: sortDescriptors,
+    ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
+      if let error = error {
+        return continuation.resume(throwing: error)
+      }
+
+      if let samples = samples {
+        return continuation.resume(returning: samples)
+      }
+
+      return continuation.resume(throwing: RuntimeError.error(withMessage: "[react-native-healthkit] Unexpected empty response"))
+    }
+
+    store.execute(q)
+  }
 }
 
 func createDatePredicate(startDate: Date?, endDate: Date?, strictStartDate: Bool?, strictEndDate: Bool?) -> NSPredicate? {
@@ -138,7 +167,7 @@ func createMetadataPredicate(metadataKey: PredicateWithMetadataKey?) throws -> N
   return nil
 }
 
-func createPredicate(filter: FilterForSamples?) throws -> NSPredicate? {
+func createPredicate(_ filter: FilterForSamples?) throws -> NSPredicate? {
   if let filter = filter {
     let metadataFilters = try filter.metadata?.compactMap({ metadataKey in
       return try createMetadataPredicate(metadataKey: metadataKey)
@@ -162,10 +191,6 @@ func createPredicate(filter: FilterForSamples?) throws -> NSPredicate? {
 }
 
 func getSortDescriptors(ascending: Bool?) -> [NSSortDescriptor] {
-    return [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending ?? false)]
-}
-
-func getSortDescsdsdriptors(ascending: Bool?) -> [NSSortDescriptor] {
     return [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending ?? false)]
 }
 

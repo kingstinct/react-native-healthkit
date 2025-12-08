@@ -52,41 +52,23 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
     }
 
     func queryWorkoutSamples(options: WorkoutQueryOptions) throws -> Promise<[HybridWorkoutProxySpec]> {
-        let predicate = try createPredicateForWorkout(filter: options.filter)
+      return Promise.async {
+        let predicate = try createPredicateForWorkout(options.filter)
+        return try await sampleQueryAsync(
+          sampleType: .workoutType(),
+          limit: options.limit,
+          predicate: predicate,
+          sortDescriptors: getSortDescriptors(ascending: options.ascending)
+        ).compactMap { s in
+          if let workout = s as? HKWorkout {
+              return WorkoutProxy.init(
+                  workout: workout
+              )
+          }
+          return nil
+      }
 
-        let limit = getQueryLimit(options.limit)
-
-        return Promise.async {
-            return try await withCheckedThrowingContinuation { continuation in
-                let q = HKSampleQuery(
-                    sampleType: .workoutType(),
-                    predicate: predicate,
-                    limit: limit,
-                    sortDescriptors: getSortDescriptors(ascending: options.ascending ?? true)
-                ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
-                    if let error = error {
-                        return continuation.resume(throwing: error)
-                    }
-
-                    guard let samples = samples else {
-                        return continuation.resume(throwing: RuntimeError.error(withMessage: "Empty response"))
-                    }
-
-                    let workoutProxies = samples.compactMap { s in
-                        if let workout = s as? HKWorkout {
-                            return WorkoutProxy.init(
-                                workout: workout
-                            )
-                        }
-                        return nil
-                    }
-
-                    return continuation.resume(returning: workoutProxies)
-                }
-
-                store.execute(q)
-            }
-        }
+      }
     }
 
     func saveWorkoutSample(
@@ -233,7 +215,7 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
     }
 
     func queryWorkoutSamplesWithAnchor(options: WorkoutQueryOptionsWithAnchor) throws -> Promise<QueryWorkoutSamplesWithAnchorResponse> {
-        let predicate = try createPredicateForWorkout(filter: options.filter)
+        let predicate = try createPredicateForWorkout(options.filter)
 
         let limit = getQueryLimit(options.limit)
 
