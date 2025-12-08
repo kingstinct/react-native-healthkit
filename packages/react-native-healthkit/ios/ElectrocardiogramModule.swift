@@ -33,12 +33,12 @@ class ElectrocardiogramModule: HybridElectrocardiogramModuleSpec {
 
     // Query (simple)
     func queryElectrocardiogramSamples(
-        options: ECGQueryOptionsWithSortOrder?
+        options: ECGQueryOptionsWithSortOrder
     ) throws -> Promise<[ElectrocardiogramSample]> {
-        let predicate = try createPredicate(filter: options?.filter)
-        let queryLimit = getQueryLimit(options?.limit)
-        let ascending = options?.ascending ?? false
-        let includeVoltages = options?.includeVoltages ?? false
+        let predicate = try createPredicate(filter: options.filter)
+        let queryLimit = getQueryLimit(options.limit)
+        let ascending = options.ascending ?? false
+        let includeVoltages = options.includeVoltages ?? false
 
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
@@ -61,7 +61,10 @@ class ElectrocardiogramModule: HybridElectrocardiogramModuleSpec {
                             var out: [ElectrocardiogramSample] = []
                             out.reserveCapacity(samples.count)
                             for s in samples {
-                                let serialized = try await self.serializeECGSample(sample: s, includeVoltages: includeVoltages)
+                                let serialized = try await self.serializeECGSample(
+                                  sample: s,
+                                  includeVoltages: includeVoltages
+                                )
                                 out.append(serialized)
                             }
                             continuation.resume(returning: out)

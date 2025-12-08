@@ -17,6 +17,6 @@ export interface CorrelationTypeModule extends HybridObject<{ ios: 'swift' }> {
 
   queryCorrelationSamples(
     typeIdentifier: CorrelationTypeIdentifier,
-    options?: QueryOptionsWithSortOrder,
+    options: QueryOptionsWithSortOrder,
   ): Promise<readonly CorrelationSample[]>
 }

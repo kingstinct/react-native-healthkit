@@ -39,7 +39,7 @@ export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
 
   queryQuantitySamples(
     identifier: QuantityTypeIdentifier,
-    options?: QueryOptionsWithSortOrderAndUnit,
+    options: QueryOptionsWithSortOrderAndUnit,
   ): Promise<readonly QuantitySample[]>
 
   queryStatisticsForQuantity(

@@ -10,7 +10,7 @@ import type {
 
 export interface HeartbeatSeriesModule extends HybridObject<{ ios: 'swift' }> {
   queryHeartbeatSeriesSamples(
-    options?: QueryOptionsWithSortOrder,
+    options: QueryOptionsWithSortOrder,
   ): Promise<readonly HeartbeatSeriesSample[]>
 
   queryHeartbeatSeriesSamplesWithAnchor(

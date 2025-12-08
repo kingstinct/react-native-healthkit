@@ -408,19 +408,19 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
         )
     }
 
-    func queryQuantitySamples(identifier: QuantityTypeIdentifier, options: QueryOptionsWithSortOrderAndUnit?) throws -> Promise<[QuantitySample]> {
+    func queryQuantitySamples(identifier: QuantityTypeIdentifier, options: QueryOptionsWithSortOrderAndUnit) throws -> Promise<[QuantitySample]> {
       let quantityType = try initializeQuantityType(identifier.stringValue)
-      let predicate = try createPredicate(filter: options?.filter)
-      let limit = getQueryLimit(options?.limit)
+      let predicate = try createPredicate(filter: options.filter)
+      let limit = getQueryLimit(options.limit)
 
       return Promise.async {
-          let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
+          let unit = try await getUnitToUse(unitOverride: options.unit, quantityType: quantityType)
           return try await withCheckedThrowingContinuation { continuation in
               let q = HKSampleQuery(
                 sampleType: quantityType,
                 predicate: predicate,
                 limit: limit,
-                sortDescriptors: getSortDescriptors(ascending: options?.ascending)
+                sortDescriptors: getSortDescriptors(ascending: options.ascending)
               ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
                 guard let err = error else {
                     if let returnValue = samples?.compactMap({ sample in

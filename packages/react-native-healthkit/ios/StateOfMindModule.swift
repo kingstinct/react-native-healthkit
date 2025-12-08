@@ -43,11 +43,11 @@ func serializeStateOfMindSample(sample: HKStateOfMind) -> StateOfMindSample {
 #if compiler(>=6)
 class StateOfMindModule: HybridStateOfMindModuleSpec {
     func queryStateOfMindSamples(
-        options: QueryOptionsWithSortOrder?
+        options: QueryOptionsWithSortOrder
     ) throws -> Promise<[StateOfMindSample]> {
         if #available(iOS 18.0, *) {
-            let predicate = try createPredicate(filter: options?.filter)
-            let queryLimit = getQueryLimit(options?.limit)
+            let predicate = try createPredicate(filter: options.filter)
+            let queryLimit = getQueryLimit(options.limit)
 
             return Promise.async {
                 try await withCheckedThrowingContinuation { continuation in
@@ -58,7 +58,7 @@ class StateOfMindModule: HybridStateOfMindModuleSpec {
                         predicate: predicate,
                         limit: queryLimit,
                         sortDescriptors: [
-                            NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: options?.ascending ?? false)
+                            NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: options.ascending ?? false)
                         ]
                     ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
                         if let error = error {
@@ -141,7 +141,7 @@ class StateOfMindModule: HybridStateOfMindModuleSpec {
 // Fallback for older Xcode versions
 class StateOfMind: HybridStateOfMindModuleSpec {
     func queryStateOfMindSamples(
-        options: QueryOptionsWithSortOrder?
+        options: QueryOptionsWithSortOrder
     ) throws -> Promise<[StateOfMindSample]> {
         throw RuntimeError.error(withMessage: "State of Mind features require iOS 18.0 or later and Xcode 16 or later to compile")
     }

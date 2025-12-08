@@ -177,7 +177,7 @@ export const isQuantityCompatibleWithUnit = UnavailableFnFromModule(
 // CategoryTypeModule functions
 export function queryCategorySamples<T extends CategoryTypeIdentifier>(
   _categoryTypeIdentifier: T,
-  _options?: QueryOptionsWithSortOrder,
+  _options: QueryOptionsWithSortOrder,
 ): Promise<CategorySampleTyped<T>[]> {
   if (Platform.OS !== 'ios' && !hasWarned) {
     console.warn(notAvailableError)

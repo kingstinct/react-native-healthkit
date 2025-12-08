@@ -34,11 +34,11 @@ class CategoryTypeModule: HybridCategoryTypeModuleSpec {
 
     func queryCategorySamples(
         identifier: CategoryTypeIdentifier,
-        options: QueryOptionsWithSortOrder?
+        options: QueryOptionsWithSortOrder
     ) throws -> Promise<[CategorySample]> {
         let sampleType = try initializeCategoryType(identifier.stringValue)
-        let predicate = try createPredicate(filter: options?.filter)
-        let queryLimit = getQueryLimit(options?.limit)
+        let predicate = try createPredicate(filter: options.filter)
+        let queryLimit = getQueryLimit(options.limit)
 
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
@@ -46,7 +46,7 @@ class CategoryTypeModule: HybridCategoryTypeModuleSpec {
                     sampleType: sampleType,
                     predicate: predicate,
                     limit: queryLimit,
-                    sortDescriptors: getSortDescriptors(ascending: options?.ascending)
+                    sortDescriptors: getSortDescriptors(ascending: options.ascending)
                 ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
                     if let error = error {
                         continuation.resume(throwing: error)

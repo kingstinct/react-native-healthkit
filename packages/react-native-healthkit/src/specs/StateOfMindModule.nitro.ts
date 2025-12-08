@@ -9,7 +9,7 @@ import type {
 
 export interface StateOfMindModule extends HybridObject<{ ios: 'swift' }> {
   queryStateOfMindSamples(
-    options?: QueryOptionsWithSortOrder,
+    options: QueryOptionsWithSortOrder,
   ): Promise<readonly StateOfMindSample[]>
 
   saveStateOfMindSample(

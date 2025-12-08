@@ -39,10 +39,10 @@ func getHeartbeatSeriesByID(
 @available(iOS 13.0.0, *)
 class HeartbeatSeriesModule: HybridHeartbeatSeriesModuleSpec {
     func queryHeartbeatSeriesSamples(
-        options: QueryOptionsWithSortOrder?
+        options: QueryOptionsWithSortOrder
     ) throws -> Promise<[HeartbeatSeriesSample]> {
-        let predicate = try createPredicate(filter: options?.filter)
-        let queryLimit = getQueryLimit(options?.limit)
+        let predicate = try createPredicate(filter: options.filter)
+        let queryLimit = getQueryLimit(options.limit)
 
         return Promise.async {
             try await withCheckedThrowingContinuation { continuation in
@@ -51,7 +51,7 @@ class HeartbeatSeriesModule: HybridHeartbeatSeriesModuleSpec {
                     predicate: predicate,
                     limit: queryLimit,
                     sortDescriptors: [
-                        NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: options?.ascending ?? false)
+                        NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: options.ascending ?? false)
                     ]
                 ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
                     if let error = error {

@@ -124,7 +124,7 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
     options: QueryOptionsWithSortOrder?,
   ) throws -> Promise<[CorrelationSample]> {
     let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
-    let predicate = try createPredicate(filter: options?.filter)
+    let predicate = try createPredicate(filter: options.filter)
     return Promise.async {
       try await withCheckedThrowingContinuation { continuation in
         let query = HKCorrelationQuery(
@@ -163,10 +163,10 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
     }
   }*/
 
-  func queryCorrelationSamples(typeIdentifier: CorrelationTypeIdentifier, options: QueryOptionsWithSortOrder?) throws -> Promise<[CorrelationSample]> {
+  func queryCorrelationSamples(typeIdentifier: CorrelationTypeIdentifier, options: QueryOptionsWithSortOrder) throws -> Promise<[CorrelationSample]> {
     let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
-    let predicate = try createPredicate(filter: options?.filter)
-    let limit = getQueryLimit(options?.limit)
+    let predicate = try createPredicate(filter: options.filter)
+    let limit = getQueryLimit(options.limit)
 
     return Promise.async {
       return try await withCheckedThrowingContinuation { continuation in
@@ -174,7 +174,7 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
           sampleType: correlationType,
           predicate: predicate,
           limit: limit,
-          sortDescriptors: getSortDescriptors(ascending: options?.ascending)
+          sortDescriptors: getSortDescriptors(ascending: options.ascending)
         ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
           if let err = error {
             return continuation.resume(throwing: err)

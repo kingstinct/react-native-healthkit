@@ -9,7 +9,7 @@ import type {
 export interface ElectrocardiogramModule
   extends HybridObject<{ ios: 'swift' }> {
   queryElectrocardiogramSamples(
-    options?: ECGQueryOptionsWithSortOrder,
+    options: ECGQueryOptionsWithSortOrder,
   ): Promise<readonly ElectrocardiogramSample[]>
 
   queryElectrocardiogramSamplesWithAnchor(

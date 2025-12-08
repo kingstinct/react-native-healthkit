@@ -20,16 +20,12 @@ func dateOrNilIfZero(_ timestamp: Double?) -> Date? {
 
 }
 
-func getQueryLimit(_ limit: Double?) -> Int {
-    if let limit = limit {
-        if limit == .infinity || limit <= 0 {
-            return HKObjectQueryNoLimit
-        }
+func getQueryLimit(_ limit: Double) -> Int {
+  if limit == .infinity || limit <= 0 || limit == .nan || limit == .signalingNaN {
+      return HKObjectQueryNoLimit
+  }
 
-        return Int(limit)
-    }
-
-    return HKObjectQueryNoLimit
+  return Int(limit)
 }
 
 func createPredicateForWorkout(filter: FilterForWorkouts?) throws -> NSPredicate? {
