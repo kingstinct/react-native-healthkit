@@ -1,6 +1,7 @@
 import type { AnyMap } from 'react-native-nitro-modules'
 import type { WorkoutProxy } from '../specs/WorkoutProxy.nitro'
-import type { FilterForSamples } from '.'
+import type { ComparisonPredicateOperator } from '../types'
+import type { FilterForSamplesBase } from '.'
 import type { Device } from './Device'
 import type { Quantity } from './QuantityType'
 import type { DeletedSample, GenericMetadata } from './Shared'
@@ -170,31 +171,21 @@ export interface QueryWorkoutSamplesWithAnchorResponse {
   readonly newAnchor: string
 }
 
-export enum ComparisonPredicateOperator {
-  lessThan = 0,
-  lessThanOrEqualTo = 1,
-  greaterThan = 2,
-  greaterThanOrEqualTo = 3,
-  equalTo = 4,
-  notEqualTo = 5,
-  matches = 6,
-  like = 7,
-  beginsWith = 8,
-  endsWith = 9,
-  in = 10,
-  customSelector = 11,
-  contains = 99,
-  between = 100,
-}
-
 export type WorkoutDurationPredicate = {
   readonly predicateOperator: ComparisonPredicateOperator
   readonly durationInSeconds: number
 }
 
-export interface FilterForWorkouts extends FilterForSamples {
+export interface FilterForWorkoutsBase
+  extends Omit<FilterForSamplesBase, 'workout'> {
   readonly workoutActivityType?: WorkoutActivityType
   readonly duration?: WorkoutDurationPredicate
+}
+
+export interface FilterForWorkouts extends FilterForWorkoutsBase {
+  readonly OR?: FilterForWorkoutsBase[]
+  readonly NOT?: FilterForWorkoutsBase[]
+  readonly AND?: FilterForWorkoutsBase[]
 }
 
 export interface WorkoutQueryOptionsWithAnchor {

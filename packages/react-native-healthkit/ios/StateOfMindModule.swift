@@ -45,7 +45,7 @@ class StateOfMindModule: HybridStateOfMindModuleSpec {
   func queryStateOfMindSamplesWithAnchor(options: QueryOptionsWithAnchor) -> Promise<StateOfMindSamplesWithAnchorResponse> {
     return Promise.async {
       if #available(iOS 18.0, *) {
-        let predicate = try createPredicate(options.filter)
+        let predicate = try createPredicateForSamples(options.filter)
 
         let response = try await sampleAnchoredQueryAsync(
           sampleType: .stateOfMindType(),
@@ -77,7 +77,7 @@ class StateOfMindModule: HybridStateOfMindModuleSpec {
   ) -> Promise<[StateOfMindSample]> {
     return Promise.async {
       if #available(iOS 18.0, *) {
-        let predicate = try createPredicate(options.filter)
+        let predicate = try createPredicateForSamples(options.filter)
 
         return try await sampleQueryAsync(
           sampleType: .stateOfMindType(),

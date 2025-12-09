@@ -19,7 +19,9 @@ export const subscribeToQuantitySamples = (
     const samplesAfterLast = await queryQuantitySamples(identifier, {
       limit: 0,
       filter: {
-        startDate: after,
+        date: {
+          startDate: after,
+        },
       },
     })
 

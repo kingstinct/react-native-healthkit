@@ -162,7 +162,7 @@ class CoreModule: HybridCoreModuleSpec {
   func querySources(identifier: SampleTypeIdentifier, filter: FilterForSamples?) -> Promise<[HybridSourceProxySpec]> {
     return Promise.async {
       let sampleType = try sampleTypeFrom(sampleTypeIdentifier: identifier)
-      let predicate = try createPredicate(filter)
+      let predicate = try createPredicateForSamples(filter)
 
       return try await withCheckedThrowingContinuation { continuation in
         let query = HKSourceQuery(
@@ -298,7 +298,7 @@ class CoreModule: HybridCoreModuleSpec {
 
   func deleteObjects(objectTypeIdentifier: ObjectTypeIdentifier, filter: FilterForSamples) -> Promise<Double> {
     return Promise.async {
-      if let predicate = try createPredicate(filter) {
+      if let predicate = try createPredicateForSamples(filter) {
 
         let of = try objectTypeFrom(objectTypeIdentifier: objectTypeIdentifier)
         return try await withCheckedThrowingContinuation { continuation in

@@ -1,10 +1,10 @@
 import { Button, Host, List, VStack } from '@expo/ui/swift-ui'
 import {
+  ComparisonPredicateOperator,
   queryWorkoutSamplesWithAnchor,
   saveWorkoutSample,
 } from '@kingstinct/react-native-healthkit'
 import {
-  ComparisonPredicateOperator,
   WorkoutActivityType,
   type WorkoutSample,
 } from '@kingstinct/react-native-healthkit/types/Workouts'
@@ -30,8 +30,21 @@ export default function WorkoutsScreen() {
           anchor,
           limit: 20,
           filter: {
-            workoutActivityType: WorkoutActivityType.running,
-            endDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30 * 6), // 6 months
+            OR: [
+              {
+                workoutActivityType: WorkoutActivityType.running,
+              },
+              {
+                workoutActivityType:
+                  WorkoutActivityType.traditionalStrengthTraining,
+              },
+              {
+                workoutActivityType: WorkoutActivityType.walking,
+              },
+            ],
+            date: {
+              endDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30 * 6), // 6 months
+            },
             duration: {
               durationInSeconds: 60,
               predicateOperator:

@@ -10,7 +10,7 @@ import {
 } from '@expo/ui/swift-ui'
 import { frame } from '@expo/ui/swift-ui/modifiers'
 import {
-  type FilterForSamples,
+  ComparisonPredicateOperator,
   queryQuantitySamplesWithAnchor,
 } from '@kingstinct/react-native-healthkit'
 import { QuantityTypes } from '@kingstinct/react-native-healthkit/modules'
@@ -59,8 +59,10 @@ export default function QuantitiesScreen() {
     if (selectedOption === 'Anchor') {
       queryQuantitySamplesWithAnchor(selectedQuantityType, {
         filter: {
-          startDate: fromDate,
-          endDate: toDate,
+          date: {
+            startDate: fromDate,
+            endDate: toDate,
+          },
         },
         limit: 20,
         anchor: anchor,
@@ -76,16 +78,14 @@ export default function QuantitiesScreen() {
     } else {
       setAnchor(undefined)
 
-      const userEnteredFilters: FilterForSamples =
+      const userEnteredFilters =
         includeUserEntered === false
           ? {
-              metadata: [
-                {
-                  withMetadataKey: 'HKWasUserEntered',
-                  operatorType: 'notEqualTo',
-                  value: true,
-                },
-              ],
+              metadata: {
+                withMetadataKey: 'HKWasUserEntered',
+                operatorType: ComparisonPredicateOperator.equalTo,
+                value: true,
+              },
             }
           : {}
 
@@ -93,8 +93,10 @@ export default function QuantitiesScreen() {
         selectedQuantityType,
         {
           filter: {
-            startDate: fromDate,
-            endDate: toDate,
+            date: {
+              startDate: fromDate,
+              endDate: toDate,
+            },
             ...userEnteredFilters,
           },
           ascending: selectedOption === 'Ascending',

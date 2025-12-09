@@ -171,7 +171,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   func queryStatisticsForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], options: StatisticsQueryOptions?) -> Promise<QueryStatisticsResponse> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
-      let predicate = try createPredicate(options?.filter)
+      let predicate = try createPredicateForSamples(options?.filter)
       let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
       return try await withCheckedThrowingContinuation { continuation in
         let query = HKStatisticsQuery.init(
@@ -206,7 +206,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
 
-      let predicate = try createPredicate(options?.filter)
+      let predicate = try createPredicateForSamples(options?.filter)
 
       // Create date components from interval
       var dateComponents = DateComponents()
@@ -259,12 +259,12 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
           var enumerateTo = Date()
 
           if let filter = options?.filter {
-            enumerateFrom = filter.startDate ?? enumerateFrom
-            enumerateTo = filter.endDate ?? enumerateTo
+            enumerateFrom = filter.date?.startDate ?? enumerateFrom
+            enumerateTo = filter.date?.endDate ?? enumerateTo
           }
 
           statistics.enumerateStatistics(from: enumerateFrom, to: enumerateTo) { stats, _ in
-            var response = serializeStatistics(gottenStats: stats, unit: unit)
+            let response = serializeStatistics(gottenStats: stats, unit: unit)
 
             responseArray.append(response)
           }
@@ -280,7 +280,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   func queryQuantitySamplesWithAnchor(identifier: QuantityTypeIdentifier, options: QueryOptionsWithAnchorAndUnit) -> Promise<QuantitySamplesWithAnchorResponse> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
-      let predicate = try createPredicate(options.filter)
+      let predicate = try createPredicateForSamples(options.filter)
 
       let unit = try await getUnitToUse(
         unitOverride: options.unit,
@@ -343,7 +343,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
       let samples = try await sampleQueryAsync(
         sampleType: quantityType,
         limit: options.limit,
-        predicate: createPredicate(options.filter),
+        predicate: createPredicateForSamples(options.filter),
         sortDescriptors: getSortDescriptors(ascending: options.ascending)
       )
 

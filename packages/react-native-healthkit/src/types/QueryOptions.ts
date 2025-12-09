@@ -1,20 +1,43 @@
 import type { SourceProxy } from '../specs/SourceProxy.nitro'
 import type { WorkoutProxy } from '../specs/WorkoutProxy.nitro'
 
-type PredicateWithMetadataOperator =
-  | 'equalTo'
-  | 'notEqualTo'
-  | 'greaterThan'
-  | 'lessThan'
+export enum ComparisonPredicateOperator {
+  lessThan = 0,
+
+  lessThanOrEqualTo = 1,
+
+  greaterThan = 2,
+
+  greaterThanOrEqualTo = 3,
+
+  equalTo = 4,
+
+  notEqualTo = 5,
+
+  matches = 6,
+
+  like = 7,
+
+  beginsWith = 8,
+
+  endsWith = 9,
+
+  IN = 10,
+
+  customSelector = 11,
+
+  contains = 99,
+
+  between = 100,
+}
 
 type PredicateWithMetadataValue = string | number | Date | boolean
 
 export interface PredicateWithMetadataKey {
   readonly withMetadataKey: string
-  readonly operatorType?: PredicateWithMetadataOperator
+  readonly operatorType?: ComparisonPredicateOperator
   readonly value?: PredicateWithMetadataValue
 }
-
 // Computes and flattens object types
 // biome-ignore lint/complexity/noBannedTypes: it works
 type ComputeRaw<A> = A extends Function ? A : { [K in keyof A]: A[K] } & {}
@@ -37,15 +60,26 @@ type _Strict<U, UAll extends U = U> = U extends any
 // The exported type you can copy into your codebase
 export type StrictUnion<U extends object> = _Strict<U>
 
-export interface FilterForSamples {
-  readonly uuids?: string[]
-  readonly metadata?: PredicateWithMetadataKey[]
+export interface DateFilter {
   readonly startDate?: Date
   readonly endDate?: Date
   readonly strictEndDate?: boolean
   readonly strictStartDate?: boolean
+}
+
+export interface FilterForSamplesBase {
+  readonly uuid?: string
+  readonly uuids?: string[]
+  readonly metadata?: PredicateWithMetadataKey
+  readonly date?: DateFilter
   readonly workout?: WorkoutProxy
   readonly sources?: SourceProxy[]
+}
+
+export interface FilterForSamples extends FilterForSamplesBase {
+  readonly OR?: FilterForSamplesBase[]
+  readonly NOT?: FilterForSamplesBase[]
+  readonly AND?: FilterForSamplesBase[]
 }
 
 /**

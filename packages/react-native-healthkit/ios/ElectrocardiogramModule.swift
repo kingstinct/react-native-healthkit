@@ -97,7 +97,7 @@ class ElectrocardiogramModule: HybridElectrocardiogramModuleSpec {
     options: ECGQueryOptionsWithSortOrder
   ) -> Promise<[ElectrocardiogramSample]> {
     return Promise.async {
-      let predicate = try createPredicate(options.filter)
+      let predicate = try createPredicateForSamples(options.filter)
       let sortDescriptors = getSortDescriptors(ascending: options.ascending)
       let includeVoltages = options.includeVoltages ?? false
       let samples = try await sampleQueryAsync(
@@ -135,7 +135,7 @@ class ElectrocardiogramModule: HybridElectrocardiogramModuleSpec {
     options: ECGQueryOptionsWithAnchor
   ) -> Promise<ElectrocardiogramSamplesWithAnchorResponse> {
     return Promise.async {
-      let predicate = try createPredicate(options.filter)
+      let predicate = try createPredicateForSamples(options.filter)
       let includeVoltages = options.includeVoltages
 
       let response = try await sampleAnchoredQueryAsync(
