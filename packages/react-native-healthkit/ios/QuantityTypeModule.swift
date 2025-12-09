@@ -171,7 +171,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   func queryStatisticsForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], options: StatisticsQueryOptions?) -> Promise<QueryStatisticsResponse> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
-      let predicate = try createPredicateForSamples(options?.filter)
+      let predicate = createPredicateForSamples(options?.filter)
       let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
       return try await withCheckedThrowingContinuation { continuation in
         let query = HKStatisticsQuery.init(
@@ -206,7 +206,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
 
-      let predicate = try createPredicateForSamples(options?.filter)
+      let predicate = createPredicateForSamples(options?.filter)
 
       // Create date components from interval
       var dateComponents = DateComponents()
@@ -280,7 +280,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   func queryQuantitySamplesWithAnchor(identifier: QuantityTypeIdentifier, options: QueryOptionsWithAnchorAndUnit) -> Promise<QuantitySamplesWithAnchorResponse> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
-      let predicate = try createPredicateForSamples(options.filter)
+      let predicate = createPredicateForSamples(options.filter)
 
       let unit = try await getUnitToUse(
         unitOverride: options.unit,

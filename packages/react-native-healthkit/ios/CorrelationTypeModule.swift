@@ -50,7 +50,7 @@ func getUnitMap(correlations: [HKCorrelation]) async throws -> [HKQuantityType: 
 class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
   func queryCorrelationSamplesWithAnchor(typeIdentifier: CorrelationTypeIdentifier, options: QueryOptionsWithAnchor) -> Promise<QueryCorrelationSamplesWithAnchorResponse> {
     return Promise.async {
-      let predicate = try createPredicateForSamples(options.filter)
+      let predicate = createPredicateForSamples(options.filter)
       let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
 
       let response = try await sampleAnchoredQueryAsync(

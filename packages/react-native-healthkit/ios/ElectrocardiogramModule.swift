@@ -85,6 +85,7 @@ func serializeClassification(_ classification: HKElectrocardiogram.Classificatio
   case .inconclusiveHighHeartRate:   return ElectrocardiogramClassification(fromString: "inconclusiveHighHeartRate")!
   case .inconclusivePoorReading:     return ElectrocardiogramClassification(fromString: "inconclusivePoorReading")!
   case .inconclusiveOther:           return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
+  case .unrecognized:                return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
   @unknown default:                  return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
   }
 }
@@ -97,7 +98,7 @@ class ElectrocardiogramModule: HybridElectrocardiogramModuleSpec {
     options: ECGQueryOptionsWithSortOrder
   ) -> Promise<[ElectrocardiogramSample]> {
     return Promise.async {
-      let predicate = try createPredicateForSamples(options.filter)
+      let predicate = createPredicateForSamples(options.filter)
       let sortDescriptors = getSortDescriptors(ascending: options.ascending)
       let includeVoltages = options.includeVoltages ?? false
       let samples = try await sampleQueryAsync(
@@ -135,7 +136,7 @@ class ElectrocardiogramModule: HybridElectrocardiogramModuleSpec {
     options: ECGQueryOptionsWithAnchor
   ) -> Promise<ElectrocardiogramSamplesWithAnchorResponse> {
     return Promise.async {
-      let predicate = try createPredicateForSamples(options.filter)
+      let predicate = createPredicateForSamples(options.filter)
       let includeVoltages = options.includeVoltages
 
       let response = try await sampleAnchoredQueryAsync(

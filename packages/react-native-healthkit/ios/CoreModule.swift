@@ -162,7 +162,7 @@ class CoreModule: HybridCoreModuleSpec {
   func querySources(identifier: SampleTypeIdentifier, filter: FilterForSamples?) -> Promise<[HybridSourceProxySpec]> {
     return Promise.async {
       let sampleType = try sampleTypeFrom(sampleTypeIdentifier: identifier)
-      let predicate = try createPredicateForSamples(filter)
+      let predicate = createPredicateForSamples(filter)
 
       return try await withCheckedThrowingContinuation { continuation in
         let query = HKSourceQuery(
@@ -260,11 +260,11 @@ class CoreModule: HybridCoreModuleSpec {
     return Promise.resolved(withResult: UIApplication.shared.isProtectedDataAvailable)
   }
 
-  func isHealthDataAvailable() throws -> Bool {
+  func isHealthDataAvailable() -> Bool {
     return HKHealthStore.isHealthDataAvailable()
   }
 
-  func isProtectedDataAvailable() throws -> Bool {
+  func isProtectedDataAvailable() -> Bool {
     return UIApplication.shared.isProtectedDataAvailable
   }
 
@@ -298,7 +298,7 @@ class CoreModule: HybridCoreModuleSpec {
 
   func deleteObjects(objectTypeIdentifier: ObjectTypeIdentifier, filter: FilterForSamples) -> Promise<Double> {
     return Promise.async {
-      if let predicate = try createPredicateForSamples(filter) {
+      if let predicate = createPredicateForSamples(filter) {
 
         let of = try objectTypeFrom(objectTypeIdentifier: objectTypeIdentifier)
         return try await withCheckedThrowingContinuation { continuation in

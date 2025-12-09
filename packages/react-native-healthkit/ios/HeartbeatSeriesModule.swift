@@ -50,7 +50,7 @@ class HeartbeatSeriesModule: HybridHeartbeatSeriesModuleSpec {
     ) -> Promise<[HeartbeatSeriesSample]> {
 
         return Promise.async {
-          let predicate = try createPredicateForSamples(options.filter)
+          let predicate = createPredicateForSamples(options.filter)
 
           let samples = try await sampleQueryAsync(
             sampleType: HKSeriesType.heartbeat(),
@@ -75,7 +75,7 @@ class HeartbeatSeriesModule: HybridHeartbeatSeriesModuleSpec {
         options: QueryOptionsWithAnchor
     ) -> Promise<HeartbeatSeriesSamplesWithAnchorResponse> {
         return Promise.async {
-            let predicate = try createPredicateForSamples(options.filter)
+            let predicate = createPredicateForSamples(options.filter)
 
             let response = try await sampleAnchoredQueryAsync(
                 sampleType: HKSeriesType.heartbeat(),

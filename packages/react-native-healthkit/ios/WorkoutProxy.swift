@@ -150,27 +150,25 @@ func getSerializedWorkoutLocations(
 func saveWorkoutRouteInternal(
   workout: HKWorkout,
   locations: [LocationForSaving]
-) -> Promise<Bool> {
-  return Promise.async {
-    try await withCheckedThrowingContinuation { continuation in
-      Task {
-        do {
-          // create CLLocations and return if locations are empty
-          let clLocations = mapLocations(from: locations)
-          let routeBuilder = HKWorkoutRouteBuilder(
-            healthStore: store,
-            device: nil
-          )
-          try await routeBuilder.insertRouteData(clLocations)
-          try await routeBuilder.finishRoute(with: workout, metadata: nil)
+) async throws -> Bool {
+  try await withCheckedThrowingContinuation { continuation in
+    Task {
+      do {
+        // create CLLocations and return if locations are empty
+        let clLocations = mapLocations(from: locations)
+        let routeBuilder = HKWorkoutRouteBuilder(
+          healthStore: store,
+          device: nil
+        )
+        try await routeBuilder.insertRouteData(clLocations)
+        try await routeBuilder.finishRoute(with: workout, metadata: nil)
 
-          return continuation.resume(returning: true)
-        } catch {
-          return continuation.resume(throwing: error)
-        }
+        return continuation.resume(returning: true)
+      } catch {
+        return continuation.resume(throwing: error)
       }
-
     }
+
   }
 }
 
@@ -190,7 +188,7 @@ class WorkoutProxy: HybridWorkoutProxySpec {
     }
   }
 
-  func getAllStatistics() throws -> Promise<[String: QueryStatisticsResponse]> {
+  func getAllStatistics() -> Promise<[String: QueryStatisticsResponse]> {
     return Promise.async {
       var result: [String: QueryStatisticsResponse] = [:]
       if #available(iOS 16.0, *) {
@@ -400,11 +398,13 @@ class WorkoutProxy: HybridWorkoutProxySpec {
     }
   }
 
-  func saveWorkoutRoute(locations: [LocationForSaving]) throws -> Promise<Bool> {
-    return saveWorkoutRouteInternal(workout: self.workout, locations: locations)
+  func saveWorkoutRoute(locations: [LocationForSaving]) -> Promise<Bool> {
+    return Promise.async {
+      return try await saveWorkoutRouteInternal(workout: self.workout, locations: locations)
+    }
   }
 
-  func getWorkoutRoutes() throws -> Promise<[WorkoutRoute]> {
+  func getWorkoutRoutes() -> Promise<[WorkoutRoute]> {
     return Promise.async {
       return try await getSerializedWorkoutLocations(workout: self.workout)
     }

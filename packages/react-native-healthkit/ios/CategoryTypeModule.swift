@@ -30,7 +30,7 @@ class CategoryTypeModule: HybridCategoryTypeModuleSpec {
     ) -> Promise<[CategorySample]> {
         return Promise.async {
           let sampleType = try initializeCategoryType(identifier.stringValue)
-          let predicate = try createPredicateForSamples(options.filter)
+          let predicate = createPredicateForSamples(options.filter)
           let sortDescriptors = getSortDescriptors(ascending: options.ascending)
 
           let samples = try await sampleQueryAsync(
@@ -50,10 +50,10 @@ class CategoryTypeModule: HybridCategoryTypeModuleSpec {
     func queryCategorySamplesWithAnchor(
         identifier: CategoryTypeIdentifier,
         options: QueryOptionsWithAnchor
-    ) throws -> Promise<CategorySamplesWithAnchorResponse> {
+    ) -> Promise<CategorySamplesWithAnchorResponse> {
         return Promise.async {
           let sampleType = try initializeCategoryType(identifier.stringValue)
-          let predicate = try createPredicateForSamples(options.filter)
+          let predicate = createPredicateForSamples(options.filter)
 
           let response = try await sampleAnchoredQueryAsync(
             sampleType: sampleType,

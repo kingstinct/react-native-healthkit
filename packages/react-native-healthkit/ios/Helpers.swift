@@ -830,7 +830,7 @@ func allQuantityTypeIdentifiers() -> [String] {
   for codePoint in 0..<300 {
     for prefix in knownPrefixes {
       let candidate = prefix + String(codePoint)
-      if let type = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier(rawValue: candidate)),
+      if let _ = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier(rawValue: candidate)),
          !allIdentifiers.contains(where: { $0.rawValue == candidate }) {
         foundButNotListed.append(candidate)
       }

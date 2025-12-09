@@ -35,7 +35,7 @@ func mapLocations(from locations: [LocationForSaving]) -> [CLLocation] {
 }
 
 class WorkoutsModule: HybridWorkoutsModuleSpec {
-    func startWatchAppWithWorkoutConfiguration(workoutConfiguration: WorkoutConfiguration) throws -> Promise<Bool> {
+    func startWatchAppWithWorkoutConfiguration(workoutConfiguration: WorkoutConfiguration) -> Promise<Bool> {
         let configuration = parseWorkoutConfiguration(workoutConfiguration)
 
         return Promise.async {
@@ -51,9 +51,9 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
         }
     }
 
-    func queryWorkoutSamples(options: WorkoutQueryOptions) throws -> Promise<[HybridWorkoutProxySpec]> {
+    func queryWorkoutSamples(options: WorkoutQueryOptions) -> Promise<[HybridWorkoutProxySpec]> {
       return Promise.async {
-        let predicate = try createPredicateForWorkout(options.filter)
+        let predicate = createPredicateForWorkout(options.filter)
         return try await sampleQueryAsync(
           sampleType: .workoutType(),
           limit: options.limit,
@@ -78,117 +78,115 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
         endDate: Date,
         totals: WorkoutTotals?,
         metadata: AnyMap?
-    ) throws -> Promise<HybridWorkoutProxySpec> {
-
-        let type = try initializeWorkoutActivityType(UInt(workoutActivityType.rawValue))
-
-        // ensure that start date is before end date
-        if startDate > endDate {
-            throw RuntimeError.error(withMessage: "[react-native-healthkit] endDate must not be less than startDate")
-        }
-
-        let metadataDeserialized = metadata != nil ? anyMapToDictionary(metadata!) : nil
-
-        var totalEnergyBurned: HKQuantity?
-        var totalDistance: HKQuantity?
-        var totalSwimmingStrokeCount: HKQuantity?
-        var totalFlightsClimbed: HKQuantity?
-        // generating quantity samples
-        let initializedSamples = try quantities.map { quantity in
-            let type = try initializeQuantityType(quantity.quantityType.stringValue)
-            let unitStr = quantity.unit
-            let quantityVal = quantity.quantity
-            let quantityStart = quantity.startDate
-            let quantityEnd = quantity.endDate
-            let unit = HKUnit.init(from: unitStr)
-            let quantity = HKQuantity.init(unit: unit, doubleValue: quantityVal)
-
-            if quantity.is(compatibleWith: HKUnit.kilocalorie()) {
-                totalEnergyBurned = quantity
-            }
-
-            if quantity.is(compatibleWith: HKUnit.meter()) {
-                totalDistance = quantity
-            }
-
-            if type.identifier == HKWorkoutSortIdentifierTotalSwimmingStrokeCount {
-                totalSwimmingStrokeCount = quantity
-            }
-
-            if type.identifier == HKWorkoutSortIdentifierTotalFlightsClimbed {
-                totalFlightsClimbed = quantity
-            }
-
-            return HKQuantitySample.init(
-                type: type,
-                quantity: quantity,
-                start: quantityStart,
-                end: quantityEnd,
-                metadata: metadataDeserialized
-            )
-        }
-
-        // if totals are provided override samples
-        let rawTotalDistance = totals?.distance ?? 0.0
-        let rawTotalEnergy = totals?.energyBurned ?? 0.0
-
-        if rawTotalDistance != 0.0 {
-            totalDistance = HKQuantity(unit: .meter(), doubleValue: rawTotalDistance)
-        }
-        if rawTotalEnergy != 0.0 {
-            totalEnergyBurned = HKQuantity(unit: .kilocalorie(), doubleValue: rawTotalEnergy)
-        }
-
-        // creating workout
-        var workout: HKWorkout?
-
-        if totalSwimmingStrokeCount != nil {
-            workout = HKWorkout.init(
-                activityType: type,
-                start: startDate,
-                end: endDate,
-                workoutEvents: nil,
-                totalEnergyBurned: totalEnergyBurned,
-                totalDistance: totalDistance,
-                totalSwimmingStrokeCount: totalSwimmingStrokeCount,
-                device: nil,
-                metadata: metadataDeserialized
-            )
-        } else {
-            if #available(iOS 11, *) {
-                if let totalFlightsClimbed = totalFlightsClimbed {
-                    workout = HKWorkout.init(
-                        activityType: type,
-                        start: startDate,
-                        end: endDate,
-                        workoutEvents: nil,
-                        totalEnergyBurned: totalEnergyBurned,
-                        totalDistance: totalDistance,
-                        totalFlightsClimbed: totalFlightsClimbed,
-                        device: nil,
-                        metadata: metadataDeserialized
-                    )
-                }
-            }
-        }
-
-        if workout == nil {
-            workout = HKWorkout.init(
-                activityType: type,
-                start: startDate,
-                end: endDate,
-                workoutEvents: nil,
-                totalEnergyBurned: totalEnergyBurned,
-                totalDistance: totalDistance,
-                metadata: metadataDeserialized
-            )
-        }
-
-        guard let workout = workout else {
-            throw RuntimeError.error(withMessage: "Could not create workout")
-        }
-
+    ) -> Promise<HybridWorkoutProxySpec> {
         return Promise.async {
+          let type = try initializeWorkoutActivityType(UInt(workoutActivityType.rawValue))
+
+          // ensure that start date is before end date
+          if startDate > endDate {
+              throw RuntimeError.error(withMessage: "[react-native-healthkit] endDate must not be less than startDate")
+          }
+
+          let metadataDeserialized = metadata != nil ? anyMapToDictionary(metadata!) : nil
+
+          var totalEnergyBurned: HKQuantity?
+          var totalDistance: HKQuantity?
+          var totalSwimmingStrokeCount: HKQuantity?
+          var totalFlightsClimbed: HKQuantity?
+          // generating quantity samples
+          let initializedSamples = try quantities.map { quantity in
+              let type = try initializeQuantityType(quantity.quantityType.stringValue)
+              let unitStr = quantity.unit
+              let quantityVal = quantity.quantity
+              let quantityStart = quantity.startDate
+              let quantityEnd = quantity.endDate
+              let unit = HKUnit.init(from: unitStr)
+              let quantity = HKQuantity.init(unit: unit, doubleValue: quantityVal)
+
+              if quantity.is(compatibleWith: HKUnit.kilocalorie()) {
+                  totalEnergyBurned = quantity
+              }
+
+              if quantity.is(compatibleWith: HKUnit.meter()) {
+                  totalDistance = quantity
+              }
+
+              if type.identifier == HKWorkoutSortIdentifierTotalSwimmingStrokeCount {
+                  totalSwimmingStrokeCount = quantity
+              }
+
+              if type.identifier == HKWorkoutSortIdentifierTotalFlightsClimbed {
+                  totalFlightsClimbed = quantity
+              }
+
+              return HKQuantitySample.init(
+                  type: type,
+                  quantity: quantity,
+                  start: quantityStart,
+                  end: quantityEnd,
+                  metadata: metadataDeserialized
+              )
+          }
+
+          // if totals are provided override samples
+          let rawTotalDistance = totals?.distance ?? 0.0
+          let rawTotalEnergy = totals?.energyBurned ?? 0.0
+
+          if rawTotalDistance != 0.0 {
+              totalDistance = HKQuantity(unit: .meter(), doubleValue: rawTotalDistance)
+          }
+          if rawTotalEnergy != 0.0 {
+              totalEnergyBurned = HKQuantity(unit: .kilocalorie(), doubleValue: rawTotalEnergy)
+          }
+
+          // creating workout
+          var workout: HKWorkout?
+
+          if totalSwimmingStrokeCount != nil {
+              workout = HKWorkout.init(
+                  activityType: type,
+                  start: startDate,
+                  end: endDate,
+                  workoutEvents: nil,
+                  totalEnergyBurned: totalEnergyBurned,
+                  totalDistance: totalDistance,
+                  totalSwimmingStrokeCount: totalSwimmingStrokeCount,
+                  device: nil,
+                  metadata: metadataDeserialized
+              )
+          } else {
+              if #available(iOS 11, *) {
+                  if let totalFlightsClimbed = totalFlightsClimbed {
+                      workout = HKWorkout.init(
+                          activityType: type,
+                          start: startDate,
+                          end: endDate,
+                          workoutEvents: nil,
+                          totalEnergyBurned: totalEnergyBurned,
+                          totalDistance: totalDistance,
+                          totalFlightsClimbed: totalFlightsClimbed,
+                          device: nil,
+                          metadata: metadataDeserialized
+                      )
+                  }
+              }
+          }
+
+          if workout == nil {
+              workout = HKWorkout.init(
+                  activityType: type,
+                  start: startDate,
+                  end: endDate,
+                  workoutEvents: nil,
+                  totalEnergyBurned: totalEnergyBurned,
+                  totalDistance: totalDistance,
+                  metadata: metadataDeserialized
+              )
+          }
+
+          guard let workout = workout else {
+              throw RuntimeError.error(withMessage: "Could not create workout")
+          }
             try await withCheckedThrowingContinuation({ continuation in
                 // saving workout, samples and route
                 store.save(workout) { (_: Bool, error: Error?) in
@@ -214,9 +212,9 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
         }
     }
 
-    func queryWorkoutSamplesWithAnchor(options: WorkoutQueryOptionsWithAnchor) throws -> Promise<QueryWorkoutSamplesWithAnchorResponse> {
+    func queryWorkoutSamplesWithAnchor(options: WorkoutQueryOptionsWithAnchor) -> Promise<QueryWorkoutSamplesWithAnchorResponse> {
         return Promise.async {
-            let predicate = try createPredicateForWorkout(options.filter)
+            let predicate = createPredicateForWorkout(options.filter)
 
             let response = try await sampleAnchoredQueryAsync(
                 sampleType: .workoutType(),
