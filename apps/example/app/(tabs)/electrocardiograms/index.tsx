@@ -12,6 +12,7 @@ export default function ElectrocardiogramsScreen() {
     try {
       const ecgs = await queryElectrocardiogramSamples({
         includeVoltages: true,
+        limit: 20,
       })
       setEcgs(ecgs)
     } catch (error) {
@@ -37,7 +38,10 @@ export default function ElectrocardiogramsScreen() {
             <ListItem
               key={item.uuid}
               title={`${item.averageHeartRateBpm} BPM`}
-              subtitle={`${item.startDate.toLocaleString()} • Duration: ${formatDuration(item.startDate, item.endDate)} • Voltage Measurements: ${item.numberOfVoltageMeasurements}`}
+              subtitle={`${item.startDate.toLocaleString()} • Duration: ${formatDuration(
+                item.startDate,
+                item.endDate,
+              )} • Voltage Measurements: ${item.numberOfVoltageMeasurements}`}
             />
           ))}
         </List>

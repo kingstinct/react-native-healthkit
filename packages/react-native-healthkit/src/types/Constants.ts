@@ -30,3 +30,6 @@ export const HeartbeatSeriesTypeIdentifier =
  */
 export const ElectrocardiogramTypeIdentifier =
   'HKElectrocardiogramType' as const
+
+export const UserAnnotatedMedicationTypeIdentifier =
+  'HKUserAnnotatedMedicationTypeIdentifier'

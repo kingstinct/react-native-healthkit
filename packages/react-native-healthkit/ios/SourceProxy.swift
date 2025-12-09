@@ -21,7 +21,7 @@ class SourceProxy: HybridSourceProxySpec {
 
   }
 
-  private let source: HKSource
+  let source: HKSource
 
   let name: String
 

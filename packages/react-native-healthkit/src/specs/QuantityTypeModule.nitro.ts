@@ -1,6 +1,7 @@
 import type { AnyMap, HybridObject } from 'react-native-nitro-modules'
 import type { QuantitySample } from '../types/QuantitySample'
 import type {
+  AggregationStyle,
   IntervalComponents,
   QuantitySamplesWithAnchorResponse,
   QueryStatisticsResponse,
@@ -9,7 +10,6 @@ import type {
 } from '../types/QuantityType'
 import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 import type {
-  FilterForSamples,
   QueryOptionsWithAnchorAndUnit,
   QueryOptionsWithSortOrderAndUnit,
 } from '../types/QueryOptions'
@@ -20,6 +20,8 @@ export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
     unit: string,
   ): boolean
 
+  aggregationStyle(identifier: QuantityTypeIdentifier): AggregationStyle
+
   saveQuantitySample(
     identifier: QuantityTypeIdentifier,
     unit: string,
@@ -29,14 +31,9 @@ export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
     metadata: AnyMap,
   ): Promise<boolean>
 
-  deleteQuantitySamples(
-    identifier: QuantityTypeIdentifier,
-    filter: FilterForSamples,
-  ): Promise<boolean>
-
   queryQuantitySamples(
     identifier: QuantityTypeIdentifier,
-    options?: QueryOptionsWithSortOrderAndUnit,
+    options: QueryOptionsWithSortOrderAndUnit,
   ): Promise<readonly QuantitySample[]>
 
   queryStatisticsForQuantity(

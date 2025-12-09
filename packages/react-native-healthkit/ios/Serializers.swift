@@ -269,7 +269,7 @@ func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision?) -> SourceRev
         return SourceRevision(
             source: serializeSource(hkSourceRevision.source),
             version: hkSourceRevision.version,
-            operatingSystemVersion: serializeOperatingSystemVersion( hkSourceRevision.operatingSystemVersion),
+            operatingSystemVersion: serializeOperatingSystemVersion(hkSourceRevision.operatingSystemVersion),
             productType: hkSourceRevision.productType
         )
     }
@@ -280,15 +280,4 @@ func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision?) -> SourceRev
         operatingSystemVersion: nil,
         productType: nil
     )
-}
-
-func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
-    if let anchor = anchor {
-      let data = NSKeyedArchiver.archivedData(withRootObject: anchor)
-      let encoded = data.base64EncodedString()
-
-      return encoded
-    } else {
-        return nil
-    }
 }

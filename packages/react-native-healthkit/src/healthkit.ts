@@ -7,6 +7,7 @@ import { Platform } from 'react-native'
 // This import is crucial for deriving the type of the default export `HealthkitModule`
 // It assumes that index.ios.ts exports a default object matching the Healthkit native module structure.
 import type ReactNativeHealthkit from './healthkit.ios'
+import type { SourceProxy } from './specs/SourceProxy.nitro'
 import type { WorkoutProxy } from './specs/WorkoutProxy.nitro'
 import { AuthorizationRequestStatus, AuthorizationStatus } from './types/Auth'
 import type {
@@ -177,7 +178,7 @@ export const isQuantityCompatibleWithUnit = UnavailableFnFromModule(
 // CategoryTypeModule functions
 export function queryCategorySamples<T extends CategoryTypeIdentifier>(
   _categoryTypeIdentifier: T,
-  _options?: QueryOptionsWithSortOrder,
+  _options: QueryOptionsWithSortOrder,
 ): Promise<CategorySampleTyped<T>[]> {
   if (Platform.OS !== 'ios' && !hasWarned) {
     console.warn(notAvailableError)
@@ -273,6 +274,24 @@ export const queryStateOfMindSamples = UnavailableFnFromModule(
   'queryStateOfMindSamples',
   Promise.resolve([]),
 )
+export const queryStateOfMindSamplesWithAnchor = UnavailableFnFromModule(
+  'queryStateOfMindSamplesWithAnchor',
+  Promise.resolve({
+    samples: [],
+    deletedSamples: [],
+    newAnchor: '',
+  }),
+)
+
+export const queryCorrelationSamplesWithAnchor = UnavailableFnFromModule(
+  'queryCorrelationSamplesWithAnchor',
+  Promise.resolve({
+    correlations: [],
+    deletedSamples: [],
+    newAnchor: '',
+  }),
+)
+
 export const saveStateOfMindSample = UnavailableFnFromModule(
   'saveStateOfMindSample',
   Promise.resolve(false),
@@ -374,9 +393,34 @@ const subscribeToQuantitySamples = UnavailableFnFromModule(
 
 export { subscribeToQuantitySamples }
 
+export const currentAppSource = UnavailableFnFromModule('currentAppSource', {
+  bundleIdentifier: '',
+  name: '',
+} as SourceProxy) // Mocking callback structure
+
+export const queryMedications = UnavailableFnFromModule(
+  'queryMedications',
+  Promise.resolve([]),
+) // Mocking callback structure
+
+export const queryMedicationEvents = UnavailableFnFromModule(
+  'queryMedicationEvents',
+  Promise.resolve([]),
+) // Mocking callback structure
+
+export const queryMedicationEventsWithAnchor = UnavailableFnFromModule(
+  'queryMedicationEventsWithAnchor',
+  Promise.resolve({ newAnchor: '', samples: [], deletedSamples: [] }),
+) // Mocking callback structure
+
 const useSubscribeToQuantitySamples = UnavailableFnFromModule(
   'useSubscribeToQuantitySamples',
   undefined,
+) // Mocking callback structure
+
+export const requestMedicationsAuthorization = UnavailableFnFromModule(
+  'requestMedicationsAuthorization',
+  Promise.resolve(false),
 ) // Mocking callback structure
 
 export { useSubscribeToQuantitySamples }
@@ -430,9 +474,17 @@ const HealthkitModule = {
   startWatchApp,
   isProtectedDataAvailable,
   queryStateOfMindSamples,
+  queryStateOfMindSamplesWithAnchor,
   saveStateOfMindSample,
   subscribeToQuantitySamples,
   useSubscribeToQuantitySamples,
+  queryCorrelationSamplesWithAnchor,
+  queryMedications,
+  queryMedicationEvents,
+  queryMedicationEventsWithAnchor,
+  requestMedicationsAuthorization,
+
+  currentAppSource,
 
   // Hooks
   useMostRecentCategorySample,

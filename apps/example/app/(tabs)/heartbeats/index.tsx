@@ -23,6 +23,7 @@ export default function HeartbeatSeriesScreen() {
         const { samples, deletedSamples, newAnchor } =
           await HeartbeatSeries.queryHeartbeatSeriesSamplesWithAnchor({
             anchor,
+            limit: 20,
           })
         setQueryTime(Date.now() - startedAt)
         setHeartbeatSeries(samples)
@@ -82,7 +83,10 @@ export default function HeartbeatSeriesScreen() {
             <ListItem
               key={item.uuid}
               title={`${item.heartbeats.length} heartbeats`}
-              subtitle={`${item.startDate.toLocaleString()} • Duration: ${formatDuration(item.startDate, item.endDate)}`}
+              subtitle={`${item.startDate.toLocaleString()} • Duration: ${formatDuration(
+                item.startDate,
+                item.endDate,
+              )}`}
               onPress={() =>
                 router.push(`/heartbeats/details?seriesId=${item.uuid}`)
               }

@@ -10,7 +10,7 @@ async function getQuantitySampleById(
     limit: 1,
     unit,
     filter: {
-      uuid: uuid,
+      uuids: [uuid],
     },
   })
 

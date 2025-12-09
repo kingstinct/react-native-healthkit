@@ -1,7 +1,7 @@
 import type { AnyMap } from 'react-native-nitro-modules'
 import type { CategorySample, CategorySampleForSaving } from './CategoryType'
 import type { QuantitySample, QuantitySampleForSaving } from './QuantitySample'
-import type { GenericMetadata } from './Shared'
+import type { DeletedSample, GenericMetadata } from './Shared'
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcorrelationtypeidentifier Apple Docs }
@@ -30,3 +30,9 @@ export type MetadataMapperForCorrelationIdentifier<
   : GenericMetadata
 
 export type SampleForSaving = CategorySampleForSaving | QuantitySampleForSaving
+
+export interface QueryCorrelationSamplesWithAnchorResponse {
+  readonly correlations: readonly CorrelationSample[]
+  readonly deletedSamples: readonly DeletedSample[]
+  readonly newAnchor: string
+}

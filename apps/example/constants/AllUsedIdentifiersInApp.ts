@@ -19,7 +19,6 @@ export const AllQuantityTypeIdentifierInApp: QuantityTypeIdentifierWriteable[] =
     'HKQuantityTypeIdentifierBloodGlucose',
     'HKQuantityTypeIdentifierOxygenSaturation',
     'HKQuantityTypeIdentifierHeartRateVariabilitySDNN',
-    // 'HKQuantityTypeIdentifierAtrialFibrillationBurden',
     'HKQuantityTypeIdentifierBodyTemperature',
     'HKQuantityTypeIdentifierBasalBodyTemperature',
     'HKQuantityTypeIdentifierBodyFatPercentage',
@@ -68,12 +67,6 @@ export const AllQuantityTypeIdentifierInApp: QuantityTypeIdentifierWriteable[] =
     'HKQuantityTypeIdentifierBloodPressureDiastolic',
     'HKQuantityTypeIdentifierRespiratoryRate',
     'HKQuantityTypeIdentifierVO2Max',
-
-    // read-only:
-    //'HKQuantityTypeIdentifierWalkingHeartRateAverage',
-    // 'HKQuantityTypeIdentifierAppleExerciseTime',
-    // 'HKQuantityTypeIdentifierAppleStandTime',
-    // 'HKQuantityTypeIdentifierAppleWalkingSteadiness',
   ]
 
 export const AllCategorySampleTypeIdentifierInApp: CategoryTypeIdentifierWriteable[] =
@@ -81,11 +74,6 @@ export const AllCategorySampleTypeIdentifierInApp: CategoryTypeIdentifierWriteab
     'HKCategoryTypeIdentifierSleepAnalysis',
     'HKCategoryTypeIdentifierSleepChanges',
     'HKCategoryTypeIdentifierMindfulSession',
-    // read-only:
-    // 'HKCategoryTypeIdentifierAppleStandHour',
-    // 'HKCategoryTypeIdentifierLowHeartRateEvent',
-    // 'HKCategoryTypeIdentifierHighHeartRateEvent',
-    // 'HKCategoryTypeIdentifierHeadphoneAudioExposureEvent',
   ]
 
 export const AllCharacteristicTypeIdentifierInApp: CharacteristicTypeIdentifier[] =
@@ -102,20 +90,13 @@ export const AllSampleTypesInApp: SampleTypeIdentifierWriteable[] = [
   'HKWorkoutTypeIdentifier',
   'HKWorkoutRouteTypeIdentifier',
   'HKDataTypeIdentifierHeartbeatSeries',
-  // 'HKAudiogramSampleType',
   ...AllCategorySampleTypeIdentifierInApp,
   ...AllQuantityTypeIdentifierInApp,
-  /*'HKQuantityTypeIdentifierRespiratoryRate',
-    'HKQuantityTypeIdentifierVO2Max',
-    'HKQuantityTypeIdentifierWalkingHeartRateAverage'*/
+  // 'HKAudiogramSampleType',
 ]
 
 export const AllObjectTypesInApp: ObjectTypeIdentifier[] = [
   ...AllSampleTypesInApp,
   ...AllCharacteristicTypeIdentifierInApp,
   'HKElectrocardiogramType',
-  // 'HKQuantityTypeIdentifierHeartRateVariabilitySDNN',
-  /*'HKQuantityTypeIdentifierRespiratoryRate',
-    'HKQuantityTypeIdentifierVO2Max',
-    'HKQuantityTypeIdentifierWalkingHeartRateAverage'*/
 ]

@@ -2,24 +2,34 @@ import HealthKit
 import NitroModules
 
 class CharacteristicTypeModule: HybridCharacteristicTypeModuleSpec {
-    func getBloodTypeAsync() throws -> Promise<BloodType> {
-        return Promise.resolved(withResult: try self.getBloodType())
+    func getBloodTypeAsync() -> Promise<BloodType> {
+      return Promise.async {
+        return try self.getBloodType()
+      }
     }
 
-    func getDateOfBirthAsync() throws -> Promise<Date?> {
-        return Promise.resolved(withResult: try self.getDateOfBirth())
+    func getDateOfBirthAsync() -> Promise<Date?> {
+      return Promise.async {
+        return try self.getDateOfBirth()
+      }
     }
 
-    func getBiologicalSexAsync() throws -> Promise<BiologicalSex> {
-        return Promise.resolved(withResult: try self.getBiologicalSex())
+    func getBiologicalSexAsync() -> Promise<BiologicalSex> {
+      return Promise.async {
+        return try self.getBiologicalSex()
+      }
     }
 
-    func getFitzpatrickSkinTypeAsync() throws -> Promise<FitzpatrickSkinType> {
-        return Promise.resolved(withResult: try self.getFitzpatrickSkinType())
+    func getFitzpatrickSkinTypeAsync() -> Promise<FitzpatrickSkinType> {
+      return Promise.async {
+        return try self.getFitzpatrickSkinType()
+      }
     }
 
-    func getWheelchairUseAsync() throws -> Promise<WheelchairUse> {
-        return Promise.resolved(withResult: try self.getWheelchairUse())
+    func getWheelchairUseAsync() -> Promise<WheelchairUse> {
+      return Promise.async {
+        return try self.getWheelchairUse()
+      }
     }
 
     // Using the global 'store' instance defined in Auth.swift

@@ -1,10 +1,18 @@
+import { Host, List } from '@expo/ui/swift-ui'
 import {
+  type CorrelationSample,
   type QuantitySampleForSaving,
+  queryCorrelationSamples,
   saveCorrelationSample,
 } from '@kingstinct/react-native-healthkit'
+import { useEffect, useState } from 'react'
 import { Button, View } from 'react-native'
+import { ListItem } from '@/components/SwiftListItem'
 
 const CorrelationScreen = () => {
+  const [correlationSamples, setCorrelationSamples] = useState<
+    readonly CorrelationSample[]
+  >([])
   const onSaveCorrelationSample = () => {
     const createdAt = new Date()
     const samples: QuantitySampleForSaving[] = [
@@ -35,12 +43,40 @@ const CorrelationScreen = () => {
     )
   }
 
+  useEffect(() => {
+    const fetchCorrelationSamples = async () => {
+      const samples = await queryCorrelationSamples(
+        'HKCorrelationTypeIdentifierBloodPressure',
+        {
+          limit: 20,
+        },
+      )
+      setCorrelationSamples(samples)
+    }
+
+    fetchCorrelationSamples()
+  }, [])
+
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Button
         onPress={onSaveCorrelationSample}
         title="Save Correlation Sample"
       />
+      <Host style={{ flex: 1 }}>
+        <List scrollEnabled>
+          {correlationSamples.map((item) => {
+            return (
+              <ListItem
+                key={item.uuid}
+                title={`${item.correlationType} (${item.objects.length}) objects`}
+                subtitle={item.startDate.toLocaleString()}
+              />
+            )
+          })}
+        </List>
+        <View style={{ height: 100 }} />
+      </Host>
     </View>
   )
 }

@@ -35,6 +35,9 @@
     },
     "StateOfMindModule": {
       "swift": "StateOfMindModule"
+    },
+    "MedicationModule": {
+      "swift": "MedicationModule"
     }
   },
   "ignorePaths": ["**/node_modules"]

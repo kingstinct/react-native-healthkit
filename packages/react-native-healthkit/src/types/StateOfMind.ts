@@ -1,5 +1,6 @@
 import type { AnyMap } from 'react-native-nitro-modules'
 import type { Device } from './Device'
+import type { DeletedSample } from './Shared'
 import type { SourceRevision } from './Source'
 
 export enum StateOfMindValenceClassification {
@@ -29,6 +30,12 @@ export interface StateOfMindSample {
   readonly valenceClassification: StateOfMindValenceClassification
   readonly associations: readonly StateOfMindAssociation[]
   readonly labels: readonly StateOfMindLabel[]
+}
+
+export interface StateOfMindSamplesWithAnchorResponse {
+  readonly samples: readonly StateOfMindSample[]
+  readonly deletedSamples: readonly DeletedSample[]
+  readonly newAnchor: string
 }
 
 /**

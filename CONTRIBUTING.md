@@ -89,6 +89,11 @@ When you're sending a pull request:
 - Follow the pull request template when opening a pull request.
 - For pull requests that change the API or implementation, discuss with maintainers first by opening an issue.
 
+Some design principles to follow:
+
+- Strive for reusable code and use abstractions where appropriate, for example sampleQueryAsync and sampleAnchoredQueryAsync
+- Always make the JS-facing code use the same error handling strategy, only use throws on sync functions and always return Promises without throwing on async functions.
+
 ## Code of Conduct
 
 ### Our Pledge

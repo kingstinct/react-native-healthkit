@@ -26,7 +26,7 @@ export interface CategoryTypeModule extends HybridObject<{ ios: 'swift' }> {
 
   queryCategorySamples(
     identifier: CategoryTypeIdentifier,
-    options?: QueryOptionsWithSortOrder,
+    options: QueryOptionsWithSortOrder,
   ): Promise<readonly CategorySample[]>
 
   queryCategorySamplesWithAnchor(
@@ -54,7 +54,7 @@ export interface CategoryTypeModuleTyped {
 
   queryCategorySamples<T extends CategoryTypeIdentifier>(
     identifier: T,
-    options?: QueryOptionsWithSortOrder,
+    options: QueryOptionsWithSortOrder,
   ): Promise<readonly CategorySampleTyped<T>[]>
 
   queryCategorySamplesWithAnchor<T extends CategoryTypeIdentifier>(

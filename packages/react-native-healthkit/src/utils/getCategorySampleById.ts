@@ -7,7 +7,7 @@ export async function getCategorySampleById<T extends CategoryTypeIdentifier>(
 ) {
   const samples = await CategoryTypes.queryCategorySamples(identifier, {
     limit: 1,
-    filter: { uuid: uuid },
+    filter: { uuids: [uuid] },
   })
 
   return samples[0]

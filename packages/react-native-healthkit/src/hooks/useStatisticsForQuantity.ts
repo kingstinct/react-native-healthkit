@@ -28,7 +28,7 @@ export function useStatisticsForQuantity<
     const res = await QuantityTypes.queryStatisticsForQuantity(
       identifier,
       optionsRef.current,
-      { filter: { startDate: from, endDate: to }, unit },
+      { filter: { date: { startDate: from, endDate: to } }, unit },
     )
     setResult(res)
   }, [identifier, from, to, unit])

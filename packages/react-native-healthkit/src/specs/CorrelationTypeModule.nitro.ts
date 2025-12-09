@@ -1,8 +1,12 @@
 import type { AnyMap, HybridObject } from 'react-native-nitro-modules'
-
+import type {
+  QueryOptionsWithAnchor,
+  QueryOptionsWithSortOrder,
+} from '../types'
 import type {
   CorrelationSample,
   CorrelationTypeIdentifier,
+  QueryCorrelationSamplesWithAnchorResponse,
   SampleForSaving,
 } from '../types/CorrelationType'
 
@@ -17,7 +21,11 @@ export interface CorrelationTypeModule extends HybridObject<{ ios: 'swift' }> {
 
   queryCorrelationSamples(
     typeIdentifier: CorrelationTypeIdentifier,
-    from: Date,
-    to: Date,
+    options: QueryOptionsWithSortOrder,
   ): Promise<readonly CorrelationSample[]>
+
+  queryCorrelationSamplesWithAnchor(
+    typeIdentifier: CorrelationTypeIdentifier,
+    options: QueryOptionsWithAnchor,
+  ): Promise<QueryCorrelationSamplesWithAnchorResponse>
 }

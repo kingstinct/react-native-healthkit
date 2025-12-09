@@ -100,6 +100,19 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="medications"
+        options={{
+          title: 'medications',
+          tabBarIcon: ({ color, focused }) => (
+            <IconSymbol
+              size={28}
+              name={focused ? 'person.fill' : 'person'}
+              color={color}
+            />
+          ),
+        }}
+      />
 
       <Tabs.Screen
         name="quantityTypes"

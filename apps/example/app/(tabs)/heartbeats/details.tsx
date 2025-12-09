@@ -19,11 +19,15 @@ export default function HeartbeatSeriesDetails() {
     // Since we don't have a direct "get by UUID" method, we'll query recent samples
     // and find the one with matching UUID
     queryHeartbeatSeriesSamples({
-      limit: 100,
+      limit: 1,
+      filter: {
+        uuids: [seriesId],
+      },
       ascending: false,
     })
       .then((samples) => {
-        const foundSeries = samples.find((s) => s.uuid === seriesId)
+        const foundSeries = samples[0]
+        console.log('foundSeries', foundSeries)
         setHeartbeatSeries(foundSeries || null)
       })
       .catch(console.error)
@@ -31,9 +35,11 @@ export default function HeartbeatSeriesDetails() {
 
   if (!heartbeatSeries) {
     return (
-      <List>
-        <ListItem title="Loading heartbeat series details..." />
-      </List>
+      <Host>
+        <List>
+          <ListItem title="Loading heartbeat series details..." />
+        </List>
+      </Host>
     )
   }
 
@@ -46,7 +52,7 @@ export default function HeartbeatSeriesDetails() {
   }
 
   return (
-    <Host>
+    <Host style={{ flex: 1 }}>
       <List scrollEnabled>
         <Section title="Series Information">
           <ListItem title="UUID" subtitle={heartbeatSeries.uuid} />

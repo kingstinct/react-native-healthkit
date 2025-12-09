@@ -57,10 +57,7 @@ const callback = (args: OnChangeCallbackArgs | OnQuantitySamplesCallback) => {
     scheduleNotificationAsync({
       content: {
         title: `Got a new ${typeIdentifier} update!`,
-        body:
-          'samples' in args
-            ? `+${args.samples.length}, -${args.deletedSamples.length} samples`
-            : '',
+        body: 'samples' in args ? `+${args.samples.length} samples` : '',
       },
       trigger: null,
     })
@@ -71,10 +68,7 @@ const callback = (args: OnChangeCallbackArgs | OnQuantitySamplesCallback) => {
       sampleTypeIdentifier: args.typeIdentifier,
       timestamp: Date.now(),
       appState: AppState.currentState,
-      description:
-        'samples' in args
-          ? `+${args.samples.length}, -${args.deletedSamples.length}`
-          : '',
+      description: 'samples' in args ? `+${args.samples.length} samples` : '',
     },
     ...prevEvents,
   ])

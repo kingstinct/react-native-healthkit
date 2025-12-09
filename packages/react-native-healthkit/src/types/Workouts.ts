@@ -1,8 +1,9 @@
 import type { AnyMap } from 'react-native-nitro-modules'
 import type { WorkoutProxy } from '../specs/WorkoutProxy.nitro'
+import type { ComparisonPredicateOperator } from '../types'
+import type { FilterForSamplesBase } from '.'
 import type { Device } from './Device'
 import type { Quantity } from './QuantityType'
-import type { PredicateForSamples } from './QueryOptions'
 import type { DeletedSample, GenericMetadata } from './Shared'
 import type { SourceRevision } from './Source'
 
@@ -170,59 +171,38 @@ export interface QueryWorkoutSamplesWithAnchorResponse {
   readonly newAnchor: string
 }
 
-type WorkoutActivityTypePredicate = {
-  readonly workoutActivityType: WorkoutActivityType
-}
-
-enum ComparisonPredicateOperator {
-  lessThan = 0,
-  lessThanOrEqualTo = 1,
-  greaterThan = 2,
-  greaterThanOrEqualTo = 3,
-  equalTo = 4,
-  notEqualTo = 5,
-  matches = 6,
-  like = 7,
-  beginsWith = 8,
-  endsWith = 9,
-  in = 10,
-  customSelector = 11,
-  contains = 99,
-  between = 100,
-}
-
-type WorkoutDurationPredicate = {
+export type WorkoutDurationPredicate = {
   readonly predicateOperator: ComparisonPredicateOperator
   readonly durationInSeconds: number
 }
 
-export type PredicateForWorkouts =
-  | PredicateForSamples
-  | WorkoutActivityTypePredicate
-  | WorkoutDurationPredicate
-
-export type PredicateForWorkoutsOr = {
-  readonly OR: readonly PredicateForWorkouts[]
+export interface FilterForWorkoutsBase
+  extends Omit<FilterForSamplesBase, 'workout'> {
+  readonly workoutActivityType?: WorkoutActivityType
+  readonly duration?: WorkoutDurationPredicate
 }
 
-export type PredicateForWorkoutsAnd = {
-  readonly AND: readonly PredicateForWorkouts[]
+export interface FilterForWorkouts extends FilterForWorkoutsBase {
+  readonly OR?: FilterForWorkoutsBase[]
+  readonly NOT?: FilterForWorkoutsBase[]
+  readonly AND?: FilterForWorkoutsBase[]
 }
-
-export type FilterForWorkouts =
-  | PredicateForWorkouts
-  | PredicateForWorkoutsOr
-  | PredicateForWorkoutsAnd
 
 export interface WorkoutQueryOptionsWithAnchor {
   filter?: FilterForWorkouts
-  limit?: number
+  /**
+   * Specify -1, 0 or any non-positive number for fetching all samples
+   * */
+  limit: number
   anchor?: string
 }
 
 export interface WorkoutQueryOptions {
   filter?: FilterForWorkouts
-  limit?: number
+  /**
+   * Specify -1, 0 or any non-positive number for fetching all samples
+   * */
+  limit: number
   ascending?: boolean
 }
 
