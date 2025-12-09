@@ -281,14 +281,3 @@ func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision?) -> SourceRev
         productType: nil
     )
 }
-
-func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
-    if let anchor = anchor {
-      let data = NSKeyedArchiver.archivedData(withRootObject: anchor)
-      let encoded = data.base64EncodedString()
-
-      return encoded
-    } else {
-        return nil
-    }
-}

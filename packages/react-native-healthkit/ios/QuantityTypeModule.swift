@@ -95,14 +95,6 @@ func getAnyMapValue(_ anyMap: AnyMap, key: String) -> Any? {
   return nil
 }
 
-func anyMapToDictionary(_ anyMap: AnyMap) -> [String: Any] {
-  var dict = [String: Any]()
-  anyMap.getAllKeys().forEach { key in
-    dict[key] = getAnyMapValue(anyMap, key: key)
-  }
-  return dict
-}
-
 func buildStatisticsOptions(statistics: [StatisticsOptions]) -> HKStatisticsOptions {
   // Build statistics options
   var opts = HKStatisticsOptions()
