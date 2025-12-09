@@ -55,6 +55,7 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
 
   querySources(
     identifier: SampleTypeIdentifier,
+    filter?: FilterForSamples,
   ): Promise<readonly SourceProxy[]>
 
   /** @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614180-requestauthorizationtoaccess Apple Docs }

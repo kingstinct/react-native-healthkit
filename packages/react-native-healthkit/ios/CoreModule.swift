@@ -155,14 +155,15 @@ class CoreModule: HybridCoreModuleSpec {
     }
   }
 
-  func querySources(identifier: SampleTypeIdentifier) -> Promise<[HybridSourceProxySpec]> {
+  func querySources(identifier: SampleTypeIdentifier, filter: FilterForSamples?) -> Promise<[HybridSourceProxySpec]> {
     return Promise.async {
       let sampleType = try sampleTypeFrom(sampleTypeIdentifier: identifier)
+      let predicate = try createPredicate(filter)
 
       return try await withCheckedThrowingContinuation { continuation in
         let query = HKSourceQuery(
           sampleType: sampleType,
-          samplePredicate: nil
+          samplePredicate: predicate
         ) { (_: HKSourceQuery, sources: Set<HKSource>?, error: Error?) in
           if let error = error {
             continuation.resume(throwing: error)
