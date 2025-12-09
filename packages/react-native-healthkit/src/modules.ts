@@ -8,11 +8,15 @@ import type { CoreModule } from './specs/CoreModule.nitro'
 import type { CorrelationTypeModule } from './specs/CorrelationTypeModule.nitro'
 import type { ElectrocardiogramModule } from './specs/ElectrocardiogramModule.nitro'
 import type { HeartbeatSeriesModule } from './specs/HeartbeatSeriesModule.nitro'
+import type { MedicationModule } from './specs/MedicationModule.nitro'
 import type { QuantityTypeModule } from './specs/QuantityTypeModule.nitro'
 import type { StateOfMindModule } from './specs/StateOfMindModule.nitro'
 import type { WorkoutsModule } from './specs/WorkoutsModule.nitro'
 
 export const Core = NitroModules.createHybridObject<CoreModule>('CoreModule')
+
+export const Medication =
+  NitroModules.createHybridObject<MedicationModule>('MedicationModule')
 
 export const Workouts =
   NitroModules.createHybridObject<WorkoutsModule>('WorkoutsModule')

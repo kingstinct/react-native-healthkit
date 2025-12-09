@@ -63,14 +63,18 @@ func sampleAnchoredQueryAsync(
 }
 
 func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
-    if let anchor = anchor {
-      let data = NSKeyedArchiver.archivedData(withRootObject: anchor)
-      let encoded = data.base64EncodedString()
+    return toBase64(anchor)
+}
 
-      return encoded
-    } else {
-        return nil
-    }
+func toBase64(_ data: Any?) -> String? {
+  if let data = data {
+    let data = NSKeyedArchiver.archivedData(withRootObject: data)
+    let encoded = data.base64EncodedString()
+
+    return encoded
+  }
+
+  return nil
 }
 
 func sampleQueryAsync(
@@ -118,7 +122,7 @@ func getSortDescriptors(ascending: Bool?) -> [NSSortDescriptor] {
   return [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending ?? false)]
 }
 
-func deserializeHKQueryAnchor(base64String: String?) throws -> HKQueryAnchor? {
+func fromBase64(base64String: String?) throws -> Any? {
   if let base64String = base64String {
     if base64String.isEmpty {
       return nil
@@ -133,14 +137,21 @@ func deserializeHKQueryAnchor(base64String: String?) throws -> HKQueryAnchor? {
     do {
       let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
       unarchiver.requiresSecureCoding = true
-      let anchor = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
-
-      return anchor as? HKQueryAnchor
+      return try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
     } catch {
       throw RuntimeError.error(withMessage: "[react-native-healthkit] Error recreating HKQueryAnchor object: \(error.localizedDescription)")
     }
   }
   return nil
+}
+
+func deserializeHKQueryAnchor(base64String: String?) throws -> HKQueryAnchor? {
+  return try fromBase64(base64String: base64String) as? HKQueryAnchor
+}
+
+@available(iOS 26.0, *)
+func deserializeHKMedicationConceptIdentifier(base64String: String?) throws -> HKHealthConceptIdentifier? {
+  return try fromBase64(base64String: base64String) as? HKHealthConceptIdentifier
 }
 
 func initializeCategoryType(_ identifier: String) throws -> HKCategoryType {

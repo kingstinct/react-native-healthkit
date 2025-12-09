@@ -15,6 +15,7 @@ import {
   CorrelationTypes,
   Electrocardiograms,
   HeartbeatSeries,
+  Medication,
   QuantityTypes,
   StateOfMind,
   Workouts,
@@ -164,6 +165,14 @@ export const isObjectTypeAvailableAsync =
 export const areObjectTypesAvailable = Core.areObjectTypesAvailable.bind(Core)
 export const areObjectTypesAvailableAsync =
   Core.areObjectTypesAvailableAsync.bind(Core)
+export const requestMedicationsAuthorization =
+  Medication.requestMedicationsAuthorization.bind(Medication)
+
+export const queryMedications = Medication.queryMedications.bind(Medication)
+export const queryMedicationEvents =
+  Medication.queryMedicationEvents.bind(Medication)
+export const queryMedicationEventsWithAnchor =
+  Medication.queryMedicationEventsWithAnchor.bind(Medication)
 
 export const currentAppSource = Core.currentAppSource
 
@@ -234,8 +243,12 @@ export default {
   queryStateOfMindSamples,
   queryStateOfMindSamplesWithAnchor,
   saveStateOfMindSample,
-
+  requestMedicationsAuthorization,
   currentAppSource,
+
+  queryMedicationEventsWithAnchor,
+  queryMedicationEvents,
+  queryMedications,
 
   // hooks
   useMostRecentCategorySample,

@@ -398,9 +398,29 @@ export const currentAppSource = UnavailableFnFromModule('currentAppSource', {
   name: '',
 } as SourceProxy) // Mocking callback structure
 
+export const queryMedications = UnavailableFnFromModule(
+  'queryMedications',
+  Promise.resolve([]),
+) // Mocking callback structure
+
+export const queryMedicationEvents = UnavailableFnFromModule(
+  'queryMedicationEvents',
+  Promise.resolve([]),
+) // Mocking callback structure
+
+export const queryMedicationEventsWithAnchor = UnavailableFnFromModule(
+  'queryMedicationEventsWithAnchor',
+  Promise.resolve({ newAnchor: '', samples: [], deletedSamples: [] }),
+) // Mocking callback structure
+
 const useSubscribeToQuantitySamples = UnavailableFnFromModule(
   'useSubscribeToQuantitySamples',
   undefined,
+) // Mocking callback structure
+
+export const requestMedicationsAuthorization = UnavailableFnFromModule(
+  'requestMedicationsAuthorization',
+  Promise.resolve(false),
 ) // Mocking callback structure
 
 export { useSubscribeToQuantitySamples }
@@ -459,6 +479,10 @@ const HealthkitModule = {
   subscribeToQuantitySamples,
   useSubscribeToQuantitySamples,
   queryCorrelationSamplesWithAnchor,
+  queryMedications,
+  queryMedicationEvents,
+  queryMedicationEventsWithAnchor,
+  requestMedicationsAuthorization,
 
   currentAppSource,
 
