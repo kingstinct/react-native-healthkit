@@ -8,7 +8,31 @@ export type QuantityTypeIdentifierReadOnly =
    * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierwalkingheartrateaverage Apple Docs HKQuantityTypeIdentifierWalkingHeartRateAverage}
    * @since iOS 11.0
    */
-  'HKQuantityTypeIdentifierWalkingHeartRateAverage'
+  | 'HKQuantityTypeIdentifierWalkingHeartRateAverage'
+
+  /**
+   * Atrial Fibrillation Burden
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifieratrialfibrillationburden Apple Docs HKQuantityTypeIdentifierAtrialFibrillationBurden}
+   * @since iOS 16
+   */
+  | 'HKQuantityTypeIdentifierAtrialFibrillationBurden' // Scalar(Percent, 0.0 - 1.0), Discrete
+  /**
+   * Apple Exercise Time
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierappleexercisetime Apple Docs HKQuantityTypeIdentifierAppleExerciseTime}
+   */
+  | 'HKQuantityTypeIdentifierAppleExerciseTime'
+  /**
+   * Apple Stand Time
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierapplestandtime Apple Docs HKQuantityTypeIdentifierAppleStandTime}
+   */
+  | 'HKQuantityTypeIdentifierAppleStandTime'
+
+  /**
+   * Apple Walking Steadiness
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierapplewalkingsteadiness Apple Docs HKQuantityTypeIdentifierAppleWalkingSteadiness}
+   * @since iOS 15
+   */
+  | 'HKQuantityTypeIdentifierAppleWalkingSteadiness' // Scalar(Percent, 0.0 - 1.0), Discrete
 
 /**
  * Represents a quantity type identifier.
@@ -95,11 +119,6 @@ export type QuantityTypeIdentifierWriteable =
    */
   | 'HKQuantityTypeIdentifierNikeFuel'
   /**
-   * Apple Exercise Time
-   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierappleexercisetime Apple Docs HKQuantityTypeIdentifierAppleExerciseTime}
-   */
-  | 'HKQuantityTypeIdentifierAppleExerciseTime'
-  /**
    * Push Count
    * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierpushcount Apple Docs HKQuantityTypeIdentifierPushCount}
    */
@@ -125,11 +144,6 @@ export type QuantityTypeIdentifierWriteable =
    */
   | 'HKQuantityTypeIdentifierDistanceDownhillSnowSports'
 
-  /**
-   * Apple Stand Time
-   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierapplestandtime Apple Docs HKQuantityTypeIdentifierAppleStandTime}
-   */
-  | 'HKQuantityTypeIdentifierAppleStandTime'
   // Vitals
   /**
    * Heart Rate
@@ -558,25 +572,11 @@ export type QuantityTypeIdentifierWriteable =
   | 'HKQuantityTypeIdentifierAppleMoveTime' // Time, Cumulative
 
   /**
-   * Apple Walking Steadiness
-   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierapplewalkingsteadiness Apple Docs HKQuantityTypeIdentifierAppleWalkingSteadiness}
-   * @since iOS 15
-   */
-  | 'HKQuantityTypeIdentifierAppleWalkingSteadiness' // Scalar(Percent, 0.0 - 1.0), Discrete
-
-  /**
    * Number Of Alcoholic Beverages
    * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifiernumberofalcoholicbeverages Apple Docs HKQuantityTypeIdentifierNumberOfAlcoholicBeverages}
    * @since iOS 15
    */
   | 'HKQuantityTypeIdentifierNumberOfAlcoholicBeverages' // Scalar(Count), Cumulative
-
-  /**
-   * Atrial Fibrillation Burden
-   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifieratrialfibrillationburden Apple Docs HKQuantityTypeIdentifierAtrialFibrillationBurden}
-   * @since iOS 16
-   */
-  | 'HKQuantityTypeIdentifierAtrialFibrillationBurden' // Scalar(Percent, 0.0 - 1.0), Discrete
 
   /**
    * Underwater Depth
