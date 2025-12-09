@@ -113,16 +113,16 @@ class CoreModule: HybridCoreModuleSpec {
     throw RuntimeError.error(withMessage: "[react-native-healthkit] got unrecognized AuthorizationStatus with value \(authStatus.rawValue)")
   }
 
-  func getRequestStatusForAuthorization(toCheck: AuthDataTypes) throws -> Promise<AuthorizationRequestStatus> {
-    let toShare = sampleTypesFromArray(typeIdentifiersWriteable: toCheck.toShare ?? [])
-    let toRead = objectTypesFromArray(typeIdentifiers: toCheck.toRead ?? [])
-
+  func getRequestStatusForAuthorization(toCheck: AuthDataTypes) -> Promise<AuthorizationRequestStatus> {
     return Promise.async {
-      try await withCheckedThrowingContinuation { continuation in
+      let toShare = sampleTypesFromArray(typeIdentifiersWriteable: toCheck.toShare ?? [])
+      let toRead = objectTypesFromArray(typeIdentifiers: toCheck.toRead ?? [])
+
+      return try await withCheckedThrowingContinuation { continuation in
         if toShare.isEmpty && toRead.isEmpty {
           return continuation.resume(throwing: RuntimeError.error(withMessage: "[react-native-healthkit] Both toRead and toShare are empty, at least one data type must be specified to check authorization status"))
         }
-        store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) { status, error in
+        return store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) { status, error in
           if let error = error {
             continuation.resume(throwing: error)
           } else {
@@ -138,12 +138,12 @@ class CoreModule: HybridCoreModuleSpec {
     }
   }
 
-  func requestAuthorization(toRequest: AuthDataTypes) throws -> Promise<Bool> {
-    let share = sampleTypesFromArray(typeIdentifiersWriteable: toRequest.toShare ?? [])
-    let toRead = objectTypesFromArray(typeIdentifiers: toRequest.toRead ?? [])
-
+  func requestAuthorization(toRequest: AuthDataTypes) -> Promise<Bool> {
     return Promise.async {
-      try await withCheckedThrowingContinuation { continuation in
+      let share = sampleTypesFromArray(typeIdentifiersWriteable: toRequest.toShare ?? [])
+      let toRead = objectTypesFromArray(typeIdentifiers: toRequest.toRead ?? [])
+
+      return try await withCheckedThrowingContinuation { continuation in
         store.requestAuthorization(toShare: share, read: toRead) { status, error in
           if let error = error {
             continuation.resume(throwing: error)
@@ -155,11 +155,11 @@ class CoreModule: HybridCoreModuleSpec {
     }
   }
 
-  func querySources(identifier: SampleTypeIdentifier) throws -> Promise<[HybridSourceProxySpec]> {
-    let sampleType = try sampleTypeFrom(sampleTypeIdentifier: identifier)
-
+  func querySources(identifier: SampleTypeIdentifier) -> Promise<[HybridSourceProxySpec]> {
     return Promise.async {
-      try await withCheckedThrowingContinuation { continuation in
+      let sampleType = try sampleTypeFrom(sampleTypeIdentifier: identifier)
+
+      return try await withCheckedThrowingContinuation { continuation in
         let query = HKSourceQuery(
           sampleType: sampleType,
           samplePredicate: nil
@@ -188,11 +188,11 @@ class CoreModule: HybridCoreModuleSpec {
     }
   }
 
-  func enableBackgroundDelivery(typeIdentifier: ObjectTypeIdentifier, updateFrequency: UpdateFrequency) throws -> Promise<Bool> {
-    if let frequency = HKUpdateFrequency(rawValue: Int(updateFrequency.rawValue)) {
-      let type = try objectTypeFrom(objectTypeIdentifier: typeIdentifier)
-      return Promise.async {
-        try await withCheckedThrowingContinuation { continuation in
+  func enableBackgroundDelivery(typeIdentifier: ObjectTypeIdentifier, updateFrequency: UpdateFrequency) -> Promise<Bool> {
+    return Promise.async {
+      if let frequency = HKUpdateFrequency(rawValue: Int(updateFrequency.rawValue)) {
+        let type = try objectTypeFrom(objectTypeIdentifier: typeIdentifier)
+        return try await withCheckedThrowingContinuation { continuation in
           store.enableBackgroundDelivery(
             for: type,
             frequency: frequency
@@ -203,15 +203,16 @@ class CoreModule: HybridCoreModuleSpec {
             return continuation.resume(returning: success)
           }
         }
+      } else {
+        throw RuntimeError.error(withMessage: "Invalid update frequency value: \(updateFrequency)")
       }
-    } else {
-      throw RuntimeError.error(withMessage: "Invalid update frequency value: \(updateFrequency)")
     }
+
   }
 
   func disableBackgroundDelivery(
     typeIdentifier: ObjectTypeIdentifier
-  ) throws -> Promise<Bool> {
+  ) -> Promise<Bool> {
     return Promise.async {
       let type = try objectTypeFrom(objectTypeIdentifier: typeIdentifier)
       return try await withCheckedThrowingContinuation { continuation in
@@ -227,7 +228,7 @@ class CoreModule: HybridCoreModuleSpec {
     }
   }
 
-  func disableAllBackgroundDelivery() throws -> Promise<Bool> {
+  func disableAllBackgroundDelivery() -> Promise<Bool> {
     return Promise.async {
       try await withCheckedThrowingContinuation { continuation in
         store.disableAllBackgroundDelivery(completion: { (success, error) in
@@ -240,10 +241,10 @@ class CoreModule: HybridCoreModuleSpec {
     }
   }
 
-  func unsubscribeQueryAsync(queryId: String) throws -> Promise<Bool> {
-    let result = try self.unsubscribeQuery(queryId: queryId)
-
-    return Promise.resolved(withResult: result)
+  func unsubscribeQueryAsync(queryId: String) -> Promise<Bool> {
+    return Promise.async {
+      return try self.unsubscribeQuery(queryId: queryId)
+    }
   }
 
   func isHealthDataAvailableAsync() -> Promise<Bool> {
@@ -262,9 +263,8 @@ class CoreModule: HybridCoreModuleSpec {
     return UIApplication.shared.isProtectedDataAvailable
   }
 
-  func getPreferredUnits(identifiers: [QuantityTypeIdentifier], forceUpdate: Bool?) throws -> Promise<[IdentifierWithUnit]> {
+  func getPreferredUnits(identifiers: [QuantityTypeIdentifier], forceUpdate: Bool?) -> Promise<[IdentifierWithUnit]> {
     return Promise.async {
-
       let quantityTypes = identifiers.compactMap { identifier in
         do {
           let quantityType = try initializeQuantityType(identifier.stringValue)
@@ -291,12 +291,11 @@ class CoreModule: HybridCoreModuleSpec {
 
   var _runningQueries: [String: HKQuery] = [:]
 
-  func deleteObjects(objectTypeIdentifier: ObjectTypeIdentifier, filter: FilterForSamples) throws -> Promise<Double> {
-    if let predicate = try createPredicate(filter) {
+  func deleteObjects(objectTypeIdentifier: ObjectTypeIdentifier, filter: FilterForSamples) -> Promise<Double> {
+    return Promise.async {
+      if let predicate = try createPredicate(filter) {
 
-      let of = try objectTypeFrom(objectTypeIdentifier: objectTypeIdentifier)
-
-      return Promise.async {
+        let of = try objectTypeFrom(objectTypeIdentifier: objectTypeIdentifier)
         return try await withCheckedThrowingContinuation { continuation in
           store.deleteObjects(of: of, predicate: predicate) { (_, count, error) in
             if let error = error {
@@ -307,9 +306,9 @@ class CoreModule: HybridCoreModuleSpec {
           }
         }
       }
+      throw RuntimeError.error(withMessage: "[react-native-healthkit] Unable to create predicate for deleting objects")
     }
 
-    throw RuntimeError.error(withMessage: "[react-native-healthkit] Unable to create predicate for deleting objects")
   }
 
   func subscribeToObserverQuery(
@@ -359,10 +358,10 @@ class CoreModule: HybridCoreModuleSpec {
     return true
   }
 
-  func unsubscribeQueriesAsync(queryIds: [String]) throws -> Promise<Double> {
-    let successCount = self.unsubscribeQueries(queryIds: queryIds)
-
-    return Promise.resolved(withResult: successCount)
+  func unsubscribeQueriesAsync(queryIds: [String]) -> Promise<Double> {
+    return Promise.async {
+      return self.unsubscribeQueries(queryIds: queryIds)
+    }
   }
 
   func unsubscribeQueries(queryIds: [String]) -> Double {

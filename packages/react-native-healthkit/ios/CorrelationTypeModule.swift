@@ -54,66 +54,58 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
     start: Date,
     end: Date,
     metadata: AnyMap
-  ) throws -> Promise<Bool> {
-    let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
-
-    var initializedSamples = Set<HKSample>()
-
-    for sample in samples {
-      switch sample {
-      case .second(let quantitySample):
-        let quantityTypeId = HKQuantityTypeIdentifier(rawValue: quantitySample.quantityType.stringValue)
-        guard let quantityType = HKSampleType.quantityType(forIdentifier: quantityTypeId) else {
-          continue
-        }
-
-        let unit = HKUnit(from: quantitySample.unit)
-        let quantity = HKQuantity(unit: unit, doubleValue: quantitySample.quantity)
-        let hkQuantitySample = HKQuantitySample(
-          type: quantityType,
-          quantity: quantity,
-          start: start,
-          end: end,
-          metadata: anyMapToDictionary(quantitySample.metadata)
-        )
-        initializedSamples.insert(hkQuantitySample)
-
-      case .first(let categorySample):
-        let categoryType = try initializeCategoryType(categorySample.categoryType.stringValue)
-
-        let hkCategorySample = HKCategorySample(
-          type: categoryType,
-          value: Int(categorySample.value),
-          start: categorySample.start,
-          end: categorySample.end,
-          metadata: anyMapToDictionary(categorySample.metadata)
-        )
-        initializedSamples.insert(hkCategorySample)
-      }
-    }
-
-    if initializedSamples.isEmpty {
-      throw RuntimeError.error(withMessage: "[react-native-healthkit] No valid samples to create correlation sample")
-    }
-
-    let correlation = HKCorrelation(
-      type: correlationType,
-      start: start,
-      end: end,
-      objects: initializedSamples,
-      metadata: anyMapToDictionary(metadata)
-    )
-
+  ) -> Promise<Bool> {
     return Promise.async {
-      try await withCheckedThrowingContinuation { continuation in
-        store.save(correlation) { (success: Bool, error: Error?) in
-          if let error = error {
-            continuation.resume(throwing: error)
-          } else {
-            continuation.resume(returning: success)
+      let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
+
+      var initializedSamples = Set<HKSample>()
+
+      for sample in samples {
+        switch sample {
+        case .second(let quantitySample):
+          let quantityTypeId = HKQuantityTypeIdentifier(rawValue: quantitySample.quantityType.stringValue)
+          guard let quantityType = HKSampleType.quantityType(forIdentifier: quantityTypeId) else {
+            continue
           }
+
+          let unit = HKUnit(from: quantitySample.unit)
+          let quantity = HKQuantity(unit: unit, doubleValue: quantitySample.quantity)
+          let hkQuantitySample = HKQuantitySample(
+            type: quantityType,
+            quantity: quantity,
+            start: start,
+            end: end,
+            metadata: anyMapToDictionary(quantitySample.metadata)
+          )
+          initializedSamples.insert(hkQuantitySample)
+
+        case .first(let categorySample):
+          let categoryType = try initializeCategoryType(categorySample.categoryType.stringValue)
+
+          let hkCategorySample = HKCategorySample(
+            type: categoryType,
+            value: Int(categorySample.value),
+            start: categorySample.start,
+            end: categorySample.end,
+            metadata: anyMapToDictionary(categorySample.metadata)
+          )
+          initializedSamples.insert(hkCategorySample)
         }
       }
+
+      if initializedSamples.isEmpty {
+        throw RuntimeError.error(withMessage: "[react-native-healthkit] No valid samples to create correlation sample")
+      }
+
+      let correlation = HKCorrelation(
+        type: correlationType,
+        start: start,
+        end: end,
+        objects: initializedSamples,
+        metadata: anyMapToDictionary(metadata)
+      )
+
+      return try await saveAsync(sample: correlation)
     }
   }
 

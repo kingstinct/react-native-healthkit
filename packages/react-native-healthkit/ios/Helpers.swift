@@ -51,6 +51,49 @@ func createPredicateForWorkout(_ filter: FilterForWorkouts?) throws -> NSPredica
   return nil
 }
 
+struct AnchoredQueryResponse {
+  var samples: [HKSample]
+  var deletedSamples: [DeletedSample]
+  var newAnchor: String
+}
+
+func sampleAnchoredQueryAsync(
+  sampleType: HKSampleType,
+  limit: Double,
+  queryAnchor: HKQueryAnchor?,
+  predicate: NSPredicate?
+) async throws -> AnchoredQueryResponse {
+  return try await withCheckedThrowingContinuation { continuation in
+    let query = HKAnchoredObjectQuery(
+        type: sampleType,
+        predicate: predicate,
+        anchor: queryAnchor,
+        limit: getQueryLimit(limit)
+    ) { (_: HKAnchoredObjectQuery, samples: [HKSample]?, deletedSamples: [HKDeletedObject]?, newAnchor:
+        HKQueryAnchor?, error: Error?) in
+      if let error = error {
+        return continuation.resume(throwing: error)
+      }
+
+      if let samples = samples, let deletedSamples = deletedSamples, let newAnchor = serializeAnchor(anchor: newAnchor) {
+        return continuation.resume(
+          returning: AnchoredQueryResponse(
+            samples: samples,
+            deletedSamples: deletedSamples.map({ deletedSample in
+              return serializeDeletedSample(sample: deletedSample)
+            }),
+            newAnchor: newAnchor
+          )
+        )
+      }
+
+      return continuation.resume(throwing: RuntimeError.error(withMessage: "[react-native-healthkit] Unexpected empty response"))
+    }
+
+    store.execute(query)
+  }
+}
+
 func sampleQueryAsync(
   sampleType: HKSampleType,
   limit: Double,
@@ -77,6 +120,18 @@ func sampleQueryAsync(
     }
 
     store.execute(q)
+  }
+}
+
+func saveAsync(sample: HKObject) async throws -> Bool {
+  return try await withCheckedThrowingContinuation { continuation in
+      store.save(sample) { (success: Bool, error: Error?) in
+          if let error = error {
+              continuation.resume(throwing: error)
+          } else {
+              continuation.resume(returning: success)
+          }
+      }
   }
 }
 

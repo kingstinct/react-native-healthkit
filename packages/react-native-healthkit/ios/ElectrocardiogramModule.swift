@@ -133,45 +133,32 @@ class ElectrocardiogramModule: HybridElectrocardiogramModuleSpec {
   // Query (anchored)
   func queryElectrocardiogramSamplesWithAnchor(
     options: ECGQueryOptionsWithAnchor
-  ) throws -> Promise<ElectrocardiogramSamplesWithAnchorResponse> {
-    let predicate = try createPredicate(options.filter)
-    let queryLimit = getQueryLimit(options.limit)
-    let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
-    let includeVoltages = options.includeVoltages
-
+  ) -> Promise<ElectrocardiogramSamplesWithAnchorResponse> {
     return Promise.async {
-      try await withCheckedThrowingContinuation { continuation in
-        let query = HKAnchoredObjectQuery(
-          type: HKObjectType.electrocardiogramType(),
-          predicate: predicate,
-          anchor: queryAnchor,
-          limit: queryLimit
-        ) { _, samples, deleted, newAnchor, error in
-          if let error { continuation.resume(throwing: error); return }
+      let predicate = try createPredicate(options.filter)
+      let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
+      let includeVoltages = options.includeVoltages
 
-          Task {
-            do {
-              let typed = (samples as? [HKElectrocardiogram]) ?? []
-              var out: [ElectrocardiogramSample] = []
-              out.reserveCapacity(typed.count)
-              for s in typed {
-                let serialized = try await serializeECGSample(sample: s, includeVoltages: includeVoltages)
-                out.append(serialized)
-              }
+      let response = try await sampleAnchoredQueryAsync(
+        sampleType: HKObjectType.electrocardiogramType(),
+        limit: options.limit,
+        queryAnchor: queryAnchor,
+        predicate: predicate
+      )
 
-              let response = ElectrocardiogramSamplesWithAnchorResponse(
-                samples: out,
-                deletedSamples: (deleted ?? []).map { serializeDeletedSample(sample: $0) },
-                newAnchor: serializeAnchor(anchor: newAnchor) ?? ""
-              )
-              continuation.resume(returning: response)
-            } catch {
-              continuation.resume(throwing: error)
-            }
-          }
-        }
-        store.execute(query)
+      let typed = response.samples.compactMap { $0 as? HKElectrocardiogram }
+      var out: [ElectrocardiogramSample] = []
+      out.reserveCapacity(typed.count)
+      for s in typed {
+        let serialized = try await serializeECGSample(sample: s, includeVoltages: includeVoltages)
+        out.append(serialized)
       }
+
+      return ElectrocardiogramSamplesWithAnchorResponse(
+        samples: out,
+        deletedSamples: response.deletedSamples,
+        newAnchor: response.newAnchor
+      )
     }
   }
 }

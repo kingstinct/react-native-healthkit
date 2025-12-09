@@ -8,27 +8,19 @@ class CategoryTypeModule: HybridCategoryTypeModuleSpec {
         startDate: Date,
         endDate: Date,
         metadata: AnyMap
-    ) throws -> Promise<Bool> {
-        let type = try initializeCategoryType(identifier.stringValue)
-
-        let sample = HKCategorySample(
-            type: type,
-            value: Int(value),
-            start: startDate,
-            end: endDate,
-            metadata: anyMapToDictionary(metadata)
-        )
-
+    ) -> Promise<Bool> {
         return Promise.async {
-            try await withCheckedThrowingContinuation { continuation in
-                store.save(sample) { (success: Bool, error: Error?) in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                    } else {
-                        continuation.resume(returning: success)
-                    }
-                }
-            }
+          let type = try initializeCategoryType(identifier.stringValue)
+
+          let sample = HKCategorySample(
+              type: type,
+              value: Int(value),
+              start: startDate,
+              end: endDate,
+              metadata: anyMapToDictionary(metadata)
+          )
+
+          return try await saveAsync(sample: sample)
         }
     }
 
@@ -39,7 +31,6 @@ class CategoryTypeModule: HybridCategoryTypeModuleSpec {
         return Promise.async {
           let sampleType = try initializeCategoryType(identifier.stringValue)
           let predicate = try createPredicate(options.filter)
-          let queryLimit = getQueryLimit(options.limit)
           let sortDescriptors = getSortDescriptors(ascending: options.ascending)
 
           let samples = try await sampleQueryAsync(
@@ -60,51 +51,28 @@ class CategoryTypeModule: HybridCategoryTypeModuleSpec {
         identifier: CategoryTypeIdentifier,
         options: QueryOptionsWithAnchor
     ) throws -> Promise<CategorySamplesWithAnchorResponse> {
-        let sampleType = try initializeCategoryType(identifier.stringValue)
-
-        let predicate = try createPredicate(options.filter)
-        let queryLimit = getQueryLimit(options.limit)
-        let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
-
         return Promise.async {
-            try await withCheckedThrowingContinuation { continuation in
-                let query = HKAnchoredObjectQuery(
-                    type: sampleType,
-                    predicate: predicate,
-                    anchor: queryAnchor,
-                    limit: queryLimit
-                ) { (_: HKAnchoredObjectQuery, samples: [HKSample]?, deletedSamples: [HKDeletedObject]?, newAnchor: HKQueryAnchor?, error: Error?) in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                        return
-                    }
+          let sampleType = try initializeCategoryType(identifier.stringValue)
+          let predicate = try createPredicate(options.filter)
+          let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
 
-                    guard let samples = samples else {
-                        let response = CategorySamplesWithAnchorResponse(
-                            samples: [],
-                            deletedSamples: deletedSamples?.map { serializeDeletedSample(sample: $0) } ?? [],
-                            newAnchor: serializeAnchor(anchor: newAnchor) ?? ""
-                        )
-                        continuation.resume(returning: response)
-                        return
-                    }
+          let response = try await sampleAnchoredQueryAsync(
+            sampleType: sampleType,
+            limit: options.limit,
+            queryAnchor: queryAnchor,
+            predicate: predicate
+          )
 
-                    let categorySamples = samples.compactMap { sample -> CategorySample? in
-                        guard let categorySample = sample as? HKCategorySample else { return nil }
-                        return serializeCategorySample(sample: categorySample)
-                    }
+          let categorySamples = response.samples.compactMap { sample -> CategorySample? in
+              guard let categorySample = sample as? HKCategorySample else { return nil }
+              return serializeCategorySample(sample: categorySample)
+          }
 
-                    let response = CategorySamplesWithAnchorResponse(
-                        samples: categorySamples,
-                        deletedSamples: deletedSamples?.map { serializeDeletedSample(sample: $0) } ?? [],
-                        newAnchor: serializeAnchor(anchor: newAnchor) ?? ""
-                    )
-
-                    continuation.resume(returning: response)
-                }
-
-                store.execute(query)
-            }
+          return CategorySamplesWithAnchorResponse(
+              samples: categorySamples,
+              deletedSamples: response.deletedSamples,
+              newAnchor: response.newAnchor
+          )
         }
     }
 }

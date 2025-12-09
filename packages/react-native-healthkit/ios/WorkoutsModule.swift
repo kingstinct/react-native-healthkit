@@ -84,7 +84,7 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
 
         // ensure that start date is before end date
         if startDate > endDate {
-            throw RuntimeError.error(withMessage: "endDate must not be less than startDate")
+            throw RuntimeError.error(withMessage: "[react-native-healthkit] endDate must not be less than startDate")
         }
 
         let metadataDeserialized = metadata != nil ? anyMapToDictionary(metadata!) : nil
@@ -215,64 +215,31 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
     }
 
     func queryWorkoutSamplesWithAnchor(options: WorkoutQueryOptionsWithAnchor) throws -> Promise<QueryWorkoutSamplesWithAnchorResponse> {
-        let predicate = try createPredicateForWorkout(options.filter)
-
-        let limit = getQueryLimit(options.limit)
-
-        let actualAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
-
         return Promise.async {
+            let predicate = try createPredicateForWorkout(options.filter)
+            let actualAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
 
-            return try await withCheckedThrowingContinuation { continuation in
-                let q = HKAnchoredObjectQuery(
-                    type: .workoutType(),
-                    predicate: predicate,
-                    anchor: actualAnchor,
-                    limit: limit
-                ) {
-                    (
-                        _: HKAnchoredObjectQuery,
-                        s: [HKSample]?,
-                        deletedSamples: [HKDeletedObject]?,
-                        newAnchor: HKQueryAnchor?,
-                        error: Error?
-                    ) in
-                    if let error = error {
-                        return continuation.resume(throwing: error)
-                    }
+            let response = try await sampleAnchoredQueryAsync(
+                sampleType: .workoutType(),
+                limit: options.limit,
+                queryAnchor: actualAnchor,
+                predicate: predicate
+            )
 
-                    guard let samples = s, let newAnchor = newAnchor else {
-                        return continuation.resume(
-                            throwing: RuntimeError.error(
-                                withMessage: "Empty response"
-                            )
-                        )
-                    }
-
-                    let workoutProxies = samples.compactMap { s in
-                        if let workout = s as? HKWorkout {
-                            return WorkoutProxy.init(
-                                workout: workout,
-                            )
-                        }
-                        return nil
-                    }
-
-                    let deletedSamples = deletedSamples?.map({ sample in
-                        return serializeDeletedSample(sample: sample)
-                    }) ?? []
-
-                    let returnValue = QueryWorkoutSamplesWithAnchorResponse(
-                        workouts: workoutProxies,
-                        deletedSamples: deletedSamples,
-                        newAnchor: serializeAnchor(anchor: newAnchor)!
+            let workoutProxies = response.samples.compactMap { s in
+                if let workout = s as? HKWorkout {
+                    return WorkoutProxy.init(
+                        workout: workout
                     )
-
-                    return continuation.resume(returning: returnValue)
                 }
-
-                store.execute(q)
+                return nil
             }
+
+            return QueryWorkoutSamplesWithAnchorResponse(
+                workouts: workoutProxies,
+                deletedSamples: response.deletedSamples,
+                newAnchor: response.newAnchor
+            )
         }
     }
 }

@@ -32,33 +32,15 @@ func getWorkoutRoutesInternal(
   workout: HKWorkout
 ) async throws -> [HKWorkoutRoute]? {
   let workoutPredicate = HKQuery.predicateForObjects(from: workout)
-  let samples = try await withCheckedThrowingContinuation {
-    (continuation: CheckedContinuation<[HKSample], Error>) in
-    let query = HKAnchoredObjectQuery(
-      type: HKSeriesType.workoutRoute(),
-      predicate: workoutPredicate,
-      anchor: nil,
-      limit: HKObjectQueryNoLimit
-    ) {
-      (_, samples, _, _, error) in
 
-      if let hasError = error {
-        return continuation.resume(throwing: hasError)
+  let response = try await sampleAnchoredQueryAsync(
+    sampleType: HKSeriesType.workoutRoute(),
+    limit: Double(HKObjectQueryNoLimit),
+    queryAnchor: nil,
+    predicate: workoutPredicate
+  )
 
-      }
-
-      guard let samples = samples else {
-        return continuation.resume(
-          throwing: RuntimeError.error(withMessage: "Empty response")
-        )
-      }
-
-      continuation.resume(returning: samples)
-    }
-    store.execute(query)
-  }
-
-  guard let routes = samples as? [HKWorkoutRoute] else {
+  guard let routes = response.samples as? [HKWorkoutRoute] else {
     return nil
   }
 

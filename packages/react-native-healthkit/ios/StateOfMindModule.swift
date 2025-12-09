@@ -75,48 +75,43 @@ class StateOfMindModule: HybridStateOfMindModuleSpec {
     associations: [StateOfMindAssociation],
     metadata: AnyMap?
   ) throws -> Promise<Bool> {
-    if #available(iOS 18, *) {
-      return Promise.async {
-        try await withCheckedThrowingContinuation { continuation in
-          // Convert enum values to HKStateOfMind types
-          if let hkKind = HKStateOfMind.Kind.init(rawValue: Int(kind.rawValue)) {
-            let hkLabels = labels.compactMap {
-              if let label = HKStateOfMind.Label.init(rawValue: Int($0.rawValue)) {
-                return label
-              }
-              print("[react-native-healthkit] Unknown StateOfMindLabel raw value: \($0.rawValue)")
-              return nil
-            }
-            let hkAssociations = associations.compactMap {
-              if let association = HKStateOfMind.Association.init(rawValue: Int($0.rawValue)) {
-                return association
-              }
-              print("[react-native-healthkit] Unknown StateOfMindAssociation raw value: \($0.rawValue)")
-              return nil
-            }
 
-            let sample = HKStateOfMind(
-              date: date,
-              kind: hkKind,
-              valence: valence,
-              labels: hkLabels,
-              associations: hkAssociations,
-              metadata: anyMapToDictionary(metadata ?? AnyMap())
-            )
-
-            store.save(sample) { (success: Bool, error: Error?) in
-              if let error = error {
-                continuation.resume(throwing: error)
-              } else {
-                continuation.resume(returning: success)
-              }
+    return Promise.async {
+      if #available(iOS 18, *) {
+        // Convert enum values to HKStateOfMind types
+        if let hkKind = HKStateOfMind.Kind.init(rawValue: Int(kind.rawValue)) {
+          let hkLabels = labels.compactMap {
+            if let label = HKStateOfMind.Label.init(rawValue: Int($0.rawValue)) {
+              return label
             }
+            print("[react-native-healthkit] Unknown StateOfMindLabel raw value: \($0.rawValue)")
+            return nil
           }
+          let hkAssociations = associations.compactMap {
+            if let association = HKStateOfMind.Association.init(rawValue: Int($0.rawValue)) {
+              return association
+            }
+            print("[react-native-healthkit] Unknown StateOfMindAssociation raw value: \($0.rawValue)")
+            return nil
+          }
+
+          let sample = HKStateOfMind(
+            date: date,
+            kind: hkKind,
+            valence: valence,
+            labels: hkLabels,
+            associations: hkAssociations,
+            metadata: anyMapToDictionary(metadata ?? AnyMap())
+          )
+
+          return try await saveAsync(sample: sample)
         }
+        throw RuntimeError.error(withMessage: "[react-native-healthkit] Unknown StateOfMindKind raw value: \(kind.rawValue)")
+      } else {
+        throw RuntimeError.error(withMessage: "StateOfMind is only available on iOS 18 and later")
       }
-    } else {
-      throw RuntimeError.error(withMessage: "StateOfMind is only available on iOS 18 and later")
     }
+
   }
 }
 #else
@@ -124,7 +119,7 @@ class StateOfMindModule: HybridStateOfMindModuleSpec {
 class StateOfMind: HybridStateOfMindModuleSpec {
   func queryStateOfMindSamples(
     options: QueryOptionsWithSortOrder
-  ) throws -> Promise<[StateOfMindSample]> {
+  ) -> Promise<[StateOfMindSample]> {
     throw RuntimeError.error(withMessage: "State of Mind features require iOS 18.0 or later and Xcode 16 or later to compile")
   }
 
@@ -135,7 +130,7 @@ class StateOfMind: HybridStateOfMindModuleSpec {
     labels: [StateOfMindLabel],
     associations: [StateOfMindAssociation],
     metadata: [String: Any]?
-  ) throws -> Promise<Bool> {
+  ) -> Promise<Bool> {
     throw RuntimeError.error(withMessage: "State of Mind features require iOS 18.0 or later and Xcode 16 or later to compile")
   }
 }

@@ -78,25 +78,18 @@ func saveQuantitySampleInternal(
   end: Date,
   metadata: [String: Any]?
 ) -> Promise<Bool> {
-  let unit = HKUnit.init(from: unitString)
-  let quantity = HKQuantity.init(unit: unit, doubleValue: value)
-  let sample = HKQuantitySample.init(
-    type: typeIdentifier,
-    quantity: quantity,
-    start: start,
-    end: end,
-    metadata: metadata
-  )
 
   return Promise.async {
-    return try await withCheckedThrowingContinuation { continuation in
-      store.save(sample) { (success: Bool, error: Error?) in
-        if let error = error {
-          return continuation.resume(throwing: error)
-        }
-        return continuation.resume(returning: success)
-      }
-    }
+    let unit = HKUnit.init(from: unitString)
+    let quantity = HKQuantity.init(unit: unit, doubleValue: value)
+    let sample = HKQuantitySample.init(
+      type: typeIdentifier,
+      quantity: quantity,
+      start: start,
+      end: end,
+      metadata: metadata
+    )
+    return try await saveAsync(sample: sample)
   }
 }
 
@@ -218,12 +211,10 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     return sampleType.is(compatibleWith: HKUnit.init(from: unit))
   }
 
-  func queryStatisticsForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], options: StatisticsQueryOptions?) throws -> Promise<QueryStatisticsResponse> {
-
-    let quantityType = try initializeQuantityType(identifier.stringValue)
-    let predicate = try createPredicate(options?.filter)
-
+  func queryStatisticsForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], options: StatisticsQueryOptions?) -> Promise<QueryStatisticsResponse> {
     return Promise.async {
+      let quantityType = try initializeQuantityType(identifier.stringValue)
+      let predicate = try createPredicate(options?.filter)
       let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
       return try await withCheckedThrowingContinuation { continuation in
         let query = HKStatisticsQuery.init(
@@ -254,33 +245,33 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     }
   }
 
-  func queryStatisticsCollectionForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], anchorDate: Date, intervalComponents: IntervalComponents, options: StatisticsQueryOptions?) throws -> Promise<[QueryStatisticsResponse]> {
-    let quantityType = try initializeQuantityType(identifier.stringValue)
-
-    let predicate = try createPredicate(options?.filter)
-
-    // Create date components from interval
-    var dateComponents = DateComponents()
-    if let minute = intervalComponents.minute {
-      dateComponents.minute = Int(minute)
-    }
-    if let hour = intervalComponents.hour {
-      dateComponents.hour = Int(hour)
-    }
-    if let day = intervalComponents.day {
-      dateComponents.day = Int(day)
-    }
-    if let month = intervalComponents.month {
-      dateComponents.month = Int(month)
-    }
-    if let year = intervalComponents.year {
-      dateComponents.year = Int(year)
-    }
-
-    // Build statistics options
-    let opts = buildStatisticsOptions(statistics: statistics)
-
+  func queryStatisticsCollectionForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], anchorDate: Date, intervalComponents: IntervalComponents, options: StatisticsQueryOptions?) -> Promise<[QueryStatisticsResponse]> {
     return Promise.async {
+      let quantityType = try initializeQuantityType(identifier.stringValue)
+
+      let predicate = try createPredicate(options?.filter)
+
+      // Create date components from interval
+      var dateComponents = DateComponents()
+      if let minute = intervalComponents.minute {
+        dateComponents.minute = Int(minute)
+      }
+      if let hour = intervalComponents.hour {
+        dateComponents.hour = Int(hour)
+      }
+      if let day = intervalComponents.day {
+        dateComponents.day = Int(day)
+      }
+      if let month = intervalComponents.month {
+        dateComponents.month = Int(month)
+      }
+      if let year = intervalComponents.year {
+        dateComponents.year = Int(year)
+      }
+
+      // Build statistics options
+      let opts = buildStatisticsOptions(statistics: statistics)
+
       let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
 
       return try await withCheckedThrowingContinuation { continuation in
@@ -329,73 +320,47 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     }
   }
 
-  func queryQuantitySamplesWithAnchor(identifier: QuantityTypeIdentifier, options: QueryOptionsWithAnchorAndUnit) throws -> Promise<QuantitySamplesWithAnchorResponse> {
-    let quantityType = try initializeQuantityType(identifier.stringValue)
-    let predicate = try createPredicate(options.filter)
-    let limit = getQueryLimit(options.limit)
-    let actualAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
-
+  func queryQuantitySamplesWithAnchor(identifier: QuantityTypeIdentifier, options: QueryOptionsWithAnchorAndUnit) -> Promise<QuantitySamplesWithAnchorResponse> {
     return Promise.async {
+      let quantityType = try initializeQuantityType(identifier.stringValue)
+      let predicate = try createPredicate(options.filter)
+      let actualAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
+
       let unit = try await getUnitToUse(
         unitOverride: options.unit,
         quantityType: quantityType
       )
 
-      return try await withCheckedThrowingContinuation { continuation in
-        let query = HKAnchoredObjectQuery(
-          type: quantityType,
-          predicate: predicate,
-          anchor: actualAnchor,
-          limit: limit
-        ) { (
-          _: HKAnchoredObjectQuery,
-          samples: [HKSample]?,
-          deletedSamples: [HKDeletedObject]?,
-          newAnchor: HKQueryAnchor?,
-          error: Error?
-        ) in
-          if let error = error {
-            return handleHKNoDataOrThrow(error: error, continuation: continuation) {
-              QuantitySamplesWithAnchorResponse(
-                samples: [],
-                deletedSamples: [],
-                newAnchor: ""
-              )
-            }
+      let response = try await sampleAnchoredQueryAsync(
+        sampleType: quantityType,
+        limit: options.limit,
+        queryAnchor: actualAnchor,
+        predicate: predicate
+      )
+
+      let quantitySamples = response.samples.compactMap { sample in
+        if let quantitySample = sample as? HKQuantitySample {
+          do {
+            return try serializeQuantitySample(
+              sample: quantitySample,
+              unit: unit
+            )
+          } catch {
+            print(error.localizedDescription)
           }
-
-          let deletedSamples = deletedSamples?.map { serializeDeletedSample(sample: $0) } ?? []
-          let newAnchor = serializeAnchor(anchor: newAnchor) ?? ""
-
-          let quantitySamples = samples?.compactMap { sample in
-            if let quantitySample = sample as? HKQuantitySample {
-              do {
-                return try serializeQuantitySample(
-                  sample: quantitySample,
-                  unit: unit
-                )
-              } catch {
-                print(error.localizedDescription)
-              }
-            }
-            return nil
-          }
-
-          let response = QuantitySamplesWithAnchorResponse(
-            samples: quantitySamples ?? [],
-            deletedSamples: deletedSamples,
-            newAnchor: newAnchor,
-          )
-
-          continuation.resume(returning: response)
         }
-
-        store.execute(query)
+        return nil
       }
+
+      return QuantitySamplesWithAnchorResponse(
+        samples: quantitySamples,
+        deletedSamples: response.deletedSamples,
+        newAnchor: response.newAnchor
+      )
     }
   }
 
-  func saveQuantitySample(identifier: QuantityTypeIdentifier, unit: String, value: Double, start: Date, end: Date, metadata: AnyMap) throws -> Promise<Bool> {
+  func saveQuantitySample(identifier: QuantityTypeIdentifier, unit: String, value: Double, start: Date, end: Date, metadata: AnyMap) -> Promise<Bool> {
     return saveQuantitySampleInternal(
       typeIdentifier: HKQuantityType(
         HKQuantityTypeIdentifier(rawValue: identifier.stringValue)
