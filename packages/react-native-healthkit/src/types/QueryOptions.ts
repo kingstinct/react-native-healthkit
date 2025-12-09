@@ -1,3 +1,4 @@
+import type { SourceProxy } from '../specs/SourceProxy.nitro'
 import type { WorkoutProxy } from '../specs/WorkoutProxy.nitro'
 
 type PredicateWithMetadataOperator =
@@ -44,6 +45,7 @@ export interface FilterForSamples {
   readonly strictEndDate?: boolean
   readonly strictStartDate?: boolean
   readonly workout?: WorkoutProxy
+  readonly sources?: SourceProxy[]
 }
 
 /**

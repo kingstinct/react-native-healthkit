@@ -48,6 +48,35 @@ func getUnitMap(correlations: [HKCorrelation]) async throws -> [HKQuantityType: 
 }
 
 class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
+  func queryCorrelationSamplesWithAnchor(typeIdentifier: CorrelationTypeIdentifier, options: QueryOptionsWithAnchor) -> Promise<QueryCorrelationSamplesWithAnchorResponse> {
+    return Promise.async {
+      let predicate = try createPredicate(options.filter)
+      let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
+
+      let response = try await sampleAnchoredQueryAsync(
+        sampleType: correlationType,
+        limit: options.limit,
+        queryAnchor: options.anchor,
+        predicate: predicate
+      )
+
+      let correlationSamples = response.samples.compactMap { sample in
+        return sample as? HKCorrelation
+      }
+
+      let unitMap = try await getUnitMap(correlations: correlationSamples)
+
+      return QueryCorrelationSamplesWithAnchorResponse(
+        correlations: correlationSamples.map { sample in
+          return serializeCorrelationSample(correlation: sample, unitMap: unitMap)
+        },
+        deletedSamples: response.deletedSamples,
+        newAnchor: response.newAnchor
+      )
+
+    }
+  }
+
   func saveCorrelationSample(
     typeIdentifier: CorrelationTypeIdentifier,
     samples: [SampleForSaving],

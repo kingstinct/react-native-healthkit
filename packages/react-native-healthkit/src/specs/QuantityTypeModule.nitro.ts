@@ -10,7 +10,6 @@ import type {
 } from '../types/QuantityType'
 import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 import type {
-  FilterForSamples,
   QueryOptionsWithAnchorAndUnit,
   QueryOptionsWithSortOrderAndUnit,
 } from '../types/QueryOptions'

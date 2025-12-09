@@ -42,10 +42,39 @@ func serializeStateOfMindSample(sample: HKStateOfMind) -> StateOfMindSample {
 
 #if compiler(>=6)
 class StateOfMindModule: HybridStateOfMindModuleSpec {
+  func queryStateOfMindSamplesWithAnchor(options: QueryOptionsWithAnchor) -> Promise<StateOfMindSamplesWithAnchorResponse> {
+    return Promise.async {
+      if #available(iOS 18.0, *) {
+        let predicate = try createPredicate(options.filter)
+
+        let response = try await sampleAnchoredQueryAsync(
+          sampleType: .stateOfMindType(),
+          limit: options.limit,
+          queryAnchor: options.anchor,
+          predicate: predicate
+        )
+
+        let samples = response.samples.compactMap { sample in
+          if let sample = sample as? HKStateOfMind {
+            return serializeStateOfMindSample(sample: sample)
+          }
+          return nil
+        }
+
+        return StateOfMindSamplesWithAnchorResponse(
+          samples: samples,
+          deletedSamples: response.deletedSamples,
+          newAnchor: response.newAnchor
+        )
+      } else {
+        throw RuntimeError.error(withMessage: "[react-native-healthkit] StateOfMind is only available on iOS 18 and later")
+      }
+    }
+  }
+
   func queryStateOfMindSamples(
     options: QueryOptionsWithSortOrder
   ) -> Promise<[StateOfMindSample]> {
-
     return Promise.async {
       if #available(iOS 18.0, *) {
         let predicate = try createPredicate(options.filter)

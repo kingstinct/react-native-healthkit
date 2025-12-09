@@ -54,12 +54,11 @@ class CategoryTypeModule: HybridCategoryTypeModuleSpec {
         return Promise.async {
           let sampleType = try initializeCategoryType(identifier.stringValue)
           let predicate = try createPredicate(options.filter)
-          let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
 
           let response = try await sampleAnchoredQueryAsync(
             sampleType: sampleType,
             limit: options.limit,
-            queryAnchor: queryAnchor,
+            queryAnchor: options.anchor,
             predicate: predicate
           )
 

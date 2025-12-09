@@ -269,7 +269,7 @@ func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision?) -> SourceRev
         return SourceRevision(
             source: serializeSource(hkSourceRevision.source),
             version: hkSourceRevision.version,
-            operatingSystemVersion: serializeOperatingSystemVersion( hkSourceRevision.operatingSystemVersion),
+            operatingSystemVersion: serializeOperatingSystemVersion(hkSourceRevision.operatingSystemVersion),
             productType: hkSourceRevision.productType
         )
     }

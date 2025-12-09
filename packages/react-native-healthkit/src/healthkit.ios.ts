@@ -113,6 +113,8 @@ export const queryCategorySamplesWithAnchor =
   CategoryTypes.queryCategorySamplesWithAnchor.bind(CategoryTypes)
 export const queryCorrelationSamples =
   CorrelationTypes.queryCorrelationSamples.bind(CorrelationTypes)
+export const queryCorrelationSamplesWithAnchor =
+  CorrelationTypes.queryCorrelationSamplesWithAnchor.bind(CorrelationTypes)
 export const queryHeartbeatSeriesSamples =
   HeartbeatSeries.queryHeartbeatSeriesSamples.bind(HeartbeatSeries)
 export const queryHeartbeatSeriesSamplesWithAnchor =
@@ -149,6 +151,8 @@ export const startWatchApp =
 export const isProtectedDataAvailable = Core.isProtectedDataAvailable.bind(Core)
 export const queryStateOfMindSamples =
   StateOfMind.queryStateOfMindSamples.bind(StateOfMind)
+export const queryStateOfMindSamplesWithAnchor =
+  StateOfMind.queryStateOfMindSamplesWithAnchor.bind(StateOfMind)
 export const saveStateOfMindSample =
   StateOfMind.saveStateOfMindSample.bind(StateOfMind)
 export const isQuantityCompatibleWithUnit =
@@ -205,6 +209,7 @@ export default {
   queryCategorySamples,
   queryCategorySamplesWithAnchor,
   queryCorrelationSamples,
+  queryCorrelationSamplesWithAnchor,
   queryHeartbeatSeriesSamples,
   queryHeartbeatSeriesSamplesWithAnchor,
   queryElectrocardiogramSamples,
@@ -227,6 +232,7 @@ export default {
   startWatchApp,
   isProtectedDataAvailable,
   queryStateOfMindSamples,
+  queryStateOfMindSamplesWithAnchor,
   saveStateOfMindSample,
 
   currentAppSource,

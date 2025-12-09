@@ -136,13 +136,12 @@ class ElectrocardiogramModule: HybridElectrocardiogramModuleSpec {
   ) -> Promise<ElectrocardiogramSamplesWithAnchorResponse> {
     return Promise.async {
       let predicate = try createPredicate(options.filter)
-      let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
       let includeVoltages = options.includeVoltages
 
       let response = try await sampleAnchoredQueryAsync(
         sampleType: HKObjectType.electrocardiogramType(),
         limit: options.limit,
-        queryAnchor: queryAnchor,
+        queryAnchor: options.anchor,
         predicate: predicate
       )
 

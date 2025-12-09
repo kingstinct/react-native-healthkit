@@ -76,12 +76,11 @@ class HeartbeatSeriesModule: HybridHeartbeatSeriesModuleSpec {
     ) -> Promise<HeartbeatSeriesSamplesWithAnchorResponse> {
         return Promise.async {
             let predicate = try createPredicate(options.filter)
-            let queryAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
 
             let response = try await sampleAnchoredQueryAsync(
                 sampleType: HKSeriesType.heartbeat(),
                 limit: options.limit,
-                queryAnchor: queryAnchor,
+                queryAnchor: options.anchor,
                 predicate: predicate
             )
 

@@ -72,10 +72,8 @@ func getPreferredUnitsInternal(quantityTypes: [HKQuantityType], forceUpdate: Boo
 }
 
 class CoreModule: HybridCoreModuleSpec {
-  var currentAppSource: any HybridSourceProxySpec {
-    get {
-      return SourceProxy(source: HKSource.default())
-    }
+  func currentAppSource() -> any HybridSourceProxySpec {
+    return SourceProxy(source: HKSource.default())
   }
 
   func areObjectTypesAvailable(objectTypeIdentifiers: [ObjectTypeIdentifier]) -> [String: Bool] {

@@ -1,6 +1,6 @@
 import type { AnyMap } from 'react-native-nitro-modules'
 import type { WorkoutProxy } from '../specs/WorkoutProxy.nitro'
-import type { PredicateWithMetadataKey } from '.'
+import type { FilterForSamples } from '.'
 import type { Device } from './Device'
 import type { Quantity } from './QuantityType'
 import type { DeletedSample, GenericMetadata } from './Shared'
@@ -192,13 +192,7 @@ export type WorkoutDurationPredicate = {
   readonly durationInSeconds: number
 }
 
-export interface FilterForWorkouts {
-  readonly uuids?: string[]
-  readonly metadata?: PredicateWithMetadataKey[]
-  readonly startDate?: Date
-  readonly endDate?: Date
-  readonly strictEndDate?: boolean
-  readonly strictStartDate?: boolean
+export interface FilterForWorkouts extends FilterForSamples {
   readonly workoutActivityType?: WorkoutActivityType
   readonly duration?: WorkoutDurationPredicate
 }

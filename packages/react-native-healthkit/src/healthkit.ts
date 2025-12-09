@@ -7,6 +7,7 @@ import { Platform } from 'react-native'
 // This import is crucial for deriving the type of the default export `HealthkitModule`
 // It assumes that index.ios.ts exports a default object matching the Healthkit native module structure.
 import type ReactNativeHealthkit from './healthkit.ios'
+import type { SourceProxy } from './specs/SourceProxy.nitro'
 import type { WorkoutProxy } from './specs/WorkoutProxy.nitro'
 import { AuthorizationRequestStatus, AuthorizationStatus } from './types/Auth'
 import type {
@@ -273,6 +274,24 @@ export const queryStateOfMindSamples = UnavailableFnFromModule(
   'queryStateOfMindSamples',
   Promise.resolve([]),
 )
+export const queryStateOfMindSamplesWithAnchor = UnavailableFnFromModule(
+  'queryStateOfMindSamplesWithAnchor',
+  Promise.resolve({
+    samples: [],
+    deletedSamples: [],
+    newAnchor: '',
+  }),
+)
+
+export const queryCorrelationSamplesWithAnchor = UnavailableFnFromModule(
+  'queryCorrelationSamplesWithAnchor',
+  Promise.resolve({
+    correlations: [],
+    deletedSamples: [],
+    newAnchor: '',
+  }),
+)
+
 export const saveStateOfMindSample = UnavailableFnFromModule(
   'saveStateOfMindSample',
   Promise.resolve(false),
@@ -374,6 +393,11 @@ const subscribeToQuantitySamples = UnavailableFnFromModule(
 
 export { subscribeToQuantitySamples }
 
+export const currentAppSource = UnavailableFnFromModule('currentAppSource', {
+  bundleIdentifier: '',
+  name: '',
+} as SourceProxy) // Mocking callback structure
+
 const useSubscribeToQuantitySamples = UnavailableFnFromModule(
   'useSubscribeToQuantitySamples',
   undefined,
@@ -430,9 +454,13 @@ const HealthkitModule = {
   startWatchApp,
   isProtectedDataAvailable,
   queryStateOfMindSamples,
+  queryStateOfMindSamplesWithAnchor,
   saveStateOfMindSample,
   subscribeToQuantitySamples,
   useSubscribeToQuantitySamples,
+  queryCorrelationSamplesWithAnchor,
+
+  currentAppSource,
 
   // Hooks
   useMostRecentCategorySample,

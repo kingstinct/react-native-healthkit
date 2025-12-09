@@ -217,12 +217,11 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
     func queryWorkoutSamplesWithAnchor(options: WorkoutQueryOptionsWithAnchor) throws -> Promise<QueryWorkoutSamplesWithAnchorResponse> {
         return Promise.async {
             let predicate = try createPredicateForWorkout(options.filter)
-            let actualAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
 
             let response = try await sampleAnchoredQueryAsync(
                 sampleType: .workoutType(),
                 limit: options.limit,
-                queryAnchor: actualAnchor,
+                queryAnchor: options.anchor,
                 predicate: predicate
             )
 

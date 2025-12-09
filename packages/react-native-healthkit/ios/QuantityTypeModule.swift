@@ -70,29 +70,6 @@ func serializeStatistics(gottenStats: HKStatistics, unit: HKUnit) -> QueryStatis
   return response
 }
 
-func saveQuantitySampleInternal(
-  typeIdentifier: HKQuantityType,
-  unitString: String,
-  value: Double,
-  start: Date,
-  end: Date,
-  metadata: [String: Any]?
-) -> Promise<Bool> {
-
-  return Promise.async {
-    let unit = HKUnit.init(from: unitString)
-    let quantity = HKQuantity.init(unit: unit, doubleValue: value)
-    let sample = HKQuantitySample.init(
-      type: typeIdentifier,
-      quantity: quantity,
-      start: start,
-      end: end,
-      metadata: metadata
-    )
-    return try await saveAsync(sample: sample)
-  }
-}
-
 func getAnyMapValue(_ anyMap: AnyMap, key: String) -> Any? {
   if anyMap.isBool(key: key) {
     return anyMap.getBoolean(key: key)
@@ -304,7 +281,6 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
       let predicate = try createPredicate(options.filter)
-      let actualAnchor = try deserializeHKQueryAnchor(base64String: options.anchor)
 
       let unit = try await getUnitToUse(
         unitOverride: options.unit,
@@ -314,7 +290,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
       let response = try await sampleAnchoredQueryAsync(
         sampleType: quantityType,
         limit: options.limit,
-        queryAnchor: actualAnchor,
+        queryAnchor: options.anchor,
         predicate: predicate
       )
 
@@ -341,16 +317,23 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   }
 
   func saveQuantitySample(identifier: QuantityTypeIdentifier, unit: String, value: Double, start: Date, end: Date, metadata: AnyMap) -> Promise<Bool> {
-    return saveQuantitySampleInternal(
-      typeIdentifier: HKQuantityType(
+    return Promise.async {
+      let unit = HKUnit.init(from: unit)
+      let quantity = HKQuantity.init(unit: unit, doubleValue: value)
+      let typeIdentifier = HKQuantityType(
         HKQuantityTypeIdentifier(rawValue: identifier.stringValue)
-      ),
-      unitString: unit,
-      value: value,
-      start: start,
-      end: end,
-      metadata: anyMapToDictionary(metadata)
-    )
+      )
+      let metadata = anyMapToDictionary(metadata)
+
+      let sample = HKQuantitySample.init(
+        type: typeIdentifier,
+        quantity: quantity,
+        start: start,
+        end: end,
+        metadata: metadata
+      )
+      return try await saveAsync(sample: sample)
+    }
   }
 
   func queryQuantitySamples(identifier: QuantityTypeIdentifier, options: QueryOptionsWithSortOrderAndUnit) -> Promise<[QuantitySample]> {
