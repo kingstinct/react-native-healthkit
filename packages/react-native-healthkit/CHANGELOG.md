@@ -1,5 +1,15 @@
 # @kingstinct/react-native-healthkit
 
+## 12.1.2
+### Patch Changes
+
+- 6678bcb: Fix native error on queryCorrelationSamples when no data available
+
+## 12.1.1
+### Patch Changes
+
+- 9c4bcd4: fix: prevent crash if getRequestStatusForAuthorization is called without any data types
+
 ## 12.1.0
 ### Minor Changes
 
