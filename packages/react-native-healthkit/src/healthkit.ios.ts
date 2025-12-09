@@ -161,6 +161,8 @@ export const areObjectTypesAvailable = Core.areObjectTypesAvailable.bind(Core)
 export const areObjectTypesAvailableAsync =
   Core.areObjectTypesAvailableAsync.bind(Core)
 
+export const currentAppSource = Core.currentAppSource
+
 export const getBiologicalSexAsync =
   Characteristics.getBiologicalSexAsync.bind(Characteristics)
 export const getBloodTypeAsync =
@@ -226,6 +228,8 @@ export default {
   isProtectedDataAvailable,
   queryStateOfMindSamples,
   saveStateOfMindSample,
+
+  currentAppSource,
 
   // hooks
   useMostRecentCategorySample,

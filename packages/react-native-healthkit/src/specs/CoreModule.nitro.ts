@@ -48,6 +48,8 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
   isProtectedDataAvailable(): boolean
   isProtectedDataAvailableAsync(): Promise<boolean>
 
+  readonly currentAppSource: SourceProxy
+
   getPreferredUnits(
     identifiers: readonly QuantityTypeIdentifier[],
     forceUpdate?: boolean,
