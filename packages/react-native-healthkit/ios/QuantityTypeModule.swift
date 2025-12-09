@@ -175,26 +175,6 @@ func handleHKNoDataOrThrow<T>(
 }
 
 class QuantityTypeModule: HybridQuantityTypeModuleSpec {
-
-  func deleteQuantitySamples(identifier: QuantityTypeIdentifier, filter: FilterForSamples) throws -> Promise<Double> {
-    let sampleType = try initializeQuantityType(identifier.stringValue)
-    if let samplePredicate = try createPredicate(filter) {
-      return Promise.async {
-        return try await withCheckedThrowingContinuation { continuation in
-          store.deleteObjects(of: sampleType, predicate: samplePredicate) { (_: Bool, deleted: Int, error: Error?) in
-            if let error = error {
-              continuation.resume(throwing: error)
-            } else {
-              continuation.resume(returning: Double(deleted))
-            }
-          }
-        }
-      }
-    }
-
-    throw RuntimeError.error(withMessage: "Failed to create predicate for deleting quantity samples")
-  }
-
   func aggregationStyle(identifier: QuantityTypeIdentifier) throws -> AggregationStyle {
     let sampleType = try initializeQuantityType(identifier.stringValue)
 

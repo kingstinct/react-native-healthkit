@@ -32,11 +32,6 @@ export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
     metadata: AnyMap,
   ): Promise<boolean>
 
-  deleteQuantitySamples(
-    identifier: QuantityTypeIdentifier,
-    filter: FilterForSamples,
-  ): Promise<number>
-
   queryQuantitySamples(
     identifier: QuantityTypeIdentifier,
     options: QueryOptionsWithSortOrderAndUnit,
