@@ -8,6 +8,13 @@
 import HealthKit
 import NitroModules
 
+#if compiler(>=6.2)
+
+@available(iOS 26.0, *)
+func deserializeHKMedicationConceptIdentifier(base64String: String?) throws -> HKHealthConceptIdentifier? {
+  return try fromBase64(base64String: base64String) as? HKHealthConceptIdentifier
+}
+
 @available(iOS 26.0, *)
 func getLogStatus(_ logStatus: HKMedicationDoseEvent.LogStatus) throws -> MedicationDoseEventLogStatus {
   if let rawValue = Int32(exactly: logStatus.rawValue) {
@@ -75,7 +82,7 @@ func serializeMedication(sample: HKUserAnnotatedMedication) throws -> UserAnnota
 }
 
 class MedicationModule: HybridMedicationModuleSpec {
-  func queryMedications() -> NitroModules.Promise<[UserAnnotatedMedication]> {
+  func queryMedications() -> Promise<[UserAnnotatedMedication]> {
     return Promise.async {
       if #available(iOS 26.0, *) {
         let q = HKUserAnnotatedMedicationQueryDescriptor()
@@ -91,7 +98,7 @@ class MedicationModule: HybridMedicationModuleSpec {
     }
   }
 
-  func queryMedicationEvents(options: QueryOptionsWithSortOrder) -> NitroModules.Promise<[MedicationDoseEvent]> {
+  func queryMedicationEvents(options: QueryOptionsWithSortOrder) -> Promise<[MedicationDoseEvent]> {
     return Promise.async {
       if #available(iOS 26.0, *) {
         let predicate = createPredicateForSamples(options.filter)
@@ -126,7 +133,7 @@ class MedicationModule: HybridMedicationModuleSpec {
     }
   }
 
-  func queryMedicationEventsWithAnchor(options: QueryOptionsWithAnchor) -> NitroModules.Promise<MedicationDoseEventsWithAnchorResponse> {
+  func queryMedicationEventsWithAnchor(options: QueryOptionsWithAnchor) -> Promise<MedicationDoseEventsWithAnchorResponse> {
     return Promise.async {
       if #available(iOS 26.0, *) {
         let predicate = createPredicateForSamples(options.filter)
@@ -156,3 +163,47 @@ class MedicationModule: HybridMedicationModuleSpec {
   }
 
 }
+
+#else
+class MedicationModule: HybridMedicationModuleSpec {
+  func queryMedications() -> Promise<[UserAnnotatedMedication]> {
+    return Promise.async {
+      if #available(iOS 26.0, *) {
+        let q = HKUserAnnotatedMedicationQueryDescriptor()
+
+        let medications = try await q.result(for: store)
+
+        return try medications.compactMap({ medication in
+          return try serializeMedication(sample: medication)
+        })
+      } else {
+        throw RuntimeError.error(withMessage: "iOS 26.0 or later is required")
+      }
+    }
+  }
+
+  func queryMedicationEvents(options: QueryOptionsWithSortOrder) -> Promise<[MedicationDoseEvent]> {
+
+      return Promise.async {
+        throw RuntimeError.error(withMessage: "[react-native-healthkit] Medication needs to be built with XCode 26.0")
+      }
+
+  }
+
+  func requestMedicationsAuthorization() -> Promise<Bool> {
+    return Promise.async {
+
+        throw RuntimeError.error(withMessage: "[react-native-healthkit] Medication needs to be built with XCode 26.0")
+
+    }
+  }
+
+  func queryMedicationEventsWithAnchor(options: QueryOptionsWithAnchor) -> NitroModules.Promise<MedicationDoseEventsWithAnchorResponse> {
+    return Promise.async {
+      throw RuntimeError.error(withMessage: "[react-native-healthkit] Medication needs to be built with XCode 26.0")
+    }
+  }
+
+}
+
+#endif

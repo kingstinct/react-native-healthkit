@@ -149,11 +149,6 @@ func deserializeHKQueryAnchor(base64String: String?) throws -> HKQueryAnchor? {
   return try fromBase64(base64String: base64String) as? HKQueryAnchor
 }
 
-@available(iOS 26.0, *)
-func deserializeHKMedicationConceptIdentifier(base64String: String?) throws -> HKHealthConceptIdentifier? {
-  return try fromBase64(base64String: base64String) as? HKHealthConceptIdentifier
-}
-
 func initializeCategoryType(_ identifier: String) throws -> HKCategoryType {
   let identifier = HKCategoryTypeIdentifier(rawValue: identifier)
   if let sampleType = HKSampleType.categoryType(forIdentifier: identifier) {
