@@ -6,6 +6,7 @@ import useMostRecentQuantitySample from './hooks/useMostRecentQuantitySample'
 import useMostRecentWorkout from './hooks/useMostRecentWorkout'
 import useSources from './hooks/useSources'
 import useStatisticsForQuantity from './hooks/useStatisticsForQuantity'
+import useSubscribeToCategorySamples from './hooks/useSubscribeToCategorySamples'
 import useSubscribeToChanges from './hooks/useSubscribeToChanges'
 import useSubscribeToQuantitySamples from './hooks/useSubscribeToQuantitySamples'
 import {
@@ -25,6 +26,7 @@ import getMostRecentCategorySample from './utils/getMostRecentCategorySample'
 import getMostRecentQuantitySample from './utils/getMostRecentQuantitySample'
 import getMostRecentWorkout from './utils/getMostRecentWorkout'
 import getPreferredUnit from './utils/getPreferredUnit'
+import { subscribeToCategorySamples } from './utils/subscribeToCategorySamples'
 import { subscribeToChanges } from './utils/subscribeToChanges'
 import { subscribeToQuantitySamples } from './utils/subscribeToQuantitySamples'
 
@@ -57,6 +59,7 @@ export {
   getMostRecentQuantitySample,
   getMostRecentWorkout,
   getPreferredUnit,
+  subscribeToCategorySamples,
   subscribeToChanges,
   subscribeToQuantitySamples,
   useHealthkitAuthorization,
@@ -66,6 +69,7 @@ export {
   useMostRecentWorkout,
   useSources,
   useStatisticsForQuantity,
+  useSubscribeToCategorySamples,
   useSubscribeToChanges,
   useSubscribeToQuantitySamples,
 }
@@ -249,6 +253,9 @@ export default {
   queryMedicationEventsWithAnchor,
   queryMedicationEvents,
   queryMedications,
+
+  subscribeToCategorySamples,
+  useSubscribeToCategorySamples,
 
   // hooks
   useMostRecentCategorySample,
