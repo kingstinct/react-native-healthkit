@@ -197,7 +197,6 @@ export default function QuantitiesScreen() {
               const quantityStr = item.quantity
                 ? `${Math.round(item.quantity * 100) / 100} ${item.unit}`
                 : 'Unknown Quantity'
-              console.log('quantityStr', quantityStr)
               return (
                 <ListItem
                   key={item.uuid}

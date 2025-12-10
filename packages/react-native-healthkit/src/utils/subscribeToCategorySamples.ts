@@ -1,13 +1,13 @@
-import { QuantityTypes } from '../modules'
-import type { QuantityTypeIdentifier } from '../types'
-import type { OnQuantitySamplesCallback } from '../types/Subscriptions'
+import { CategoryTypes } from '../modules'
+import type { CategoryTypeIdentifier } from '../types'
+import type { OnCategorySamplesCallback } from '../types/Subscriptions'
 import { subscribeToChanges } from './subscribeToChanges'
 
-export const subscribeToQuantitySamples = (
-  identifier: QuantityTypeIdentifier,
-  callback: (args: OnQuantitySamplesCallback) => void,
+export function subscribeToCategorySamples<T extends CategoryTypeIdentifier>(
+  identifier: T,
+  callback: (args: OnCategorySamplesCallback<T>) => void,
   after = new Date(),
-) => {
+) {
   return subscribeToChanges(identifier, async ({ errorMessage }) => {
     if (errorMessage) {
       return callback({
@@ -16,7 +16,7 @@ export const subscribeToQuantitySamples = (
       })
     }
 
-    const samplesAfterLast = await QuantityTypes.queryQuantitySamples(
+    const samplesAfterLast = await CategoryTypes.queryCategorySamples(
       identifier,
       {
         limit: 0,

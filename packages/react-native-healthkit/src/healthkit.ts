@@ -413,17 +413,28 @@ export const queryMedicationEventsWithAnchor = UnavailableFnFromModule(
   Promise.resolve({ newAnchor: '', samples: [], deletedSamples: [] }),
 ) // Mocking callback structure
 
-const useSubscribeToQuantitySamples = UnavailableFnFromModule(
+export const useSubscribeToQuantitySamples = UnavailableFnFromModule(
   'useSubscribeToQuantitySamples',
   undefined,
-) // Mocking callback structure
+)
+
+export const useSubscribeToCategorySamples = UnavailableFnFromModule(
+  'useSubscribeToCategorySamples',
+  undefined,
+)
+
+export const subscribeToCategorySamples = UnavailableFnFromModule(
+  'subscribeToCategorySamples',
+  {
+    remove: () => false,
+  },
+) // Mocking the observer query UUID
 
 export const requestMedicationsAuthorization = UnavailableFnFromModule(
   'requestMedicationsAuthorization',
   Promise.resolve(false),
 ) // Mocking callback structure
 
-export { useSubscribeToQuantitySamples }
 // --- Default Export ---
 // This attempts to match the structure of the default export from index.ios.ts
 const HealthkitModule = {
@@ -484,6 +495,7 @@ const HealthkitModule = {
   queryMedicationEventsWithAnchor,
   requestMedicationsAuthorization,
 
+  subscribeToCategorySamples,
   currentAppSource,
 
   // Hooks
@@ -493,6 +505,7 @@ const HealthkitModule = {
   useSubscribeToChanges,
   useHealthkitAuthorization,
   useIsHealthDataAvailable,
+  useSubscribeToCategorySamples,
   useSources,
   useStatisticsForQuantity,
   getBiologicalSexAsync,

@@ -1,7 +1,7 @@
 import type { QuantitySample } from './QuantitySample'
 import type { QuantityTypeIdentifier } from './QuantityTypeIdentifier'
 import type { FilterForSamples } from './QueryOptions'
-import type { DeletedSample, GenericMetadata } from './Shared'
+import type { DeletedSample } from './Shared'
 import type {
   BloodGlucoseUnit,
   CountPerTime,
@@ -88,22 +88,6 @@ export type StatisticsOptions =
   | 'duration'
   | 'mostRecent'
   | 'separateBySource'
-
-export type MetadataMapperForQuantityIdentifier<
-  TQuantityTypeIdentifier = QuantityTypeIdentifier,
-> = TQuantityTypeIdentifier extends 'QuantityTypeIdentifierInsulinDelivery'
-  ? GenericMetadata & {
-      readonly HKInsulinDeliveryReason: InsulinDeliveryReason
-    }
-  : TQuantityTypeIdentifier extends 'QuantityTypeIdentifierBloodGlucose'
-    ? GenericMetadata & {
-        readonly HKBloodGlucoseMealTime?: number
-      }
-    : TQuantityTypeIdentifier extends 'QuantityTypeIdentifierHeartRate'
-      ? GenericMetadata & {
-          readonly HKHeartRateMotionContext?: HeartRateMotionContext
-        }
-      : GenericMetadata
 
 export type UnitForIdentifier<
   T extends QuantityTypeIdentifier = QuantityTypeIdentifier,

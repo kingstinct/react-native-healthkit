@@ -37,13 +37,18 @@ func sampleAnchoredQueryAsync(
       predicate: predicate,
       anchor: queryAnchor,
       limit: getQueryLimit(limit)
-    ) { (_: HKAnchoredObjectQuery, samples: [HKSample]?, deletedSamples: [HKDeletedObject]?, newAnchor:
-          HKQueryAnchor?, error: Error?) in
+    ) {
+      (
+        _: HKAnchoredObjectQuery, samples: [HKSample]?, deletedSamples: [HKDeletedObject]?,
+        newAnchor:
+          HKQueryAnchor?, error: Error?
+      ) in
       if let error = error {
         return continuation.resume(throwing: error)
       }
 
-      if let samples = samples, let deletedSamples = deletedSamples, let newAnchor = serializeAnchor(anchor: newAnchor) {
+      if let samples = samples, let deletedSamples = deletedSamples,
+        let newAnchor = serializeAnchor(anchor: newAnchor) {
         return continuation.resume(
           returning: AnchoredQueryResponse(
             samples: samples,
@@ -55,7 +60,8 @@ func sampleAnchoredQueryAsync(
         )
       }
 
-      return continuation.resume(throwing: RuntimeError.error(withMessage: "[react-native-healthkit] Unexpected empty response"))
+      return continuation.resume(
+        throwing: runtimeErrorWithPrefix("Unexpected empty response"))
     }
 
     store.execute(query)
@@ -63,7 +69,7 @@ func sampleAnchoredQueryAsync(
 }
 
 func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
-    return toBase64(anchor)
+  return toBase64(anchor)
 }
 
 func toBase64(_ data: Any?) -> String? {
@@ -99,7 +105,8 @@ func sampleQueryAsync(
         return continuation.resume(returning: samples)
       }
 
-      return continuation.resume(throwing: RuntimeError.error(withMessage: "[react-native-healthkit] Unexpected empty response"))
+      return continuation.resume(
+        throwing: runtimeErrorWithPrefix("Unexpected empty response"))
     }
 
     store.execute(q)
@@ -130,7 +137,7 @@ func fromBase64(base64String: String?) throws -> Any? {
 
     // Step 1: Decode the base64 string to a Data object
     guard let data = Data(base64Encoded: base64String) else {
-      throw RuntimeError.error(withMessage: "[react-native-healthkit] Invalid base64 string: \(base64String)")
+      throw runtimeErrorWithPrefix("Invalid base64 string: \(base64String)")
     }
 
     // Step 2: Use NSKeyedUnarchiver to unarchive the data and create an HKQueryAnchor object
@@ -139,7 +146,8 @@ func fromBase64(base64String: String?) throws -> Any? {
       unarchiver.requiresSecureCoding = true
       return try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
     } catch {
-      throw RuntimeError.error(withMessage: "[react-native-healthkit] Error recreating HKQueryAnchor object: \(error.localizedDescription)")
+      throw runtimeErrorWithPrefix(
+        "Error recreating HKQueryAnchor object: \(error.localizedDescription)")
     }
   }
   return nil
@@ -149,18 +157,14 @@ func deserializeHKQueryAnchor(base64String: String?) throws -> HKQueryAnchor? {
   return try fromBase64(base64String: base64String) as? HKQueryAnchor
 }
 
-@available(iOS 26.0, *)
-func deserializeHKMedicationConceptIdentifier(base64String: String?) throws -> HKHealthConceptIdentifier? {
-  return try fromBase64(base64String: base64String) as? HKHealthConceptIdentifier
-}
-
 func initializeCategoryType(_ identifier: String) throws -> HKCategoryType {
   let identifier = HKCategoryTypeIdentifier(rawValue: identifier)
   if let sampleType = HKSampleType.categoryType(forIdentifier: identifier) {
     return sampleType
   }
 
-  throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized categoryType with identifier \(identifier)")
+  throw runtimeErrorWithPrefix(
+    "Failed to initialize unrecognized categoryType with identifier \(identifier)")
 }
 
 func initializeWorkoutActivityType(_ typeIdentifier: UInt) throws -> HKWorkoutActivityType {
@@ -168,7 +172,8 @@ func initializeWorkoutActivityType(_ typeIdentifier: UInt) throws -> HKWorkoutAc
     return type
   }
 
-  throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized quantityType with identifier \(typeIdentifier)")
+  throw runtimeErrorWithPrefix(
+    "Failed to initialize unrecognized quantityType with identifier \(typeIdentifier)")
 }
 
 func initializeQuantityType(_ identifier: String) throws -> HKQuantityType {
@@ -178,7 +183,8 @@ func initializeQuantityType(_ identifier: String) throws -> HKQuantityType {
     return sampleType
   }
 
-  throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized quantityType with identifier \(identifier)")
+  throw runtimeErrorWithPrefix(
+    "Failed to initialize unrecognized quantityType with identifier \(identifier)")
 }
 
 func initializeCorrelationType(_ identifier: String) throws -> HKCorrelationType {
@@ -188,7 +194,8 @@ func initializeCorrelationType(_ identifier: String) throws -> HKCorrelationType
     return sampleType
   }
 
-  throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized correlationType with identifier \(identifier)")
+  throw runtimeErrorWithPrefix(
+    "Failed to initialize unrecognized correlationType with identifier \(identifier)")
 }
 
 func initializeSeriesType(_ identifier: String) throws -> HKSeriesType {
@@ -196,23 +203,31 @@ func initializeSeriesType(_ identifier: String) throws -> HKSeriesType {
     return seriesType
   }
 
-  throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized seriesType with identifier \(identifier)")
+  throw runtimeErrorWithPrefix(
+    "Failed to initialize unrecognized seriesType with identifier \(identifier)")
 }
 
 func sampleTypeFrom(sampleTypeIdentifier: SampleTypeIdentifier) throws -> HKSampleType {
-  if let sampleType = try sampleTypeFromStringNullable(typeIdentifier: sampleTypeIdentifier.stringValue) {
+  if let sampleType = try sampleTypeFromStringNullable(
+    typeIdentifier: sampleTypeIdentifier.stringValue) {
     return sampleType
   }
 
-  throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized sampleType with identifier \(sampleTypeIdentifier.stringValue)")
+  throw runtimeErrorWithPrefix(
+    "Failed to initialize unrecognized sampleType with identifier \(sampleTypeIdentifier.stringValue)"
+  )
 }
 
-func sampleTypeFrom(sampleTypeIdentifierWriteable: SampleTypeIdentifierWriteable) throws -> HKSampleType {
-  if let sampleType = try sampleTypeFromStringNullable(typeIdentifier: sampleTypeIdentifierWriteable.stringValue) {
+func sampleTypeFrom(sampleTypeIdentifierWriteable: SampleTypeIdentifierWriteable) throws
+  -> HKSampleType {
+  if let sampleType = try sampleTypeFromStringNullable(
+    typeIdentifier: sampleTypeIdentifierWriteable.stringValue) {
     return sampleType
   }
 
-  throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed to initialize unrecognized sampleType with identifier \(sampleTypeIdentifierWriteable.stringValue)")
+  throw runtimeErrorWithPrefix(
+    "Failed to initialize unrecognized sampleType with identifier \(sampleTypeIdentifierWriteable.stringValue)"
+  )
 }
 
 private func sampleTypeFromStringNullable(typeIdentifier: String) throws -> HKSampleType? {
@@ -258,13 +273,13 @@ private func sampleTypeFromStringNullable(typeIdentifier: String) throws -> HKSa
     }
   }
 
-#if compiler(>=6)
-  if #available(iOS 18, *) {
-    if typeIdentifier == HKStateOfMindTypeIdentifier {
-      return HKObjectType.stateOfMindType()
+  #if compiler(>=6)
+    if #available(iOS 18, *) {
+      if typeIdentifier == HKStateOfMindTypeIdentifier {
+        return HKObjectType.stateOfMindType()
+      }
     }
-  }
-#endif
+  #endif
 
   return nil
 }
@@ -276,7 +291,7 @@ func objectTypesFromArray(typeIdentifiers: [ObjectTypeIdentifier]) -> Set<HKObje
       let objectType = try objectTypeFrom(objectTypeIdentifier: typeIdentifier)
       share.insert(objectType)
     } catch {
-      print(error.localizedDescription)
+      warnWithPrefix("objectTypesFromArray: \(error.localizedDescription)")
     }
   }
   return share
@@ -287,31 +302,35 @@ func initializeUUID(_ uuidString: String) throws -> UUID {
     return uuid
   }
 
-  throw RuntimeError.error(withMessage: "[react-native-healthkit] Got invalid UUID: \(uuidString)")
+  throw runtimeErrorWithPrefix("Got invalid UUID: \(uuidString)")
 }
 
 func sampleTypesFromArray(typeIdentifiers: [SampleTypeIdentifier]) -> Set<HKSampleType> {
-  return Set(typeIdentifiers.compactMap { typeIdentifier in
-    do {
-      let sampleType = try sampleTypeFrom(sampleTypeIdentifier: typeIdentifier)
-      return sampleType
-    } catch {
-      print(error.localizedDescription)
-    }
-    return nil
-  })
+  return Set(
+    typeIdentifiers.compactMap { typeIdentifier in
+      do {
+        let sampleType = try sampleTypeFrom(sampleTypeIdentifier: typeIdentifier)
+        return sampleType
+      } catch {
+        warnWithPrefix("sampleTypesFromArray: \(error.localizedDescription)")
+      }
+      return nil
+    })
 }
 
-func sampleTypesFromArray(typeIdentifiersWriteable: [SampleTypeIdentifierWriteable]) -> Set<HKSampleType> {
-  return Set(typeIdentifiersWriteable.compactMap { typeIdentifier in
-    do {
-      let sampleType = try sampleTypeFrom(sampleTypeIdentifierWriteable: typeIdentifier)
-      return sampleType
-    } catch {
-      print(error.localizedDescription)
-    }
-    return nil
-  })
+func sampleTypesFromArray(typeIdentifiersWriteable: [SampleTypeIdentifierWriteable]) -> Set<
+  HKSampleType
+> {
+  return Set(
+    typeIdentifiersWriteable.compactMap { typeIdentifier in
+      do {
+        let sampleType = try sampleTypeFrom(sampleTypeIdentifierWriteable: typeIdentifier)
+        return sampleType
+      } catch {
+        warnWithPrefix("sampleTypesFromArray: \(error.localizedDescription)")
+      }
+      return nil
+    })
 }
 
 // objectType is wider than sampleType, so it uses it under the hood
@@ -332,7 +351,8 @@ func objectTypeFrom(objectTypeIdentifier: ObjectTypeIdentifier) throws -> HKObje
     return HKObjectType.activitySummaryType()
   }
 
-  throw RuntimeError.error(withMessage: "[react-native-healthkit] Failed initializing unrecognized objectType identifier " + typeIdentifier)
+  throw runtimeErrorWithPrefix(
+    "Failed initializing unrecognized objectType identifier " + typeIdentifier)
 }
 
 func hkStatisticsOptionsFromOptions(_ options: NSArray) -> HKStatisticsOptions {
@@ -374,7 +394,7 @@ func componentsFromInterval(_ interval: NSDictionary) -> DateComponents {
     "hour": \.hour,
     "day": \.day,
     "month": \.month,
-    "year": \.year
+    "year": \.year,
   ]
 
   var intervalComponents = DateComponents()
@@ -394,7 +414,7 @@ func parseWorkoutConfiguration(_ config: WorkoutConfiguration) -> HKWorkoutConfi
   }
 
   if let locationTypeRaw = config.locationType,
-     let locationType = HKWorkoutSessionLocationType(rawValue: Int(locationTypeRaw.rawValue)) {
+    let locationType = HKWorkoutSessionLocationType(rawValue: Int(locationTypeRaw.rawValue)) {
     configuration.locationType = locationType
   }
 
@@ -407,4 +427,12 @@ func anyMapToDictionary(_ anyMap: AnyMap) -> [String: Any] {
     dict[key] = getAnyMapValue(anyMap, key: key)
   }
   return dict
+}
+
+func runtimeErrorWithPrefix(_ withMessage: String) -> Error {
+  return RuntimeError.error(withMessage: "[react-native-healthkit] \(withMessage)")
+}
+
+func warnWithPrefix(_ withMessage: String) {
+  print("[react-native-healthkit] \(withMessage)")
 }

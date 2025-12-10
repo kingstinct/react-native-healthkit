@@ -3,44 +3,77 @@ import NitroModules
 
 // MARK: - Helpers
 
-private func serializeSymptomsStatus(_ symptoms: HKElectrocardiogram.SymptomsStatus) -> ElectrocardiogramSymptomsStatus {
+private func serializeSymptomsStatus(_ symptoms: HKElectrocardiogram.SymptomsStatus)
+  -> ElectrocardiogramSymptomsStatus {
   switch symptoms {
-  case .notSet:  return ElectrocardiogramSymptomsStatus(fromString: "notSet")!
-  case .none:    return ElectrocardiogramSymptomsStatus(fromString: "none")!
+  case .notSet: return ElectrocardiogramSymptomsStatus(fromString: "notSet")!
+  case .none: return ElectrocardiogramSymptomsStatus(fromString: "none")!
   case .present: return ElectrocardiogramSymptomsStatus(fromString: "present")!
   @unknown default: return ElectrocardiogramSymptomsStatus(fromString: "notSet")!
   }
 }
 
-private func serializeECGSample(sample: HKElectrocardiogram, includeVoltages: Bool) async throws -> ElectrocardiogramSample {
+private func serializeECGSample(sample: HKElectrocardiogram, includeVoltages: Bool) async throws
+  -> ElectrocardiogramSample {
   // Convert quantities
   let bpmUnit = HKUnit.count().unitDivided(by: .minute())
-  let hzUnit  = HKUnit.hertz()
-  let avgHR   = sample.averageHeartRate?.doubleValue(for: bpmUnit)
-  let freqHz  = sample.samplingFrequency?.doubleValue(for: hzUnit)
+  let hzUnit = HKUnit.hertz()
+  let avgHR = sample.averageHeartRate?.doubleValue(for: bpmUnit)
+  let freqHz = sample.samplingFrequency?.doubleValue(for: hzUnit)
 
   // Optional: waveform
-  let voltages: [ElectrocardiogramVoltage]? = includeVoltages
-  ? try await getECGVoltages(sample: sample)
-  : nil
-
-  // Algorithm version is stored in metadata under HKAppleECGAlgorithmVersion
-  let algorithmVersion = sample.metadata?[HKMetadataKeyAlgorithmVersion] as? String
+  let voltages: [ElectrocardiogramVoltage]? =
+    includeVoltages
+    ? try await getECGVoltages(sample: sample)
+    : nil
 
   return ElectrocardiogramSample(
-    uuid: sample.uuid.uuidString,
-    device: serializeDevice(hkDevice: sample.device),
-    startDate: sample.startDate,
-    endDate: sample.endDate,
     classification: serializeClassification(sample.classification),
     symptomsStatus: serializeSymptomsStatus(sample.symptomsStatus),
     averageHeartRateBpm: avgHR,
     samplingFrequencyHz: freqHz,
     numberOfVoltageMeasurements: Double(sample.numberOfVoltageMeasurements),
-    algorithmVersion: algorithmVersion,
     voltages: voltages,
+    sampleType: serializeSampleType(sample.sampleType),
+    startDate: sample.startDate,
+    endDate: sample.endDate,
+    hasUndeterminedDuration: sample.hasUndeterminedDuration,
+
+    metadataWeatherCondition: serializeWeatherCondition(
+      sample.metadata?[HKMetadataKeyWeatherCondition] as? HKWeatherCondition),
+    metadataWeatherHumidity: serializeUnknownQuantityTyped(
+      quantity: sample.metadata?[HKMetadataKeyWeatherHumidity] as? HKQuantity),
+    metadataWeatherTemperature: serializeUnknownQuantityTyped(
+      quantity: sample.metadata?[HKMetadataKeyWeatherTemperature] as? HKQuantity),
+    metadataInsulinDeliveryReason: serializeInsulinDeliveryReason(
+      sample.metadata?[HKMetadataKeyInsulinDeliveryReason] as? HKInsulinDeliveryReason),
+    metadataHeartRateMotionContext: serializeHeartRateMotionContext(
+      sample.metadata?[HKMetadataKeyHeartRateMotionContext] as? HKHeartRateMotionContext),
+
+    uuid: sample.uuid.uuidString,
+    sourceRevision: serializeSourceRevision(sample.sourceRevision),
+    device: serializeDevice(hkDevice: sample.device),
     metadata: serializeMetadata(sample.metadata),
-    sourceRevision: serializeSourceRevision(sample.sourceRevision)
+
+    metadataExternalUUID: sample.metadata?[HKMetadataKeyExternalUUID] as? String,
+    metadataTimeZone: sample.metadata?[HKMetadataKeyTimeZone] as? String,
+    metadataWasUserEntered: sample.metadata?[HKMetadataKeyWasUserEntered] as? Bool,
+    metadataDeviceSerialNumber: sample.metadata?[HKMetadataKeyDeviceSerialNumber] as? String,
+    metadataUdiDeviceIdentifier: sample.metadata?[HKMetadataKeyUDIDeviceIdentifier] as? String,
+    metadataUdiProductionIdentifier: sample.metadata?[HKMetadataKeyUDIProductionIdentifier]
+      as? String,
+    metadataDigitalSignature: sample.metadata?[HKMetadataKeyDigitalSignature] as? String,
+    metadataDeviceName: sample.metadata?[HKMetadataKeyDeviceName] as? String,
+    metadataDeviceManufacturerName: sample.metadata?[HKMetadataKeyDeviceManufacturerName]
+      as? String,
+    metadataSyncIdentifier: sample.metadata?[HKMetadataKeySyncIdentifier] as? String,
+    metadataSyncVersion: sample.metadata?[HKMetadataKeySyncVersion] as? Double,
+    metadataWasTakenInLab: sample.metadata?[HKMetadataKeyWasTakenInLab] as? Bool,
+    metadataReferenceRangeLowerLimit: sample.metadata?[HKMetadataKeyReferenceRangeLowerLimit]
+      as? Double,
+    metadataReferenceRangeUpperLimit: sample.metadata?[HKMetadataKeyReferenceRangeUpperLimit]
+      as? Double,
+    metadataAlgorithmVersion: sample.metadata?[HKMetadataKeyAlgorithmVersion] as? Double
   )
 }
 
@@ -69,24 +102,30 @@ func getECGVoltages(sample: HKElectrocardiogram) async throws -> [Electrocardiog
       case .done:
         continuation.resume(returning: all)
       @unknown default:
-        continuation.resume(throwing: RuntimeError.error(withMessage: "HKElectrocardiogramQuery received unknown result type"))
+        continuation.resume(
+          throwing: runtimeErrorWithPrefix("HKElectrocardiogramQuery received unknown result type"))
       }
     }
     store.execute(q)
   }
 }
 
-func serializeClassification(_ classification: HKElectrocardiogram.Classification) -> ElectrocardiogramClassification {
+func serializeClassification(_ classification: HKElectrocardiogram.Classification)
+  -> ElectrocardiogramClassification {
   switch classification {
-  case .notSet:                      return ElectrocardiogramClassification(fromString: "notSet")!
-  case .sinusRhythm:                 return ElectrocardiogramClassification(fromString: "sinusRhythm")!
-  case .atrialFibrillation:          return ElectrocardiogramClassification(fromString: "atrialFibrillation")!
-  case .inconclusiveLowHeartRate:    return ElectrocardiogramClassification(fromString: "inconclusiveLowHeartRate")!
-  case .inconclusiveHighHeartRate:   return ElectrocardiogramClassification(fromString: "inconclusiveHighHeartRate")!
-  case .inconclusivePoorReading:     return ElectrocardiogramClassification(fromString: "inconclusivePoorReading")!
-  case .inconclusiveOther:           return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
-  case .unrecognized:                return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
-  @unknown default:                  return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
+  case .notSet: return ElectrocardiogramClassification(fromString: "notSet")!
+  case .sinusRhythm: return ElectrocardiogramClassification(fromString: "sinusRhythm")!
+  case .atrialFibrillation:
+    return ElectrocardiogramClassification(fromString: "atrialFibrillation")!
+  case .inconclusiveLowHeartRate:
+    return ElectrocardiogramClassification(fromString: "inconclusiveLowHeartRate")!
+  case .inconclusiveHighHeartRate:
+    return ElectrocardiogramClassification(fromString: "inconclusiveHighHeartRate")!
+  case .inconclusivePoorReading:
+    return ElectrocardiogramClassification(fromString: "inconclusivePoorReading")!
+  case .inconclusiveOther: return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
+  case .unrecognized: return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
+  @unknown default: return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
   }
 }
 

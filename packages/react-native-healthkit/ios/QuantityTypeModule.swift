@@ -136,7 +136,7 @@ func handleHKNoDataOrThrow<T>(
 ) {
   let nsError = error as NSError
   if nsError.domain == HKError.errorDomain,
-     nsError.code == HKError.Code.errorNoData.rawValue {
+    nsError.code == HKError.Code.errorNoData.rawValue {
     continuation.resume(returning: noDataFallback())
   } else {
     continuation.resume(throwing: error)
@@ -147,11 +147,13 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   func aggregationStyle(identifier: QuantityTypeIdentifier) throws -> AggregationStyle {
     let sampleType = try initializeQuantityType(identifier.stringValue)
 
-    if let aggregationStyle = AggregationStyle(rawValue: Int32(sampleType.aggregationStyle.rawValue)) {
+    if let aggregationStyle = AggregationStyle(
+      rawValue: Int32(sampleType.aggregationStyle.rawValue)) {
       return aggregationStyle
     }
 
-    throw RuntimeError.error(withMessage: "Got unknown aggregation style value: \(sampleType.aggregationStyle.rawValue)")
+    throw runtimeErrorWithPrefix(
+      "Got unknown aggregation style value: \(sampleType.aggregationStyle.rawValue)")
   }
 
   func isQuantityCompatibleWithUnit(identifier: QuantityTypeIdentifier, unit: String) throws -> Bool {
@@ -160,7 +162,10 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     return sampleType.is(compatibleWith: HKUnit.init(from: unit))
   }
 
-  func queryStatisticsForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], options: StatisticsQueryOptions?) -> Promise<QueryStatisticsResponse> {
+  func queryStatisticsForQuantity(
+    identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions],
+    options: StatisticsQueryOptions?
+  ) -> Promise<QueryStatisticsResponse> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
       let predicate = createPredicateForSamples(options?.filter)
@@ -194,7 +199,10 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     }
   }
 
-  func queryStatisticsCollectionForQuantity(identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], anchorDate: Date, intervalComponents: IntervalComponents, options: StatisticsQueryOptions?) -> Promise<[QueryStatisticsResponse]> {
+  func queryStatisticsCollectionForQuantity(
+    identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], anchorDate: Date,
+    intervalComponents: IntervalComponents, options: StatisticsQueryOptions?
+  ) -> Promise<[QueryStatisticsResponse]> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
 
@@ -269,7 +277,9 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     }
   }
 
-  func queryQuantitySamplesWithAnchor(identifier: QuantityTypeIdentifier, options: QueryOptionsWithAnchorAndUnit) -> Promise<QuantitySamplesWithAnchorResponse> {
+  func queryQuantitySamplesWithAnchor(
+    identifier: QuantityTypeIdentifier, options: QueryOptionsWithAnchorAndUnit
+  ) -> Promise<QuantitySamplesWithAnchorResponse> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
       let predicate = createPredicateForSamples(options.filter)
@@ -294,7 +304,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
               unit: unit
             )
           } catch {
-            print(error.localizedDescription)
+            warnWithPrefix("queryQuantitySamplesWithAnchor: \(error.localizedDescription)")
           }
         }
         return nil
@@ -308,7 +318,10 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     }
   }
 
-  func saveQuantitySample(identifier: QuantityTypeIdentifier, unit: String, value: Double, start: Date, end: Date, metadata: AnyMap) -> Promise<Bool> {
+  func saveQuantitySample(
+    identifier: QuantityTypeIdentifier, unit: String, value: Double, start: Date, end: Date,
+    metadata: AnyMap
+  ) -> Promise<Bool> {
     return Promise.async {
       let unit = HKUnit.init(from: unit)
       let quantity = HKQuantity.init(unit: unit, doubleValue: value)
@@ -328,7 +341,9 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     }
   }
 
-  func queryQuantitySamples(identifier: QuantityTypeIdentifier, options: QueryOptionsWithSortOrderAndUnit) -> Promise<[QuantitySample]> {
+  func queryQuantitySamples(
+    identifier: QuantityTypeIdentifier, options: QueryOptionsWithSortOrderAndUnit
+  ) -> Promise<[QuantitySample]> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
       let unit = try await getUnitToUse(unitOverride: options.unit, quantityType: quantityType)
@@ -349,7 +364,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
 
             return serialized
           } catch {
-            print(error.localizedDescription)
+            warnWithPrefix("Error serializing quantity sample: \(error.localizedDescription)")
           }
         }
         return nil

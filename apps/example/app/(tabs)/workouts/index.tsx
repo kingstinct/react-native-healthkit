@@ -54,9 +54,6 @@ export default function WorkoutsScreen() {
         })
       setQueryTime(Date.now() - startedAt)
 
-      console.log(workouts[0])
-
-      console.log(workouts[0]?.sourceRevision)
       setWorkouts(workouts.map((w) => w))
       setAnchor(newAnchor)
       setDeletedSamples(deletedSamples.map((d) => d.uuid))
@@ -68,6 +65,8 @@ export default function WorkoutsScreen() {
   useEffect(() => {
     queryWorkoutSamples()
   }, [queryWorkoutSamples])
+
+  console.log(JSON.stringify(workouts, null, 2))
 
   return (
     <Host style={{ flex: 1 }}>
@@ -107,7 +106,6 @@ export default function WorkoutsScreen() {
                   something: 'dsfdfg',
                 },
               )
-              console.log('Created workout:', workout)
             }}
           >
             Create workout

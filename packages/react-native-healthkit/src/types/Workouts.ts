@@ -1,11 +1,8 @@
-import type { AnyMap } from 'react-native-nitro-modules'
 import type { WorkoutProxy } from '../specs/WorkoutProxy.nitro'
-import type { ComparisonPredicateOperator } from '../types'
-import type { FilterForSamplesBase } from '.'
-import type { Device } from './Device'
+import type { BaseSample, ComparisonPredicateOperator } from '../types'
 import type { Quantity } from './QuantityType'
-import type { DeletedSample, GenericMetadata } from './Shared'
-import type { SourceRevision } from './Source'
+import type { FilterForSamplesBase } from './QueryOptions'
+import type { DeletedSample } from './Shared'
 
 export enum WorkoutActivityType {
   americanFootball = 1,
@@ -92,47 +89,6 @@ export enum WorkoutActivityType {
   transition = 83,
   underwaterDiving = 84,
   other = 3000,
-}
-
-// documented at https://developer.apple.com/documentation/healthkit/hkweathercondition
-export enum WeatherCondition {
-  none = 0,
-  clear = 1,
-  fair = 2,
-  partlyCloudy = 3,
-  mostlyCloudy = 4,
-  cloudy = 5,
-  foggy = 6,
-  haze = 7,
-  windy = 8,
-  blustery = 9,
-  smoky = 10,
-  dust = 11,
-  snow = 12,
-  hail = 13,
-  sleet = 14,
-  freezingDrizzle = 15,
-  freezingRain = 16,
-  mixedRainAndHail = 17,
-  mixedRainAndSnow = 18,
-  mixedRainAndSleet = 19,
-  mixedSnowAndSleet = 20,
-  drizzle = 21,
-  scatteredShowers = 22,
-  showers = 23,
-  thunderstorms = 24,
-  tropicalStorm = 25,
-  hurricane = 26,
-  tornado = 27,
-}
-
-export interface WorkoutMetadata extends GenericMetadata {
-  readonly HKWeatherCondition?: WeatherCondition
-  readonly HKWeatherHumidity?: Quantity
-  readonly HKWeatherTemperature?: Quantity
-  readonly HKAverageMETs?: Quantity
-  readonly HKElevationAscended?: Quantity
-  readonly HKIndoorWorkout?: boolean
 }
 
 export interface WorkoutEvent {
@@ -240,15 +196,16 @@ export interface WorkoutTotals {
   readonly energyBurned?: number
 }
 
-export interface WorkoutSample {
-  readonly uuid: string
-  readonly device?: Device
+export interface WorkoutSample extends BaseSample {
   readonly workoutActivityType: WorkoutActivityType
   readonly duration: Quantity
-  readonly startDate: Date
-  readonly endDate: Date
-  readonly metadata?: AnyMap
-  readonly sourceRevision?: SourceRevision
   readonly events?: readonly WorkoutEvent[]
   readonly activities?: readonly WorkoutActivity[]
+
+  readonly metadataAverageMETs?: Quantity
+  readonly metadataElevationAscended?: Quantity
+  readonly metadataElevationDescended?: Quantity
+  readonly metadataIndoorWorkout?: boolean
+  readonly metadataAverageSpeed?: Quantity
+  readonly metadataMaximumSpeed?: Quantity
 }

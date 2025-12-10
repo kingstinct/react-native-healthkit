@@ -1,6 +1,8 @@
 import {
   AuthorizationRequestStatus,
+  type CategoryTypeIdentifier,
   getRequestStatusForAuthorization,
+  type OnCategorySamplesCallback,
   type OnChangeCallbackArgs,
   type OnQuantitySamplesCallback,
   type QuantityTypeIdentifier,
@@ -33,7 +35,12 @@ export const subscriptionEvents = atomWithMMKV<SubscriptionEvent[]>(
   [],
 )
 
-const callback = (args: OnChangeCallbackArgs | OnQuantitySamplesCallback) => {
+const callback = (
+  args:
+    | OnChangeCallbackArgs
+    | OnQuantitySamplesCallback
+    | OnCategorySamplesCallback<CategoryTypeIdentifier>,
+) => {
   const { typeIdentifier } = args
   if ('errorMessage' in args && args.errorMessage) {
     if (AppState.currentState === 'active') {
@@ -54,10 +61,28 @@ const callback = (args: OnChangeCallbackArgs | OnQuantitySamplesCallback) => {
   if (AppState.currentState === 'active') {
     impactAsync(ImpactFeedbackStyle.Light)
   } else {
+    if ('samples' in args) {
+      const firstSample = args.samples[0]
+      if (firstSample) {
+        const body =
+          'quantity' in firstSample
+            ? `${firstSample.quantity} ${firstSample.unit}`
+            : `Value: ${firstSample.value}`
+
+        return scheduleNotificationAsync({
+          content: {
+            title: `Got a new ${typeIdentifier}`,
+            body: body,
+          },
+          trigger: null,
+        })
+      }
+    }
+
     scheduleNotificationAsync({
       content: {
-        title: `Got a new ${typeIdentifier} update!`,
-        body: 'samples' in args ? `+${args.samples.length} samples` : '',
+        title: `Got a new ${typeIdentifier}`,
+        body: '',
       },
       trigger: null,
     })

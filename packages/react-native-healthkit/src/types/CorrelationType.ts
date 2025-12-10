@@ -1,7 +1,6 @@
-import type { AnyMap } from 'react-native-nitro-modules'
 import type { CategorySample, CategorySampleForSaving } from './CategoryType'
 import type { QuantitySample, QuantitySampleForSaving } from './QuantitySample'
-import type { DeletedSample, GenericMetadata } from './Shared'
+import type { BaseSample, DeletedSample } from './Shared'
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcorrelationtypeidentifier Apple Docs }
@@ -12,22 +11,12 @@ export type CorrelationTypeIdentifier =
 
 type CorrelationObject = CategorySample | QuantitySample
 
-export interface CorrelationSample {
-  readonly uuid: string
+export interface CorrelationSample extends BaseSample {
   readonly correlationType: CorrelationTypeIdentifier
   readonly objects: readonly CorrelationObject[]
-  readonly metadata: AnyMap
-  readonly startDate: Date
-  readonly endDate: Date
-}
 
-export type MetadataMapperForCorrelationIdentifier<
-  TCorrelationTypeIdentifier = CorrelationTypeIdentifier,
-> = TCorrelationTypeIdentifier extends 'CorrelationTypeIdentifierFood'
-  ? GenericMetadata & {
-      readonly HKFoodType?: string
-    }
-  : GenericMetadata
+  readonly metadataFoodType?: string
+}
 
 export type SampleForSaving = CategorySampleForSaving | QuantitySampleForSaving
 

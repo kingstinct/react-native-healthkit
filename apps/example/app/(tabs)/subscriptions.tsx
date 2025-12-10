@@ -24,15 +24,15 @@ const transformIdentifierToName = (identifier: SampleTypeIdentifier) => {
 }
 
 const Subscriptions = () => {
-  const [subscriptionEventss] = useAtom(subscriptionEvents)
+  const [events] = useAtom(subscriptionEvents)
   const [eventsWithAppState] = useAtom(appStateEvents)
 
   const allEvents = useMemo(
     () =>
-      [...subscriptionEventss, ...eventsWithAppState].sort(
+      [...events, ...eventsWithAppState].sort(
         (a, b) => b.timestamp - a.timestamp,
       ),
-    [subscriptionEventss, eventsWithAppState],
+    [events, eventsWithAppState],
   )
 
   useEffect(() => {

@@ -64,7 +64,7 @@ func getRouteLocations(
 
       guard let currentLocationBatch = locationsOrNil else {
         return continuation.resume(
-          throwing: RuntimeError.error(withMessage: "Empty response")
+          throwing: runtimeErrorWithPrefix("Unexpected empty response")
         )
       }
 
@@ -113,7 +113,7 @@ func getSerializedWorkoutLocations(
 
   var allRoutes: [WorkoutRoute] = []
   guard let _routes = routes else {
-    throw RuntimeError.error(withMessage: "Unexpected empty response")
+    throw runtimeErrorWithPrefix("Unexpected empty response")
   }
   for route in _routes {
     let routeMetadata = serializeMetadata(
@@ -135,12 +135,14 @@ func getSerializedWorkoutLocations(
     allRoutes.append(
       WorkoutRoute(
         locations: routeLocations,
-        HKMetadataKeySyncIdentifier: routeMetadata.isString(key: "HKMetadataKeySyncIdentifier") ?  routeMetadata.getString(
-          key: "HKMetadataKeySyncIdentifier"
-        ) : nil,
-        HKMetadataKeySyncVersion: routeMetadata.isDouble(key: "HKMetadataKeySyncVersion") ? routeMetadata.getDouble(
-          key: "HKMetadataKeySyncVersion"
-        ) : nil
+        HKMetadataKeySyncIdentifier: routeMetadata.isString(key: "HKMetadataKeySyncIdentifier")
+          ? routeMetadata.getString(
+            key: "HKMetadataKeySyncIdentifier"
+          ) : nil,
+        HKMetadataKeySyncVersion: routeMetadata.isDouble(key: "HKMetadataKeySyncVersion")
+          ? routeMetadata.getDouble(
+            key: "HKMetadataKeySyncVersion"
+          ) : nil
       )
     )
   }
@@ -173,9 +175,10 @@ func saveWorkoutRouteInternal(
 }
 
 class WorkoutProxy: HybridWorkoutProxySpec {
-
   // Return a Promise instead of directly returning the value; wrap async logic.
-  func getStatistic(quantityType: QuantityTypeIdentifier, unitOverride: String?) throws -> Promise<QueryStatisticsResponse?> {
+  func getStatistic(quantityType: QuantityTypeIdentifier, unitOverride: String?) throws -> Promise<
+    QueryStatisticsResponse?
+  > {
     return Promise.async {
       if #available(iOS 16.0, *) {
         let type = try initializeQuantityType(quantityType.stringValue)
@@ -205,34 +208,58 @@ class WorkoutProxy: HybridWorkoutProxySpec {
 
   func toJSON(key: String?) throws -> WorkoutSample {
     if let key = key, !key.isEmpty {
-      print("WorkoutProxy does not support toJSON with key: \(key)")
+      warnWithPrefix("WorkoutProxy does not support toJSON with key: \(key)")
     }
 
     return WorkoutSample(
-      uuid: self.uuid,
-      device: self.device,
       workoutActivityType: self.workoutActivityType,
       duration: self.duration,
+      events: self.events,
+      activities: self.activities,
+      metadataAverageMETs: self.metadataAverageMETs,
+      metadataElevationAscended: self.metadataElevationAscended,
+      metadataElevationDescended: self.metadataElevationDescended,
+      metadataIndoorWorkout: self.metadataIndoorWorkout,
+      metadataAverageSpeed: self.metadataAverageSpeed,
+      metadataMaximumSpeed: self.metadataMaximumSpeed,
+      sampleType: self.sampleType,
       startDate: self.startDate,
       endDate: self.endDate,
-      metadata: self.metadata,
+      hasUndeterminedDuration: self.hasUndeterminedDuration,
+      metadataWeatherCondition: self.metadataWeatherCondition,
+      metadataWeatherHumidity: self.metadataWeatherHumidity,
+      metadataWeatherTemperature: self.metadataWeatherTemperature,
+      metadataInsulinDeliveryReason: self.metadataInsulinDeliveryReason,
+      metadataHeartRateMotionContext: self.metadataHeartRateMotionContext,
+      uuid: self.uuid,
       sourceRevision: self.sourceRevision,
-      events: self.events,
-      activities: self.activities
+      device: self.device,
+      metadata: self.metadata,
+      metadataExternalUUID: self.metadataExternalUUID,
+      metadataTimeZone: self.metadataTimeZone,
+      metadataWasUserEntered: self.metadataWasUserEntered,
+      metadataDeviceSerialNumber: self.metadataDeviceSerialNumber,
+      metadataUdiDeviceIdentifier: self.metadataUdiDeviceIdentifier,
+      metadataUdiProductionIdentifier: self.metadataUdiProductionIdentifier,
+      metadataDigitalSignature: self.metadataDigitalSignature,
+      metadataDeviceName: self.metadataDeviceName,
+      metadataDeviceManufacturerName: self.metadataDeviceManufacturerName,
+      metadataSyncIdentifier: self.metadataSyncIdentifier,
+      metadataSyncVersion: self.metadataSyncVersion,
+      metadataWasTakenInLab: self.metadataWasTakenInLab,
+      metadataReferenceRangeLowerLimit: self.metadataReferenceRangeLowerLimit,
+      metadataReferenceRangeUpperLimit: self.metadataReferenceRangeUpperLimit,
+      metadataAlgorithmVersion: self.metadataAlgorithmVersion
     )
   }
 
   var workoutPredicate: NSPredicate {
-    get {
-      let predicate = HKQuery.predicateForObjects(from: self.workout)
-      return predicate
-    }
+    let predicate = HKQuery.predicateForObjects(from: self.workout)
+    return predicate
   }
 
   var uuid: String {
-    get {
-      return workout.uuid.uuidString
-    }
+    return workout.uuid.uuidString
   }
 
   var device: Device? {
@@ -252,30 +279,28 @@ class WorkoutProxy: HybridWorkoutProxySpec {
   }
 
   var workoutActivityType: WorkoutActivityType {
-    get {
-      if let activityType = WorkoutActivityType.init(
-        rawValue: Int32(workout.workoutActivityType.rawValue)
-      ) {
-        return activityType
-      }
-
-      print("Unknown workout activity type: \(workout.workoutActivityType.rawValue), falling back to 'other'")
-
-      return WorkoutActivityType.other
+    if let activityType = WorkoutActivityType.init(
+      rawValue: Int32(workout.workoutActivityType.rawValue)
+    ) {
+      return activityType
     }
+
+    warnWithPrefix(
+      "Unknown workoutActivityType with rawValue: \(workout.workoutActivityType.rawValue), falling back to 'other'"
+    )
+
+    return WorkoutActivityType.other
   }
 
   var duration: Quantity {
-    get {
-      let quantity = HKQuantity(unit: .second(), doubleValue: workout.duration)
+    let quantity = HKQuantity(unit: .second(), doubleValue: workout.duration)
 
-      let duration = serializeQuantityTyped(
-        unit: .second(),
-        quantity: quantity
-      )
+    let duration = serializeQuantityTyped(
+      unit: .second(),
+      quantity: quantity
+    )
 
-      return duration
-    }
+    return duration
   }
 
   var totalDistance: Quantity? {
@@ -289,21 +314,17 @@ class WorkoutProxy: HybridWorkoutProxySpec {
   }
 
   var totalEnergyBurned: Quantity? {
-    get {
-      return serializeQuantityTyped(
-        unit: HKUnit.kilocalorie(),
-        quantityNullable: workout.totalEnergyBurned
-      )
-    }
+    return serializeQuantityTyped(
+      unit: HKUnit.kilocalorie(),
+      quantityNullable: workout.totalEnergyBurned
+    )
   }
 
   var totalSwimmingStrokeCount: Quantity? {
-    get {
     return serializeQuantityTyped(
       unit: .count(),
       quantityNullable: workout.totalSwimmingStrokeCount
     )
-    }
 
   }
 
@@ -320,27 +341,148 @@ class WorkoutProxy: HybridWorkoutProxySpec {
   }
 
   var startDate: Date {
-    get {
-      return workout.startDate
-    }
+    return workout.startDate
   }
 
   var endDate: Date {
-    get {
-      return workout.endDate
-    }
+    return workout.endDate
   }
 
-  var metadata: AnyMap? {
-    get {
-      return serializeMetadata(workout.metadata)
-    }
+  var metadata: AnyMap {
+    return serializeMetadata(workout.metadata)
   }
 
-  var sourceRevision: SourceRevision? {
-    get {
-      return serializeSourceRevision(workout.sourceRevision)
+  var sourceRevision: SourceRevision {
+    return serializeSourceRevision(workout.sourceRevision)
+  }
+
+  // BaseSample properties
+  var sampleType: SampleType {
+    return serializeSampleType(workout.sampleType)
+  }
+
+  var hasUndeterminedDuration: Bool {
+    return workout.hasUndeterminedDuration
+  }
+
+  // Weather metadata
+  var metadataWeatherCondition: WeatherCondition? {
+    return serializeWeatherCondition(
+      workout.metadata?[HKMetadataKeyWeatherCondition] as? HKWeatherCondition)
+  }
+
+  var metadataWeatherHumidity: Quantity? {
+    return serializeUnknownQuantityTyped(
+      quantity: workout.metadata?[HKMetadataKeyWeatherHumidity] as? HKQuantity)
+  }
+
+  var metadataWeatherTemperature: Quantity? {
+    return serializeUnknownQuantityTyped(
+      quantity: workout.metadata?[HKMetadataKeyWeatherTemperature] as? HKQuantity)
+  }
+
+  var metadataInsulinDeliveryReason: InsulinDeliveryReason? {
+    return serializeInsulinDeliveryReason(
+      workout.metadata?[HKMetadataKeyInsulinDeliveryReason] as? HKInsulinDeliveryReason)
+  }
+
+  var metadataHeartRateMotionContext: HeartRateMotionContext? {
+    return serializeHeartRateMotionContext(
+      workout.metadata?[HKMetadataKeyHeartRateMotionContext] as? HKHeartRateMotionContext)
+  }
+
+  // Workout-specific metadata
+  var metadataAverageMETs: Quantity? {
+    return serializeUnknownQuantityTyped(
+      quantity: workout.metadata?[HKMetadataKeyAverageMETs] as? HKQuantity)
+  }
+
+  var metadataElevationAscended: Quantity? {
+    return serializeUnknownQuantityTyped(
+      quantity: workout.metadata?[HKMetadataKeyElevationAscended] as? HKQuantity)
+  }
+
+  var metadataElevationDescended: Quantity? {
+    if #available(iOS 18.0, *) {
+      return serializeUnknownQuantityTyped(
+        quantity: workout.metadata?[HKMetadataKeyElevationDescended] as? HKQuantity)
     }
+    return nil
+  }
+
+  var metadataIndoorWorkout: Bool? {
+    return workout.metadata?[HKMetadataKeyIndoorWorkout] as? Bool
+  }
+
+  var metadataAverageSpeed: Quantity? {
+    return serializeUnknownQuantityTyped(
+      quantity: workout.metadata?[HKMetadataKeyAverageSpeed] as? HKQuantity)
+  }
+
+  var metadataMaximumSpeed: Quantity? {
+    return serializeUnknownQuantityTyped(
+      quantity: workout.metadata?[HKMetadataKeyMaximumSpeed] as? HKQuantity)
+  }
+
+  // BaseObject metadata
+  var metadataExternalUUID: String? {
+    return workout.metadata?[HKMetadataKeyExternalUUID] as? String
+  }
+
+  var metadataTimeZone: String? {
+    return workout.metadata?[HKMetadataKeyTimeZone] as? String
+  }
+
+  var metadataWasUserEntered: Bool? {
+    return workout.metadata?[HKMetadataKeyWasUserEntered] as? Bool
+  }
+
+  var metadataDeviceSerialNumber: String? {
+    return workout.metadata?[HKMetadataKeyDeviceSerialNumber] as? String
+  }
+
+  var metadataUdiDeviceIdentifier: String? {
+    return workout.metadata?[HKMetadataKeyUDIDeviceIdentifier] as? String
+  }
+
+  var metadataUdiProductionIdentifier: String? {
+    return workout.metadata?[HKMetadataKeyUDIProductionIdentifier] as? String
+  }
+
+  var metadataDigitalSignature: String? {
+    return workout.metadata?[HKMetadataKeyDigitalSignature] as? String
+  }
+
+  var metadataDeviceName: String? {
+    return workout.metadata?[HKMetadataKeyDeviceName] as? String
+  }
+
+  var metadataDeviceManufacturerName: String? {
+    return workout.metadata?[HKMetadataKeyDeviceManufacturerName] as? String
+  }
+
+  var metadataSyncIdentifier: String? {
+    return workout.metadata?[HKMetadataKeySyncIdentifier] as? String
+  }
+
+  var metadataSyncVersion: Double? {
+    return workout.metadata?[HKMetadataKeySyncVersion] as? Double
+  }
+
+  var metadataWasTakenInLab: Bool? {
+    return workout.metadata?[HKMetadataKeyWasTakenInLab] as? Bool
+  }
+
+  var metadataReferenceRangeLowerLimit: Double? {
+    return workout.metadata?[HKMetadataKeyReferenceRangeLowerLimit] as? Double
+  }
+
+  var metadataReferenceRangeUpperLimit: Double? {
+    return workout.metadata?[HKMetadataKeyReferenceRangeUpperLimit] as? Double
+  }
+
+  var metadataAlgorithmVersion: Double? {
+    return workout.metadata?[HKMetadataKeyAlgorithmVersion] as? Double
   }
 
   var events: [WorkoutEvent]? {
@@ -355,7 +497,7 @@ class WorkoutProxy: HybridWorkoutProxySpec {
             endDate: event.dateInterval.end
           )
         }
-        print(
+        warnWithPrefix(
           "Failed to initialize WorkoutEventType with rawValue: \(event.type.rawValue)"
         )
         return nil
@@ -391,9 +533,8 @@ class WorkoutProxy: HybridWorkoutProxySpec {
       if #available(iOS 17.0.0, *) {
         return try await getWorkoutPlanInternal(workout: self.workout)
       } else {
-        throw RuntimeError.error(
-          withMessage: "Workout plans are only available on iOS 17.0 or later"
-        )
+        warnWithPrefix("Workout plans are only available on iOS 17.0 or later")
+        return nil
       }
     }
   }

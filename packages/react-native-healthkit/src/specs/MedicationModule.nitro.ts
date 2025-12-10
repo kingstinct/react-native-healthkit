@@ -1,5 +1,10 @@
 import type { AnyMap, HybridObject } from 'react-native-nitro-modules'
-import type { DeletedSample, Device, SourceRevision } from '../types'
+import type {
+  BaseSample,
+  DeletedSample,
+  Device,
+  SourceRevision,
+} from '../types'
 import type {
   QueryOptionsWithAnchor,
   QueryOptionsWithSortOrder,
@@ -104,14 +109,7 @@ export interface UserAnnotatedMedication {
   medication: MedicationConcept
 }
 
-export interface MedicationDoseEvent {
-  readonly uuid: string
-  readonly device?: Device
-  readonly startDate: Date
-  readonly endDate: Date
-  readonly metadata: AnyMap
-  readonly sourceRevision?: SourceRevision
-
+export interface MedicationDoseEvent extends BaseSample {
   scheduleType: MedicationDoseEventScheduleType
   medicationConceptIdentifier: string // not sure here
   scheduledDate?: Date

@@ -1,11 +1,8 @@
-import type { AnyMap } from 'react-native-nitro-modules'
 import type {
   QueryOptionsWithAnchor,
   QueryOptionsWithSortOrder,
 } from '../types/QueryOptions'
-import type { Device } from './Device'
-import type { DeletedSample } from './Shared'
-import type { SourceRevision } from './Source'
+import type { BaseSample, DeletedSample } from './Shared'
 
 // Enums mirror HealthKit; keep the union literal names stable.
 export type ElectrocardiogramClassification =
@@ -26,23 +23,14 @@ export interface ElectrocardiogramVoltage {
   readonly lead: ElectrocardiogramLead
 }
 
-export interface ElectrocardiogramSample {
-  readonly uuid: string
-  readonly device?: Device
-  readonly startDate: Date
-  readonly endDate: Date
-
+export interface ElectrocardiogramSample extends BaseSample {
   readonly classification: ElectrocardiogramClassification
   readonly symptomsStatus: ElectrocardiogramSymptomsStatus
 
   readonly averageHeartRateBpm?: number // HKQuantity (count/min)
   readonly samplingFrequencyHz?: number // HKQuantity (Hz)
   readonly numberOfVoltageMeasurements: number
-  readonly algorithmVersion?: string
   readonly voltages?: readonly ElectrocardiogramVoltage[]
-
-  readonly metadata?: AnyMap
-  readonly sourceRevision?: SourceRevision
 }
 
 export interface ElectrocardiogramSamplesWithAnchorResponse {
