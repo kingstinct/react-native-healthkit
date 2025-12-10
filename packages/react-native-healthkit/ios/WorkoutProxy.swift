@@ -64,7 +64,7 @@ func getRouteLocations(
 
       guard let currentLocationBatch = locationsOrNil else {
         return continuation.resume(
-          throwing: RuntimeError.error(withMessage: "Empty response")
+          throwing: runtimeErrorWithPrefix("Unexpected empty response")
         )
       }
 
@@ -113,7 +113,7 @@ func getSerializedWorkoutLocations(
 
   var allRoutes: [WorkoutRoute] = []
   guard let _routes = routes else {
-    throw RuntimeError.error(withMessage: "Unexpected empty response")
+    throw runtimeErrorWithPrefix("Unexpected empty response")
   }
   for route in _routes {
     let routeMetadata = serializeMetadata(
@@ -135,12 +135,14 @@ func getSerializedWorkoutLocations(
     allRoutes.append(
       WorkoutRoute(
         locations: routeLocations,
-        HKMetadataKeySyncIdentifier: routeMetadata.isString(key: "HKMetadataKeySyncIdentifier") ?  routeMetadata.getString(
-          key: "HKMetadataKeySyncIdentifier"
-        ) : nil,
-        HKMetadataKeySyncVersion: routeMetadata.isDouble(key: "HKMetadataKeySyncVersion") ? routeMetadata.getDouble(
-          key: "HKMetadataKeySyncVersion"
-        ) : nil
+        HKMetadataKeySyncIdentifier: routeMetadata.isString(key: "HKMetadataKeySyncIdentifier")
+          ? routeMetadata.getString(
+            key: "HKMetadataKeySyncIdentifier"
+          ) : nil,
+        HKMetadataKeySyncVersion: routeMetadata.isDouble(key: "HKMetadataKeySyncVersion")
+          ? routeMetadata.getDouble(
+            key: "HKMetadataKeySyncVersion"
+          ) : nil
       )
     )
   }
@@ -175,7 +177,9 @@ func saveWorkoutRouteInternal(
 class WorkoutProxy: HybridWorkoutProxySpec {
 
   // Return a Promise instead of directly returning the value; wrap async logic.
-  func getStatistic(quantityType: QuantityTypeIdentifier, unitOverride: String?) throws -> Promise<QueryStatisticsResponse?> {
+  func getStatistic(quantityType: QuantityTypeIdentifier, unitOverride: String?) throws -> Promise<
+    QueryStatisticsResponse?
+  > {
     return Promise.async {
       if #available(iOS 16.0, *) {
         let type = try initializeQuantityType(quantityType.stringValue)
@@ -223,16 +227,12 @@ class WorkoutProxy: HybridWorkoutProxySpec {
   }
 
   var workoutPredicate: NSPredicate {
-    get {
-      let predicate = HKQuery.predicateForObjects(from: self.workout)
-      return predicate
-    }
+    let predicate = HKQuery.predicateForObjects(from: self.workout)
+    return predicate
   }
 
   var uuid: String {
-    get {
-      return workout.uuid.uuidString
-    }
+    return workout.uuid.uuidString
   }
 
   var device: Device? {
@@ -252,30 +252,28 @@ class WorkoutProxy: HybridWorkoutProxySpec {
   }
 
   var workoutActivityType: WorkoutActivityType {
-    get {
-      if let activityType = WorkoutActivityType.init(
-        rawValue: Int32(workout.workoutActivityType.rawValue)
-      ) {
-        return activityType
-      }
-
-      print("Unknown workout activity type: \(workout.workoutActivityType.rawValue), falling back to 'other'")
-
-      return WorkoutActivityType.other
+    if let activityType = WorkoutActivityType.init(
+      rawValue: Int32(workout.workoutActivityType.rawValue)
+    ) {
+      return activityType
     }
+
+    print(
+      "Unknown workout activity type: \(workout.workoutActivityType.rawValue), falling back to 'other'"
+    )
+
+    return WorkoutActivityType.other
   }
 
   var duration: Quantity {
-    get {
-      let quantity = HKQuantity(unit: .second(), doubleValue: workout.duration)
+    let quantity = HKQuantity(unit: .second(), doubleValue: workout.duration)
 
-      let duration = serializeQuantityTyped(
-        unit: .second(),
-        quantity: quantity
-      )
+    let duration = serializeQuantityTyped(
+      unit: .second(),
+      quantity: quantity
+    )
 
-      return duration
-    }
+    return duration
   }
 
   var totalDistance: Quantity? {
@@ -289,21 +287,17 @@ class WorkoutProxy: HybridWorkoutProxySpec {
   }
 
   var totalEnergyBurned: Quantity? {
-    get {
-      return serializeQuantityTyped(
-        unit: HKUnit.kilocalorie(),
-        quantityNullable: workout.totalEnergyBurned
-      )
-    }
+    return serializeQuantityTyped(
+      unit: HKUnit.kilocalorie(),
+      quantityNullable: workout.totalEnergyBurned
+    )
   }
 
   var totalSwimmingStrokeCount: Quantity? {
-    get {
     return serializeQuantityTyped(
       unit: .count(),
       quantityNullable: workout.totalSwimmingStrokeCount
     )
-    }
 
   }
 
@@ -320,27 +314,19 @@ class WorkoutProxy: HybridWorkoutProxySpec {
   }
 
   var startDate: Date {
-    get {
-      return workout.startDate
-    }
+    return workout.startDate
   }
 
   var endDate: Date {
-    get {
-      return workout.endDate
-    }
+    return workout.endDate
   }
 
   var metadata: AnyMap? {
-    get {
-      return serializeMetadata(workout.metadata)
-    }
+    return serializeMetadata(workout.metadata)
   }
 
   var sourceRevision: SourceRevision? {
-    get {
-      return serializeSourceRevision(workout.sourceRevision)
-    }
+    return serializeSourceRevision(workout.sourceRevision)
   }
 
   var events: [WorkoutEvent]? {
@@ -391,9 +377,7 @@ class WorkoutProxy: HybridWorkoutProxySpec {
       if #available(iOS 17.0.0, *) {
         return try await getWorkoutPlanInternal(workout: self.workout)
       } else {
-        throw RuntimeError.error(
-          withMessage: "Workout plans are only available on iOS 17.0 or later"
-        )
+        throw runtimeErrorWithPrefix("Workout plans are only available on iOS 17.0 or later")
       }
     }
   }

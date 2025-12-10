@@ -8,7 +8,7 @@ func serializeStateOfMindSample(sample: HKStateOfMind) -> StateOfMindSample {
     if let association = StateOfMindAssociation(rawValue: Int32(association.rawValue)) {
       return association
     }
-    print("[react-native-healthkit] Unknown StateOfMindAssociation raw value: \(association.rawValue)")
+    warnWithPrefix("Unknown StateOfMindAssociation raw value: \(association.rawValue)")
 
     return nil
   }
@@ -19,7 +19,7 @@ func serializeStateOfMindSample(sample: HKStateOfMind) -> StateOfMindSample {
       return label
     }
 
-    print("[react-native-healthkit] Unknown StateOfMindLabel raw value: \(label.rawValue)")
+    warnWithPrefix("Unknown StateOfMindLabel raw value: \(label.rawValue)")
     return nil
   }
 
@@ -34,133 +34,141 @@ func serializeStateOfMindSample(sample: HKStateOfMind) -> StateOfMindSample {
     // todo: handle better?
     kind: StateOfMindKind(rawValue: Int32(sample.kind.rawValue))!,
     // todo: handle better?
-    valenceClassification: StateOfMindValenceClassification(rawValue: Int32(sample.valenceClassification.rawValue))!,
+    valenceClassification: StateOfMindValenceClassification(
+      rawValue: Int32(sample.valenceClassification.rawValue))!,
     associations: associations,
     labels: labels
   )
 }
 
 #if compiler(>=6)
-class StateOfMindModule: HybridStateOfMindModuleSpec {
-  func queryStateOfMindSamplesWithAnchor(options: QueryOptionsWithAnchor) -> Promise<StateOfMindSamplesWithAnchorResponse> {
-    return Promise.async {
-      if #available(iOS 18.0, *) {
-        let predicate = createPredicateForSamples(options.filter)
+  class StateOfMindModule: HybridStateOfMindModuleSpec {
+    func queryStateOfMindSamplesWithAnchor(options: QueryOptionsWithAnchor) -> Promise<
+      StateOfMindSamplesWithAnchorResponse
+    > {
+      return Promise.async {
+        if #available(iOS 18.0, *) {
+          let predicate = createPredicateForSamples(options.filter)
 
-        let response = try await sampleAnchoredQueryAsync(
-          sampleType: .stateOfMindType(),
-          limit: options.limit,
-          queryAnchor: options.anchor,
-          predicate: predicate
-        )
-
-        let samples = response.samples.compactMap { sample in
-          if let sample = sample as? HKStateOfMind {
-            return serializeStateOfMindSample(sample: sample)
-          }
-          return nil
-        }
-
-        return StateOfMindSamplesWithAnchorResponse(
-          samples: samples,
-          deletedSamples: response.deletedSamples,
-          newAnchor: response.newAnchor
-        )
-      } else {
-        throw RuntimeError.error(withMessage: "[react-native-healthkit] StateOfMind is only available on iOS 18 and later")
-      }
-    }
-  }
-
-  func queryStateOfMindSamples(
-    options: QueryOptionsWithSortOrder
-  ) -> Promise<[StateOfMindSample]> {
-    return Promise.async {
-      if #available(iOS 18.0, *) {
-        let predicate = createPredicateForSamples(options.filter)
-
-        return try await sampleQueryAsync(
-          sampleType: .stateOfMindType(),
-          limit: options.limit,
-          predicate: predicate,
-          sortDescriptors: getSortDescriptors(ascending: options.ascending)
-        ).compactMap { sample in
-          if let sample = sample as? HKStateOfMind {
-            return serializeStateOfMindSample(sample: sample)
-          }
-          return nil
-        }
-      } else {
-        throw RuntimeError.error(withMessage: "[react-native-healthkit] StateOfMind is only available on iOS 18 and later")
-      }
-    }
-  }
-
-  func saveStateOfMindSample(
-    date: Date,
-    kind: StateOfMindKind,
-    valence: Double,
-    labels: [StateOfMindLabel],
-    associations: [StateOfMindAssociation],
-    metadata: AnyMap?
-  ) -> Promise<Bool> {
-
-    return Promise.async {
-      if #available(iOS 18, *) {
-        // Convert enum values to HKStateOfMind types
-        if let hkKind = HKStateOfMind.Kind.init(rawValue: Int(kind.rawValue)) {
-          let hkLabels = labels.compactMap {
-            if let label = HKStateOfMind.Label.init(rawValue: Int($0.rawValue)) {
-              return label
-            }
-            print("[react-native-healthkit] Unknown StateOfMindLabel raw value: \($0.rawValue)")
-            return nil
-          }
-          let hkAssociations = associations.compactMap {
-            if let association = HKStateOfMind.Association.init(rawValue: Int($0.rawValue)) {
-              return association
-            }
-            print("[react-native-healthkit] Unknown StateOfMindAssociation raw value: \($0.rawValue)")
-            return nil
-          }
-
-          let sample = HKStateOfMind(
-            date: date,
-            kind: hkKind,
-            valence: valence,
-            labels: hkLabels,
-            associations: hkAssociations,
-            metadata: anyMapToDictionary(metadata ?? AnyMap())
+          let response = try await sampleAnchoredQueryAsync(
+            sampleType: .stateOfMindType(),
+            limit: options.limit,
+            queryAnchor: options.anchor,
+            predicate: predicate
           )
 
-          return try await saveAsync(sample: sample)
+          let samples = response.samples.compactMap { sample in
+            if let sample = sample as? HKStateOfMind {
+              return serializeStateOfMindSample(sample: sample)
+            }
+            return nil
+          }
+
+          return StateOfMindSamplesWithAnchorResponse(
+            samples: samples,
+            deletedSamples: response.deletedSamples,
+            newAnchor: response.newAnchor
+          )
+        } else {
+          throw runtimeErrorWithPrefix(
+            "StateOfMind is only available on iOS 18 and later")
         }
-        throw RuntimeError.error(withMessage: "[react-native-healthkit] Unknown StateOfMindKind raw value: \(kind.rawValue)")
-      } else {
-        throw RuntimeError.error(withMessage: "StateOfMind is only available on iOS 18 and later")
       }
     }
 
-  }
-}
-#else
-// Fallback for older Xcode versions
-class StateOfMind: HybridStateOfMindModuleSpec {
-  func queryStateOfMindSamples(
-    options: QueryOptionsWithSortOrder
-  ) -> Promise<[StateOfMindSample]> {
-    throw RuntimeError.error(withMessage: "State of Mind features require iOS 18.0 or later and Xcode 16 or later to compile")
-  }
+    func queryStateOfMindSamples(
+      options: QueryOptionsWithSortOrder
+    ) -> Promise<[StateOfMindSample]> {
+      return Promise.async {
+        if #available(iOS 18.0, *) {
+          let predicate = createPredicateForSamples(options.filter)
 
-  func saveStateOfMindSample(
-    date: Date,
-    kind: StateOfMindKind,
-    valence: Double,
-    labels: [StateOfMindLabel],
-    associations: [StateOfMindAssociation],
-    metadata: [String: Any]?
-  ) -> Promise<Bool> {
-    throw RuntimeError.error(withMessage: "State of Mind features require iOS 18.0 or later and Xcode 16 or later to compile")
+          return try await sampleQueryAsync(
+            sampleType: .stateOfMindType(),
+            limit: options.limit,
+            predicate: predicate,
+            sortDescriptors: getSortDescriptors(ascending: options.ascending)
+          ).compactMap { sample in
+            if let sample = sample as? HKStateOfMind {
+              return serializeStateOfMindSample(sample: sample)
+            }
+            return nil
+          }
+        } else {
+          throw runtimeErrorWithPrefix(
+            "StateOfMind is only available on iOS 18 and later")
+        }
+      }
+    }
+
+    func saveStateOfMindSample(
+      date: Date,
+      kind: StateOfMindKind,
+      valence: Double,
+      labels: [StateOfMindLabel],
+      associations: [StateOfMindAssociation],
+      metadata: AnyMap?
+    ) -> Promise<Bool> {
+
+      return Promise.async {
+        if #available(iOS 18, *) {
+          // Convert enum values to HKStateOfMind types
+          if let hkKind = HKStateOfMind.Kind.init(rawValue: Int(kind.rawValue)) {
+            let hkLabels = labels.compactMap {
+              if let label = HKStateOfMind.Label.init(rawValue: Int($0.rawValue)) {
+                return label
+              }
+              warnWithPrefix("Unknown StateOfMindLabel raw value: \($0.rawValue)")
+              return nil
+            }
+            let hkAssociations = associations.compactMap {
+              if let association = HKStateOfMind.Association.init(rawValue: Int($0.rawValue)) {
+                return association
+              }
+              warnWithPrefix(
+                "Unknown StateOfMindAssociation raw value: \($0.rawValue)")
+              return nil
+            }
+
+            let sample = HKStateOfMind(
+              date: date,
+              kind: hkKind,
+              valence: valence,
+              labels: hkLabels,
+              associations: hkAssociations,
+              metadata: anyMapToDictionary(metadata ?? AnyMap())
+            )
+
+            return try await saveAsync(sample: sample)
+          }
+          throw runtimeErrorWithPrefix("Unknown StateOfMindKind raw value: \(kind.rawValue)")
+        } else {
+          throw runtimeErrorWithPrefix("StateOfMind is only available on iOS 18 and later")
+        }
+      }
+
+    }
   }
-}
+#else
+  // Fallback for older Xcode versions
+  class StateOfMind: HybridStateOfMindModuleSpec {
+    func queryStateOfMindSamples(
+      options: QueryOptionsWithSortOrder
+    ) -> Promise<[StateOfMindSample]> {
+      throw runtimeErrorWithPrefix(
+        "State of Mind features require iOS 18.0 or later and Xcode 16 or later to compile")
+    }
+
+    func saveStateOfMindSample(
+      date: Date,
+      kind: StateOfMindKind,
+      valence: Double,
+      labels: [StateOfMindLabel],
+      associations: [StateOfMindAssociation],
+      metadata: [String: Any]?
+    ) -> Promise<Bool> {
+      throw runtimeErrorWithPrefix(
+        "State of Mind features require iOS 18.0 or later and Xcode 16 or later to compile")
+    }
+  }
 #endif

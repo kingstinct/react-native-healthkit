@@ -3,26 +3,29 @@ import NitroModules
 
 // MARK: - Helpers
 
-private func serializeSymptomsStatus(_ symptoms: HKElectrocardiogram.SymptomsStatus) -> ElectrocardiogramSymptomsStatus {
+private func serializeSymptomsStatus(_ symptoms: HKElectrocardiogram.SymptomsStatus)
+  -> ElectrocardiogramSymptomsStatus {
   switch symptoms {
-  case .notSet:  return ElectrocardiogramSymptomsStatus(fromString: "notSet")!
-  case .none:    return ElectrocardiogramSymptomsStatus(fromString: "none")!
+  case .notSet: return ElectrocardiogramSymptomsStatus(fromString: "notSet")!
+  case .none: return ElectrocardiogramSymptomsStatus(fromString: "none")!
   case .present: return ElectrocardiogramSymptomsStatus(fromString: "present")!
   @unknown default: return ElectrocardiogramSymptomsStatus(fromString: "notSet")!
   }
 }
 
-private func serializeECGSample(sample: HKElectrocardiogram, includeVoltages: Bool) async throws -> ElectrocardiogramSample {
+private func serializeECGSample(sample: HKElectrocardiogram, includeVoltages: Bool) async throws
+  -> ElectrocardiogramSample {
   // Convert quantities
   let bpmUnit = HKUnit.count().unitDivided(by: .minute())
-  let hzUnit  = HKUnit.hertz()
-  let avgHR   = sample.averageHeartRate?.doubleValue(for: bpmUnit)
-  let freqHz  = sample.samplingFrequency?.doubleValue(for: hzUnit)
+  let hzUnit = HKUnit.hertz()
+  let avgHR = sample.averageHeartRate?.doubleValue(for: bpmUnit)
+  let freqHz = sample.samplingFrequency?.doubleValue(for: hzUnit)
 
   // Optional: waveform
-  let voltages: [ElectrocardiogramVoltage]? = includeVoltages
-  ? try await getECGVoltages(sample: sample)
-  : nil
+  let voltages: [ElectrocardiogramVoltage]? =
+    includeVoltages
+    ? try await getECGVoltages(sample: sample)
+    : nil
 
   // Algorithm version is stored in metadata under HKAppleECGAlgorithmVersion
   let algorithmVersion = sample.metadata?[HKMetadataKeyAlgorithmVersion] as? String
@@ -69,24 +72,30 @@ func getECGVoltages(sample: HKElectrocardiogram) async throws -> [Electrocardiog
       case .done:
         continuation.resume(returning: all)
       @unknown default:
-        continuation.resume(throwing: RuntimeError.error(withMessage: "HKElectrocardiogramQuery received unknown result type"))
+        continuation.resume(
+          throwing: runtimeErrorWithPrefix("HKElectrocardiogramQuery received unknown result type"))
       }
     }
     store.execute(q)
   }
 }
 
-func serializeClassification(_ classification: HKElectrocardiogram.Classification) -> ElectrocardiogramClassification {
+func serializeClassification(_ classification: HKElectrocardiogram.Classification)
+  -> ElectrocardiogramClassification {
   switch classification {
-  case .notSet:                      return ElectrocardiogramClassification(fromString: "notSet")!
-  case .sinusRhythm:                 return ElectrocardiogramClassification(fromString: "sinusRhythm")!
-  case .atrialFibrillation:          return ElectrocardiogramClassification(fromString: "atrialFibrillation")!
-  case .inconclusiveLowHeartRate:    return ElectrocardiogramClassification(fromString: "inconclusiveLowHeartRate")!
-  case .inconclusiveHighHeartRate:   return ElectrocardiogramClassification(fromString: "inconclusiveHighHeartRate")!
-  case .inconclusivePoorReading:     return ElectrocardiogramClassification(fromString: "inconclusivePoorReading")!
-  case .inconclusiveOther:           return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
-  case .unrecognized:                return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
-  @unknown default:                  return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
+  case .notSet: return ElectrocardiogramClassification(fromString: "notSet")!
+  case .sinusRhythm: return ElectrocardiogramClassification(fromString: "sinusRhythm")!
+  case .atrialFibrillation:
+    return ElectrocardiogramClassification(fromString: "atrialFibrillation")!
+  case .inconclusiveLowHeartRate:
+    return ElectrocardiogramClassification(fromString: "inconclusiveLowHeartRate")!
+  case .inconclusiveHighHeartRate:
+    return ElectrocardiogramClassification(fromString: "inconclusiveHighHeartRate")!
+  case .inconclusivePoorReading:
+    return ElectrocardiogramClassification(fromString: "inconclusivePoorReading")!
+  case .inconclusiveOther: return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
+  case .unrecognized: return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
+  @unknown default: return ElectrocardiogramClassification(fromString: "inconclusiveOther")!
   }
 }
 

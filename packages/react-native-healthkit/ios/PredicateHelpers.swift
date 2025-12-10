@@ -10,9 +10,10 @@ import HealthKit
 func createSourcePredicate(_ sources: [HybridSourceProxySpec]?) -> NSPredicate? {
   if let sources = sources {
 
-    let sourceSet = Set(sources.compactMap({ source in
-      return (source as? SourceProxy)?.source
-    }))
+    let sourceSet = Set(
+      sources.compactMap({ source in
+        return (source as? SourceProxy)?.source
+      }))
     if sourceSet.count > 0 {
       return HKQuery.predicateForObjects(from: sourceSet)
     }
@@ -22,10 +23,13 @@ func createSourcePredicate(_ sources: [HybridSourceProxySpec]?) -> NSPredicate? 
 
 func createDurationFilter(_ duration: WorkoutDurationPredicate?) -> NSPredicate? {
   if let duration = duration {
-    if let predicateOperator = NSComparisonPredicate.Operator(rawValue: UInt(duration.predicateOperator.rawValue)) {
-      return HKQuery.predicateForWorkouts(with: predicateOperator, duration: duration.durationInSeconds)
+    if let predicateOperator = NSComparisonPredicate.Operator(
+      rawValue: UInt(duration.predicateOperator.rawValue)) {
+      return HKQuery.predicateForWorkouts(
+        with: predicateOperator, duration: duration.durationInSeconds)
     } else {
-      print("[react-native-healthkit] Unsupported operator in duration filter: \(duration.predicateOperator.rawValue)")
+      warnWithPrefix(
+        "Unsupported operator in duration filter: \(duration.predicateOperator.rawValue)")
     }
   }
   return nil
@@ -33,10 +37,11 @@ func createDurationFilter(_ duration: WorkoutDurationPredicate?) -> NSPredicate?
 
 func createWorkoutActivityTypeFilter(_ workoutActivityType: WorkoutActivityType?) -> NSPredicate? {
   if let workoutActivityType = workoutActivityType {
-    if let workoutActivityType = HKWorkoutActivityType.init(rawValue: UInt(workoutActivityType.rawValue)) {
+    if let workoutActivityType = HKWorkoutActivityType.init(
+      rawValue: UInt(workoutActivityType.rawValue)) {
       return HKQuery.predicateForWorkouts(with: workoutActivityType)
     } else {
-      print("[react-native-healthkit] Unsupported workout activity type in filter: \(workoutActivityType.rawValue)")
+      warnWithPrefix("Unsupported workout activity type in filter: \(workoutActivityType.rawValue)")
     }
   }
   return nil
@@ -82,12 +87,13 @@ func createCompoundOrPredicateForWorkout(OR: [FilterForWorkoutsBase]?) -> NSPred
       return createPredicateForWorkoutBase(filter)
     })
 
-    let compoundOr = orPredicates.count > 1
+    let compoundOr =
+      orPredicates.count > 1
       ? NSCompoundPredicate.init(orPredicateWithSubpredicates: orPredicates)
       : orPredicates.first
 
     if orPredicates.count < 2 {
-      print("[react-native-healthkit] Workout filter OR clause contains less than 2 valid predicates.")
+      warnWithPrefix("Workout filter OR clause contains less than 2 valid predicates.")
     }
     return compoundOr
   }
@@ -132,12 +138,11 @@ func createPredicateForWorkout(_ filter: FilterForWorkouts?) -> NSPredicate? {
       ),
       createCompoundOrPredicateForWorkout(OR: filter.OR),
       createNotPredicateForWorkout(NOT: filter.NOT),
-      createAndPredicateForWorkout(AND: filter.AND)
+      createAndPredicateForWorkout(AND: filter.AND),
     ].compactMap { $0 }
 
-    return allPredicates.count > 1 ?
-      NSCompoundPredicate.init(andPredicateWithSubpredicates: allPredicates) :
-      allPredicates.first
+    return allPredicates.count > 1
+      ? NSCompoundPredicate.init(andPredicateWithSubpredicates: allPredicates) : allPredicates.first
   }
   return nil
 }
@@ -147,13 +152,14 @@ func createDatePredicate(_ dateFilter: DateFilter?) -> NSPredicate? {
     let strictStartDate = dateFilter.strictStartDate ?? false
     let strictEndDate = dateFilter.strictEndDate ?? false
 
-    let options: HKQueryOptions = strictStartDate && strictEndDate
-    ? [.strictStartDate, .strictEndDate]
-    : strictEndDate
-    ? .strictEndDate
-    : strictStartDate
-    ? .strictStartDate
-    : []
+    let options: HKQueryOptions =
+      strictStartDate && strictEndDate
+      ? [.strictStartDate, .strictEndDate]
+      : strictEndDate
+        ? .strictEndDate
+        : strictStartDate
+          ? .strictStartDate
+          : []
 
     return HKQuery.predicateForSamples(
       withStart: dateFilter.startDate,
@@ -193,12 +199,13 @@ func createUUIDPredicate(_ uuid: String?) -> NSPredicate? {
   return nil
 }
 
-func getComparisonPredicateOperator(_ op: ComparisonPredicateOperator?) -> NSComparisonPredicate.Operator? {
+func getComparisonPredicateOperator(_ op: ComparisonPredicateOperator?) -> NSComparisonPredicate
+  .Operator? {
   if let rawValue = op?.rawValue {
     if let op = NSComparisonPredicate.Operator.init(rawValue: UInt(rawValue)) {
-        return op
+      return op
     } else {
-      print("[react-native-healthkit] Unsupported operator in metadata filter: \(rawValue)")
+      warnWithPrefix("Unsupported operator in metadata filter: \(rawValue)")
     }
   }
   return nil
@@ -226,7 +233,7 @@ func createMetadataPredicate(_ metadata: PredicateWithMetadataKey?) -> NSPredica
 
     if let operatorType = metadata.operatorType != nil
       ? getComparisonPredicateOperator(metadata.operatorType)
-        : .equalTo {
+      : .equalTo {
       return HKQuery.predicateForObjects(
         withMetadataKey: metadata.withMetadataKey,
         operatorType: operatorType,
@@ -283,7 +290,8 @@ func createOrPredicateForSamples(OR: [FilterForSamplesBase]?) -> NSPredicate? {
     let allFilters = filter.compactMap({ createPredicateForSamplesBase($0) })
 
     if allFilters.count < 2 {
-      print("[react-native-healthkit] Sample filter OR clause contains less than 2 valid predicates, which makes it redundant.")
+      warnWithPrefix(
+        "Sample filter OR clause contains less than 2 valid predicates, which makes it redundant.")
     }
 
     return allFilters.count > 1
@@ -315,12 +323,11 @@ func createPredicateForSamples(_ filter: FilterForSamples?) -> NSPredicate? {
       ),
       createOrPredicateForSamples(OR: filter.OR),
       createAndPredicateForSamples(filter.AND),
-      createNotPredicateForSamples(NOT: filter.NOT)
+      createNotPredicateForSamples(NOT: filter.NOT),
     ].compactMap { $0 }
 
-    return allPredicates.count > 1 ?
-      NSCompoundPredicate.init(andPredicateWithSubpredicates: allPredicates) :
-      allPredicates.first
+    return allPredicates.count > 1
+      ? NSCompoundPredicate.init(andPredicateWithSubpredicates: allPredicates) : allPredicates.first
   }
   return nil
 }

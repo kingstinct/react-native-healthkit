@@ -1,5 +1,6 @@
 import HealthKit
 import NitroModules
+
 //
 //  Core.swift
 //  Pods
@@ -21,20 +22,23 @@ func getUnitToUse(unitOverride: String?, quantityType: HKQuantityType) async thr
     let unit = HKUnit(from: unitOverride)
 
     if !quantityType.is(compatibleWith: unit) {
-      throw RuntimeError.error(withMessage: "[react-native-healthkit] Unit \(unitOverride) is incompatible with \(quantityType.identifier)")
+      throw runtimeErrorWithPrefix(
+        "Unit \(unitOverride) is incompatible with \(quantityType.identifier)")
     }
 
     return unit
   }
 
-  if let preferredUnit = try await getPreferredUnitsInternal(quantityTypes: [quantityType]).first?.value {
+  if let preferredUnit = try await getPreferredUnitsInternal(quantityTypes: [quantityType]).first?
+    .value {
     return preferredUnit
   }
 
-  throw RuntimeError.error(withMessage: "[react-native-healthkit] Must specify a unit for \(quantityType.identifier)")
+  throw runtimeErrorWithPrefix("Must specify a unit for \(quantityType.identifier)")
 }
 
-func getPreferredUnitsInternal(quantityTypes: [HKQuantityType], forceUpdate: Bool? = false) async throws -> [HKQuantityType: HKUnit] {
+func getPreferredUnitsInternal(quantityTypes: [HKQuantityType], forceUpdate: Bool? = false)
+  async throws -> [HKQuantityType: HKUnit] {
 
   if quantityTypes.count == 0 {
     return [:]
@@ -80,14 +84,18 @@ class CoreModule: HybridCoreModuleSpec {
     var dict = [String: Bool]()
 
     for objectTypeIdentifier in objectTypeIdentifiers {
-      dict[objectTypeIdentifier.stringValue] = isObjectTypeAvailable(objectTypeIdentifier: objectTypeIdentifier)
+      dict[objectTypeIdentifier.stringValue] = isObjectTypeAvailable(
+        objectTypeIdentifier: objectTypeIdentifier)
     }
 
     return dict
   }
 
-  func areObjectTypesAvailableAsync(objectTypeIdentifiers: [ObjectTypeIdentifier]) -> Promise<[String: Bool]> {
-    return Promise.resolved(withResult: areObjectTypesAvailable(objectTypeIdentifiers: objectTypeIdentifiers))
+  func areObjectTypesAvailableAsync(objectTypeIdentifiers: [ObjectTypeIdentifier]) -> Promise<
+    [String: Bool]
+  > {
+    return Promise.resolved(
+      withResult: areObjectTypesAvailable(objectTypeIdentifiers: objectTypeIdentifiers))
   }
 
   func isObjectTypeAvailable(objectTypeIdentifier: ObjectTypeIdentifier) -> Bool {
@@ -100,7 +108,8 @@ class CoreModule: HybridCoreModuleSpec {
   }
 
   func isObjectTypeAvailableAsync(objectTypeIdentifier: ObjectTypeIdentifier) -> Promise<Bool> {
-    return Promise.resolved(withResult: isObjectTypeAvailable(objectTypeIdentifier: objectTypeIdentifier))
+    return Promise.resolved(
+      withResult: isObjectTypeAvailable(objectTypeIdentifier: objectTypeIdentifier))
   }
 
   func authorizationStatusFor(
@@ -114,26 +123,35 @@ class CoreModule: HybridCoreModuleSpec {
       return authStatus
     }
 
-    throw RuntimeError.error(withMessage: "[react-native-healthkit] got unrecognized AuthorizationStatus with value \(authStatus.rawValue)")
+    throw runtimeErrorWithPrefix(
+      "got unrecognized AuthorizationStatus with value \(authStatus.rawValue)")
   }
 
-  func getRequestStatusForAuthorization(toCheck: AuthDataTypes) -> Promise<AuthorizationRequestStatus> {
+  func getRequestStatusForAuthorization(toCheck: AuthDataTypes) -> Promise<
+    AuthorizationRequestStatus
+  > {
     return Promise.async {
       let toShare = sampleTypesFromArray(typeIdentifiersWriteable: toCheck.toShare ?? [])
       let toRead = objectTypesFromArray(typeIdentifiers: toCheck.toRead ?? [])
 
       return try await withCheckedThrowingContinuation { continuation in
         if toShare.isEmpty && toRead.isEmpty {
-          return continuation.resume(throwing: RuntimeError.error(withMessage: "[react-native-healthkit] Both toRead and toShare are empty, at least one data type must be specified to check authorization status"))
+          return continuation.resume(
+            throwing: runtimeErrorWithPrefix(
+              "Both toRead and toShare are empty, at least one data type must be specified to check authorization status"
+            ))
         }
-        return store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) { status, error in
+        return store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) {
+          status, error in
           if let error = error {
             continuation.resume(throwing: error)
           } else {
             if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
               continuation.resume(returning: authStatus)
             } else {
-              continuation.resume(throwing: RuntimeError.error(withMessage: "Unrecognized authStatus returned: \(status.rawValue)"))
+              continuation.resume(
+                throwing: runtimeErrorWithPrefix(
+                  "Unrecognized authStatus returned: \(status.rawValue)"))
             }
 
           }
@@ -159,7 +177,9 @@ class CoreModule: HybridCoreModuleSpec {
     }
   }
 
-  func querySources(identifier: SampleTypeIdentifier, filter: FilterForSamples?) -> Promise<[HybridSourceProxySpec]> {
+  func querySources(identifier: SampleTypeIdentifier, filter: FilterForSamples?) -> Promise<
+    [HybridSourceProxySpec]
+  > {
     return Promise.async {
       let sampleType = try sampleTypeFrom(sampleTypeIdentifier: identifier)
       let predicate = createPredicateForSamples(filter)
@@ -175,7 +195,9 @@ class CoreModule: HybridCoreModuleSpec {
           }
 
           guard let sources = sources else {
-            return continuation.resume(throwing: RuntimeError.error(withMessage: "[react-native-healthkit] Empty response for sample type \(identifier.stringValue)"))
+            return continuation.resume(
+              throwing: runtimeErrorWithPrefix(
+                "Empty response for sample type \(identifier.stringValue)"))
           }
 
           let serializedSources = sources.map { source -> SourceProxy in
@@ -193,7 +215,9 @@ class CoreModule: HybridCoreModuleSpec {
     }
   }
 
-  func enableBackgroundDelivery(typeIdentifier: ObjectTypeIdentifier, updateFrequency: UpdateFrequency) -> Promise<Bool> {
+  func enableBackgroundDelivery(
+    typeIdentifier: ObjectTypeIdentifier, updateFrequency: UpdateFrequency
+  ) -> Promise<Bool> {
     return Promise.async {
       if let frequency = HKUpdateFrequency(rawValue: Int(updateFrequency.rawValue)) {
         let type = try objectTypeFrom(objectTypeIdentifier: typeIdentifier)
@@ -209,7 +233,7 @@ class CoreModule: HybridCoreModuleSpec {
           }
         }
       } else {
-        throw RuntimeError.error(withMessage: "Invalid update frequency value: \(updateFrequency)")
+        throw runtimeErrorWithPrefix("Invalid update frequency value: \(updateFrequency)")
       }
     }
 
@@ -268,7 +292,9 @@ class CoreModule: HybridCoreModuleSpec {
     return UIApplication.shared.isProtectedDataAvailable
   }
 
-  func getPreferredUnits(identifiers: [QuantityTypeIdentifier], forceUpdate: Bool?) -> Promise<[IdentifierWithUnit]> {
+  func getPreferredUnits(identifiers: [QuantityTypeIdentifier], forceUpdate: Bool?) -> Promise<
+    [IdentifierWithUnit]
+  > {
     return Promise.async {
       let quantityTypes = identifiers.compactMap { identifier in
         do {
@@ -281,7 +307,8 @@ class CoreModule: HybridCoreModuleSpec {
         }
       }
 
-      let typePerUnits = try await getPreferredUnitsInternal(quantityTypes: quantityTypes, forceUpdate: forceUpdate)
+      let typePerUnits = try await getPreferredUnitsInternal(
+        quantityTypes: quantityTypes, forceUpdate: forceUpdate)
 
       let dic = typePerUnits.map { typePerUnit in
         return IdentifierWithUnit(
@@ -296,7 +323,8 @@ class CoreModule: HybridCoreModuleSpec {
 
   var _runningQueries: [String: HKQuery] = [:]
 
-  func deleteObjects(objectTypeIdentifier: ObjectTypeIdentifier, filter: FilterForSamples) -> Promise<Double> {
+  func deleteObjects(objectTypeIdentifier: ObjectTypeIdentifier, filter: FilterForSamples)
+    -> Promise<Double> {
     return Promise.async {
       if let predicate = createPredicateForSamples(filter) {
 
@@ -311,7 +339,7 @@ class CoreModule: HybridCoreModuleSpec {
           }
         }
       }
-      throw RuntimeError.error(withMessage: "[react-native-healthkit] Unable to create predicate for deleting objects")
+      throw runtimeErrorWithPrefix("Unable to create predicate for deleting objects")
     }
 
   }
@@ -338,7 +366,9 @@ class CoreModule: HybridCoreModuleSpec {
       in
 
       DispatchQueue.main.async {
-        callback(OnChangeCallbackArgs(typeIdentifier: typeIdentifier, errorMessage: error?.localizedDescription))
+        callback(
+          OnChangeCallbackArgs(
+            typeIdentifier: typeIdentifier, errorMessage: error?.localizedDescription))
         handler()
       }
 
@@ -353,7 +383,7 @@ class CoreModule: HybridCoreModuleSpec {
 
   func unsubscribeQuery(queryId: String) throws -> Bool {
     guard let query = self._runningQueries[queryId] else {
-      throw RuntimeError.error(withMessage: "[react-native-healthkit] Query with id \(queryId) not found")
+      throw runtimeErrorWithPrefix("Query with id \(queryId) not found")
     }
 
     store.stop(query)

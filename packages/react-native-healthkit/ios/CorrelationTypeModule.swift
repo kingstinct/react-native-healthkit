@@ -1,10 +1,11 @@
 import HealthKit
 import NitroModules
 
-func serializeCorrelationSample(correlation: HKCorrelation, unitMap: [HKQuantityType: HKUnit]) -> CorrelationSample {
+func serializeCorrelationSample(correlation: HKCorrelation, unitMap: [HKQuantityType: HKUnit])
+  -> CorrelationSample {
   let objects = correlation.objects.compactMap { object -> CorrelationObject? in
     if let quantitySample = object as? HKQuantitySample,
-       let unit = unitMap[quantitySample.quantityType] {
+      let unit = unitMap[quantitySample.quantityType] {
       do {
         let quantitySample = try serializeQuantitySample(
           sample: quantitySample,
@@ -48,7 +49,9 @@ func getUnitMap(correlations: [HKCorrelation]) async throws -> [HKQuantityType: 
 }
 
 class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
-  func queryCorrelationSamplesWithAnchor(typeIdentifier: CorrelationTypeIdentifier, options: QueryOptionsWithAnchor) -> Promise<QueryCorrelationSamplesWithAnchorResponse> {
+  func queryCorrelationSamplesWithAnchor(
+    typeIdentifier: CorrelationTypeIdentifier, options: QueryOptionsWithAnchor
+  ) -> Promise<QueryCorrelationSamplesWithAnchorResponse> {
     return Promise.async {
       let predicate = createPredicateForSamples(options.filter)
       let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
@@ -92,7 +95,8 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
       for sample in samples {
         switch sample {
         case .second(let quantitySample):
-          let quantityTypeId = HKQuantityTypeIdentifier(rawValue: quantitySample.quantityType.stringValue)
+          let quantityTypeId = HKQuantityTypeIdentifier(
+            rawValue: quantitySample.quantityType.stringValue)
           guard let quantityType = HKSampleType.quantityType(forIdentifier: quantityTypeId) else {
             continue
           }
@@ -123,7 +127,7 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
       }
 
       if initializedSamples.isEmpty {
-        throw RuntimeError.error(withMessage: "[react-native-healthkit] No valid samples to create correlation sample")
+        throw runtimeErrorWithPrefix("No valid samples to create correlation sample")
       }
 
       let correlation = HKCorrelation(
@@ -138,7 +142,9 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
     }
   }
 
-  func queryCorrelationSamples(typeIdentifier: CorrelationTypeIdentifier, options: QueryOptionsWithSortOrder) -> Promise<[CorrelationSample]> {
+  func queryCorrelationSamples(
+    typeIdentifier: CorrelationTypeIdentifier, options: QueryOptionsWithSortOrder
+  ) -> Promise<[CorrelationSample]> {
     return Promise.async {
       let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
 
