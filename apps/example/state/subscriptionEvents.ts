@@ -57,7 +57,10 @@ const callback = (args: OnChangeCallbackArgs | OnQuantitySamplesCallback) => {
     scheduleNotificationAsync({
       content: {
         title: `Got a new ${typeIdentifier} update!`,
-        body: 'samples' in args ? `+${args.samples.length} samples` : '',
+        body:
+          'samples' in args && args.samples.length > 0
+            ? `${args.samples[0]?.quantity} ${args.samples[0]?.unit}`
+            : '',
       },
       trigger: null,
     })

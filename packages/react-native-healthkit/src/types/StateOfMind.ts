@@ -1,7 +1,4 @@
-import type { AnyMap } from 'react-native-nitro-modules'
-import type { Device } from './Device'
-import type { DeletedSample } from './Shared'
-import type { SourceRevision } from './Source'
+import type { BaseSample, DeletedSample } from './Shared'
 
 export enum StateOfMindValenceClassification {
   veryUnpleasant = 1,
@@ -13,13 +10,7 @@ export enum StateOfMindValenceClassification {
   veryPleasant = 7,
 }
 
-export interface StateOfMindSample {
-  readonly uuid: string
-  readonly device?: Device
-  readonly startDate: Date
-  readonly endDate: Date
-  readonly metadata?: AnyMap
-  readonly sourceRevision?: SourceRevision
+export interface StateOfMindSample extends BaseSample {
   // State of mind sample properties
   /**
    * @see {@link https://developer.apple.com/documentation/healthkit/hkstateofmind/4337998-valence Apple Docs }

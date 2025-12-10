@@ -1,4 +1,4 @@
-import { queryQuantitySamples } from '../healthkit'
+import { QuantityTypes } from '../modules'
 import type { QuantityTypeIdentifier } from '../types'
 import type { OnQuantitySamplesCallback } from '../types/Subscriptions'
 import { subscribeToChanges } from './subscribeToChanges'
@@ -16,14 +16,17 @@ export const subscribeToQuantitySamples = (
       })
     }
 
-    const samplesAfterLast = await queryQuantitySamples(identifier, {
-      limit: 0,
-      filter: {
-        date: {
-          startDate: after,
+    const samplesAfterLast = await QuantityTypes.queryQuantitySamples(
+      identifier,
+      {
+        limit: 0,
+        filter: {
+          date: {
+            startDate: after,
+          },
         },
       },
-    })
+    )
 
     if (samplesAfterLast.length > 0) {
       callback({

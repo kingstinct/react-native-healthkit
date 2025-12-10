@@ -22,12 +22,46 @@ func serializeCorrelationSample(correlation: HKCorrelation, unitMap: [HKQuantity
   }
 
   return CorrelationSample(
-    uuid: correlation.uuid.uuidString,
     correlationType: CorrelationTypeIdentifier(fromString: correlation.correlationType.identifier)!,
     objects: objects,
-    metadata: serializeMetadata(correlation.metadata),
+    metadataFoodType: correlation.metadata?[HKMetadataKeyFoodType] as? String,
+    sampleType: serializeSampleType(correlation.sampleType),
     startDate: correlation.startDate,
-    endDate: correlation.endDate
+    endDate: correlation.endDate,
+    hasUndeterminedDuration: correlation.hasUndeterminedDuration,
+    metadataWeatherCondition: serializeWeatherCondition(
+      correlation.metadata?[HKMetadataKeyWeatherCondition] as? HKWeatherCondition),
+    metadataWeatherHumidity: serializeUnknownQuantityTyped(
+      quantity: correlation.metadata?[HKMetadataKeyWeatherHumidity] as? HKQuantity),
+    metadataWeatherTemperature: serializeUnknownQuantityTyped(
+      quantity: correlation.metadata?[HKMetadataKeyWeatherTemperature] as? HKQuantity),
+    metadataInsulinDeliveryReason: serializeInsulinDeliveryReason(
+      correlation.metadata?[HKMetadataKeyInsulinDeliveryReason] as? HKInsulinDeliveryReason),
+    metadataHeartRateMotionContext: serializeHeartRateMotionContext(
+      correlation.metadata?[HKMetadataKeyHeartRateMotionContext] as? HKHeartRateMotionContext),
+    uuid: correlation.uuid.uuidString,
+    sourceRevision: serializeSourceRevision(correlation.sourceRevision),
+    device: serializeDevice(hkDevice: correlation.device),
+    metadata: serializeMetadata(correlation.metadata),
+    metadataExternalUUID: correlation.metadata?[HKMetadataKeyExternalUUID] as? String,
+    metadataTimeZone: correlation.metadata?[HKMetadataKeyTimeZone] as? String,
+    metadataWasUserEntered: correlation.metadata?[HKMetadataKeyWasUserEntered] as? Bool,
+    metadataDeviceSerialNumber: correlation.metadata?[HKMetadataKeyDeviceSerialNumber] as? String,
+    metadataUdiDeviceIdentifier: correlation.metadata?[HKMetadataKeyUDIDeviceIdentifier] as? String,
+    metadataUdiProductionIdentifier: correlation.metadata?[HKMetadataKeyUDIProductionIdentifier]
+      as? String,
+    metadataDigitalSignature: correlation.metadata?[HKMetadataKeyDigitalSignature] as? String,
+    metadataDeviceName: correlation.metadata?[HKMetadataKeyDeviceName] as? String,
+    metadataDeviceManufacturerName: correlation.metadata?[HKMetadataKeyDeviceManufacturerName]
+      as? String,
+    metadataSyncIdentifier: correlation.metadata?[HKMetadataKeySyncIdentifier] as? String,
+    metadataSyncVersion: correlation.metadata?[HKMetadataKeySyncVersion] as? Double,
+    metadataWasTakenInLab: correlation.metadata?[HKMetadataKeyWasTakenInLab] as? Bool,
+    metadataReferenceRangeLowerLimit: correlation.metadata?[HKMetadataKeyReferenceRangeLowerLimit]
+      as? Double,
+    metadataReferenceRangeUpperLimit: correlation.metadata?[HKMetadataKeyReferenceRangeUpperLimit]
+      as? Double,
+    metadataAlgorithmVersion: correlation.metadata?[HKMetadataKeyAlgorithmVersion] as? Double
   )
 }
 

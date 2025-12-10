@@ -1,7 +1,6 @@
 import type { AnyMap } from 'react-native-nitro-modules'
 import type { CategoryTypeIdentifier } from './CategoryTypeIdentifier'
-import type { Device } from './Device'
-import type { DeletedSample, GenericMetadata } from './Shared'
+import type { BaseSample, DeletedSample, GenericMetadata } from './Shared'
 import type { SourceRevision } from './Source'
 
 export type CategoryTypePresenceIdentifier =
@@ -180,15 +179,9 @@ export interface CategorySamplesWithAnchorResponse {
   readonly newAnchor: string
 }
 
-export interface CategorySample {
-  readonly uuid: string
-  readonly device?: Device
+export interface CategorySample extends BaseSample {
   readonly categoryType: CategoryTypeIdentifier
-  readonly startDate: Date
-  readonly endDate: Date
   readonly value: CategoryValueForIdentifier
-  readonly metadata: AnyMap
-  readonly sourceRevision?: SourceRevision
 }
 
 export interface CategorySamplesWithAnchorResponseTyped<
@@ -199,28 +192,28 @@ export interface CategorySamplesWithAnchorResponseTyped<
   readonly newAnchor: string
 }
 
-export interface CategorySampleTyped<T extends CategoryTypeIdentifier> {
-  readonly uuid: string
-  readonly device?: Device
-  readonly categoryType: T
-  readonly startDate: Date
-  readonly endDate: Date
-  readonly value: CategoryValueForIdentifier<T>
-  readonly metadata: MetadataForCategoryIdentifier<T>
-  readonly sourceRevision?: SourceRevision
-}
-
 export type MetadataForCategoryIdentifier<
   T extends CategoryTypeIdentifier = CategoryTypeIdentifier,
 > = T extends 'HKCategoryTypeIdentifierSexualActivity'
   ? GenericMetadata & {
-      readonly HKSexualActivityProtectionUsed: boolean
+      readonly HKSexualActivityProtectionUsed?: boolean
     }
   : T extends 'HKCategoryTypeIdentifierMenstrualFlow'
     ? GenericMetadata & {
-        readonly HKMenstrualCycleStart: boolean
+        readonly HKMenstrualCycleStart?: boolean
       }
     : GenericMetadata
+
+export interface CategorySampleTyped<T extends CategoryTypeIdentifier>
+  extends Omit<BaseSample, 'metadata'> {
+  readonly categoryType: T
+  readonly value: CategoryValueForIdentifier<T>
+
+  readonly metadata: MetadataForCategoryIdentifier<T>
+
+  readonly metadataSexualActivityProtectionUsed?: boolean
+  readonly metadataMenstrualCycleStart?: boolean
+}
 
 export type CategoryValueForIdentifier<
   T extends CategoryTypeIdentifier = CategoryTypeIdentifier,

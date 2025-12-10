@@ -1,25 +1,12 @@
-import type { AnyMap } from 'react-native-nitro-modules'
-import type { Device } from './Device'
-import type { DeletedSample, GenericMetadata } from './Shared'
-import type { SourceRevision } from './Source'
-
-export interface HeartbeatSeriesSampleMetadata extends GenericMetadata {
-  readonly HKMetadataKeyAlgorithmVersion: string
-}
+import type { BaseSample, DeletedSample } from './Shared'
 
 export interface Heartbeat {
   readonly timeSinceSeriesStart: number
   readonly precededByGap: boolean
 }
 
-export interface HeartbeatSeriesSample {
-  readonly uuid: string
-  readonly device?: Device
-  readonly startDate: Date
-  readonly endDate: Date
+export interface HeartbeatSeriesSample extends BaseSample {
   readonly heartbeats: readonly Heartbeat[]
-  readonly metadata?: AnyMap
-  readonly sourceRevision?: SourceRevision
 }
 
 export interface HeartbeatSeriesSamplesWithAnchorResponse {

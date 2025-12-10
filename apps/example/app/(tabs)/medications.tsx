@@ -10,7 +10,6 @@ import {
 } from '@kingstinct/react-native-healthkit/healthkit.ios'
 import type {
   MedicationDoseEvent,
-  MedicationDoseEventsWithAnchorResponse,
   UserAnnotatedMedication,
 } from '@kingstinct/react-native-healthkit/specs/MedicationModule.nitro'
 import { useEffect, useState } from 'react'

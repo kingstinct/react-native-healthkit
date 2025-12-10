@@ -174,7 +174,7 @@ export const queryMedicationEvents =
 export const queryMedicationEventsWithAnchor =
   Medication.queryMedicationEventsWithAnchor.bind(Medication)
 
-export const currentAppSource = Core.currentAppSource
+export const currentAppSource = Core.currentAppSource.bind(Core)
 
 export const getBiologicalSexAsync =
   Characteristics.getBiologicalSexAsync.bind(Characteristics)

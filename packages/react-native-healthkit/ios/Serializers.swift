@@ -20,6 +20,28 @@ func serializeQuantityTyped(unit: HKUnit, quantityNullable: HKQuantity?) -> Quan
   )
 }
 
+func serializeWeatherCondition(_ hkWeatherCondition: HKWeatherCondition?) -> WeatherCondition? {
+  guard let hkWeatherCondition = hkWeatherCondition else {
+    return nil
+  }
+  return WeatherCondition(rawValue: Int32(hkWeatherCondition.rawValue))
+}
+
+func serializeInsulinDeliveryReason(_ hkReason: HKInsulinDeliveryReason?) -> InsulinDeliveryReason? {
+  guard let hkReason = hkReason else {
+    return nil
+  }
+  return InsulinDeliveryReason(rawValue: Int32(hkReason.rawValue))
+}
+
+func serializeHeartRateMotionContext(_ hkContext: HKHeartRateMotionContext?)
+  -> HeartRateMotionContext? {
+  guard let hkContext = hkContext else {
+    return nil
+  }
+  return HeartRateMotionContext(rawValue: Int32(hkContext.rawValue))
+}
+
 func serializeQuantityTyped(unit: HKUnit, quantity: HKQuantity) -> Quantity {
   return Quantity(
     unit: unit.unitString,
@@ -30,15 +52,46 @@ func serializeQuantityTyped(unit: HKUnit, quantity: HKQuantity) -> Quantity {
 func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) throws -> QuantitySample {
   if let quantityType = QuantityTypeIdentifier(fromString: sample.quantityType.identifier) {
     return QuantitySample(
-      uuid: sample.uuid.uuidString,
-      device: serializeDevice(hkDevice: sample.device),
       quantityType: quantityType,
-      startDate: sample.startDate,
-      endDate: sample.endDate,
       quantity: sample.quantity.doubleValue(for: unit),
       unit: unit.unitString,
+      sampleType: serializeSampleType(sample.sampleType),
+      startDate: sample.startDate,
+      endDate: sample.endDate,
+      hasUndeterminedDuration: sample.hasUndeterminedDuration,
+      metadataWeatherCondition: serializeWeatherCondition(
+        sample.metadata?[HKMetadataKeyWeatherCondition] as? HKWeatherCondition),
+      metadataWeatherHumidity: serializeUnknownQuantityTyped(
+        quantity: sample.metadata?[HKMetadataKeyWeatherHumidity] as? HKQuantity),
+      metadataWeatherTemperature: serializeUnknownQuantityTyped(
+        quantity: sample.metadata?[HKMetadataKeyWeatherTemperature] as? HKQuantity),
+      metadataInsulinDeliveryReason: serializeInsulinDeliveryReason(
+        sample.metadata?[HKMetadataKeyInsulinDeliveryReason] as? HKInsulinDeliveryReason),
+      metadataHeartRateMotionContext: serializeHeartRateMotionContext(
+        sample.metadata?[HKMetadataKeyHeartRateMotionContext] as? HKHeartRateMotionContext),
+      uuid: sample.uuid.uuidString,
+      sourceRevision: serializeSourceRevision(sample.sourceRevision),
+      device: serializeDevice(hkDevice: sample.device),
       metadata: serializeMetadata(sample.metadata),
-      sourceRevision: serializeSourceRevision(sample.sourceRevision)
+      metadataExternalUUID: sample.metadata?[HKMetadataKeyExternalUUID] as? String,
+      metadataTimeZone: sample.metadata?[HKMetadataKeyTimeZone] as? String,
+      metadataWasUserEntered: sample.metadata?[HKMetadataKeyWasUserEntered] as? Bool,
+      metadataDeviceSerialNumber: sample.metadata?[HKMetadataKeyDeviceSerialNumber] as? String,
+      metadataUdiDeviceIdentifier: sample.metadata?[HKMetadataKeyUDIDeviceIdentifier] as? String,
+      metadataUdiProductionIdentifier: sample.metadata?[HKMetadataKeyUDIProductionIdentifier]
+        as? String,
+      metadataDigitalSignature: sample.metadata?[HKMetadataKeyDigitalSignature] as? String,
+      metadataDeviceName: sample.metadata?[HKMetadataKeyDeviceName] as? String,
+      metadataDeviceManufacturerName: sample.metadata?[HKMetadataKeyDeviceManufacturerName]
+        as? String,
+      metadataSyncIdentifier: sample.metadata?[HKMetadataKeySyncIdentifier] as? String,
+      metadataSyncVersion: sample.metadata?[HKMetadataKeySyncVersion] as? Double,
+      metadataWasTakenInLab: sample.metadata?[HKMetadataKeyWasTakenInLab] as? Bool,
+      metadataReferenceRangeLowerLimit: sample.metadata?[HKMetadataKeyReferenceRangeLowerLimit]
+        as? Double,
+      metadataReferenceRangeUpperLimit: sample.metadata?[HKMetadataKeyReferenceRangeUpperLimit]
+        as? Double,
+      metadataAlgorithmVersion: sample.metadata?[HKMetadataKeyAlgorithmVersion] as? Double
     )
   }
   throw runtimeErrorWithPrefix(
@@ -54,14 +107,45 @@ func serializeDeletedSample(sample: HKDeletedObject) -> DeletedSample {
 
 func serializeCategorySample(sample: HKCategorySample) -> CategorySample {
   return CategorySample(
-    uuid: sample.uuid.uuidString,
-    device: serializeDevice(hkDevice: sample.device),
     categoryType: CategoryTypeIdentifier(fromString: sample.categoryType.identifier)!,
+    value: Double(sample.value),
+    sampleType: serializeSampleType(sample.sampleType),
     startDate: sample.startDate,
     endDate: sample.endDate,
-    value: Double(sample.value),
+    hasUndeterminedDuration: sample.hasUndeterminedDuration,
+    metadataWeatherCondition: serializeWeatherCondition(
+      sample.metadata?[HKMetadataKeyWeatherCondition] as? HKWeatherCondition),
+    metadataWeatherHumidity: serializeUnknownQuantityTyped(
+      quantity: sample.metadata?[HKMetadataKeyWeatherHumidity] as? HKQuantity),
+    metadataWeatherTemperature: serializeUnknownQuantityTyped(
+      quantity: sample.metadata?[HKMetadataKeyWeatherTemperature] as? HKQuantity),
+    metadataInsulinDeliveryReason: serializeInsulinDeliveryReason(
+      sample.metadata?[HKMetadataKeyInsulinDeliveryReason] as? HKInsulinDeliveryReason),
+    metadataHeartRateMotionContext: serializeHeartRateMotionContext(
+      sample.metadata?[HKMetadataKeyHeartRateMotionContext] as? HKHeartRateMotionContext),
+    uuid: sample.uuid.uuidString,
+    sourceRevision: serializeSourceRevision(sample.sourceRevision),
+    device: serializeDevice(hkDevice: sample.device),
     metadata: serializeMetadata(sample.metadata),
-    sourceRevision: serializeSourceRevision(sample.sourceRevision)
+    metadataExternalUUID: sample.metadata?[HKMetadataKeyExternalUUID] as? String,
+    metadataTimeZone: sample.metadata?[HKMetadataKeyTimeZone] as? String,
+    metadataWasUserEntered: sample.metadata?[HKMetadataKeyWasUserEntered] as? Bool,
+    metadataDeviceSerialNumber: sample.metadata?[HKMetadataKeyDeviceSerialNumber] as? String,
+    metadataUdiDeviceIdentifier: sample.metadata?[HKMetadataKeyUDIDeviceIdentifier] as? String,
+    metadataUdiProductionIdentifier: sample.metadata?[HKMetadataKeyUDIProductionIdentifier]
+      as? String,
+    metadataDigitalSignature: sample.metadata?[HKMetadataKeyDigitalSignature] as? String,
+    metadataDeviceName: sample.metadata?[HKMetadataKeyDeviceName] as? String,
+    metadataDeviceManufacturerName: sample.metadata?[HKMetadataKeyDeviceManufacturerName]
+      as? String,
+    metadataSyncIdentifier: sample.metadata?[HKMetadataKeySyncIdentifier] as? String,
+    metadataSyncVersion: sample.metadata?[HKMetadataKeySyncVersion] as? Double,
+    metadataWasTakenInLab: sample.metadata?[HKMetadataKeyWasTakenInLab] as? Bool,
+    metadataReferenceRangeLowerLimit: sample.metadata?[HKMetadataKeyReferenceRangeLowerLimit]
+      as? Double,
+    metadataReferenceRangeUpperLimit: sample.metadata?[HKMetadataKeyReferenceRangeUpperLimit]
+      as? Double,
+    metadataAlgorithmVersion: sample.metadata?[HKMetadataKeyAlgorithmVersion] as? Double
   )
 }
 
@@ -238,11 +322,7 @@ func serializeOperatingSystemVersion(_ version: OperatingSystemVersion?) -> Stri
   return versionString
 }
 
-func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision?) -> SourceRevision? {
-  guard let hkSourceRevision = hkSourceRevision else {
-    return nil
-  }
-
+func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision) -> SourceRevision {
   if #available(iOS 11, *) {
     return SourceRevision(
       source: serializeSource(hkSourceRevision.source),
@@ -258,5 +338,14 @@ func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision?) -> SourceRev
     version: hkSourceRevision.version,
     operatingSystemVersion: nil,
     productType: nil
+  )
+}
+
+func serializeSampleType(_ sampleType: HKSampleType) -> SampleType {
+  return SampleType(
+    identifier: sampleType.identifier,
+    allowsRecalibrationForEstimates: sampleType.allowsRecalibrationForEstimates,
+    isMinimumDurationRestricted: sampleType.isMinimumDurationRestricted,
+    isMaximumDurationRestricted: sampleType.isMaximumDurationRestricted
   )
 }

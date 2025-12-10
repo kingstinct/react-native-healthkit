@@ -12,27 +12,18 @@ import type {
   WorkoutTypeIdentifier,
 } from './Constants'
 import type { CorrelationTypeIdentifier } from './CorrelationType'
+import type { Device } from './Device'
+import type {
+  HeartRateMotionContext,
+  InsulinDeliveryReason,
+  Quantity,
+} from './QuantityType'
 import type {
   QuantityTypeIdentifier,
   QuantityTypeIdentifierWriteable,
 } from './QuantityTypeIdentifier'
-
-export interface GenericMetadata {
-  readonly HKExternalUUID?: string
-  readonly HKTimeZone?: string
-  readonly HKWasUserEntered?: boolean
-  readonly HKDeviceSerialNumber?: string
-  readonly HKUDIDeviceIdentifier?: string
-  readonly HKUDIProductionIdentifier?: string
-  readonly HKDigitalSignature?: string
-  readonly HKDeviceName?: string
-  readonly HKDeviceManufacturerName?: string
-  readonly HKSyncIdentifier?: string
-  readonly HKSyncVersion?: number
-  readonly HKWasTakenInLab?: boolean
-  readonly HKReferenceRangeLowerLimit?: number
-  readonly HKReferenceRangeUpperLimit?: number
-}
+import type { SourceRevision } from './Source'
+import type { WeatherCondition } from './WeatherCondition'
 
 export interface DeletedSample {
   readonly uuid: string
@@ -65,6 +56,23 @@ export type SampleTypeIdentifierWriteable =
   | typeof WorkoutRouteTypeIdentifier
   | typeof WorkoutTypeIdentifier
 
+export interface GenericMetadata {
+  readonly HKExternalUUID?: string
+  readonly HKTimeZone?: string
+  readonly HKWasUserEntered?: boolean
+  readonly HKDeviceSerialNumber?: string
+  readonly HKUDIDeviceIdentifier?: string
+  readonly HKUDIProductionIdentifier?: string
+  readonly HKDigitalSignature?: string
+  readonly HKDeviceName?: string
+  readonly HKDeviceManufacturerName?: string
+  readonly HKSyncIdentifier?: string
+  readonly HKSyncVersion?: number
+  readonly HKWasTakenInLab?: boolean
+  readonly HKReferenceRangeLowerLimit?: number
+  readonly HKReferenceRangeUpperLimit?: number
+}
+
 /**
  * Represents a type that identifies activity summary objects.
  * @see {@link https://developer.apple.com/documentation/healthkit/hkactivitysummarytype Apple Docs HKActivitySummaryType}
@@ -77,3 +85,52 @@ export const ActivitySummaryTypeIdentifier =
  * @see {@link https://developer.apple.com/documentation/healthkit/HKAudiogramSampleType Apple Docs HKAudiogramSampleType}
  */
 export const AudiogramTypeIdentifier = 'HKAudiogramSampleType' as const
+
+export interface BaseObject {
+  readonly uuid: string
+  readonly sourceRevision: SourceRevision
+  readonly device?: Device
+  readonly metadata: AnyMap
+
+  // metadata
+  readonly metadataExternalUUID?: string
+  readonly metadataTimeZone?: string
+  readonly metadataWasUserEntered?: boolean
+  readonly metadataDeviceSerialNumber?: string
+  readonly metadataUdiDeviceIdentifier?: string
+  readonly metadataUdiProductionIdentifier?: string
+  readonly metadataDigitalSignature?: string
+  readonly metadataDeviceName?: string
+  readonly metadataDeviceManufacturerName?: string
+  readonly metadataSyncIdentifier?: string
+  readonly metadataSyncVersion?: number
+  readonly metadataWasTakenInLab?: boolean
+  readonly metadataReferenceRangeLowerLimit?: number
+  readonly metadataReferenceRangeUpperLimit?: number
+  readonly metadataAlgorithmVersion?: number
+}
+
+export interface SampleType {
+  identifier: string
+  allowsRecalibrationForEstimates: boolean
+  isMinimumDurationRestricted: boolean
+  isMaximumDurationRestricted: boolean
+}
+
+export interface BaseSample extends BaseObject {
+  readonly sampleType: SampleType
+  readonly startDate: Date
+  readonly endDate: Date
+  readonly hasUndeterminedDuration: boolean
+
+  // metadata
+  readonly metadataWeatherCondition?: WeatherCondition
+  readonly metadataWeatherHumidity?: Quantity
+  readonly metadataWeatherTemperature?: Quantity
+  readonly metadataInsulinDeliveryReason?: InsulinDeliveryReason
+  /**
+   * postprandial or preprandial (https://developer.apple.com/documentation/healthkit/hkbloodglucosemealtime)
+   */
+  // readonly metadataBloodGlucoseMealTime?: number
+  readonly metadataHeartRateMotionContext?: HeartRateMotionContext
+}

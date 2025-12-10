@@ -1,5 +1,5 @@
 // documented at https://developer.apple.com/documentation/healthkit/hkweathercondition
-export enum HKWeatherCondition {
+export enum WeatherCondition {
   none = 0,
   clear = 1,
   fair = 2,

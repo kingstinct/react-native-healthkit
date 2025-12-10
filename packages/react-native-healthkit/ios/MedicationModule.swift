@@ -49,12 +49,6 @@ import NitroModules
   @available(iOS 26.0, *)
   func serializeMedicationEvent(sample: HKMedicationDoseEvent) throws -> MedicationDoseEvent {
     return MedicationDoseEvent(
-      uuid: sample.uuid.uuidString,
-      device: serializeDevice(hkDevice: sample.device),
-      startDate: sample.startDate,
-      endDate: sample.endDate,
-      metadata: serializeMetadata(sample.metadata),
-      sourceRevision: serializeSourceRevision(sample.sourceRevision),
       scheduleType: try getScheduleType(sample.scheduleType),
       medicationConceptIdentifier: try serializeMedicationConceptIdentifier(
         sample.medicationConceptIdentifier),
@@ -62,7 +56,44 @@ import NitroModules
       scheduledDoseQuantity: sample.scheduledDoseQuantity,
       doseQuantity: sample.doseQuantity,
       logStatus: try getLogStatus(sample.logStatus),
-      unit: sample.unit.unitString
+      unit: sample.unit.unitString,
+      sampleType: serializeSampleType(sample.sampleType),
+      startDate: sample.startDate,
+      endDate: sample.endDate,
+      hasUndeterminedDuration: sample.hasUndeterminedDuration,
+      metadataWeatherCondition: serializeWeatherCondition(
+        sample.metadata?[HKMetadataKeyWeatherCondition] as? HKWeatherCondition),
+      metadataWeatherHumidity: serializeUnknownQuantityTyped(
+        quantity: sample.metadata?[HKMetadataKeyWeatherHumidity] as? HKQuantity),
+      metadataWeatherTemperature: serializeUnknownQuantityTyped(
+        quantity: sample.metadata?[HKMetadataKeyWeatherTemperature] as? HKQuantity),
+      metadataInsulinDeliveryReason: serializeInsulinDeliveryReason(
+        sample.metadata?[HKMetadataKeyInsulinDeliveryReason] as? HKInsulinDeliveryReason),
+      metadataHeartRateMotionContext: serializeHeartRateMotionContext(
+        sample.metadata?[HKMetadataKeyHeartRateMotionContext] as? HKHeartRateMotionContext),
+      uuid: sample.uuid.uuidString,
+      sourceRevision: serializeSourceRevision(sample.sourceRevision),
+      device: serializeDevice(hkDevice: sample.device),
+      metadata: serializeMetadata(sample.metadata),
+      metadataExternalUUID: sample.metadata?[HKMetadataKeyExternalUUID] as? String,
+      metadataTimeZone: sample.metadata?[HKMetadataKeyTimeZone] as? String,
+      metadataWasUserEntered: sample.metadata?[HKMetadataKeyWasUserEntered] as? Bool,
+      metadataDeviceSerialNumber: sample.metadata?[HKMetadataKeyDeviceSerialNumber] as? String,
+      metadataUdiDeviceIdentifier: sample.metadata?[HKMetadataKeyUDIDeviceIdentifier] as? String,
+      metadataUdiProductionIdentifier: sample.metadata?[HKMetadataKeyUDIProductionIdentifier]
+        as? String,
+      metadataDigitalSignature: sample.metadata?[HKMetadataKeyDigitalSignature] as? String,
+      metadataDeviceName: sample.metadata?[HKMetadataKeyDeviceName] as? String,
+      metadataDeviceManufacturerName: sample.metadata?[HKMetadataKeyDeviceManufacturerName]
+        as? String,
+      metadataSyncIdentifier: sample.metadata?[HKMetadataKeySyncIdentifier] as? String,
+      metadataSyncVersion: sample.metadata?[HKMetadataKeySyncVersion] as? Double,
+      metadataWasTakenInLab: sample.metadata?[HKMetadataKeyWasTakenInLab] as? Bool,
+      metadataReferenceRangeLowerLimit: sample.metadata?[HKMetadataKeyReferenceRangeLowerLimit]
+        as? Double,
+      metadataReferenceRangeUpperLimit: sample.metadata?[HKMetadataKeyReferenceRangeUpperLimit]
+        as? Double,
+      metadataAlgorithmVersion: sample.metadata?[HKMetadataKeyAlgorithmVersion] as? Double
     )
   }
 

@@ -175,7 +175,6 @@ func saveWorkoutRouteInternal(
 }
 
 class WorkoutProxy: HybridWorkoutProxySpec {
-
   // Return a Promise instead of directly returning the value; wrap async logic.
   func getStatistic(quantityType: QuantityTypeIdentifier, unitOverride: String?) throws -> Promise<
     QueryStatisticsResponse?
@@ -213,16 +212,44 @@ class WorkoutProxy: HybridWorkoutProxySpec {
     }
 
     return WorkoutSample(
-      uuid: self.uuid,
-      device: self.device,
       workoutActivityType: self.workoutActivityType,
       duration: self.duration,
+      events: self.events,
+      activities: self.activities,
+      metadataAverageMETs: self.metadataAverageMETs,
+      metadataElevationAscended: self.metadataElevationAscended,
+      metadataElevationDescended: self.metadataElevationDescended,
+      metadataIndoorWorkout: self.metadataIndoorWorkout,
+      metadataAverageSpeed: self.metadataAverageSpeed,
+      metadataMaximumSpeed: self.metadataMaximumSpeed,
+      sampleType: self.sampleType,
       startDate: self.startDate,
       endDate: self.endDate,
-      metadata: self.metadata,
+      hasUndeterminedDuration: self.hasUndeterminedDuration,
+      metadataWeatherCondition: self.metadataWeatherCondition,
+      metadataWeatherHumidity: self.metadataWeatherHumidity,
+      metadataWeatherTemperature: self.metadataWeatherTemperature,
+      metadataInsulinDeliveryReason: self.metadataInsulinDeliveryReason,
+      metadataHeartRateMotionContext: self.metadataHeartRateMotionContext,
+      uuid: self.uuid,
       sourceRevision: self.sourceRevision,
-      events: self.events,
-      activities: self.activities
+      device: self.device,
+      metadata: self.metadata,
+      metadataExternalUUID: self.metadataExternalUUID,
+      metadataTimeZone: self.metadataTimeZone,
+      metadataWasUserEntered: self.metadataWasUserEntered,
+      metadataDeviceSerialNumber: self.metadataDeviceSerialNumber,
+      metadataUdiDeviceIdentifier: self.metadataUdiDeviceIdentifier,
+      metadataUdiProductionIdentifier: self.metadataUdiProductionIdentifier,
+      metadataDigitalSignature: self.metadataDigitalSignature,
+      metadataDeviceName: self.metadataDeviceName,
+      metadataDeviceManufacturerName: self.metadataDeviceManufacturerName,
+      metadataSyncIdentifier: self.metadataSyncIdentifier,
+      metadataSyncVersion: self.metadataSyncVersion,
+      metadataWasTakenInLab: self.metadataWasTakenInLab,
+      metadataReferenceRangeLowerLimit: self.metadataReferenceRangeLowerLimit,
+      metadataReferenceRangeUpperLimit: self.metadataReferenceRangeUpperLimit,
+      metadataAlgorithmVersion: self.metadataAlgorithmVersion
     )
   }
 
@@ -321,12 +348,141 @@ class WorkoutProxy: HybridWorkoutProxySpec {
     return workout.endDate
   }
 
-  var metadata: AnyMap? {
+  var metadata: AnyMap {
     return serializeMetadata(workout.metadata)
   }
 
-  var sourceRevision: SourceRevision? {
+  var sourceRevision: SourceRevision {
     return serializeSourceRevision(workout.sourceRevision)
+  }
+
+  // BaseSample properties
+  var sampleType: SampleType {
+    return serializeSampleType(workout.sampleType)
+  }
+
+  var hasUndeterminedDuration: Bool {
+    return workout.hasUndeterminedDuration
+  }
+
+  // Weather metadata
+  var metadataWeatherCondition: WeatherCondition? {
+    return serializeWeatherCondition(
+      workout.metadata?[HKMetadataKeyWeatherCondition] as? HKWeatherCondition)
+  }
+
+  var metadataWeatherHumidity: Quantity? {
+    return serializeUnknownQuantityTyped(
+      quantity: workout.metadata?[HKMetadataKeyWeatherHumidity] as? HKQuantity)
+  }
+
+  var metadataWeatherTemperature: Quantity? {
+    return serializeUnknownQuantityTyped(
+      quantity: workout.metadata?[HKMetadataKeyWeatherTemperature] as? HKQuantity)
+  }
+
+  var metadataInsulinDeliveryReason: InsulinDeliveryReason? {
+    return serializeInsulinDeliveryReason(
+      workout.metadata?[HKMetadataKeyInsulinDeliveryReason] as? HKInsulinDeliveryReason)
+  }
+
+  var metadataHeartRateMotionContext: HeartRateMotionContext? {
+    return serializeHeartRateMotionContext(
+      workout.metadata?[HKMetadataKeyHeartRateMotionContext] as? HKHeartRateMotionContext)
+  }
+
+  // Workout-specific metadata
+  var metadataAverageMETs: Quantity? {
+    return serializeUnknownQuantityTyped(
+      quantity: workout.metadata?[HKMetadataKeyAverageMETs] as? HKQuantity)
+  }
+
+  var metadataElevationAscended: Quantity? {
+    return serializeUnknownQuantityTyped(
+      quantity: workout.metadata?[HKMetadataKeyElevationAscended] as? HKQuantity)
+  }
+
+  var metadataElevationDescended: Quantity? {
+    if #available(iOS 18.0, *) {
+      return serializeUnknownQuantityTyped(
+        quantity: workout.metadata?[HKMetadataKeyElevationDescended] as? HKQuantity)
+    }
+    return nil
+  }
+
+  var metadataIndoorWorkout: Bool? {
+    return workout.metadata?[HKMetadataKeyIndoorWorkout] as? Bool
+  }
+
+  var metadataAverageSpeed: Quantity? {
+    return serializeUnknownQuantityTyped(
+      quantity: workout.metadata?[HKMetadataKeyAverageSpeed] as? HKQuantity)
+  }
+
+  var metadataMaximumSpeed: Quantity? {
+    return serializeUnknownQuantityTyped(
+      quantity: workout.metadata?[HKMetadataKeyMaximumSpeed] as? HKQuantity)
+  }
+
+  // BaseObject metadata
+  var metadataExternalUUID: String? {
+    return workout.metadata?[HKMetadataKeyExternalUUID] as? String
+  }
+
+  var metadataTimeZone: String? {
+    return workout.metadata?[HKMetadataKeyTimeZone] as? String
+  }
+
+  var metadataWasUserEntered: Bool? {
+    return workout.metadata?[HKMetadataKeyWasUserEntered] as? Bool
+  }
+
+  var metadataDeviceSerialNumber: String? {
+    return workout.metadata?[HKMetadataKeyDeviceSerialNumber] as? String
+  }
+
+  var metadataUdiDeviceIdentifier: String? {
+    return workout.metadata?[HKMetadataKeyUDIDeviceIdentifier] as? String
+  }
+
+  var metadataUdiProductionIdentifier: String? {
+    return workout.metadata?[HKMetadataKeyUDIProductionIdentifier] as? String
+  }
+
+  var metadataDigitalSignature: String? {
+    return workout.metadata?[HKMetadataKeyDigitalSignature] as? String
+  }
+
+  var metadataDeviceName: String? {
+    return workout.metadata?[HKMetadataKeyDeviceName] as? String
+  }
+
+  var metadataDeviceManufacturerName: String? {
+    return workout.metadata?[HKMetadataKeyDeviceManufacturerName] as? String
+  }
+
+  var metadataSyncIdentifier: String? {
+    return workout.metadata?[HKMetadataKeySyncIdentifier] as? String
+  }
+
+  var metadataSyncVersion: Double? {
+    return workout.metadata?[HKMetadataKeySyncVersion] as? Double
+  }
+
+  var metadataWasTakenInLab: Bool? {
+    return workout.metadata?[HKMetadataKeyWasTakenInLab] as? Bool
+  }
+
+  var metadataReferenceRangeLowerLimit: Double? {
+    return workout.metadata?[HKMetadataKeyReferenceRangeLowerLimit] as? Double
+  }
+
+  var metadataReferenceRangeUpperLimit: Double? {
+    return workout.metadata?[HKMetadataKeyReferenceRangeUpperLimit] as? Double
+  }
+
+  var metadataAlgorithmVersion: Double? {
+    return workout.metadata?[HKMetadataKeyAlgorithmVersion] as? Double
   }
 
   var events: [WorkoutEvent]? {
