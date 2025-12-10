@@ -38,6 +38,7 @@ private func serializeECGSample(sample: HKElectrocardiogram, includeVoltages: Bo
     startDate: sample.startDate,
     endDate: sample.endDate,
     hasUndeterminedDuration: sample.hasUndeterminedDuration,
+
     metadataWeatherCondition: serializeWeatherCondition(
       sample.metadata?[HKMetadataKeyWeatherCondition] as? HKWeatherCondition),
     metadataWeatherHumidity: serializeUnknownQuantityTyped(
@@ -48,10 +49,12 @@ private func serializeECGSample(sample: HKElectrocardiogram, includeVoltages: Bo
       sample.metadata?[HKMetadataKeyInsulinDeliveryReason] as? HKInsulinDeliveryReason),
     metadataHeartRateMotionContext: serializeHeartRateMotionContext(
       sample.metadata?[HKMetadataKeyHeartRateMotionContext] as? HKHeartRateMotionContext),
+
     uuid: sample.uuid.uuidString,
     sourceRevision: serializeSourceRevision(sample.sourceRevision),
     device: serializeDevice(hkDevice: sample.device),
     metadata: serializeMetadata(sample.metadata),
+
     metadataExternalUUID: sample.metadata?[HKMetadataKeyExternalUUID] as? String,
     metadataTimeZone: sample.metadata?[HKMetadataKeyTimeZone] as? String,
     metadataWasUserEntered: sample.metadata?[HKMetadataKeyWasUserEntered] as? Bool,

@@ -9,7 +9,6 @@ import HealthKit
 import NitroModules
 
 #if compiler(>=6.2)
-
   @available(iOS 26.0, *)
   func deserializeHKMedicationConceptIdentifier(base64String: String?) throws
     -> HKHealthConceptIdentifier? {
@@ -61,6 +60,7 @@ import NitroModules
       startDate: sample.startDate,
       endDate: sample.endDate,
       hasUndeterminedDuration: sample.hasUndeterminedDuration,
+
       metadataWeatherCondition: serializeWeatherCondition(
         sample.metadata?[HKMetadataKeyWeatherCondition] as? HKWeatherCondition),
       metadataWeatherHumidity: serializeUnknownQuantityTyped(
@@ -71,10 +71,12 @@ import NitroModules
         sample.metadata?[HKMetadataKeyInsulinDeliveryReason] as? HKInsulinDeliveryReason),
       metadataHeartRateMotionContext: serializeHeartRateMotionContext(
         sample.metadata?[HKMetadataKeyHeartRateMotionContext] as? HKHeartRateMotionContext),
+
       uuid: sample.uuid.uuidString,
       sourceRevision: serializeSourceRevision(sample.sourceRevision),
       device: serializeDevice(hkDevice: sample.device),
       metadata: serializeMetadata(sample.metadata),
+
       metadataExternalUUID: sample.metadata?[HKMetadataKeyExternalUUID] as? String,
       metadataTimeZone: sample.metadata?[HKMetadataKeyTimeZone] as? String,
       metadataWasUserEntered: sample.metadata?[HKMetadataKeyWasUserEntered] as? Bool,
@@ -220,7 +222,6 @@ import NitroModules
         throw runtimeErrorWithPrefix("queryMedicationEventsWithAnchor requires iOS 26.0 or later")
       }
     }
-
   }
 
 #else
@@ -232,25 +233,21 @@ import NitroModules
     }
 
     func queryMedicationEvents(options: QueryOptionsWithSortOrder) -> Promise<[MedicationDoseEvent]> {
-
       return Promise.async {
         throw runtimeErrorWithPrefix(
           "queryMedicationEvents needs to be built with XCode 26.0 or later")
       }
-
     }
 
     func requestMedicationsAuthorization() -> Promise<Bool> {
       return Promise.async {
-
         throw runtimeErrorWithPrefix(
           "requestMedicationsAuthorization needs to be built with XCode 26.0 or later")
-
       }
     }
 
     func queryMedicationEventsWithAnchor(options: QueryOptionsWithAnchor)
-      -> NitroModules.Promise<MedicationDoseEventsWithAnchorResponse> {
+      -> Promise<MedicationDoseEventsWithAnchorResponse> {
       return Promise.async {
         throw runtimeErrorWithPrefix(
           "queryMedicationEventsWithAnchor needs to be built with XCode 26.0 or later")

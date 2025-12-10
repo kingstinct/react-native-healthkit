@@ -29,6 +29,7 @@ func serializeCorrelationSample(correlation: HKCorrelation, unitMap: [HKQuantity
     startDate: correlation.startDate,
     endDate: correlation.endDate,
     hasUndeterminedDuration: correlation.hasUndeterminedDuration,
+
     metadataWeatherCondition: serializeWeatherCondition(
       correlation.metadata?[HKMetadataKeyWeatherCondition] as? HKWeatherCondition),
     metadataWeatherHumidity: serializeUnknownQuantityTyped(
@@ -39,10 +40,12 @@ func serializeCorrelationSample(correlation: HKCorrelation, unitMap: [HKQuantity
       correlation.metadata?[HKMetadataKeyInsulinDeliveryReason] as? HKInsulinDeliveryReason),
     metadataHeartRateMotionContext: serializeHeartRateMotionContext(
       correlation.metadata?[HKMetadataKeyHeartRateMotionContext] as? HKHeartRateMotionContext),
+
     uuid: correlation.uuid.uuidString,
     sourceRevision: serializeSourceRevision(correlation.sourceRevision),
     device: serializeDevice(hkDevice: correlation.device),
     metadata: serializeMetadata(correlation.metadata),
+
     metadataExternalUUID: correlation.metadata?[HKMetadataKeyExternalUUID] as? String,
     metadataTimeZone: correlation.metadata?[HKMetadataKeyTimeZone] as? String,
     metadataWasUserEntered: correlation.metadata?[HKMetadataKeyWasUserEntered] as? Bool,
