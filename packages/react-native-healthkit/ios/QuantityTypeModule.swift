@@ -304,7 +304,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
               unit: unit
             )
           } catch {
-            print(error.localizedDescription)
+            warnWithPrefix("queryQuantitySamplesWithAnchor: \(error.localizedDescription)")
           }
         }
         return nil
@@ -364,7 +364,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
 
             return serialized
           } catch {
-            print(error.localizedDescription)
+            warnWithPrefix("Error serializing quantity sample: \(error.localizedDescription)")
           }
         }
         return nil

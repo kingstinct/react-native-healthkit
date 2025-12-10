@@ -189,7 +189,7 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
       }
 
       guard let workout = workout else {
-        throw runtimeErrorWithPrefix("Could not create workout")
+        throw runtimeErrorWithPrefix("Failed to create workout")
       }
       try await withCheckedThrowingContinuation({ continuation in
         // saving workout, samples and route

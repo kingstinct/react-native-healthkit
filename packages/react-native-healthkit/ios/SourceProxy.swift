@@ -11,7 +11,7 @@ import NitroModules
 class SourceProxy: HybridSourceProxySpec {
   func toJSON(key: String?) throws -> Source {
     if key != nil && key?.isEmpty != true {
-      print("SourceProxy does not support toJSON with key: \(key!)")
+      warnWithPrefix("SourceProxy does not support toJSON with key: \(key!)")
     }
 
     return Source(

@@ -209,7 +209,7 @@ class WorkoutProxy: HybridWorkoutProxySpec {
 
   func toJSON(key: String?) throws -> WorkoutSample {
     if let key = key, !key.isEmpty {
-      print("WorkoutProxy does not support toJSON with key: \(key)")
+      warnWithPrefix("WorkoutProxy does not support toJSON with key: \(key)")
     }
 
     return WorkoutSample(
@@ -258,8 +258,8 @@ class WorkoutProxy: HybridWorkoutProxySpec {
       return activityType
     }
 
-    print(
-      "Unknown workout activity type: \(workout.workoutActivityType.rawValue), falling back to 'other'"
+    warnWithPrefix(
+      "Unknown workoutActivityType with rawValue: \(workout.workoutActivityType.rawValue), falling back to 'other'"
     )
 
     return WorkoutActivityType.other
@@ -341,7 +341,7 @@ class WorkoutProxy: HybridWorkoutProxySpec {
             endDate: event.dateInterval.end
           )
         }
-        print(
+        warnWithPrefix(
           "Failed to initialize WorkoutEventType with rawValue: \(event.type.rawValue)"
         )
         return nil
@@ -377,7 +377,8 @@ class WorkoutProxy: HybridWorkoutProxySpec {
       if #available(iOS 17.0.0, *) {
         return try await getWorkoutPlanInternal(workout: self.workout)
       } else {
-        throw runtimeErrorWithPrefix("Workout plans are only available on iOS 17.0 or later")
+        warnWithPrefix("Workout plans are only available on iOS 17.0 or later")
+        return nil
       }
     }
   }

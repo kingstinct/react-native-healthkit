@@ -13,9 +13,8 @@ func serializeCorrelationSample(correlation: HKCorrelation, unitMap: [HKQuantity
         )
         return CorrelationObject.second(quantitySample)
       } catch {
-        print(error.localizedDescription)
+        warnWithPrefix("serializeCorrelationSample: \(error.localizedDescription)")
       }
-
     } else if let categorySample = object as? HKCategorySample {
       return CorrelationObject.first(serializeCategorySample(sample: categorySample))
     }

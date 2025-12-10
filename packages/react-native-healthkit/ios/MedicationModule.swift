@@ -186,9 +186,7 @@ import NitroModules
             newAnchor: response.newAnchor
           )
         }
-        warnWithPrefix("queryMedicationEventsWithAnchor requires iOS 26.0 or later")
-        return MedicationDoseEventsWithAnchorResponse(
-          samples: [], deletedSamples: [], newAnchor: "")
+        throw runtimeErrorWithPrefix("queryMedicationEventsWithAnchor requires iOS 26.0 or later")
       }
     }
 
@@ -198,14 +196,15 @@ import NitroModules
   class MedicationModule: HybridMedicationModuleSpec {
     func queryMedications() -> Promise<[UserAnnotatedMedication]> {
       return Promise.async {
-        throw runtimeErrorWithPrefix("queryMedications needs to be built with XCode 26.0")
+        throw runtimeErrorWithPrefix("queryMedications needs to be built with XCode 26.0 or later")
       }
     }
 
     func queryMedicationEvents(options: QueryOptionsWithSortOrder) -> Promise<[MedicationDoseEvent]> {
 
       return Promise.async {
-        throw runtimeErrorWithPrefix("queryMedicationEvents needs to be built with XCode 26.0")
+        throw runtimeErrorWithPrefix(
+          "queryMedicationEvents needs to be built with XCode 26.0 or later")
       }
 
     }
@@ -214,7 +213,7 @@ import NitroModules
       return Promise.async {
 
         throw runtimeErrorWithPrefix(
-          "requestMedicationsAuthorization needs to be built with XCode 26.0")
+          "requestMedicationsAuthorization needs to be built with XCode 26.0 or later")
 
       }
     }
@@ -223,7 +222,7 @@ import NitroModules
       -> NitroModules.Promise<MedicationDoseEventsWithAnchorResponse> {
       return Promise.async {
         throw runtimeErrorWithPrefix(
-          "queryMedicationEventsWithAnchor needs to be built with XCode 26.0")
+          "queryMedicationEventsWithAnchor needs to be built with XCode 26.0 or later")
       }
     }
 

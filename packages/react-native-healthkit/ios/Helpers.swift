@@ -291,7 +291,7 @@ func objectTypesFromArray(typeIdentifiers: [ObjectTypeIdentifier]) -> Set<HKObje
       let objectType = try objectTypeFrom(objectTypeIdentifier: typeIdentifier)
       share.insert(objectType)
     } catch {
-      print(error.localizedDescription)
+      warnWithPrefix("objectTypesFromArray: \(error.localizedDescription)")
     }
   }
   return share
@@ -312,7 +312,7 @@ func sampleTypesFromArray(typeIdentifiers: [SampleTypeIdentifier]) -> Set<HKSamp
         let sampleType = try sampleTypeFrom(sampleTypeIdentifier: typeIdentifier)
         return sampleType
       } catch {
-        print(error.localizedDescription)
+        warnWithPrefix("sampleTypesFromArray: \(error.localizedDescription)")
       }
       return nil
     })
@@ -327,7 +327,7 @@ func sampleTypesFromArray(typeIdentifiersWriteable: [SampleTypeIdentifierWriteab
         let sampleType = try sampleTypeFrom(sampleTypeIdentifierWriteable: typeIdentifier)
         return sampleType
       } catch {
-        print(error.localizedDescription)
+        warnWithPrefix("sampleTypesFromArray: \(error.localizedDescription)")
       }
       return nil
     })

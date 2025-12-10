@@ -211,29 +211,6 @@ func serializeMetadata(_ metadata: [String: Any]?) -> AnyMap {
   return serialized
 }
 
-/*func serializeGenericMetadata(_ metadata: [String: Any]?) -> GenericMetadata? {
-    if let metadata = metadata {
-        return GenericMetadata(
-            HKExternalUUID: metadata["HKExternalUUID"] as? String,
-            HKTimeZone: metadata["HKTimeZone"] as? String,
-            HKWasUserEntered: metadata["HKWasUserEntered"] as? Bool,
-            HKDeviceSerialNumber: metadata["HKDeviceSerialNumber"] as? String,
-            HKUDIDeviceIdentifier: metadata["HKUDIDeviceIdentifier"] as? String,
-            HKUDIProductionIdentifier: metadata["HKUDIProductionIdentifier"] as? String,
-            HKDigitalSignature: metadata["HKDigitalSignature"] as? String,
-            HKDeviceName: metadata["HKDeviceName"] as? String,
-            HKDeviceManufacturerName: metadata["HKDeviceManufacturerName"] as? String,
-            HKSyncIdentifier: metadata["HKSyncIdentifier"] as? String,
-            HKSyncVersion: metadata["HKSyncVersion"] as? Double,
-            HKWasTakenInLab: metadata["HKWasTakenInLab"] as? Bool,
-            HKReferenceRangeLowerLimit: metadata["HKReferenceRangeLowerLimit"] as? Double,
-            HKReferenceRangeUpperLimit: metadata["HKReferenceRangeUpperLimit"] as? Double,
-            allMetadata: serializeAllMetadata(metadata)
-        )
-    }
-    return nil
-}*/
-
 func serializeDevice(hkDevice: HKDevice?) -> Device? {
   guard let hkDevice = hkDevice else {
     return nil

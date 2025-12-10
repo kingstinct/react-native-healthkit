@@ -177,7 +177,7 @@ func createUUIDsPredicate(uuids: [String]?) -> NSPredicate? {
         let uuid = try initializeUUID(uuidStr)
         return uuid
       } catch {
-        print(error.localizedDescription)
+        warnWithPrefix(error.localizedDescription)
         return nil
       }
     }
@@ -192,7 +192,7 @@ func createUUIDPredicate(_ uuid: String?) -> NSPredicate? {
       let uuid = try initializeUUID(uuidStr)
       return HKQuery.predicateForObject(with: uuid)
     } catch {
-      print(error.localizedDescription)
+      warnWithPrefix("createUUIDPredicate: \(error.localizedDescription)")
       return nil
     }
   }
@@ -205,7 +205,8 @@ func getComparisonPredicateOperator(_ op: ComparisonPredicateOperator?) -> NSCom
     if let op = NSComparisonPredicate.Operator.init(rawValue: UInt(rawValue)) {
       return op
     } else {
-      warnWithPrefix("Unsupported operator in metadata filter: \(rawValue)")
+      warnWithPrefix(
+        "getComparisonPredicateOperator: Unsupported operator in metadata filter: \(rawValue)")
     }
   }
   return nil

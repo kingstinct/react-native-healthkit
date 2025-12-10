@@ -23,7 +23,7 @@ func getUnitToUse(unitOverride: String?, quantityType: HKQuantityType) async thr
 
     if !quantityType.is(compatibleWith: unit) {
       throw runtimeErrorWithPrefix(
-        "Unit \(unitOverride) is incompatible with \(quantityType.identifier)")
+        "Unit \(unitOverride) is incompatible with quantityType \(quantityType.identifier)")
     }
 
     return unit
@@ -34,11 +34,11 @@ func getUnitToUse(unitOverride: String?, quantityType: HKQuantityType) async thr
     return preferredUnit
   }
 
-  throw runtimeErrorWithPrefix("Must specify a unit for \(quantityType.identifier)")
+  throw runtimeErrorWithPrefix("getUnitToUse: Must specify a unit for \(quantityType.identifier)")
 }
 
 func getPreferredUnitsInternal(quantityTypes: [HKQuantityType], forceUpdate: Bool? = false)
-  async throws -> [HKQuantityType: HKUnit] {
+async throws -> [HKQuantityType: HKUnit] {
 
   if quantityTypes.count == 0 {
     return [:]
@@ -124,7 +124,7 @@ class CoreModule: HybridCoreModuleSpec {
     }
 
     throw runtimeErrorWithPrefix(
-      "got unrecognized AuthorizationStatus with value \(authStatus.rawValue)")
+      "Got unrecognized AuthorizationStatus rawValue: \(authStatus.rawValue)")
   }
 
   func getRequestStatusForAuthorization(toCheck: AuthDataTypes) -> Promise<
@@ -136,10 +136,10 @@ class CoreModule: HybridCoreModuleSpec {
 
       return try await withCheckedThrowingContinuation { continuation in
         if toShare.isEmpty && toRead.isEmpty {
+          warnWithPrefix("Both toRead and toShare are empty, returning 'unnecessary' status")
           return continuation.resume(
-            throwing: runtimeErrorWithPrefix(
-              "Both toRead and toShare are empty, at least one data type must be specified to check authorization status"
-            ))
+            returning: .unnecessary
+          )
         }
         return store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) {
           status, error in
@@ -233,7 +233,7 @@ class CoreModule: HybridCoreModuleSpec {
           }
         }
       } else {
-        throw runtimeErrorWithPrefix("Invalid update frequency value: \(updateFrequency)")
+        throw runtimeErrorWithPrefix("Invalid update frequency rawValue: \(updateFrequency)")
       }
     }
 
@@ -302,7 +302,7 @@ class CoreModule: HybridCoreModuleSpec {
 
           return quantityType
         } catch {
-          print(error.localizedDescription)
+          warnWithPrefix("getPreferredUnits: \(error.localizedDescription)")
           return nil
         }
       }
@@ -383,7 +383,9 @@ class CoreModule: HybridCoreModuleSpec {
 
   func unsubscribeQuery(queryId: String) throws -> Bool {
     guard let query = self._runningQueries[queryId] else {
-      throw runtimeErrorWithPrefix("Query with id \(queryId) not found")
+      warnWithPrefix("unsubscribeQuery: Query with id \(queryId) not found")
+
+      return false
     }
 
     store.stop(query)
@@ -409,7 +411,7 @@ class CoreModule: HybridCoreModuleSpec {
         return true
       }
 
-      print("Query with id \(queryId) not found, skipping unsubscribe")
+      warnWithPrefix("unsubscribeQueries: Query with id \(queryId) not found, skipping unsubscribe")
 
       return false
     }
