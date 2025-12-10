@@ -1,5 +1,20 @@
 # @kingstinct/react-native-healthkit
 
+## 12.2.0
+### Minor Changes
+
+- 1c9d774: - Streamline errors and warnings, so they always are prefixed with [react-native-healthkit]
+  - Add common metadata properties to all sample types, so they're typesafe and easily accessible
+  - Add subscribeToCategorySamples and useSubscribeToCategorySamples
+
+### Patch Changes
+
+- d7c2675: - Make limit required (aligns with HealthKit and forces user to make a decision)
+  - Refactor to deduplicate more code and streamline error handling
+  - Add anchored queries for stateOfMind and correlations
+  - Improve filter handling, add source filter and currentAppSource
+  - Add medications API support
+
 ## 12.1.2
 ### Patch Changes
 
