@@ -1,3 +1,5 @@
+import type { CategorySample, CategorySampleTyped } from './CategoryType'
+import type { CategoryTypeIdentifier } from './CategoryTypeIdentifier'
 import type { QuantitySample } from './QuantitySample'
 import type { QuantityTypeIdentifier } from './QuantityTypeIdentifier'
 import type { SampleTypeIdentifier } from './Shared'
@@ -24,3 +26,19 @@ export interface OnQuantitySamplesCallbackSuccess {
 export type OnQuantitySamplesCallback =
   | OnQuantitySamplesCallbackError
   | OnQuantitySamplesCallbackSuccess
+
+export interface OnCategorySamplesCallbackError {
+  readonly typeIdentifier: CategoryTypeIdentifier
+  readonly errorMessage: string
+}
+
+export interface OnCategorySamplesCallbackSuccess<
+  T extends CategoryTypeIdentifier,
+> {
+  readonly typeIdentifier: CategoryTypeIdentifier
+  readonly samples: readonly CategorySampleTyped<T>[]
+}
+
+export type OnCategorySamplesCallback<T extends CategoryTypeIdentifier> =
+  | OnCategorySamplesCallbackError
+  | OnCategorySamplesCallbackSuccess<T>
