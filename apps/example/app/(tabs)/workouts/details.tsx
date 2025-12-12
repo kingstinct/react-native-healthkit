@@ -1,5 +1,6 @@
 import { Host, List, Section } from '@expo/ui/swift-ui'
 import {
+  type QuantityTypeIdentifier,
   type QueryStatisticsResponse,
   queryWorkoutSamples,
 } from '@kingstinct/react-native-healthkit'
@@ -136,7 +137,9 @@ export default function WorkoutDetails() {
             {Object.entries(allStatistics).map(([key, value]) => (
               <ListItem
                 key={key}
-                title={transformQuantityIdentifierToName(key as any)}
+                title={transformQuantityIdentifierToName(
+                  key as QuantityTypeIdentifier,
+                )}
                 subtitle={JSON.stringify(value, null, 2)}
               />
             ))}

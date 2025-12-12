@@ -34,6 +34,11 @@ export interface QueryStatisticsResponse {
   readonly sources: SourceProxy[]
 }
 
+export interface QueryStatisticsResponseFromSingleSource
+  extends Omit<QueryStatisticsResponse, 'sources'> {
+  readonly source: SourceProxy
+}
+
 export enum AggregationStyle {
   cumulative = 0,
   discreteArithmetic = 1,
@@ -89,7 +94,7 @@ export type StatisticsOptions =
   | 'discreteMin'
   | 'duration'
   | 'mostRecent'
-  | 'separateBySource'
+// | 'separateBySource' (removed since it's handled by separate functions)
 
 export type UnitForIdentifier<
   T extends QuantityTypeIdentifier = QuantityTypeIdentifier,

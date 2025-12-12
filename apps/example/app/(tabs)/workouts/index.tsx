@@ -106,6 +106,7 @@ export default function WorkoutsScreen() {
                   something: 'dsfdfg',
                 },
               )
+              console.log(JSON.stringify(workout, null, 2))
             }}
           >
             Create workout

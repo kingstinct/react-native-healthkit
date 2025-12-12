@@ -138,6 +138,12 @@ export const queryStatisticsForQuantity =
   QuantityTypes.queryStatisticsForQuantity.bind(QuantityTypes)
 export const queryStatisticsCollectionForQuantity =
   QuantityTypes.queryStatisticsCollectionForQuantity.bind(QuantityTypes)
+export const queryStatisticsForQuantitySeparateBySource =
+  QuantityTypes.queryStatisticsForQuantitySeparateBySource.bind(QuantityTypes)
+export const queryStatisticsCollectionForQuantitySeparateBySource =
+  QuantityTypes.queryStatisticsCollectionForQuantitySeparateBySource.bind(
+    QuantityTypes,
+  )
 export const queryWorkoutSamples = Workouts.queryWorkoutSamples.bind(Workouts)
 export const queryWorkoutSamplesWithAnchor =
   Workouts.queryWorkoutSamplesWithAnchor.bind(Workouts)
@@ -231,6 +237,8 @@ export default {
   queryQuantitySamplesWithAnchor,
   queryStatisticsForQuantity,
   queryStatisticsCollectionForQuantity,
+  queryStatisticsForQuantitySeparateBySource,
+  queryStatisticsCollectionForQuantitySeparateBySource,
   queryWorkoutSamples,
   queryWorkoutSamplesWithAnchor,
   querySources,

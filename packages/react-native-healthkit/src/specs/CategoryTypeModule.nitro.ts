@@ -50,7 +50,7 @@ export interface CategoryTypeModuleTyped {
     startDate: Date,
     endDate: Date,
     metadata?: MetadataForCategoryIdentifier<T>,
-  ): Promise<boolean>
+  ): Promise<CategorySample | undefined>
 
   queryCategorySamples<T extends CategoryTypeIdentifier>(
     identifier: T,

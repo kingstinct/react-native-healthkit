@@ -5,6 +5,7 @@ import type {
   IntervalComponents,
   QuantitySamplesWithAnchorResponse,
   QueryStatisticsResponse,
+  QueryStatisticsResponseFromSingleSource,
   StatisticsOptions,
   StatisticsQueryOptions,
 } from '../types/QuantityType'
@@ -49,6 +50,20 @@ export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
     intervalComponents: IntervalComponents,
     options?: StatisticsQueryOptions,
   ): Promise<readonly QueryStatisticsResponse[]>
+
+  queryStatisticsForQuantitySeparateBySource(
+    identifier: QuantityTypeIdentifier,
+    statistics: readonly StatisticsOptions[],
+    options?: StatisticsQueryOptions,
+  ): Promise<QueryStatisticsResponseFromSingleSource[]>
+
+  queryStatisticsCollectionForQuantitySeparateBySource(
+    identifier: QuantityTypeIdentifier,
+    statistics: readonly StatisticsOptions[],
+    anchorDate: Date,
+    intervalComponents: IntervalComponents,
+    options?: StatisticsQueryOptions,
+  ): Promise<readonly QueryStatisticsResponseFromSingleSource[]>
 
   queryQuantitySamplesWithAnchor(
     identifier: QuantityTypeIdentifier,

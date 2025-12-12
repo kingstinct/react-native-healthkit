@@ -10,7 +10,9 @@ describe('queryStatisticsForQuantity', () => {
     // This test would normally require running on iOS simulator or device
     // For now, we're just testing the TypeScript interface
 
-    const mockEmptyResponse: QueryStatisticsResponse = {}
+    const mockEmptyResponse: QueryStatisticsResponse = {
+      sources: [],
+    }
 
     // Verify that empty response is properly typed
     expect(mockEmptyResponse.averageQuantity).toBeUndefined()
@@ -24,6 +26,7 @@ describe('queryStatisticsForQuantity', () => {
     // The query should resolve with an empty response object
     // when there's no data in the specified timeframe
     const expectedResult: QueryStatisticsResponse = {
+      sources: [],
       // All properties should be undefined for empty result
     }
 
