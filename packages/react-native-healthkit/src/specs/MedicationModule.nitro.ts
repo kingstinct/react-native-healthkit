@@ -1,10 +1,5 @@
-import type { AnyMap, HybridObject } from 'react-native-nitro-modules'
-import type {
-  BaseSample,
-  DeletedSample,
-  Device,
-  SourceRevision,
-} from '../types'
+import type { HybridObject } from 'react-native-nitro-modules'
+import type { BaseSample, DeletedSample } from '../types'
 import type {
   QueryOptionsWithAnchor,
   QueryOptionsWithSortOrder,

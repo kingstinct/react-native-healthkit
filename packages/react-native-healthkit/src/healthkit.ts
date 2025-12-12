@@ -160,15 +160,28 @@ export const queryQuantitySamplesWithAnchor = UnavailableFnFromModule(
 )
 export const queryStatisticsForQuantity = UnavailableFnFromModule(
   'queryStatisticsForQuantity',
-  Promise.resolve({}),
+  Promise.resolve({
+    sources: [],
+  }),
 )
 export const queryStatisticsCollectionForQuantity = UnavailableFnFromModule(
   'queryStatisticsCollectionForQuantity',
   Promise.resolve([]),
 )
+
+export const queryStatisticsForQuantitySeparateBySource =
+  UnavailableFnFromModule(
+    'queryStatisticsForQuantitySeparateBySource',
+    Promise.resolve([]),
+  )
+export const queryStatisticsCollectionForQuantitySeparateBySource =
+  UnavailableFnFromModule(
+    'queryStatisticsCollectionForQuantitySeparateBySource',
+    Promise.resolve([]),
+  )
 export const saveQuantitySample = UnavailableFnFromModule(
   'saveQuantitySample',
-  Promise.resolve(false),
+  Promise.resolve(undefined),
 )
 export const isQuantityCompatibleWithUnit = UnavailableFnFromModule(
   'isQuantityCompatibleWithUnit',
@@ -205,7 +218,7 @@ export function queryCategorySamplesWithAnchor<
 }
 export const saveCategorySample = UnavailableFnFromModule(
   'saveCategorySample',
-  Promise.resolve(false),
+  Promise.resolve(undefined),
 )
 
 // CorrelationTypeModule functions
@@ -215,7 +228,7 @@ export const queryCorrelationSamples = UnavailableFnFromModule(
 )
 export const saveCorrelationSample = UnavailableFnFromModule(
   'saveCorrelationSample',
-  Promise.resolve(false),
+  Promise.resolve(undefined),
 )
 
 // HeartbeatSeriesModule functions
@@ -294,7 +307,7 @@ export const queryCorrelationSamplesWithAnchor = UnavailableFnFromModule(
 
 export const saveStateOfMindSample = UnavailableFnFromModule(
   'saveStateOfMindSample',
-  Promise.resolve(false),
+  Promise.resolve(undefined),
 )
 
 // Utility functions (from original export list)
@@ -472,6 +485,8 @@ const HealthkitModule = {
   queryQuantitySamplesWithAnchor,
   queryStatisticsForQuantity,
   queryStatisticsCollectionForQuantity,
+  queryStatisticsForQuantitySeparateBySource,
+  queryStatisticsCollectionForQuantitySeparateBySource,
   queryWorkoutSamples,
   queryWorkoutSamplesWithAnchor,
   querySources,

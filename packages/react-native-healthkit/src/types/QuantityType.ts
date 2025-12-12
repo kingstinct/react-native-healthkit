@@ -1,3 +1,4 @@
+import type { SourceProxy } from '../specs/SourceProxy.nitro'
 import type { QuantitySample } from './QuantitySample'
 import type { QuantityTypeIdentifier } from './QuantityTypeIdentifier'
 import type { FilterForSamples } from './QueryOptions'
@@ -30,6 +31,12 @@ export interface QueryStatisticsResponse {
   readonly duration?: Quantity
   readonly startDate?: Date
   readonly endDate?: Date
+  readonly sources: SourceProxy[]
+}
+
+export interface QueryStatisticsResponseFromSingleSource
+  extends Omit<QueryStatisticsResponse, 'sources'> {
+  readonly source: SourceProxy
 }
 
 export enum AggregationStyle {
@@ -87,7 +94,7 @@ export type StatisticsOptions =
   | 'discreteMin'
   | 'duration'
   | 'mostRecent'
-  | 'separateBySource'
+// | 'separateBySource' (removed since it's handled by separate functions)
 
 export type UnitForIdentifier<
   T extends QuantityTypeIdentifier = QuantityTypeIdentifier,

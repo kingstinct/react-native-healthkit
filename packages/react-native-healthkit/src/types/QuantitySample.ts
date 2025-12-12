@@ -19,6 +19,6 @@ export interface QuantitySampleForSaving {
   readonly quantityType: QuantityTypeIdentifier
   readonly quantity: number
   readonly unit: string
-  readonly metadata: AnyMap
+  readonly metadata?: AnyMap
   readonly sourceRevision?: SourceRevision
 }

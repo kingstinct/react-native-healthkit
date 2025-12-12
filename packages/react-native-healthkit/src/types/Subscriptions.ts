@@ -1,4 +1,4 @@
-import type { CategorySample, CategorySampleTyped } from './CategoryType'
+import type { CategorySampleTyped } from './CategoryType'
 import type { CategoryTypeIdentifier } from './CategoryTypeIdentifier'
 import type { QuantitySample } from './QuantitySample'
 import type { QuantityTypeIdentifier } from './QuantityTypeIdentifier'

@@ -27,5 +27,5 @@ export interface StateOfMindModule extends HybridObject<{ ios: 'swift' }> {
     labels: readonly StateOfMindLabel[],
     associations: readonly StateOfMindAssociation[],
     metadata?: AnyMap,
-  ): Promise<boolean>
+  ): Promise<StateOfMindSample | undefined>
 }
