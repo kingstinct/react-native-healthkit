@@ -321,7 +321,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   func saveQuantitySample(
     identifier: QuantityTypeIdentifier, unit: String, value: Double, start: Date, end: Date,
     metadata: AnyMap
-  ) -> Promise<Bool> {
+  ) -> Promise<QuantitySample?> {
     return Promise.async {
       let unit = HKUnit.init(from: unit)
       let quantity = HKQuantity.init(unit: unit, doubleValue: value)
@@ -337,7 +337,10 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
         end: end,
         metadata: metadata
       )
-      return try await saveAsync(sample: sample)
+
+      let succeeded = try await saveAsync(sample: sample)
+
+      return succeeded ? serializeQuantitySample(sample: sample, unit: unit) : nil
     }
   }
 

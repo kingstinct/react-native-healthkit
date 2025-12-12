@@ -179,7 +179,9 @@ import NitroModules
               metadata: anyMapToDictionary(metadata ?? AnyMap())
             )
 
-            return try await saveAsync(sample: sample)
+            let succeeded = try await saveAsync(sample: sample)
+
+            return succeeded ? serializeStateOfMindSample(sample: sample) : nil
           }
           throw runtimeErrorWithPrefix(
             "saveStateOfMindSample: Unknown StateOfMindKind rawValue: \(kind.rawValue)")

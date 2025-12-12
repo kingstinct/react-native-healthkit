@@ -174,7 +174,13 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
         metadata: anyMapToDictionary(metadata)
       )
 
-      return try await saveAsync(sample: correlation)
+      let succeeded = try await saveAsync(sample: correlation)
+
+      let unitMap = try await getUnitMap(correlations: [correlation])
+
+      return succeeded
+        ? serializeCorrelationSample(correlation: correlation, unitMap: unitMap)
+        : nil
     }
   }
 

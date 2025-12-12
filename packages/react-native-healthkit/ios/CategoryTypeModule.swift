@@ -8,7 +8,7 @@ class CategoryTypeModule: HybridCategoryTypeModuleSpec {
         startDate: Date,
         endDate: Date,
         metadata: AnyMap
-    ) -> Promise<Bool> {
+    ) -> Promise<CategorySample> {
         return Promise.async {
           let type = try initializeCategoryType(identifier.stringValue)
 
@@ -20,7 +20,9 @@ class CategoryTypeModule: HybridCategoryTypeModuleSpec {
               metadata: anyMapToDictionary(metadata)
           )
 
-          return try await saveAsync(sample: sample)
+          let succeeded = try await saveAsync(sample: sample)
+
+          return succeeded ? serializeCategorySample(sample: sample) : nil
         }
     }
 

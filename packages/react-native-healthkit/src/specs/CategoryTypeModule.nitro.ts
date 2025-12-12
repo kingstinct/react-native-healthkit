@@ -21,8 +21,8 @@ export interface CategoryTypeModule extends HybridObject<{ ios: 'swift' }> {
     value: CategoryValueForIdentifier,
     startDate: Date,
     endDate: Date,
-    metadata: AnyMap,
-  ): Promise<boolean>
+    metadata?: AnyMap,
+  ): Promise<CategorySample | null>
 
   queryCategorySamples(
     identifier: CategoryTypeIdentifier,
