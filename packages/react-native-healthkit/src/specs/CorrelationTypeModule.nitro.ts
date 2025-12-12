@@ -17,7 +17,7 @@ export interface CorrelationTypeModule extends HybridObject<{ ios: 'swift' }> {
     start: Date,
     end: Date,
     metadata?: AnyMap,
-  ): Promise<CorrelationSample | null>
+  ): Promise<CorrelationSample | undefined>
 
   queryCorrelationSamples(
     typeIdentifier: CorrelationTypeIdentifier,

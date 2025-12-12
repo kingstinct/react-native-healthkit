@@ -121,8 +121,8 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
     samples: [SampleForSaving],
     start: Date,
     end: Date,
-    metadata: AnyMap
-  ) -> Promise<Bool> {
+    metadata: AnyMap?
+  ) -> Promise<CorrelationSample?> {
     return Promise.async {
       let correlationType = try initializeCorrelationType(typeIdentifier.stringValue)
 
@@ -144,7 +144,7 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
             quantity: quantity,
             start: start,
             end: end,
-            metadata: anyMapToDictionary(quantitySample.metadata)
+            metadata: anyMapToDictionaryOptional(quantitySample.metadata)
           )
           initializedSamples.insert(hkQuantitySample)
 
@@ -171,7 +171,7 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
         start: start,
         end: end,
         objects: initializedSamples,
-        metadata: anyMapToDictionary(metadata)
+        metadata: anyMapToDictionaryOptional(metadata)
       )
 
       let succeeded = try await saveAsync(sample: correlation)

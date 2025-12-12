@@ -421,6 +421,13 @@ func parseWorkoutConfiguration(_ config: WorkoutConfiguration) -> HKWorkoutConfi
   return configuration
 }
 
+func anyMapToDictionaryOptional(_ anyMap: AnyMap?) -> [String: Any]? {
+  if let anyMap = anyMap {
+    return anyMapToDictionary(anyMap)
+  }
+  return nil
+}
+
 func anyMapToDictionary(_ anyMap: AnyMap) -> [String: Any] {
   var dict = [String: Any]()
   anyMap.getAllKeys().forEach { key in

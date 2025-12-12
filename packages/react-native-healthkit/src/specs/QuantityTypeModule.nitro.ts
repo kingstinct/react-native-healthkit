@@ -29,7 +29,7 @@ export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
     start: Date,
     end: Date,
     metadata?: AnyMap,
-  ): Promise<QuantitySample | null>
+  ): Promise<QuantitySample | undefined>
 
   queryQuantitySamples(
     identifier: QuantityTypeIdentifier,

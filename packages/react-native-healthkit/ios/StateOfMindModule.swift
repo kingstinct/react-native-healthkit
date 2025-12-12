@@ -145,7 +145,7 @@ import NitroModules
       labels: [StateOfMindLabel],
       associations: [StateOfMindAssociation],
       metadata: AnyMap?
-    ) -> Promise<Bool> {
+    ) -> Promise<StateOfMindSample?> {
 
       return Promise.async {
         if #available(iOS 18, *) {
