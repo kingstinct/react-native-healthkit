@@ -1,5 +1,15 @@
 # @kingstinct/react-native-healthkit
 
+## 13.0.0
+### Major Changes
+
+- 332c106: return samples from save calls
+
+### Minor Changes
+
+- 004dd94: add statistics per source queries
+- 332c106: expose sources from statistics queries
+
 ## 12.2.0
 ### Minor Changes
 
