@@ -9,6 +9,17 @@ import Foundation
 import HealthKit
 import NitroModules
 
+func parseUnitStringSafe(_ unitString: String) throws -> HKUnit {
+  var err: NSError?
+  let unitOut = HKUnitFromStringCatchingExceptions(unitString, &err)
+
+  if let hkUnit = unitOut {
+    return hkUnit
+  }
+
+  throw runtimeErrorWithPrefix("Supplied invalid '\(unitString)' as HKUnit")
+}
+
 func getQueryLimit(_ limit: Double) -> Int {
   if limit == .infinity || limit <= 0 || limit == .nan || limit == .signalingNaN {
     return HKObjectQueryNoLimit

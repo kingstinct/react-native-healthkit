@@ -361,7 +361,9 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   func isQuantityCompatibleWithUnit(identifier: QuantityTypeIdentifier, unit: String) throws -> Bool {
     let sampleType = try initializeQuantityType(identifier.stringValue)
 
-    return sampleType.is(compatibleWith: HKUnit.init(from: unit))
+    let hkUnit = try parseUnitStringSafe(unit)
+
+    return sampleType.is(compatibleWith: hkUnit)
   }
 
   func queryStatisticsForQuantity(
@@ -464,7 +466,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     metadata: AnyMap?
   ) -> Promise<QuantitySample?> {
     return Promise.async {
-      let unit = HKUnit.init(from: unit)
+      let unit = try parseUnitStringSafe(unit)
       let quantity = HKQuantity.init(unit: unit, doubleValue: value)
       let typeIdentifier = HKQuantityType(
         HKQuantityTypeIdentifier(rawValue: identifier.stringValue)
