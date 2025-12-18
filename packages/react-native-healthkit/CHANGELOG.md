@@ -1,5 +1,12 @@
 # @kingstinct/react-native-healthkit
 
+## 13.0.1
+### Patch Changes
+
+- 24829ca: avoid hard crash when supplying invalid statisticsOptions
+- 24829ca: add parseUnitStringSafe to remove hard crashes for invalid units
+- 24829ca: add missing sources return from statistics
+
 ## 13.0.0
 ### Major Changes
 
