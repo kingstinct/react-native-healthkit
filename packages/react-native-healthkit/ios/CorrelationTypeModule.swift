@@ -137,8 +137,11 @@ class CorrelationTypeModule: HybridCorrelationTypeModuleSpec {
             continue
           }
 
-          let unit = HKUnit(from: quantitySample.unit)
-          let quantity = HKQuantity(unit: unit, doubleValue: quantitySample.quantity)
+          let unit = try parseUnitStringSafe(quantitySample.unit)
+          let quantity = HKQuantity(
+            unit: unit,
+            doubleValue: quantitySample.quantity
+          )
           let hkQuantitySample = HKQuantitySample(
             type: quantityType,
             quantity: quantity,

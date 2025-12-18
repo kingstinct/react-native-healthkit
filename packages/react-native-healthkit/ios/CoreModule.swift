@@ -19,7 +19,7 @@ private var quantityTypeUnitCache = [HKQuantityType: HKUnit]()
 
 func getUnitToUse(unitOverride: String?, quantityType: HKQuantityType) async throws -> HKUnit {
   if let unitOverride = unitOverride {
-    let unit = HKUnit(from: unitOverride)
+    let unit = try parseUnitStringSafe(unitOverride)
 
     if !quantityType.is(compatibleWith: unit) {
       throw runtimeErrorWithPrefix(

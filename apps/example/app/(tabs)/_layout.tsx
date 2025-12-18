@@ -24,7 +24,6 @@ export default function TabLayout() {
 
   useEffect(() => {
     try {
-      console.log('checking auth status for', AllSampleTypesInApp)
       getRequestStatusForAuthorization({
         toRead: AllObjectTypesInApp,
         toShare: AllSampleTypesInApp,

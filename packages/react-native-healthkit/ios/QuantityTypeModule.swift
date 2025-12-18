@@ -21,7 +21,7 @@ func queryStatisticsForQuantityInternal(
     let query = HKStatisticsQuery.init(
       quantityType: quantityType,
       quantitySamplePredicate: predicate,
-      options: buildStatisticsOptions(statistics: statistics)
+      options: buildStatisticsOptions(statistics: statistics, quantityType: quantityType)
     ) { (_, stats: HKStatistics?, error: Error?) in
       DispatchQueue.main.async {
         if let error = error {
@@ -48,6 +48,10 @@ func serializeStatistics(gottenStats: HKStatistics, unit: HKUnit) -> QueryStatis
 
   response.startDate = gottenStats.startDate
   response.endDate = gottenStats.endDate
+
+  response.sources = gottenStats.sources?.map { source in
+    return serializeSource(source)
+  } ?? []
 
   if let averageQuantity = gottenStats.averageQuantity() {
     response.averageQuantity = Quantity(
@@ -131,9 +135,7 @@ func queryStatisticsCollectionForQuantityInternal(
   }
 
   // Build statistics options
-  let opts = buildStatisticsOptions(statistics: statistics)
-
-  let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
+  let opts = buildStatisticsOptions(statistics: statistics, quantityType: quantityType)
 
   return try await withCheckedThrowingContinuation { continuation in
     let query = HKStatisticsCollectionQuery.init(
@@ -250,31 +252,6 @@ func getAnyMapValue(_ anyMap: AnyMap, key: String) -> Any? {
   return nil
 }
 
-func buildStatisticsOptions(statistics: [StatisticsOptions]) -> HKStatisticsOptions {
-  // Build statistics options
-  var opts = HKStatisticsOptions()
-  for statistic in statistics {
-    if statistic == .cumulativesum {
-      opts.insert(HKStatisticsOptions.cumulativeSum)
-    } else if statistic == .discreteaverage {
-      opts.insert(HKStatisticsOptions.discreteAverage)
-    } else if statistic == .discretemax {
-      opts.insert(HKStatisticsOptions.discreteMax)
-    } else if statistic == .discretemin {
-      opts.insert(HKStatisticsOptions.discreteMin)
-    }
-    if #available(iOS 13, *) {
-      if statistic == .duration {
-        opts.insert(HKStatisticsOptions.duration)
-      }
-      if statistic == .mostrecent {
-        opts.insert(HKStatisticsOptions.mostRecent)
-      }
-    }
-  }
-  return opts
-}
-
 /// Handles HealthKit's `errorNoData` by resuming the continuation with a fallback value if provided,
 /// otherwise resumes with `nil` for Optional result types. For other errors, resumes by throwing.
 /// - Parameters:
@@ -361,11 +338,14 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   func isQuantityCompatibleWithUnit(identifier: QuantityTypeIdentifier, unit: String) throws -> Bool {
     let sampleType = try initializeQuantityType(identifier.stringValue)
 
-    return sampleType.is(compatibleWith: HKUnit.init(from: unit))
+    let hkUnit = try parseUnitStringSafe(unit)
+
+    return sampleType.is(compatibleWith: hkUnit)
   }
 
   func queryStatisticsForQuantity(
-    identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions],
+    identifier: QuantityTypeIdentifier,
+    statistics: [StatisticsOptions],
     options: StatisticsQueryOptions?
   ) -> Promise<QueryStatisticsResponse> {
     return Promise.async {
@@ -464,7 +444,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     metadata: AnyMap?
   ) -> Promise<QuantitySample?> {
     return Promise.async {
-      let unit = HKUnit.init(from: unit)
+      let unit = try parseUnitStringSafe(unit)
       let quantity = HKQuantity.init(unit: unit, doubleValue: value)
       let typeIdentifier = HKQuantityType(
         HKQuantityTypeIdentifier(rawValue: identifier.stringValue)

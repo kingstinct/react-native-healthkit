@@ -104,7 +104,7 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
         let quantityVal = quantity.quantity
         let quantityStart = quantity.startDate
         let quantityEnd = quantity.endDate
-        let unit = HKUnit.init(from: unitStr)
+        let unit = try parseUnitStringSafe(unitStr)
         let quantity = HKQuantity.init(unit: unit, doubleValue: quantityVal)
 
         if quantity.is(compatibleWith: HKUnit.kilocalorie()) {
