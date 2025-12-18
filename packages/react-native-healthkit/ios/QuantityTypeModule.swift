@@ -1,11 +1,12 @@
 import HealthKit
 import NitroModules
 
-func emptyStatisticsResponse(from: Date, to: Date) -> QueryStatisticsResponse {
+func emptyStatisticsResponse(from: Date?, to: Date?) -> QueryStatisticsResponse {
   var response = QueryStatisticsResponse()
 
   response.startDate = from
   response.endDate = to
+  response.sources = []
 
   return response
 }
@@ -14,7 +15,7 @@ func queryStatisticsForQuantityInternal(
   quantityType: HKQuantityType,
   statistics: [StatisticsOptions],
   options: StatisticsQueryOptions?
-) async throws -> HKStatistics {
+) async throws -> HKStatistics? {
   let predicate = createPredicateForSamples(options?.filter)
 
   return try await withCheckedThrowingContinuation { continuation in
@@ -25,7 +26,9 @@ func queryStatisticsForQuantityInternal(
     ) { (_, stats: HKStatistics?, error: Error?) in
       DispatchQueue.main.async {
         if let error = error {
-          return continuation.resume(throwing: error)
+          return handleHKNoDataOrThrow(error: error, continuation: continuation, noDataFallback: {
+            return nil
+          })
         }
 
         if let stats = stats {
@@ -113,7 +116,7 @@ func queryStatisticsCollectionForQuantityInternal(
   anchorDate: Date,
   intervalComponents: IntervalComponents,
   options: StatisticsQueryOptions?
-) async throws -> HKStatisticsCollection {
+) async throws -> HKStatisticsCollection? {
   let predicate = createPredicateForSamples(options?.filter)
 
   // Create date components from interval
@@ -148,7 +151,9 @@ func queryStatisticsCollectionForQuantityInternal(
 
     query.initialResultsHandler = { (_, results: HKStatisticsCollection?, error: Error?) in
       if let error = error {
-        return continuation.resume(throwing: error)
+        return handleHKNoDataOrThrow(error: error, continuation: continuation, noDataFallback: {
+          return nil
+        })
       }
 
       guard let statistics = results else {
@@ -280,20 +285,19 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
 
-      let gottenStats = try await queryStatisticsForQuantityInternal(
+      if let gottenStats = try await queryStatisticsForQuantityInternal(
         quantityType: quantityType,
         statistics: statistics,
         options: options
-      )
-
-      let unit = try await getUnitToUse(
-        unitOverride: options?.unit,
-        quantityType: quantityType
-      )
-
-      let response = serializeStatisticsPerSource(gottenStats: gottenStats, unit: unit)
-
-      return response
+      ) {
+        let unit = try await getUnitToUse(
+          unitOverride: options?.unit,
+          quantityType: quantityType
+        )
+        return serializeStatisticsPerSource(gottenStats: gottenStats, unit: unit)
+      } else {
+        return []
+      }
     }
   }
 
@@ -304,22 +308,24 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
 
-      let statistics = try await queryStatisticsCollectionForQuantityInternal(
+      if let statistics = try await queryStatisticsCollectionForQuantityInternal(
         quantityType: quantityType,
         statistics: statistics,
         anchorDate: anchorDate,
         intervalComponents: intervalComponents,
         options: options
-      )
+      ) {
 
-      let unit = try await getUnitToUse(
-        unitOverride: options?.unit,
-        quantityType: quantityType
-      )
+        let unit = try await getUnitToUse(
+          unitOverride: options?.unit,
+          quantityType: quantityType
+        )
 
-      return statistics.statistics().flatMap { statistics in
-        return serializeStatisticsPerSource(gottenStats: statistics, unit: unit)
+        return statistics.statistics().flatMap { statistics in
+          return serializeStatisticsPerSource(gottenStats: statistics, unit: unit)
+        }
       }
+      return []
     }
   }
 
@@ -351,20 +357,23 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
 
-      let gottenStats = try await queryStatisticsForQuantityInternal(
+      if let gottenStats = try await queryStatisticsForQuantityInternal(
         quantityType: quantityType,
         statistics: statistics,
         options: options
+      ) {
+        let unit = try await getUnitToUse(
+          unitOverride: options?.unit,
+          quantityType: quantityType
+        )
+
+        return serializeStatistics(gottenStats: gottenStats, unit: unit)
+      }
+
+      return emptyStatisticsResponse(
+        from: options?.filter?.date?.startDate,
+        to: options?.filter?.date?.endDate
       )
-
-      let unit = try await getUnitToUse(
-        unitOverride: options?.unit,
-        quantityType: quantityType
-      )
-
-      let response = serializeStatistics(gottenStats: gottenStats, unit: unit)
-
-      return response
     }
   }
 
@@ -375,22 +384,24 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
 
-      let statistics = try await queryStatisticsCollectionForQuantityInternal(
+      if let statistics = try await queryStatisticsCollectionForQuantityInternal(
         quantityType: quantityType,
         statistics: statistics,
         anchorDate: anchorDate,
         intervalComponents: intervalComponents,
         options: options
-      )
+      ) {
+        let unit = try await getUnitToUse(
+          unitOverride: options?.unit,
+          quantityType: quantityType
+        )
 
-      let unit = try await getUnitToUse(
-        unitOverride: options?.unit,
-        quantityType: quantityType
-      )
-
-      return statistics.statistics().map { statistics in
-        return serializeStatistics(gottenStats: statistics, unit: unit)
+        return statistics.statistics().map { statistics in
+          return serializeStatistics(gottenStats: statistics, unit: unit)
+        }
       }
+
+      return []
     }
   }
 
