@@ -252,49 +252,6 @@ func getAnyMapValue(_ anyMap: AnyMap, key: String) -> Any? {
   return nil
 }
 
-func buildStatisticsOptions(statistics: [StatisticsOptions], quantityType: HKQuantityType) -> HKStatisticsOptions {
-
-  // Build statistics options
-  var opts = HKStatisticsOptions()
-  for statistic in statistics {
-    if statistic == .cumulativesum {
-      if quantityType.aggregationStyle == .cumulative {
-        opts.insert(HKStatisticsOptions.cumulativeSum)
-      } else {
-        warnWithPrefix("buildStatisticsOptions: cumulativesum statistic requested for discrete quantity type \(quantityType.identifier)")
-      }
-
-    } else if statistic == .discreteaverage {
-      if quantityType.aggregationStyle != .cumulative {
-        opts.insert(HKStatisticsOptions.discreteAverage)
-      } else {
-        warnWithPrefix("buildStatisticsOptions: discreteaverage statistic requested for cumulative quantity type \(quantityType.identifier)")
-      }
-    } else if statistic == .discretemax {
-      if quantityType.aggregationStyle != .cumulative {
-        opts.insert(HKStatisticsOptions.discreteMax)
-      } else {
-        warnWithPrefix("buildStatisticsOptions: discretemax statistic requested for cumulative quantity type \(quantityType.identifier)")
-      }
-    } else if statistic == .discretemin {
-      if quantityType.aggregationStyle != .cumulative {
-        opts.insert(HKStatisticsOptions.discreteMin)
-      } else {
-        warnWithPrefix("buildStatisticsOptions: discretemin statistic requested for cumulative quantity type \(quantityType.identifier)")
-      }
-    }
-    if #available(iOS 13, *) {
-      if statistic == .duration {
-        opts.insert(HKStatisticsOptions.duration)
-      }
-      if statistic == .mostrecent {
-        opts.insert(HKStatisticsOptions.mostRecent)
-      }
-    }
-  }
-  return opts
-}
-
 /// Handles HealthKit's `errorNoData` by resuming the continuation with a fallback value if provided,
 /// otherwise resumes with `nil` for Optional result types. For other errors, resumes by throwing.
 /// - Parameters:

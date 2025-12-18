@@ -366,39 +366,6 @@ func objectTypeFrom(objectTypeIdentifier: ObjectTypeIdentifier) throws -> HKObje
     "Failed initializing unrecognized objectType identifier " + typeIdentifier)
 }
 
-func hkStatisticsOptionsFromOptions(_ options: NSArray) -> HKStatisticsOptions {
-  var opts = HKStatisticsOptions()
-
-  for o in options {
-    guard let str = o as? String else { continue }
-
-    switch str {
-    case "cumulativeSum":
-      opts.insert(.cumulativeSum)
-    case "discreteAverage":
-      opts.insert(.discreteAverage)
-    case "discreteMax":
-      opts.insert(.discreteMax)
-    case "discreteMin":
-      opts.insert(.discreteMin)
-    case "duration":
-      if #available(iOS 13, *) {
-        opts.insert(.duration)
-      }
-    case "mostRecent":
-      if #available(iOS 13, *) {
-        opts.insert(.mostRecent)
-      }
-    case "separateBySource":
-      opts.insert(.separateBySource)
-    default:
-      continue
-    }
-  }
-
-  return opts
-}
-
 func componentsFromInterval(_ interval: NSDictionary) -> DateComponents {
   let componentKeys: [String: WritableKeyPath<DateComponents, Int?>] = [
     "minute": \.minute,
@@ -453,4 +420,48 @@ func runtimeErrorWithPrefix(_ withMessage: String) -> Error {
 
 func warnWithPrefix(_ withMessage: String) {
   print("[react-native-healthkit] \(withMessage)")
+}
+
+func buildStatisticsOptions(statistics: [StatisticsOptions], quantityType: HKQuantityType) -> HKStatisticsOptions {
+
+  // Build statistics options
+  var opts = HKStatisticsOptions()
+  opts.insert(.separateBySource)
+  for statistic in statistics {
+    if statistic == .cumulativesum {
+      if quantityType.aggregationStyle == .cumulative {
+        opts.insert(HKStatisticsOptions.cumulativeSum)
+      } else {
+        warnWithPrefix("buildStatisticsOptions: cumulativesum statistic requested for discrete quantity type \(quantityType.identifier)")
+      }
+
+    } else if statistic == .discreteaverage {
+      if quantityType.aggregationStyle != .cumulative {
+        opts.insert(HKStatisticsOptions.discreteAverage)
+      } else {
+        warnWithPrefix("buildStatisticsOptions: discreteaverage statistic requested for cumulative quantity type \(quantityType.identifier)")
+      }
+    } else if statistic == .discretemax {
+      if quantityType.aggregationStyle != .cumulative {
+        opts.insert(HKStatisticsOptions.discreteMax)
+      } else {
+        warnWithPrefix("buildStatisticsOptions: discretemax statistic requested for cumulative quantity type \(quantityType.identifier)")
+      }
+    } else if statistic == .discretemin {
+      if quantityType.aggregationStyle != .cumulative {
+        opts.insert(HKStatisticsOptions.discreteMin)
+      } else {
+        warnWithPrefix("buildStatisticsOptions: discretemin statistic requested for cumulative quantity type \(quantityType.identifier)")
+      }
+    }
+    if #available(iOS 13, *) {
+      if statistic == .duration {
+        opts.insert(HKStatisticsOptions.duration)
+      }
+      if statistic == .mostrecent {
+        opts.insert(HKStatisticsOptions.mostRecent)
+      }
+    }
+  }
+  return opts
 }
