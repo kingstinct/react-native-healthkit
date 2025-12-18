@@ -21,7 +21,7 @@ func queryStatisticsForQuantityInternal(
     let query = HKStatisticsQuery.init(
       quantityType: quantityType,
       quantitySamplePredicate: predicate,
-      options: buildStatisticsOptions(statistics: statistics)
+      options: buildStatisticsOptions(statistics: statistics, quantityType: quantityType)
     ) { (_, stats: HKStatistics?, error: Error?) in
       DispatchQueue.main.async {
         if let error = error {
@@ -135,9 +135,7 @@ func queryStatisticsCollectionForQuantityInternal(
   }
 
   // Build statistics options
-  let opts = buildStatisticsOptions(statistics: statistics)
-
-  let unit = try await getUnitToUse(unitOverride: options?.unit, quantityType: quantityType)
+  let opts = buildStatisticsOptions(statistics: statistics, quantityType: quantityType)
 
   return try await withCheckedThrowingContinuation { continuation in
     let query = HKStatisticsCollectionQuery.init(
@@ -254,18 +252,36 @@ func getAnyMapValue(_ anyMap: AnyMap, key: String) -> Any? {
   return nil
 }
 
-func buildStatisticsOptions(statistics: [StatisticsOptions]) -> HKStatisticsOptions {
+func buildStatisticsOptions(statistics: [StatisticsOptions], quantityType: HKQuantityType) -> HKStatisticsOptions {
+
   // Build statistics options
   var opts = HKStatisticsOptions()
   for statistic in statistics {
     if statistic == .cumulativesum {
-      opts.insert(HKStatisticsOptions.cumulativeSum)
+      if quantityType.aggregationStyle == .cumulative {
+        opts.insert(HKStatisticsOptions.cumulativeSum)
+      } else {
+        warnWithPrefix("buildStatisticsOptions: cumulativesum statistic requested for discrete quantity type \(quantityType.identifier)")
+      }
+
     } else if statistic == .discreteaverage {
-      opts.insert(HKStatisticsOptions.discreteAverage)
+      if quantityType.aggregationStyle != .cumulative {
+        opts.insert(HKStatisticsOptions.discreteAverage)
+      } else {
+        warnWithPrefix("buildStatisticsOptions: discreteaverage statistic requested for cumulative quantity type \(quantityType.identifier)")
+      }
     } else if statistic == .discretemax {
-      opts.insert(HKStatisticsOptions.discreteMax)
+      if quantityType.aggregationStyle != .cumulative {
+        opts.insert(HKStatisticsOptions.discreteMax)
+      } else {
+        warnWithPrefix("buildStatisticsOptions: discretemax statistic requested for cumulative quantity type \(quantityType.identifier)")
+      }
     } else if statistic == .discretemin {
-      opts.insert(HKStatisticsOptions.discreteMin)
+      if quantityType.aggregationStyle != .cumulative {
+        opts.insert(HKStatisticsOptions.discreteMin)
+      } else {
+        warnWithPrefix("buildStatisticsOptions: discretemin statistic requested for cumulative quantity type \(quantityType.identifier)")
+      }
     }
     if #available(iOS 13, *) {
       if statistic == .duration {
@@ -371,7 +387,8 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   }
 
   func queryStatisticsForQuantity(
-    identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions],
+    identifier: QuantityTypeIdentifier,
+    statistics: [StatisticsOptions],
     options: StatisticsQueryOptions?
   ) -> Promise<QueryStatisticsResponse> {
     return Promise.async {
