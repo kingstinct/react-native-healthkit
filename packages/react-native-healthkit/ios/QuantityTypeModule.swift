@@ -49,6 +49,10 @@ func serializeStatistics(gottenStats: HKStatistics, unit: HKUnit) -> QueryStatis
   response.startDate = gottenStats.startDate
   response.endDate = gottenStats.endDate
 
+  response.sources = gottenStats.sources?.map { source in
+    return serializeSource(source)
+  } ?? []
+
   if let averageQuantity = gottenStats.averageQuantity() {
     response.averageQuantity = Quantity(
       unit: unit.unitString,
