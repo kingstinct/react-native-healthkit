@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 13.0.2
+### Patch Changes
+
+- f4c1a7f: add handling of noData error for statistics queries without data
+
 ## 13.0.1
 ### Patch Changes
 
