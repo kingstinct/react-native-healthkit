@@ -69,17 +69,32 @@ import { useHealthkitAuthorization, saveQuantitySample } from '@kingstinct/react
 const [authorizationStatus, requestAuthorization] = useHealthkitAuthorization(['HKQuantityTypeIdentifierBloodGlucose'])
 
 // make sure that you've requested authorization before requesting data, otherwise your app will crash
-import { useMostRecentQuantitySample, HKQuantityTypeIdentifier, useMostRecentCategorySample } from '@kingstinct/react-native-healthkit';
+import {
+  useMostRecentQuantitySample,
+  useMostRecentCategorySample,
+  useMostRecentMindfulSession,
+  useMostRecentWorkout
+} from '@kingstinct/react-native-healthkit';
 
 const mostRecentBloodGlucoseSample = useMostRecentQuantitySample('HKQuantityTypeIdentifierBloodGlucose')
 const lastBodyFatSample = useMostRecentQuantitySample('HKQuantityTypeIdentifierBodyFatPercentage')
 const lastMindfulSession = useMostRecentCategorySample('HKCategoryTypeIdentifierMindfulSession')
+// or use the dedicated mindful session hook:
+const lastMindfulSession = useMostRecentMindfulSession()
 const lastWorkout = useMostRecentWorkout()
 ```
 
 Some imperative examples:
 ```TypeScript
-  import { isHealthDataAvailable, requestAuthorization, subscribeToChanges, saveQuantitySample, getMostRecentQuantitySample } from '@kingstinct/react-native-healthkit';
+  import {
+    isHealthDataAvailable,
+    requestAuthorization,
+    subscribeToChanges,
+    saveQuantitySample,
+    getMostRecentQuantitySample,
+    saveMindfulSession,
+    queryMindfulSessions
+  } from '@kingstinct/react-native-healthkit';
 
   const isAvailable = await isHealthDataAvailable();
 
@@ -87,13 +102,35 @@ Some imperative examples:
   await requestAuthorization({ toRead: ['HKQuantityTypeIdentifierBodyFatPercentage'] }); // request read permission for bodyFatPercentage
 
   const { quantity, unit, startDate, endDate } = await getMostRecentQuantitySample('HKQuantityTypeIdentifierBodyFatPercentage'); // read latest sample
-  
+
   console.log(quantity) // 17.5
   console.log(unit) // %
 
   await requestAuthorization({
     toRead: ['HKQuantityTypeIdentifierHeartRate']
   }); // request read permission for heart rate
+
+  /* Working with mindful sessions */
+  await requestAuthorization({
+    toRead: ['HKCategoryTypeIdentifierMindfulSession'],
+    toShare: ['HKCategoryTypeIdentifierMindfulSession']
+  });
+
+  // Save a 10-minute mindful session
+  const now = new Date();
+  const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+  await saveMindfulSession(tenMinutesAgo, now);
+
+  // Query recent mindful sessions
+  const sessions = await queryMindfulSessions({
+    limit: 10,
+    ascending: false,
+  });
+
+  sessions.forEach(session => {
+    const duration = (session.endDate.getTime() - session.startDate.getTime()) / 1000 / 60;
+    console.log(`Session: ${duration} minutes on ${session.startDate.toLocaleDateString()}`);
+  });
 
   /* Subscribe to data (Make sure to request permissions before subscribing to changes) */
   const [hasRequestedAuthorization, setHasRequestedAuthorization] = useState(false);

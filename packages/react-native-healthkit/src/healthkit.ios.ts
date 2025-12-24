@@ -2,12 +2,14 @@ import { Platform } from 'react-native'
 import useHealthkitAuthorization from './hooks/useHealthkitAuthorization'
 import { useIsHealthDataAvailable } from './hooks/useIsHealthDataAvailable'
 import useMostRecentCategorySample from './hooks/useMostRecentCategorySample'
+import useMostRecentMindfulSession from './hooks/useMostRecentMindfulSession'
 import useMostRecentQuantitySample from './hooks/useMostRecentQuantitySample'
 import useMostRecentWorkout from './hooks/useMostRecentWorkout'
 import useSources from './hooks/useSources'
 import useStatisticsForQuantity from './hooks/useStatisticsForQuantity'
 import useSubscribeToCategorySamples from './hooks/useSubscribeToCategorySamples'
 import useSubscribeToChanges from './hooks/useSubscribeToChanges'
+import useSubscribeToMindfulSessions from './hooks/useSubscribeToMindfulSessions'
 import useSubscribeToQuantitySamples from './hooks/useSubscribeToQuantitySamples'
 import {
   CategoryTypes,
@@ -23,11 +25,15 @@ import {
 } from './modules'
 import type { QuantityTypeIdentifier } from './types/QuantityTypeIdentifier'
 import getMostRecentCategorySample from './utils/getMostRecentCategorySample'
+import getMostRecentMindfulSession from './utils/getMostRecentMindfulSession'
 import getMostRecentQuantitySample from './utils/getMostRecentQuantitySample'
 import getMostRecentWorkout from './utils/getMostRecentWorkout'
 import getPreferredUnit from './utils/getPreferredUnit'
+import queryMindfulSessions from './utils/queryMindfulSessions'
+import saveMindfulSession from './utils/saveMindfulSession'
 import { subscribeToCategorySamples } from './utils/subscribeToCategorySamples'
 import { subscribeToChanges } from './utils/subscribeToChanges'
+import subscribeToMindfulSessions from './utils/subscribeToMindfulSessions'
 import { subscribeToQuantitySamples } from './utils/subscribeToQuantitySamples'
 
 export * from './types'
@@ -56,21 +62,27 @@ export type AvailableQuantityTypesBeforeIOS17 = Exclude<
 
 export {
   getMostRecentCategorySample,
+  getMostRecentMindfulSession,
   getMostRecentQuantitySample,
   getMostRecentWorkout,
   getPreferredUnit,
+  queryMindfulSessions,
+  saveMindfulSession,
   subscribeToCategorySamples,
   subscribeToChanges,
+  subscribeToMindfulSessions,
   subscribeToQuantitySamples,
   useHealthkitAuthorization,
   useIsHealthDataAvailable,
   useMostRecentCategorySample,
+  useMostRecentMindfulSession,
   useMostRecentQuantitySample,
   useMostRecentWorkout,
   useSources,
   useStatisticsForQuantity,
   useSubscribeToCategorySamples,
   useSubscribeToChanges,
+  useSubscribeToMindfulSessions,
   useSubscribeToQuantitySamples,
 }
 
@@ -217,6 +229,7 @@ export default {
   getFitzpatrickSkinTypeAsync,
   getWheelchairUseAsync,
   getMostRecentCategorySample,
+  getMostRecentMindfulSession,
   getMostRecentQuantitySample,
   getMostRecentWorkout,
   getPreferredUnits,
@@ -233,6 +246,7 @@ export default {
   queryHeartbeatSeriesSamplesWithAnchor,
   queryElectrocardiogramSamples,
   queryElectrocardiogramSamplesWithAnchor,
+  queryMindfulSessions,
   queryQuantitySamples,
   queryQuantitySamplesWithAnchor,
   queryStatisticsForQuantity,
@@ -246,9 +260,11 @@ export default {
   deleteObjects,
   saveCategorySample,
   saveCorrelationSample,
+  saveMindfulSession,
   saveQuantitySample,
   saveWorkoutSample,
   subscribeToChanges,
+  subscribeToMindfulSessions,
   subscribeToQuantitySamples,
   startWatchApp,
   isProtectedDataAvailable,
@@ -264,9 +280,11 @@ export default {
 
   subscribeToCategorySamples,
   useSubscribeToCategorySamples,
+  useSubscribeToMindfulSessions,
 
   // hooks
   useMostRecentCategorySample,
+  useMostRecentMindfulSession,
   useMostRecentQuantitySample,
   useMostRecentWorkout,
   useSubscribeToChanges,

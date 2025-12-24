@@ -321,6 +321,41 @@ export function getMostRecentCategorySample<T extends CategoryTypeIdentifier>(
   return Promise.resolve(undefined)
 }
 
+export function getMostRecentMindfulSession(): Promise<
+  | CategorySampleTyped<'HKCategoryTypeIdentifierMindfulSession'>
+  | undefined
+> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve(undefined)
+}
+
+export function queryMindfulSessions(
+  _options?: QueryOptionsWithSortOrder,
+): Promise<
+  CategorySampleTyped<'HKCategoryTypeIdentifierMindfulSession'>[]
+> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve([])
+}
+
+export const saveMindfulSession = UnavailableFnFromModule(
+  'saveMindfulSession',
+  Promise.resolve(undefined),
+)
+
+export const subscribeToMindfulSessions = UnavailableFnFromModule(
+  'subscribeToMindfulSessions',
+  {
+    remove: () => false,
+  },
+)
+
 export const getMostRecentQuantitySample = UnavailableFnFromModule(
   'getMostRecentQuantitySample',
   // biome-ignore lint/suspicious/noExplicitAny: it works
@@ -346,6 +381,21 @@ export function useMostRecentCategorySample<T extends CategoryTypeIdentifier>(
   }
   return undefined
 }
+
+export function useMostRecentMindfulSession():
+  | CategorySampleTyped<'HKCategoryTypeIdentifierMindfulSession'>
+  | undefined {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return undefined
+}
+
+export const useSubscribeToMindfulSessions = UnavailableFnFromModule(
+  'useSubscribeToMindfulSessions',
+  { sessions: [], errorMessage: undefined },
+)
 
 export const useMostRecentQuantitySample = UnavailableFnFromModule(
   'useMostRecentQuantitySample',
@@ -466,6 +516,7 @@ const HealthkitModule = {
   getDateOfBirth,
   getFitzpatrickSkinType,
   getMostRecentCategorySample,
+  getMostRecentMindfulSession,
   getMostRecentQuantitySample,
   getMostRecentWorkout,
   getPreferredUnits,
@@ -481,6 +532,7 @@ const HealthkitModule = {
   queryHeartbeatSeriesSamplesWithAnchor,
   queryElectrocardiogramSamples,
   queryElectrocardiogramSamplesWithAnchor,
+  queryMindfulSessions,
   queryQuantitySamples,
   queryQuantitySamplesWithAnchor,
   queryStatisticsForQuantity,
@@ -494,9 +546,11 @@ const HealthkitModule = {
   deleteObjects,
   saveCategorySample,
   saveCorrelationSample,
+  saveMindfulSession,
   saveQuantitySample,
   saveWorkoutSample,
   subscribeToChanges,
+  subscribeToMindfulSessions,
   startWatchApp,
   isProtectedDataAvailable,
   queryStateOfMindSamples,
@@ -511,16 +565,18 @@ const HealthkitModule = {
   requestMedicationsAuthorization,
 
   subscribeToCategorySamples,
+  useSubscribeToCategorySamples,
+  useSubscribeToMindfulSessions,
   currentAppSource,
 
   // Hooks
   useMostRecentCategorySample,
+  useMostRecentMindfulSession,
   useMostRecentQuantitySample,
   useMostRecentWorkout,
   useSubscribeToChanges,
   useHealthkitAuthorization,
   useIsHealthDataAvailable,
-  useSubscribeToCategorySamples,
   useSources,
   useStatisticsForQuantity,
   getBiologicalSexAsync,

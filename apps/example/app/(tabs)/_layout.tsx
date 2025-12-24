@@ -191,6 +191,20 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="mindfulSessions"
+        options={{
+          title: 'Mindful',
+          tabBarIcon: ({ color, focused }) => (
+            <IconSymbol
+              size={28}
+              name={focused ? 'brain.head.profile.fill' : 'brain.head.profile'}
+              color={color}
+            />
+          ),
+        }}
+      />
     </Tabs>
   )
 }
