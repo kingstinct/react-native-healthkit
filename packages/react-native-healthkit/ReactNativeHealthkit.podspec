@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
     "cpp/**/*.{hpp,cpp}",
   ]
 
-  s.public_header_files = "ios/**/*.h"
+  s.public_header_files = "ios/ExceptionCatcher.h"
 
   s.pod_target_xcconfig = {
     # C++ compiler flags, mainly for folly.
