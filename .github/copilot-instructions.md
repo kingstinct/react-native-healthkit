@@ -22,9 +22,11 @@ cd apps/example && bun start
 
 ## Build Verification Rule
 
-IMPORTANT: After making code changes, you MUST: 
+IMPORTANT: After making code changes, you MUST:
+- if you've changed anything in the `/packages/react-native-healthkit/src/specs` directory, run `bun codegen` to regenerate types.
 - first run `bun typecheck` and `bun lint` to ensure code quality and type safety. Iterate on these until they pass.
 - finally use xcodebuild to build and verify the project compiles without errors. Build the reactnativehealthkitexample scheme for iOS Simulator using specific simulator UUID to avoid conflicts. Note: Using simulatorId instead of simulatorName to avoid conflicts when multiple simulators have the same name.
+- For any features or bug fixes, add changesets. Easily done by running `bun changeset` and following the prompts, follow semver best practices.
 
 If there are build or validation errors, fix them before considering the task complete.
 
