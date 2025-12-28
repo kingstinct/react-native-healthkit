@@ -436,6 +436,11 @@ export const useSubscribeToCategorySamples = UnavailableFnFromModule(
   undefined,
 )
 
+export const requestPerObjectReadAuthorization = UnavailableFnFromModule(
+  'requestPerObjectReadAuthorization',
+  Promise.resolve(undefined),
+) // Mocking callback structure
+
 export const subscribeToCategorySamples = UnavailableFnFromModule(
   'subscribeToCategorySamples',
   {
@@ -509,6 +514,7 @@ const HealthkitModule = {
   queryMedicationEvents,
   queryMedicationEventsWithAnchor,
   requestMedicationsAuthorization,
+  requestPerObjectReadAuthorization,
 
   subscribeToCategorySamples,
   currentAppSource,

@@ -8,6 +8,7 @@ import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 import type { FilterForSamples } from '../types/QueryOptions'
 import type {
   ObjectTypeIdentifier,
+  PerObjectTypeIdentifier,
   SampleTypeIdentifier,
   SampleTypeIdentifierWriteable,
 } from '../types/Shared'
@@ -90,6 +91,10 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614152-requestauthorization Apple Docs }
    */
   requestAuthorization(toRequest: AuthDataTypes): Promise<boolean>
+
+  requestPerObjectReadAuthorization(
+    typeIdentifier: PerObjectTypeIdentifier,
+  ): Promise<void>
 
   deleteObjects(
     objectTypeIdentifier: ObjectTypeIdentifier,

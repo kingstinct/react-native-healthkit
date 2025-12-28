@@ -35,6 +35,10 @@ export type ObjectTypeIdentifier =
   | SampleTypeIdentifier
   | typeof ActivitySummaryTypeIdentifier
 
+export type PerObjectTypeIdentifier =
+  | typeof HKVisionPrescriptionTypeIdentifier
+  | typeof UserAnnotatedMedicationTypeIdentifier
+
 export type SampleTypeIdentifier =
   | CategoryTypeIdentifier
   | CorrelationTypeIdentifier
@@ -78,7 +82,17 @@ export interface GenericMetadata {
  * @see {@link https://developer.apple.com/documentation/healthkit/hkactivitysummarytype Apple Docs HKActivitySummaryType}
  */
 export const ActivitySummaryTypeIdentifier =
-  'ActivitySummaryTypeIdentifier' as const
+  'HKActivitySummaryTypeIdentifier' as const
+
+/**
+ * Represents a type that identifies activity summary objects.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkactivitysummarytype Apple Docs HKActivitySummaryType}
+ */
+export const HKVisionPrescriptionTypeIdentifier =
+  'HKVisionPrescriptionTypeIdentifier' as const
+
+export const UserAnnotatedMedicationTypeIdentifier =
+  'UserAnnotatedMedicationType' as const
 
 /**
  * Represents an audiogram type identifier.

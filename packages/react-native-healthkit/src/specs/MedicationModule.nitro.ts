@@ -123,6 +123,9 @@ export interface MedicationDoseEventsWithAnchorResponse {
 export interface MedicationModule extends HybridObject<{ ios: 'swift' }> {
   queryMedications(): Promise<readonly UserAnnotatedMedication[]>
 
+  /**
+   * @deprecated Use requestPerObjectReadAuthorization instead.
+   */
   requestMedicationsAuthorization(): Promise<boolean>
 
   queryMedicationEvents(
