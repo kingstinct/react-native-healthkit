@@ -81,7 +81,6 @@ func getHeartbeatSeriesHeartbeats(sample: HKHeartbeatSeriesSample) async throws 
   }
 }
 
-@available(iOS 13.0.0, *)
 class HeartbeatSeriesModule: HybridHeartbeatSeriesModuleSpec {
   func queryHeartbeatSeriesSamples(
     options: QueryOptionsWithSortOrder

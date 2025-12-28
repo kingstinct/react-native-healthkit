@@ -329,13 +329,11 @@ class WorkoutProxy: HybridWorkoutProxySpec {
   }
 
   var totalFlightsClimbed: Quantity? {
-    if #available(iOS 11, *) {
-      if let hkTotalFlightsClimbed = workout.totalFlightsClimbed {
-        return Quantity(
-          unit: "count",
-          quantity: hkTotalFlightsClimbed.doubleValue(for: HKUnit.count())
-        )
-      }
+    if let hkTotalFlightsClimbed = workout.totalFlightsClimbed {
+      return Quantity(
+        unit: "count",
+        quantity: hkTotalFlightsClimbed.doubleValue(for: HKUnit.count())
+      )
     }
     return nil
   }

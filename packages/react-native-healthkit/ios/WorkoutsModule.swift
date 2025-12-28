@@ -159,20 +159,18 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
           metadata: metadataDeserialized
         )
       } else {
-        if #available(iOS 11, *) {
-          if let totalFlightsClimbed = totalFlightsClimbed {
-            workout = HKWorkout.init(
-              activityType: type,
-              start: startDate,
-              end: endDate,
-              workoutEvents: nil,
-              totalEnergyBurned: totalEnergyBurned,
-              totalDistance: totalDistance,
-              totalFlightsClimbed: totalFlightsClimbed,
-              device: nil,
-              metadata: metadataDeserialized
-            )
-          }
+        if let totalFlightsClimbed = totalFlightsClimbed {
+          workout = HKWorkout.init(
+            activityType: type,
+            start: startDate,
+            end: endDate,
+            workoutEvents: nil,
+            totalEnergyBurned: totalEnergyBurned,
+            totalDistance: totalDistance,
+            totalFlightsClimbed: totalFlightsClimbed,
+            device: nil,
+            metadata: metadataDeserialized
+          )
         }
       }
 

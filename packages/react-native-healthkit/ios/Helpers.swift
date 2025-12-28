@@ -258,30 +258,24 @@ private func sampleTypeFromStringNullable(typeIdentifier: String) throws -> HKSa
     return HKSampleType.workoutType()
   }
 
-  if #available(iOS 11.0, *) {
-    if typeIdentifier == HKWorkoutRouteTypeIdentifier {
-      return try initializeSeriesType(typeIdentifier)
-    }
+  if typeIdentifier == HKWorkoutRouteTypeIdentifier {
+    return try initializeSeriesType(typeIdentifier)
   }
 
-  if #available(iOS 13, *) {
-    if typeIdentifier == HKAudiogramTypeIdentifier {
-      return HKObjectType.audiogramSampleType()
-    }
-
-    if typeIdentifier == HKDataTypeIdentifierHeartbeatSeries {
-      return try initializeSeriesType(typeIdentifier)
-    }
-
-    if typeIdentifier == HKAudiogramTypeIdentifier {
-      return HKSampleType.audiogramSampleType()
-    }
+  if typeIdentifier == HKAudiogramTypeIdentifier {
+    return HKObjectType.audiogramSampleType()
   }
 
-  if #available(iOS 14, *) {
-    if typeIdentifier == HKElectrocardiogramType {
-      return HKSampleType.electrocardiogramType()
-    }
+  if typeIdentifier == HKDataTypeIdentifierHeartbeatSeries {
+    return try initializeSeriesType(typeIdentifier)
+  }
+
+  if typeIdentifier == HKAudiogramTypeIdentifier {
+    return HKSampleType.audiogramSampleType()
+  }
+
+  if typeIdentifier == HKElectrocardiogramType {
+    return HKSampleType.electrocardiogramType()
   }
 
   #if compiler(>=6)
@@ -454,13 +448,12 @@ func buildStatisticsOptions(statistics: [StatisticsOptions], quantityType: HKQua
         warnWithPrefix("buildStatisticsOptions: discretemin statistic requested for cumulative quantity type \(quantityType.identifier)")
       }
     }
-    if #available(iOS 13, *) {
-      if statistic == .duration {
-        opts.insert(HKStatisticsOptions.duration)
-      }
-      if statistic == .mostrecent {
-        opts.insert(HKStatisticsOptions.mostRecent)
-      }
+
+    if statistic == .duration {
+      opts.insert(HKStatisticsOptions.duration)
+    }
+    if statistic == .mostrecent {
+      opts.insert(HKStatisticsOptions.mostRecent)
     }
   }
   return opts

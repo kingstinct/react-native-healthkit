@@ -218,19 +218,15 @@ func serializeUnknownQuantityTyped(quantity: HKQuantity?) -> Quantity? {
     return serializeQuantityTyped(unit: METUnit, quantity: quantity)
   }
 
-  if #available(iOS 11, *) {
-    if quantity.is(compatibleWith: HKUnit.internationalUnit()) {
-      return serializeQuantityTyped(unit: HKUnit.internationalUnit(), quantity: quantity)
-    }
+  if quantity.is(compatibleWith: HKUnit.internationalUnit()) {
+    return serializeQuantityTyped(unit: HKUnit.internationalUnit(), quantity: quantity)
   }
 
-  if #available(iOS 13, *) {
-    if quantity.is(compatibleWith: HKUnit.hertz()) {
-      return serializeQuantityTyped(unit: HKUnit.hertz(), quantity: quantity)
-    }
-    if quantity.is(compatibleWith: HKUnit.decibelHearingLevel()) {
-      return serializeQuantityTyped(unit: HKUnit.decibelHearingLevel(), quantity: quantity)
-    }
+  if quantity.is(compatibleWith: HKUnit.hertz()) {
+    return serializeQuantityTyped(unit: HKUnit.hertz(), quantity: quantity)
+  }
+  if quantity.is(compatibleWith: HKUnit.decibelHearingLevel()) {
+    return serializeQuantityTyped(unit: HKUnit.decibelHearingLevel(), quantity: quantity)
   }
 
   if #available(iOS 16.0, *) {
@@ -318,32 +314,19 @@ func serializeDevice(hkDevice: HKDevice?) -> Device? {
   )
 }
 
-func serializeOperatingSystemVersion(_ version: OperatingSystemVersion?) -> String? {
-  guard let version = version else {
-    return nil
-  }
-
+func serializeOperatingSystemVersion(_ version: OperatingSystemVersion) -> String {
   let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
 
   return versionString
 }
 
 func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision) -> SourceRevision {
-  if #available(iOS 11, *) {
-    return SourceRevision(
-      source: serializeSource(hkSourceRevision.source),
-      version: hkSourceRevision.version,
-      operatingSystemVersion: serializeOperatingSystemVersion(
-        hkSourceRevision.operatingSystemVersion),
-      productType: hkSourceRevision.productType
-    )
-  }
-
   return SourceRevision(
     source: serializeSource(hkSourceRevision.source),
     version: hkSourceRevision.version,
-    operatingSystemVersion: nil,
-    productType: nil
+    operatingSystemVersion: serializeOperatingSystemVersion(
+      hkSourceRevision.operatingSystemVersion),
+    productType: hkSourceRevision.productType
   )
 }
 

@@ -80,20 +80,16 @@ class CharacteristicTypeModule: HybridCharacteristicTypeModuleSpec {
   }
 
   func getFitzpatrickSkinType() throws -> FitzpatrickSkinType {
-    if #available(iOS 9.0, *) {
-      let skinTypeObject = try store.fitzpatrickSkinType()
+    let skinTypeObject = try store.fitzpatrickSkinType()
 
-      if let skinType = FitzpatrickSkinType(rawValue: Int32(skinTypeObject.skinType.rawValue)) {
-        return skinType
-      }
-
-      throw runtimeErrorWithPrefix(
-        "Got unknown Fitzpatrick skin type value: \(skinTypeObject.skinType.rawValue)")
+    if let skinType = FitzpatrickSkinType(rawValue: Int32(skinTypeObject.skinType.rawValue)) {
+      return skinType
     }
-    throw runtimeErrorWithPrefix("Fitzpatrick skin type is not available before iOS 9.0")
+
+    throw runtimeErrorWithPrefix(
+      "Got unknown Fitzpatrick skin type value: \(skinTypeObject.skinType.rawValue)")
   }
 
-  @available(iOS 10.0, *)
   func getWheelchairUse() throws -> WheelchairUse {
     let wheelchairUseObject = try store.wheelchairUse()
     if let wheelChairUse = WheelchairUse(
