@@ -11,7 +11,7 @@
     "build-sim": "xcodebuild -workspace ios/RNHealthKit.xcworkspace -scheme RNHealthKit -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build"
   },
   "dependencies": {
-    "@expo/ui": "0.2.0-beta.7",
+    "@expo/ui": "~0.2.0-beta.9",
     "@expo/vector-icons": "^15.0.3",
     "@kingstinct/react-native-healthkit": "workspace:*",
     "@react-navigation/bottom-tabs": "^7.4.0",
