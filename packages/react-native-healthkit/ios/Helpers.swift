@@ -370,11 +370,13 @@ func perObjectTypeFrom(objectTypeIdentifier: PerObjectTypeIdentifier) throws -> 
     }
   }
 
+  #if compiler(>=6.2)
   if #available(iOS 26.0, *) {
     if typeIdentifier == "UserAnnotatedMedicationType" {
       return HKObjectType.userAnnotatedMedicationType()
     }
   }
+  #endif
 
   throw runtimeErrorWithPrefix(
     "Failed initializing unrecognized objectType identifier " + typeIdentifier)
