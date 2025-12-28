@@ -33,3 +33,19 @@ export const ElectrocardiogramTypeIdentifier =
 
 export const UserAnnotatedMedicationTypeIdentifier =
   'HKUserAnnotatedMedicationTypeIdentifier'
+
+/**
+ * Represents a type that identifies activity summary objects.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkactivitysummarytype Apple Docs HKActivitySummaryType}
+ */
+export const ActivitySummaryTypeIdentifier =
+  'HKActivitySummaryTypeIdentifier' as const
+
+export const HKVisionPrescriptionTypeIdentifier =
+  'HKVisionPrescriptionTypeIdentifier' as const
+
+/**
+ * Represents an audiogram type identifier.
+ * @see {@link https://developer.apple.com/documentation/healthkit/HKAudiogramSampleType Apple Docs HKAudiogramSampleType}
+ */
+export const AudiogramTypeIdentifier = 'HKAudiogramSampleType' as const
