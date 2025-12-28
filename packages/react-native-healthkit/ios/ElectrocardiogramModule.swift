@@ -129,7 +129,6 @@ func serializeClassification(_ classification: HKElectrocardiogram.Classificatio
   }
 }
 
-@available(iOS 14.0, *)
 class ElectrocardiogramModule: HybridElectrocardiogramModuleSpec {
 
   // Query (simple)

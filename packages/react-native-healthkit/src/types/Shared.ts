@@ -5,9 +5,13 @@ import type {
 } from './CategoryTypeIdentifier'
 import type { CharacteristicTypeIdentifier } from './Characteristics'
 import type {
+  ActivitySummaryTypeIdentifier,
+  AudiogramTypeIdentifier,
   ElectrocardiogramTypeIdentifier,
   HeartbeatSeriesTypeIdentifier,
+  HKVisionPrescriptionTypeIdentifier,
   StateOfMindTypeIdentifier,
+  UserAnnotatedMedicationTypeIdentifier,
   WorkoutRouteTypeIdentifier,
   WorkoutTypeIdentifier,
 } from './Constants'
@@ -34,6 +38,10 @@ export type ObjectTypeIdentifier =
   | CharacteristicTypeIdentifier
   | SampleTypeIdentifier
   | typeof ActivitySummaryTypeIdentifier
+
+export type PerObjectTypeIdentifier =
+  | typeof HKVisionPrescriptionTypeIdentifier
+  | typeof UserAnnotatedMedicationTypeIdentifier
 
 export type SampleTypeIdentifier =
   | CategoryTypeIdentifier
@@ -72,19 +80,6 @@ export interface GenericMetadata {
   readonly HKReferenceRangeLowerLimit?: number
   readonly HKReferenceRangeUpperLimit?: number
 }
-
-/**
- * Represents a type that identifies activity summary objects.
- * @see {@link https://developer.apple.com/documentation/healthkit/hkactivitysummarytype Apple Docs HKActivitySummaryType}
- */
-export const ActivitySummaryTypeIdentifier =
-  'ActivitySummaryTypeIdentifier' as const
-
-/**
- * Represents an audiogram type identifier.
- * @see {@link https://developer.apple.com/documentation/healthkit/HKAudiogramSampleType Apple Docs HKAudiogramSampleType}
- */
-export const AudiogramTypeIdentifier = 'HKAudiogramSampleType' as const
 
 export interface BaseObject {
   readonly uuid: string

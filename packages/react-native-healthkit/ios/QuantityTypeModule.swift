@@ -81,30 +81,26 @@ func serializeStatistics(gottenStats: HKStatistics, unit: HKUnit) -> QueryStatis
     )
   }
 
-  if #available(iOS 12, *) {
-    if let mostRecent = gottenStats.mostRecentQuantity() {
-      response.mostRecentQuantity = Quantity(
-        unit: unit.unitString,
-        quantity: mostRecent.doubleValue(for: unit)
-      )
-    }
-
-    if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
-      response.mostRecentQuantityDateInterval = QuantityDateInterval(
-        from: mostRecentDateInterval.start,
-        to: mostRecentDateInterval.end
-      )
-    }
+  if let mostRecent = gottenStats.mostRecentQuantity() {
+    response.mostRecentQuantity = Quantity(
+      unit: unit.unitString,
+      quantity: mostRecent.doubleValue(for: unit)
+    )
   }
 
-  if #available(iOS 13, *) {
-    if let duration = gottenStats.duration() {
-      let durationUnit = HKUnit.second()
-      response.duration = Quantity(
-        unit: durationUnit.unitString,
-        quantity: duration.doubleValue(for: durationUnit)
-      )
-    }
+  if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
+    response.mostRecentQuantityDateInterval = QuantityDateInterval(
+      from: mostRecentDateInterval.start,
+      to: mostRecentDateInterval.end
+    )
+  }
+
+  if let duration = gottenStats.duration() {
+    let durationUnit = HKUnit.second()
+    response.duration = Quantity(
+      unit: durationUnit.unitString,
+      quantity: duration.doubleValue(for: durationUnit)
+    )
   }
 
   return response
@@ -201,31 +197,28 @@ func serializeStatisticsPerSource(gottenStats: HKStatistics, unit: HKUnit)
         )
       }
 
-      if #available(iOS 12, *) {
-        if let mostRecent = gottenStats.mostRecentQuantity(for: source) {
-          response.mostRecentQuantity = Quantity(
-            unit: unit.unitString,
-            quantity: mostRecent.doubleValue(for: unit)
-          )
-        }
-
-        if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval(for: source) {
-          response.mostRecentQuantityDateInterval = QuantityDateInterval(
-            from: mostRecentDateInterval.start,
-            to: mostRecentDateInterval.end
-          )
-        }
+      if let mostRecent = gottenStats.mostRecentQuantity(for: source) {
+        response.mostRecentQuantity = Quantity(
+          unit: unit.unitString,
+          quantity: mostRecent.doubleValue(for: unit)
+        )
       }
 
-      if #available(iOS 13, *) {
-        if let duration = gottenStats.duration(for: source) {
-          let durationUnit = HKUnit.second()
-          response.duration = Quantity(
-            unit: durationUnit.unitString,
-            quantity: duration.doubleValue(for: durationUnit)
-          )
-        }
+      if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval(for: source) {
+        response.mostRecentQuantityDateInterval = QuantityDateInterval(
+          from: mostRecentDateInterval.start,
+          to: mostRecentDateInterval.end
+        )
       }
+
+      if let duration = gottenStats.duration(for: source) {
+        let durationUnit = HKUnit.second()
+        response.duration = Quantity(
+          unit: durationUnit.unitString,
+          quantity: duration.doubleValue(for: durationUnit)
+        )
+      }
+
       return response
     }
   }

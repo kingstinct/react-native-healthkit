@@ -92,6 +92,8 @@ export type AvailableQuantityTypes<
 
 // Named exports - all functions bound to their respective modules
 export const authorizationStatusFor = Core.authorizationStatusFor.bind(Core)
+export const requestPerObjectReadAuthorization =
+  Core.requestPerObjectReadAuthorization.bind(Core)
 export const disableAllBackgroundDelivery =
   Core.disableAllBackgroundDelivery.bind(Core)
 export const disableBackgroundDelivery =
@@ -243,6 +245,7 @@ export default {
   queryWorkoutSamplesWithAnchor,
   querySources,
   requestAuthorization,
+  requestPerObjectReadAuthorization,
   deleteObjects,
   saveCategorySample,
   saveCorrelationSample,

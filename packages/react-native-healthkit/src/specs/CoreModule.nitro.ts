@@ -8,6 +8,7 @@ import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 import type { FilterForSamples } from '../types/QueryOptions'
 import type {
   ObjectTypeIdentifier,
+  PerObjectTypeIdentifier,
   SampleTypeIdentifier,
   SampleTypeIdentifierWriteable,
 } from '../types/Shared'
@@ -91,8 +92,12 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
    */
   requestAuthorization(toRequest: AuthDataTypes): Promise<boolean>
 
+  requestPerObjectReadAuthorization(
+    typeIdentifier: PerObjectTypeIdentifier,
+  ): Promise<void>
+
   deleteObjects(
-    objectTypeIdentifier: ObjectTypeIdentifier,
+    objectTypeIdentifier: SampleTypeIdentifierWriteable,
     filter: FilterForSamples,
   ): Promise<number>
 

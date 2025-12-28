@@ -6,3 +6,5 @@
 //
 
 #pragma once
+
+#import "ExceptionCatcher.h"
