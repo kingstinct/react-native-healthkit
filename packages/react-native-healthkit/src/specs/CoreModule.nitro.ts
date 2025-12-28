@@ -97,7 +97,7 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
   ): Promise<void>
 
   deleteObjects(
-    objectTypeIdentifier: ObjectTypeIdentifier,
+    objectTypeIdentifier: SampleTypeIdentifierWriteable,
     filter: FilterForSamples,
   ): Promise<number>
 

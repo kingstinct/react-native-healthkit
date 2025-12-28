@@ -76,6 +76,20 @@ async throws -> [HKQuantityType: HKUnit] {
 }
 
 class CoreModule: HybridCoreModuleSpec {
+  func requestPerObjectReadAuthorization(typeIdentifier: PerObjectTypeIdentifier) -> Promise<Void> {
+    return Promise.async {
+      let objectType = try perObjectTypeFrom(objectTypeIdentifier: typeIdentifier)
+      if #available(iOS 16.0, *) {
+        try await store.requestPerObjectReadAuthorization(
+          for: objectType,
+          predicate: nil
+        )
+      } else {
+        warnWithPrefix("Per-object read authorization is only available on iOS 16.0 and above")
+      }
+    }
+  }
+
   func currentAppSource() -> any HybridSourceProxySpec {
     return SourceProxy(source: HKSource.default())
   }
@@ -323,12 +337,12 @@ class CoreModule: HybridCoreModuleSpec {
 
   var _runningQueries: [String: HKQuery] = [:]
 
-  func deleteObjects(objectTypeIdentifier: ObjectTypeIdentifier, filter: FilterForSamples)
+  func deleteObjects(objectTypeIdentifier: SampleTypeIdentifierWriteable, filter: FilterForSamples)
     -> Promise<Double> {
     return Promise.async {
       if let predicate = createPredicateForSamples(filter) {
 
-        let of = try objectTypeFrom(objectTypeIdentifier: objectTypeIdentifier)
+        let of = try sampleTypeFrom(sampleTypeIdentifierWriteable: objectTypeIdentifier)
         return try await withCheckedThrowingContinuation { continuation in
           store.deleteObjects(of: of, predicate: predicate) { (_, count, error) in
             if let error = error {

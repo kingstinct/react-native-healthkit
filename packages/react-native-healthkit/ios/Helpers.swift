@@ -356,18 +356,6 @@ func objectTypeFrom(objectTypeIdentifier: ObjectTypeIdentifier) throws -> HKObje
     return HKObjectType.activitySummaryType()
   }
 
-  if #available(iOS 16.0, *) {
-    if typeIdentifier == HKVisionPrescriptionTypeIdentifier {
-      return HKObjectType.visionPrescriptionType()
-    }
-  }
-
-  if #available(iOS 26.0, *) {
-    if typeIdentifier == "UserAnnotatedMedicationType" {
-      return HKObjectType.userAnnotatedMedicationType()
-    }
-  }
-
   throw runtimeErrorWithPrefix(
     "Failed initializing unrecognized objectType identifier " + typeIdentifier)
 }
