@@ -1,5 +1,15 @@
 # @kingstinct/react-native-healthkit
 
+## 13.1.0
+### Minor Changes
+
+- dcc070e: tighten up SourceRevision type, remove old os version checks
+- dcc070e: add requestPerObjectReadAuthorization
+
+### Patch Changes
+
+- dcc070e: clean up header and objective-c source
+
 ## 13.0.2
 ### Patch Changes
 
