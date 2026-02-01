@@ -18,6 +18,8 @@ Pod::Spec.new do |s|
     "ios/**/*.{swift}",
     # Autolinking/Registration (Objective-C++)
     "ios/**/*.{m,mm}",
+    # Header files (must be in source_files for umbrella header)
+    "ios/**/*.h",
     # Implementation (C++ objects)
     "cpp/**/*.{hpp,cpp}",
   ]
