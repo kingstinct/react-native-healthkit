@@ -45,6 +45,7 @@
     "ios/**/*.mm",
     "ios/**/*.cpp",
     "ios/**/*.swift",
+    "ios/**/*.modulemap",
     "app.plugin.ts",
     "app.plugin.js",
     "*.podspec",
