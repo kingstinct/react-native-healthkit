@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 13.1.1
+### Patch Changes
+
+- 31a07e2: fix: add module.modulemap and build settings to resolve Bridge.h header visibility issues
+
 ## 13.1.0
 ### Minor Changes
 
