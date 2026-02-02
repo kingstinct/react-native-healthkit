@@ -26,7 +26,10 @@ Pod::Spec.new do |s|
 
   s.pod_target_xcconfig = {
     # C++ compiler flags, mainly for folly.
-    "GCC_PREPROCESSOR_DEFINITIONS" => "$(inherited) FOLLY_NO_CONFIG FOLLY_CFG_NO_COROUTINES"
+    "GCC_PREPROCESSOR_DEFINITIONS" => "$(inherited) FOLLY_NO_CONFIG FOLLY_CFG_NO_COROUTINES",
+    # Allow importing Objective-C headers in Swift without bridging header
+    "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES" => "YES",
+    "SWIFT_INCLUDE_PATHS" => "$(inherited) $(PODS_TARGET_SRCROOT)/ios"
   }
 
   load 'nitrogen/generated/ios/ReactNativeHealthkit+autolinking.rb'
