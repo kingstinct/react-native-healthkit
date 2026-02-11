@@ -244,9 +244,6 @@ func getAnyMapValue(_ anyMap: AnyMap, key: String) -> Any? {
   if anyMap.isInt64(key: key) {
     return anyMap.getInt64(key: key)
   }
-  if anyMap.isUInt64(key: key) {
-    return anyMap.getUInt64(key: key)
-  }
   if anyMap.isNull(key: key) {
     return nil
   }
