@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 13.1.4
+### Patch Changes
+
+- da250b0: Revert nitro fixes
+
 ## 13.1.1
 ### Patch Changes
 
