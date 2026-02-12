@@ -1,10 +1,5 @@
 # @kingstinct/react-native-healthkit
 
-## 13.1.2
-### Patch Changes
-
-- 6f95447: Fix build failure with react-native-nitro-modules >= 0.33. Migrate from deprecated `isBigInt`/`getBigInt` API to new `isInt64`/`getInt64` API in `AnyMap`.
-
 ## 13.1.1
 ### Patch Changes
 
