@@ -91,10 +91,10 @@
   "devDependencies": {
     "@testing-library/react-native": "^13.3.3",
     "@types/react": "~19.1.17",
-    "nitrogen": "^0.33.8",
+    "nitrogen": "^0.31.10",
     "react": "19.1.0",
     "react-native": "0.81.5",
-    "react-native-nitro-modules": "^0.33.8",
+    "react-native-nitro-modules": "^0.31.10",
     "typescript": "~5.9.3"
   },
   "peerDependencies": {
