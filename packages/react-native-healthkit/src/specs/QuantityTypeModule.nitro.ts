@@ -9,7 +9,10 @@ import type {
   StatisticsOptions,
   StatisticsQueryOptions,
 } from '../types/QuantityType'
-import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
+import type {
+  QuantityTypeIdentifier,
+  QuantityTypeIdentifierWriteable,
+} from '../types/QuantityTypeIdentifier'
 import type {
   QueryOptionsWithAnchorAndUnit,
   QueryOptionsWithSortOrderAndUnit,
@@ -24,7 +27,7 @@ export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
   aggregationStyle(identifier: QuantityTypeIdentifier): AggregationStyle
 
   saveQuantitySample(
-    identifier: QuantityTypeIdentifier,
+    identifier: QuantityTypeIdentifierWriteable,
     unit: string,
     value: number,
     start: Date,
