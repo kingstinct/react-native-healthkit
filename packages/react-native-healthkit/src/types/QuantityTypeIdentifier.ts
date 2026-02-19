@@ -600,6 +600,13 @@ export type QuantityTypeIdentifierWriteable =
   | 'HKQuantityTypeIdentifierAppleSleepingWristTemperature'
 
   /**
+   * Apple Sleeping Breathing Disturbances
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifier/applesleepingbreathingdisturbances Apple Docs HKQuantityTypeIdentifierAppleSleepingBreathingDisturbances}
+   * @since iOS 18
+   */
+  | 'HKQuantityTypeIdentifierAppleSleepingBreathingDisturbances'
+
+  /**
    * Time In Daylight
    * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifiertimeindaylight Apple Docs HKQuantityTypeIdentifierTimeInDaylight}
    * @since iOS 17

@@ -91,6 +91,41 @@ export type CategoryTypeIdentifierWriteable =
    */
   | 'HKCategoryTypeIdentifierBleedingDuringPregnancy'
 
+  /**
+   * Infrequent Menstrual Cycles
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier/infrequentmenstrualcycles Apple Docs }
+   * @since iOS 16
+   */
+  | 'HKCategoryTypeIdentifierInfrequentMenstrualCycles'
+
+  /**
+   * Irregular Menstrual Cycles
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier/irregularmenstrualcycles Apple Docs }
+   * @since iOS 16
+   */
+  | 'HKCategoryTypeIdentifierIrregularMenstrualCycles'
+
+  /**
+   * Persistent Intermenstrual Bleeding
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier/persistentintermenstrualbleeding Apple Docs }
+   * @since iOS 16
+   */
+  | 'HKCategoryTypeIdentifierPersistentIntermenstrualBleeding'
+
+  /**
+   * Prolonged Menstrual Periods
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier/prolongedmenstrualperiods Apple Docs }
+   * @since iOS 16
+   */
+  | 'HKCategoryTypeIdentifierProlongedMenstrualPeriods'
+
+  /**
+   * Sleep Apnea Event
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier/sleepapneaevent Apple Docs }
+   * @since iOS 18
+   */
+  | 'HKCategoryTypeIdentifierSleepApneaEvent'
+
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkcategorytypeidentifier Apple Docs }
  */
