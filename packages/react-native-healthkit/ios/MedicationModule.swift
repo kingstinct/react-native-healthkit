@@ -46,11 +46,31 @@ import NitroModules
   }
 
   @available(iOS 26.0, *)
-  func serializeMedicationEvent(sample: HKMedicationDoseEvent) throws -> MedicationDoseEvent {
+  func buildMedicationNameLookup() async -> [HKHealthConceptIdentifier: String] {
+    var lookup: [HKHealthConceptIdentifier: String] = [:]
+    do {
+      let q = HKUserAnnotatedMedicationQueryDescriptor()
+      let medications = try await q.result(for: store)
+      for med in medications {
+        lookup[med.medication.identifier] = med.medication.displayText
+      }
+    } catch {
+      warnWithPrefix("Failed to build medication name lookup: \(error.localizedDescription)")
+    }
+    return lookup
+  }
+
+  @available(iOS 26.0, *)
+  func serializeMedicationEvent(
+    sample: HKMedicationDoseEvent,
+    medicationNameLookup: [HKHealthConceptIdentifier: String] = [:]
+  ) throws -> MedicationDoseEvent {
+    let displayText = medicationNameLookup[sample.medicationConceptIdentifier]
     return MedicationDoseEvent(
       scheduleType: try getScheduleType(sample.scheduleType),
       medicationConceptIdentifier: try serializeMedicationConceptIdentifier(
         sample.medicationConceptIdentifier),
+      medicationDisplayText: displayText,
       scheduledDate: sample.scheduledDate,
       scheduledDoseQuantity: sample.scheduledDoseQuantity,
       doseQuantity: sample.doseQuantity,
@@ -165,9 +185,11 @@ import NitroModules
             sortDescriptors: getSortDescriptors(ascending: options.ascending)
           )
 
+          let nameLookup = await buildMedicationNameLookup()
+
           return try doseEvents.compactMap({ sample in
             if let event = sample as? HKMedicationDoseEvent {
-              return try serializeMedicationEvent(sample: event)
+              return try serializeMedicationEvent(sample: event, medicationNameLookup: nameLookup)
             }
             return nil
           })
@@ -206,9 +228,11 @@ import NitroModules
             predicate: predicate
           )
 
+          let nameLookup = await buildMedicationNameLookup()
+
           let serializedSamples = try response.samples.compactMap { s in
             if let sample = s as? HKMedicationDoseEvent {
-              return try serializeMedicationEvent(sample: sample)
+              return try serializeMedicationEvent(sample: sample, medicationNameLookup: nameLookup)
             }
             return nil
           }
