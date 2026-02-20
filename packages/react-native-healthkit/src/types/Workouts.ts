@@ -199,6 +199,10 @@ export interface WorkoutTotals {
 export interface WorkoutSample extends BaseSample {
   readonly workoutActivityType: WorkoutActivityType
   readonly duration: Quantity
+  readonly totalEnergyBurned?: Quantity
+  readonly totalDistance?: Quantity
+  readonly totalSwimmingStrokeCount?: Quantity
+  readonly totalFlightsClimbed?: Quantity
   readonly events?: readonly WorkoutEvent[]
   readonly activities?: readonly WorkoutActivity[]
 
