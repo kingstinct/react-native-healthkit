@@ -46,8 +46,8 @@ import NitroModules
   }
 
   @available(iOS 26.0, *)
-  func buildMedicationNameLookup(datePredicate: NSPredicate?) async -> [String: String] {
-    var lookup: [String: String] = [:]
+  func buildMedicationNameLookup(datePredicate: NSPredicate?) async -> [String: (name: String, nickname: String?)] {
+    var lookup: [String: (name: String, nickname: String?)] = [:]
     do {
       let q = HKUserAnnotatedMedicationQueryDescriptor()
       let medications = try await q.result(for: store)
@@ -67,7 +67,7 @@ import NitroModules
           predicate: combinedPredicate,
           sortDescriptors: nil)
         for event in events {
-          lookup[event.uuid.uuidString] = med.medication.displayText
+          lookup[event.uuid.uuidString] = (name: med.medication.displayText, nickname: med.nickname)
         }
       }
     } catch {
@@ -79,9 +79,10 @@ import NitroModules
   @available(iOS 26.0, *)
   func serializeMedicationEvent(
     sample: HKMedicationDoseEvent,
-    medicationNameLookup: [String: String] = [:]
+    medicationNameLookup: [String: (name: String, nickname: String?)] = [:]
   ) throws -> MedicationDoseEvent {
-    let displayText = medicationNameLookup[sample.uuid.uuidString]
+    let info = medicationNameLookup[sample.uuid.uuidString]
+    let displayText = info?.name
     return MedicationDoseEvent(
       scheduleType: try getScheduleType(sample.scheduleType),
       medicationConceptIdentifier: try serializeMedicationConceptIdentifier(
@@ -111,7 +112,13 @@ import NitroModules
       uuid: sample.uuid.uuidString,
       sourceRevision: serializeSourceRevision(sample.sourceRevision),
       device: serializeDevice(hkDevice: sample.device),
-      metadata: serializeMetadata(sample.metadata),
+      metadata: {
+        var meta = serializeMetadata(sample.metadata)
+        if let nick = info?.nickname {
+          meta.setString(key: "HKMedicationNickname", value: nick)
+        }
+        return meta
+      }(),
 
       metadataExternalUUID: sample.metadata?[HKMetadataKeyExternalUUID] as? String,
       metadataTimeZone: sample.metadata?[HKMetadataKeyTimeZone] as? String,
