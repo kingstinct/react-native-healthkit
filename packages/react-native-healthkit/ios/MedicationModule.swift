@@ -46,11 +46,48 @@ import NitroModules
   }
 
   @available(iOS 26.0, *)
-  func serializeMedicationEvent(sample: HKMedicationDoseEvent) throws -> MedicationDoseEvent {
+  func buildMedicationNameLookup(datePredicate: NSPredicate?) async -> [String: (name: String, nickname: String?)] {
+    var lookup: [String: (name: String, nickname: String?)] = [:]
+    do {
+      let q = HKUserAnnotatedMedicationQueryDescriptor()
+      let medications = try await q.result(for: store)
+      for med in medications {
+        let medPredicate = HKQuery.predicateForMedicationDoseEvent(
+          medicationConceptIdentifier: med.medication.identifier)
+        let combinedPredicate: NSPredicate?
+        if let dp = datePredicate {
+          combinedPredicate = NSCompoundPredicate(
+            andPredicateWithSubpredicates: [dp, medPredicate])
+        } else {
+          combinedPredicate = medPredicate
+        }
+        let events = try await sampleQueryAsync(
+          sampleType: HKSeriesType.medicationDoseEventType(),
+          limit: 0,
+          predicate: combinedPredicate,
+          sortDescriptors: nil)
+        for event in events {
+          lookup[event.uuid.uuidString] = (name: med.medication.displayText, nickname: med.nickname)
+        }
+      }
+    } catch {
+      warnWithPrefix("Failed to build medication name lookup: \(error.localizedDescription)")
+    }
+    return lookup
+  }
+
+  @available(iOS 26.0, *)
+  func serializeMedicationEvent(
+    sample: HKMedicationDoseEvent,
+    medicationNameLookup: [String: (name: String, nickname: String?)] = [:]
+  ) throws -> MedicationDoseEvent {
+    let info = medicationNameLookup[sample.uuid.uuidString]
+    let displayText = info?.name
     return MedicationDoseEvent(
       scheduleType: try getScheduleType(sample.scheduleType),
       medicationConceptIdentifier: try serializeMedicationConceptIdentifier(
         sample.medicationConceptIdentifier),
+      medicationDisplayText: displayText,
       scheduledDate: sample.scheduledDate,
       scheduledDoseQuantity: sample.scheduledDoseQuantity,
       doseQuantity: sample.doseQuantity,
@@ -75,7 +112,13 @@ import NitroModules
       uuid: sample.uuid.uuidString,
       sourceRevision: serializeSourceRevision(sample.sourceRevision),
       device: serializeDevice(hkDevice: sample.device),
-      metadata: serializeMetadata(sample.metadata),
+      metadata: {
+        var meta = serializeMetadata(sample.metadata)
+        if let nick = info?.nickname {
+          meta.setString(key: "HKMedicationNickname", value: nick)
+        }
+        return meta
+      }(),
 
       metadataExternalUUID: sample.metadata?[HKMetadataKeyExternalUUID] as? String,
       metadataTimeZone: sample.metadata?[HKMetadataKeyTimeZone] as? String,
@@ -165,9 +208,11 @@ import NitroModules
             sortDescriptors: getSortDescriptors(ascending: options.ascending)
           )
 
+          let nameLookup = await buildMedicationNameLookup(datePredicate: predicate)
+
           return try doseEvents.compactMap({ sample in
             if let event = sample as? HKMedicationDoseEvent {
-              return try serializeMedicationEvent(sample: event)
+              return try serializeMedicationEvent(sample: event, medicationNameLookup: nameLookup)
             }
             return nil
           })
@@ -206,9 +251,11 @@ import NitroModules
             predicate: predicate
           )
 
+          let nameLookup = await buildMedicationNameLookup(datePredicate: predicate)
+
           let serializedSamples = try response.samples.compactMap { s in
             if let sample = s as? HKMedicationDoseEvent {
-              return try serializeMedicationEvent(sample: sample)
+              return try serializeMedicationEvent(sample: sample, medicationNameLookup: nameLookup)
             }
             return nil
           }

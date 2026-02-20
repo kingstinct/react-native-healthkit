@@ -107,6 +107,7 @@ export interface UserAnnotatedMedication {
 export interface MedicationDoseEvent extends BaseSample {
   scheduleType: MedicationDoseEventScheduleType
   medicationConceptIdentifier: string // not sure here
+  medicationDisplayText?: string
   scheduledDate?: Date
   scheduledDoseQuantity?: number
   doseQuantity?: number
