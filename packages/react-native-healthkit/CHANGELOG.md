@@ -1,5 +1,14 @@
 # @kingstinct/react-native-healthkit
 
+## 13.2.0
+### Minor Changes
+
+- f820272: Add `HKQuantityTypeIdentifierBloodKetones` to `QuantityTypeIdentifier` enum
+
+### Patch Changes
+
+- a8b4fd4: feat: resolve medication display text on dose events
+
 ## 13.1.4
 ### Patch Changes
 
