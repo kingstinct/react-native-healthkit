@@ -214,6 +214,10 @@ class WorkoutProxy: HybridWorkoutProxySpec {
     return WorkoutSample(
       workoutActivityType: self.workoutActivityType,
       duration: self.duration,
+      totalEnergyBurned: self.totalEnergyBurned,
+      totalDistance: self.totalDistance,
+      totalSwimmingStrokeCount: self.totalSwimmingStrokeCount,
+      totalFlightsClimbed: self.totalFlightsClimbed,
       events: self.events,
       activities: self.activities,
       metadataAverageMETs: self.metadataAverageMETs,
