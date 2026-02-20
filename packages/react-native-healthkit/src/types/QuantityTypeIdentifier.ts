@@ -205,6 +205,13 @@ export type QuantityTypeIdentifierWriteable =
   | 'HKQuantityTypeIdentifierBloodGlucose'
 
   /**
+   * Blood Ketones
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifierbloodketones Apple Docs HKQuantityTypeIdentifierBloodKetones}
+   * @since iOS 8.0
+   */
+  | 'HKQuantityTypeIdentifierBloodKetones'
+
+  /**
    * Number Of Times Fallen
    * @see {@link https://developer.apple.com/documentation/healthkit/hkquantitytypeidentifiernumberoftimesfallen Apple Docs HKQuantityTypeIdentifierNumberOfTimesFallen}
    */
