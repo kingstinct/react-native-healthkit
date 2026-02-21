@@ -1,5 +1,11 @@
 # @kingstinct/react-native-healthkit
 
+## 13.2.1
+### Patch Changes
+
+- e8d6326: Restrict peerDependency of react-native-nitro-modules to under 33
+  Fix failing iOS build
+
 ## 13.2.0
 ### Minor Changes
 
