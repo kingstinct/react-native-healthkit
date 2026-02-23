@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>@kingstinct/react-native-healthkit</title>
+  <title>react-native-healthkit — HealthKit for React Native & Expo</title>
   <meta name="description" content="Access HealthKit seamlessly and effortlessly with Expo and React Native">
-  <meta name="keywords" content="TypeScript, HealthKit, iOS, React Native">
+  <meta name="keywords" content="TypeScript, HealthKit, iOS, React Native, Expo">
   <meta name="author" content="Kingstinct">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta property="og:title" content="@kingstinct/react-native-healthkit" />
@@ -12,16 +12,13 @@
   <meta property="og:image" content="./images/heart-data.webp" />
   <meta name="twitter:title" content="@kingstinct/react-native-healthkit">
   <meta name="twitter:description" content="Access HealthKit seamlessly and effortlessly with Expo and React Native">
-  <meta name="twitter:image" content=" ./images/heart-data.webp">
+  <meta name="twitter:image" content="./images/heart-data.webp">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="./images/healthkit.png">
-  <link rel="stylesheet" href="./styles/style.css">
-  <link rel="stylesheet" href="./styles/prism.css">
 
-    <!-- Matomo -->
+  <!-- Matomo -->
   <script type="text/javascript">
     var _paq = window._paq = window._paq || [];
-    /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
     _paq.push(['trackPageView']);
     _paq.push(['enableLinkTracking']);
     (function() {
@@ -32,223 +29,359 @@
       g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
     })();
   </script>
-  <!-- End Matomo Code -->
-
   <script async src="https://ackee.kingstinct.dev/tracker.js" data-ackee-server="https://ackee.kingstinct.dev" data-ackee-domain-id="d3adbe01-d0cd-42a5-8e6d-812c1380d14e"></script>
-
   <script defer data-domain="kingstinct.com" src="http://plausible.kingstinct.dev/js/script.js"></script>
-
   <script async defer data-website-id="1a60abb4-3f28-4ee1-998b-03d3f69c3bf7" src="https://umami.kingstinct.dev/umami.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./styles/prism.css">
+  <link rel="stylesheet" href="./styles/style.css">
 </head>
 <body>
 
+  <!-- ═══ HEADER ═══ -->
+  <header class="site-header" id="site-header">
+    <div class="header-inner">
+      <a href="#home" class="logo-link">
+        <img src="./images/healthkit.webp" alt="HealthKit Logo" class="logo-img">
+        <span class="logo-text">react-native-healthkit</span>
+      </a>
+      <nav class="main-nav">
+        <a href="#install" class="nav-link">Install</a>
+        <a href="#authorize" class="nav-link">Authorize</a>
+        <a href="#launch" class="nav-link">Launch</a>
+        <a href="https://github.com/kingstinct/react-native-healthkit" target="_blank" class="nav-github" aria-label="View on GitHub">
+          <img src="./images/github-mark-white.webp" alt="GitHub" class="github-icon">
+        </a>
+      </nav>
+    </div>
+  </header>
 
-  
-<!-- partial:index.partial.html -->
-<div class="section" id="home">
-  <!-- <div class="oop"></div> -->
-  <div class="fixed">
-    <h1 class="large" style="backdrop-filter: blur(4px); 
-    
-    background-color: #fffa; border-radius: 10px; padding: 10px;">Access HealthKit seamlessly and effortlessly with Expo and React Native</h1>
-    <div style="border-radius: 5px;">
-      <ul  class="contrast-safe-text" style="text-align: left; 
-        list-style: none; display: flex;     
-        padding-inline-start: 10px;
-      
-        flex-direction: column;
-        gap: 10px;">
-        <li>✅ All 100+ <b>Quantity Types</b></li>
-        <li>✅ All 63+ <b>Category Types</b></li>
-        <li>✅ All 75+ <b>Workout Types</b></li>
-        <li>✅ Save, query and subscribe to data</li>
-        <li>✅ TypeScript, Promise-based, Expo Plugin</li>
-        <li>✅ Convenient hooks</li>
-        <li>✅ <b>Future-proof</b> - mapping closely to the Native API</li>
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="home">
+    <div class="hero-bg">
+      <div class="mesh-gradient"></div>
+      <div class="ecg-container" aria-hidden="true">
+        <svg class="ecg-svg" viewBox="0 0 2400 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <path class="ecg-path" filter="url(#glow)" d="
+            M 0,65 L 50,65 Q 65,65 75,55 Q 90,47 105,62 Q 112,65 120,65 L 133,65 L 136,72 L 143,8 L 150,85 L 157,65 L 170,65 Q 188,58 205,48 Q 222,42 240,52 Q 252,62 260,65 L 300,65
+            L 350,65 Q 365,65 375,55 Q 390,47 405,62 Q 412,65 420,65 L 433,65 L 436,72 L 443,8 L 450,85 L 457,65 L 470,65 Q 488,58 505,48 Q 522,42 540,52 Q 552,62 560,65 L 600,65
+            L 650,65 Q 665,65 675,55 Q 690,47 705,62 Q 712,65 720,65 L 733,65 L 736,72 L 743,8 L 750,85 L 757,65 L 770,65 Q 788,58 805,48 Q 822,42 840,52 Q 852,62 860,65 L 900,65
+            L 950,65 Q 965,65 975,55 Q 990,47 1005,62 Q 1012,65 1020,65 L 1033,65 L 1036,72 L 1043,8 L 1050,85 L 1057,65 L 1070,65 Q 1088,58 1105,48 Q 1122,42 1140,52 Q 1152,62 1160,65 L 1200,65
+            L 1250,65 Q 1265,65 1275,55 Q 1290,47 1305,62 Q 1312,65 1320,65 L 1333,65 L 1336,72 L 1343,8 L 1350,85 L 1357,65 L 1370,65 Q 1388,58 1405,48 Q 1422,42 1440,52 Q 1452,62 1460,65 L 1500,65
+            L 1550,65 Q 1565,65 1575,55 Q 1590,47 1605,62 Q 1612,65 1620,65 L 1633,65 L 1636,72 L 1643,8 L 1650,85 L 1657,65 L 1670,65 Q 1688,58 1705,48 Q 1722,42 1740,52 Q 1752,62 1760,65 L 1800,65
+            L 1850,65 Q 1865,65 1875,55 Q 1890,47 1905,62 Q 1912,65 1920,65 L 1933,65 L 1936,72 L 1943,8 L 1950,85 L 1957,65 L 1970,65 Q 1988,58 2005,48 Q 2022,42 2040,52 Q 2052,62 2060,65 L 2100,65
+            L 2150,65 Q 2165,65 2175,55 Q 2190,47 2205,62 Q 2212,65 2220,65 L 2233,65 L 2236,72 L 2243,8 L 2250,85 L 2257,65 L 2270,65 Q 2288,58 2305,48 Q 2322,42 2340,52 Q 2352,62 2360,65 L 2400,65
+          "/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        iOS &middot; TypeScript &middot; Expo &middot; React Native
+      </div>
+      <h1 class="hero-title">
+        <span class="hero-title-line">Access</span>
+        <em class="hero-title-accent">HealthKit</em>
+        <span class="hero-title-line">seamlessly.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Type-safe, Promise-based HealthKit bindings for React Native and Expo.
+        Powered by Nitro Modules for exceptional performance.
+      </p>
+      <div class="hero-metrics" aria-label="Library statistics">
+        <div class="metric">
+          <span class="metric-value">100+</span>
+          <span class="metric-label">Quantity Types</span>
+        </div>
+        <div class="metric-divider" aria-hidden="true"></div>
+        <div class="metric">
+          <span class="metric-value">63+</span>
+          <span class="metric-label">Category Types</span>
+        </div>
+        <div class="metric-divider" aria-hidden="true"></div>
+        <div class="metric">
+          <span class="metric-value">75+</span>
+          <span class="metric-label">Workout Types</span>
+        </div>
+      </div>
+      <div class="hero-cta">
+        <a href="#install" class="btn-primary">Get Started</a>
+        <a href="https://github.com/kingstinct/react-native-healthkit" target="_blank" class="btn-secondary">View on GitHub</a>
+      </div>
+    </div>
+
+    <div class="activity-rings" aria-hidden="true">
+      <svg viewBox="0 0 200 200" class="rings-svg" xmlns="http://www.w3.org/2000/svg">
+        <circle class="ring ring-move"     cx="100" cy="100" r="90" />
+        <circle class="ring ring-exercise" cx="100" cy="100" r="70" />
+        <circle class="ring ring-stand"    cx="100" cy="100" r="50" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- ═══ FEATURE STRIP ═══ -->
+  <div class="features-strip">
+    <div class="container">
+      <ul class="features-grid" role="list">
+        <li class="feature-item"><span class="feature-icon" aria-hidden="true">⚡</span>Nitro Modules Performance</li>
+        <li class="feature-item"><span class="feature-icon" aria-hidden="true">🔒</span>Type-safe Authorization</li>
+        <li class="feature-item"><span class="feature-icon" aria-hidden="true">🔄</span>Save, Query &amp; Subscribe</li>
+        <li class="feature-item"><span class="feature-icon" aria-hidden="true">🪝</span>Convenient React Hooks</li>
+        <li class="feature-item"><span class="feature-icon" aria-hidden="true">📦</span>Expo Plugin</li>
+        <li class="feature-item"><span class="feature-icon" aria-hidden="true">🗺️</span>Future-proof Native API Mapping</li>
       </ul>
     </div>
   </div>
-</div>
-<div class="section" id="install">
-  <div class="fixed">
-    <h1 style="color: black;" style="user-select: none;">
-      1. Install <span class="toggle-expo-rn">with Expo</span> ⚙️
-    </h1>
-    <ol class="expo-only instructions">
-      <li><p>Install dependency</p><div class="code-window">
-        <pre><span class="toggle-package-manager">yarn</span> install @kingstinct/react-native-healthkit</pre>
-        <div class="copy-code">
-          Copy
-          </div>
-      </div></li>
-      <li><p>Add Config Plugin to your app.json/app.config.js</p>  <div class="code-window">
-      
-        <pre>{
+
+  <!-- ═══ STEPS SECTION ═══ -->
+  <section class="steps-section">
+    <div class="container">
+      <div class="steps-header">
+        <span class="section-label">Quick Start</span>
+        <h2 class="section-title">Three steps to launch</h2>
+      </div>
+
+      <!-- ─ STEP 1: INSTALL ─ -->
+      <div class="step" id="install">
+        <div class="step-number" aria-hidden="true">01</div>
+        <div class="step-content">
+          <h3 class="step-title">
+            Install
+            <button class="toggle-btn toggle-expo-rn" aria-label="Toggle between Expo and React Native">with Expo</button>
+          </h3>
+
+          <!-- Expo instructions -->
+          <div class="expo-only step-instructions">
+            <div class="instruction-item">
+              <p class="instruction-label">Install the package</p>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-lang">Terminal</span>
+                  <button class="copy-btn" aria-label="Copy code to clipboard">Copy</button>
+                </div>
+                <pre class="code-content"><code><span class="toggle-package-manager pkg-toggle">yarn</span> add @kingstinct/react-native-healthkit</code></pre>
+              </div>
+            </div>
+            <div class="instruction-item">
+              <p class="instruction-label">Add the Config Plugin to app.json</p>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-lang">app.json</span>
+                  <button class="copy-btn" aria-label="Copy code to clipboard">Copy</button>
+                </div>
+                <pre class="code-content language-json"><code class="language-json">{
   "expo": {
     "plugins": [
       "@kingstinct/react-native-healthkit"
     ]
   }
-}</pre>
-      
-      <div class="copy-code">
-      Copy
-      </div>
-    </div></li>
-      <li>Build a new Dev Client</li>
-    </ol>
-
-    <ol class="rn-only instructions" style="display: none;"> 
-      <li><p>Install dependency</p><div class="code-window">
-        <pre><span class="toggle-package-manager">yarn</span> install @kingstinct/react-native-healthkit</pre>
-        <div class="copy-code">
-          Copy
-          </div>
-      </div></li>
-      <li><p>Run pod install</p><div class="code-window">
-        <pre>npx pod-install</pre>
-        <div class="copy-code">
-          Copy
-          </div>
-      </div></li>
-      <li>
-        Set NSHealthUpdateUsageDescription and NSHealthShareUsageDescription in your Info.plist
-      </li>
-      <li>Enable the HealthKit capability for the project in Xcode.</li>
-      <li>Since this package is using Swift you might also need to add a bridging header in your project if you haven't already, you can find more about that in the <a href="https://reactnative.dev/docs/native-modules-ios#exporting-swift" target="_blank">official React Native docs</a></li>
-    </ol>
-    
-
-   
-  </div>
-  
-</div>
-<div class="section" id="auth">
-  <div class="p fixed">
-    <pre class="code-window-prism"><code class="language-tsx">// --- 2. Authorize 🔒 ---
-
-import { 
-  Text, 
-  Button,
-  View
-} from 'react-native';
-import { 
-  useHealthkitAuthorization 
-} from '@kingstinct/react-native-healthkit';
-
-export default () => {
-  const [
-    authorizationStatus, 
-    requestAuthorization
-  ] = useHealthkitAuthorization({
-    toRead: [ 'HKQuantityTypeIdentifierBloodGlucose' ]
-  })
-
-  return &lt;View>
-    &lt;Text>Authorization Status: {authorizationStatus}&lt;/Text>
-    &lt;Button 
-      onPress={requestAuthorization} 
-      title="Request Authorization" 
-    />
-  &lt;/View>
 }</code></pre>
-  </div>
-</div>
-<div class="section" id="data">
-  <div class="p fixed">
-    
-      <pre class="code-window-prism"><code class="language-tsx">// --- 3. Launch 🚀 ---
+              </div>
+            </div>
+            <div class="instruction-item plain">
+              <span class="step-bullet" aria-hidden="true">→</span>
+              Build a new Dev Client
+            </div>
+          </div>
 
-import { 
-  Text, 
-  View
-} from 'react-native';
-import { 
-  useMostRecentQuantitySample
-} from '@kingstinct/react-native-healthkit';
+          <!-- React Native instructions -->
+          <div class="rn-only step-instructions" style="display:none;">
+            <div class="instruction-item">
+              <p class="instruction-label">Install the package</p>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-lang">Terminal</span>
+                  <button class="copy-btn" aria-label="Copy code to clipboard">Copy</button>
+                </div>
+                <pre class="code-content"><code><span class="toggle-package-manager pkg-toggle">yarn</span> add @kingstinct/react-native-healthkit</code></pre>
+              </div>
+            </div>
+            <div class="instruction-item">
+              <p class="instruction-label">Install CocoaPods</p>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-lang">Terminal</span>
+                  <button class="copy-btn" aria-label="Copy code to clipboard">Copy</button>
+                </div>
+                <pre class="code-content"><code>npx pod-install</code></pre>
+              </div>
+            </div>
+            <div class="instruction-item plain">
+              <span class="step-bullet" aria-hidden="true">→</span>
+              <span>Set <code class="inline-code">NSHealthUpdateUsageDescription</code> and <code class="inline-code">NSHealthShareUsageDescription</code> in your Info.plist</span>
+            </div>
+            <div class="instruction-item plain">
+              <span class="step-bullet" aria-hidden="true">→</span>
+              Enable the HealthKit capability in Xcode
+            </div>
+            <div class="instruction-item plain">
+              <span class="step-bullet" aria-hidden="true">→</span>
+              <span>Add a Swift bridging header if needed &mdash; see the <a href="https://reactnative.dev/docs/native-modules-ios#exporting-swift" target="_blank" class="text-link">React Native docs</a></span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-export default () => {
+      <!-- ─ STEP 2: AUTHORIZE ─ -->
+      <div class="step" id="authorize">
+        <div class="step-number" aria-hidden="true">02</div>
+        <div class="step-content">
+          <h3 class="step-title">Authorize <span class="step-icon" aria-hidden="true">🔒</span></h3>
+          <div class="code-block code-block-large">
+            <div class="code-block-header">
+              <span class="code-lang">TypeScript &middot; React Native</span>
+              <button class="copy-btn" aria-label="Copy code to clipboard">Copy</button>
+            </div>
+            <pre class="code-window-prism"><code class="language-tsx">import { Text, Button, View } from 'react-native'
+import { useHealthkitAuthorization } from '@kingstinct/react-native-healthkit'
+
+export default function AuthExample() {
+  const [authorizationStatus, requestAuthorization] =
+    useHealthkitAuthorization({
+      toRead: ['HKQuantityTypeIdentifierBloodGlucose']
+    })
+
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;Authorization Status: {authorizationStatus}&lt;/Text&gt;
+      &lt;Button
+        onPress={requestAuthorization}
+        title="Request Authorization"
+      /&gt;
+    &lt;/View&gt;
+  )
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─ STEP 3: LAUNCH ─ -->
+      <div class="step" id="launch">
+        <div class="step-number" aria-hidden="true">03</div>
+        <div class="step-content">
+          <h3 class="step-title">Launch <span class="step-icon" aria-hidden="true">🚀</span></h3>
+          <div class="code-block code-block-large">
+            <div class="code-block-header">
+              <span class="code-lang">TypeScript &middot; React Native</span>
+              <button class="copy-btn" aria-label="Copy code to clipboard">Copy</button>
+            </div>
+            <pre class="code-window-prism"><code class="language-tsx">import { Text, View } from 'react-native'
+import { useMostRecentQuantitySample } from '@kingstinct/react-native-healthkit'
+
+export default function BloodGlucoseMonitor() {
   const sample = useMostRecentQuantitySample(
     'HKQuantityTypeIdentifierBloodGlucose'
   )
 
-  return &lt;View>
-    &lt;Text>Blood Glucose: {sample?.quantity}&lt;/Text>
-  &lt;/View>
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;
+        Blood Glucose: {sample?.quantity} {sample?.unit}
+      &lt;/Text&gt;
+    &lt;/View&gt;
+  )
 }</code></pre>
-  </div>
-</div>
+          </div>
+        </div>
+      </div>
 
-<div style="position: fixed; padding-top: 20px; padding-bottom: 20px; padding-right: 20px; right: 0px; left: 0px; z-index: 9999999999; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); background-color: #fff5;">
-  <div style="vertical-align: middle;">
-    <a href="#home" style="text-decoration: none;"><img alt="HealthKit Logo" src="./images/healthkit.webp" style="width:10vw;height:7vw; margin-left: 10px;vertical-align: middle;">
-    <div style="display:inline-block; vertical-align: middle;">
-      <span style="vertical-align: middle; display:inline-block; font-size: 4vw; color: black;">@kingstinct/react-native-healthkit</span>
     </div>
-    </a>
-    <a href="https://github.com/kingstinct/react-native-healthkit" target="_blank">
-      <img alt="GitHub Logo" src="./images/github-mark-white.webp" style="width:6.5vw;height:6.5vw; float: right; filter:invert(100%); vertical-align: middle;">
-    </a>
-  </div>
-  <div class="tabs">
-    <a href="#install">1. Install ⚙️</a>
-    <a href="#auth">2. Authorize 🔒</a>
-    <a href="#data">3. Launch 🚀</a>
-  </div>
-</div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <img src="./images/healthkit.webp" alt="HealthKit" class="footer-logo">
+          <span class="footer-name">@kingstinct/react-native-healthkit</span>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/kingstinct/react-native-healthkit" target="_blank" class="footer-link">GitHub</a>
+          <a href="https://www.npmjs.com/package/@kingstinct/react-native-healthkit" target="_blank" class="footer-link">npm</a>
+        </div>
+      </div>
+      <p class="footer-copy">MIT License &middot; Built by <a href="https://kingstinct.com" target="_blank" class="text-link">Kingstinct</a></p>
+    </div>
+  </footer>
+
   <script>
-    function init(){
-      function toggleSelf(evt){
-          this.innerHTML = this.innerHTML === 'npm' ? 'yarn' : this.innerHTML === 'yarn' ? 'pnpm' : 'npm'
-        }
-
-      document.querySelectorAll('.toggle-package-manager').forEach(el => {
-        el.addEventListener('click', toggleSelf)
+    // ── Package manager toggle (cycles through npm → yarn → pnpm) ──
+    document.querySelectorAll('.pkg-toggle').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var cur = this.textContent.trim()
+        var next = cur === 'npm' ? 'yarn' : cur === 'yarn' ? 'pnpm' : 'npm'
+        document.querySelectorAll('.pkg-toggle').forEach(function(t) { t.textContent = next })
       })
+    })
 
-      function toggleExpoRn(evt){
-        const toggleToRN = this.innerHTML === 'with Expo'
-        this.innerHTML = toggleToRN ? 'with React Native' : 'with Expo'
-        document.querySelectorAll('.rn-only').forEach(el => {
-          el.style.display = toggleToRN ? 'block' : 'none'
-        })
-        document.querySelectorAll('.expo-only').forEach(el => {
-          el.style.display = !toggleToRN ? 'block' : 'none'
-        })
-      }
-
-      document.querySelectorAll('.toggle-expo-rn').forEach(el => {
-        el.addEventListener('click', toggleExpoRn)
-        
+    // ── Expo / React Native toggle ──
+    document.querySelectorAll('.toggle-expo-rn').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var isExpo = this.textContent.trim() === 'with Expo'
+        this.textContent = isExpo ? 'with React Native' : 'with Expo'
+        document.querySelectorAll('.rn-only').forEach(function(e) { e.style.display = isExpo ? 'flex' : 'none' })
+        document.querySelectorAll('.expo-only').forEach(function(e) { e.style.display = isExpo ? 'none' : 'flex' })
       })
+    })
 
-      document.querySelectorAll('.copy-code').forEach(el => {
-        el.addEventListener('click', function(evt) {
-          this.innerHTML = ''
-          let codeElement = this.parentElement
-          while(!codeElement.classList.contains('code-window') && codeElement.parentElement){
-            codeElement = codeElement.parentElement
+    // ── Copy button ──
+    document.querySelectorAll('.copy-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var block = this.closest('.code-block')
+        var codeEl = block.querySelector('.code-content, .code-window-prism')
+        if (!codeEl) return
+        navigator.clipboard.writeText(codeEl.innerText).then(function() {})
+        btn.textContent = 'Copied!'
+        btn.classList.add('copied')
+        setTimeout(function() {
+          btn.textContent = 'Copy'
+          btn.classList.remove('copied')
+        }, 1600)
+      })
+    })
+
+    // ── Header scroll effect ──
+    var header = document.getElementById('site-header')
+    window.addEventListener('scroll', function() {
+      header.classList.toggle('scrolled', window.scrollY > 60)
+    }, { passive: true })
+
+    // ── Step entrance animations ──
+    var steps = document.querySelectorAll('.step')
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible')
           }
-          let innerText = codeElement?.innerText
-          if(innerText){
-            this.innerHTML = '✅ Copied'
-            navigator.clipboard.writeText(innerText)
-          }
-          setTimeout(() => {
-            this.innerHTML = 'Copy'
-          }, 1000)
         })
-      })
+      }, { threshold: 0.08 })
+      steps.forEach(function(step) { observer.observe(step) })
+    } else {
+      steps.forEach(function(step) { step.classList.add('visible') })
     }
-    init()
   </script>
+
   <script src="scripts/prism.js"></script>
-
-
   <script src="https://cdn.jsdelivr.net/npm/ackee-tracker-consent@1.2.0/dist/ackee-tracker-consent.min.js"></script>
-
   <script>
-      AckeeTrackerOptIn.consent('https://ackee.kingstinct.dev', 'd3adbe01-d0cd-42a5-8e6d-812c1380d14e')
+    AckeeTrackerOptIn.consent('https://ackee.kingstinct.dev', 'd3adbe01-d0cd-42a5-8e6d-812c1380d14e')
   </script>
 </body>
 </html>
