@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 13.2.3
+### Patch Changes
+
+- ec14062: Fix: Xcode 26 build workaround for package consumers
+
 ## 13.2.2
 ### Patch Changes
 
