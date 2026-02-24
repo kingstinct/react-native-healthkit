@@ -1,11 +1,11 @@
 name: Dev Client
 
 on:
-  pull_request_target:
   push:
     branches:
       - master
       - main
+  workflow_dispatch:
 
 jobs:
   eas-build:
