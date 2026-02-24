@@ -1,5 +1,11 @@
 # @kingstinct/react-native-healthkit
 
+## 13.2.2
+### Patch Changes
+
+- a78d484: Fix: nitro-modules 0.33+ compatibility + Xcode 26 workaround
+- 231c004: fix: correct audiogram type identifier string mismatch
+
 ## 13.2.1
 ### Patch Changes
 
