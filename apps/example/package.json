@@ -40,7 +40,7 @@
     "react-native": "0.81.5",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-mmkv": "^3.3.3",
-    "react-native-nitro-modules": "^0.31.10",
+    "react-native-nitro-modules": "^0.33.9",
     "react-native-reanimated": "~4.1.6",
     "react-native-safe-area-context": "~5.6.2",
     "react-native-screens": "~4.16.0",
@@ -50,7 +50,7 @@
   "devDependencies": {
     "@babel/core": "^7.28.5",
     "@types/react": "~19.1.17",
-    "nitrogen": "^0.31.10",
+    "nitrogen": "^0.33.9",
     "typescript": "~5.9.3"
   },
   "private": true

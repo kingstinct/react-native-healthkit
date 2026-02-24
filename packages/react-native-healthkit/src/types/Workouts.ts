@@ -139,9 +139,9 @@ export interface FilterForWorkoutsBase
 }
 
 export interface FilterForWorkouts extends FilterForWorkoutsBase {
-  readonly OR?: FilterForWorkoutsBase[]
-  readonly NOT?: FilterForWorkoutsBase[]
-  readonly AND?: FilterForWorkoutsBase[]
+  OR?: FilterForWorkoutsBase[]
+  NOT?: FilterForWorkoutsBase[]
+  AND?: FilterForWorkoutsBase[]
 }
 
 export interface WorkoutQueryOptionsWithAnchor {

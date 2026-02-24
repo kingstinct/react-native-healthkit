@@ -73,13 +73,14 @@ export interface FilterForSamplesBase {
   readonly metadata?: PredicateWithMetadataKey
   readonly date?: DateFilter
   readonly workout?: WorkoutProxy
-  readonly sources?: SourceProxy[]
+  sources?: SourceProxy[]
 }
 
 export interface FilterForSamples extends FilterForSamplesBase {
-  readonly OR?: FilterForSamplesBase[]
-  readonly NOT?: FilterForSamplesBase[]
-  readonly AND?: FilterForSamplesBase[]
+  sources?: SourceProxy[]
+  OR?: FilterForSamplesBase[]
+  NOT?: FilterForSamplesBase[]
+  AND?: FilterForSamplesBase[]
 }
 
 /**

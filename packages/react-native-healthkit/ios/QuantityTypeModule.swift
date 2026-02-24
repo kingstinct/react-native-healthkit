@@ -2,13 +2,18 @@ import HealthKit
 import NitroModules
 
 func emptyStatisticsResponse(from: Date?, to: Date?) -> QueryStatisticsResponse {
-  var response = QueryStatisticsResponse()
-
-  response.startDate = from
-  response.endDate = to
-  response.sources = []
-
-  return response
+  return QueryStatisticsResponse(
+    averageQuantity: nil,
+    maximumQuantity: nil,
+    minimumQuantity: nil,
+    sumQuantity: nil,
+    mostRecentQuantity: nil,
+    mostRecentQuantityDateInterval: nil,
+    duration: nil,
+    startDate: from,
+    endDate: to,
+    sources: []
+  )
 }
 
 func queryStatisticsForQuantityInternal(
@@ -47,63 +52,75 @@ func queryStatisticsForQuantityInternal(
 }
 
 func serializeStatistics(gottenStats: HKStatistics, unit: HKUnit) -> QueryStatisticsResponse {
-  var response = QueryStatisticsResponse()
-
-  response.startDate = gottenStats.startDate
-  response.endDate = gottenStats.endDate
-
-  response.sources = gottenStats.sources?.map { source in
+  let sources = gottenStats.sources?.map { source in
     return serializeSource(source)
   } ?? []
 
-  if let averageQuantity = gottenStats.averageQuantity() {
-    response.averageQuantity = Quantity(
+  var averageQuantity: Quantity?
+  if let quantity = gottenStats.averageQuantity()?.doubleValue(for: unit) {
+    averageQuantity = Quantity(
       unit: unit.unitString,
-      quantity: averageQuantity.doubleValue(for: unit)
+      quantity: quantity
     )
   }
-  if let maximumQuantity = gottenStats.maximumQuantity() {
-    response.maximumQuantity = Quantity(
+  var maximumQuantity: Quantity?
+  if let quantity = gottenStats.maximumQuantity()?.doubleValue(for: unit) {
+    maximumQuantity = Quantity(
       unit: unit.unitString,
-      quantity: maximumQuantity.doubleValue(for: unit)
+      quantity: quantity
     )
   }
-  if let minimumQuantity = gottenStats.minimumQuantity() {
-    response.minimumQuantity = Quantity(
+  var minimumQuantity: Quantity?
+  if let quantity = gottenStats.minimumQuantity()?.doubleValue(for: unit) {
+    minimumQuantity = Quantity(
       unit: unit.unitString,
-      quantity: minimumQuantity.doubleValue(for: unit)
+      quantity: quantity
     )
   }
-  if let sumQuantity = gottenStats.sumQuantity() {
-    response.sumQuantity = Quantity(
+  var sumQuantity: Quantity?
+  if let quantity = gottenStats.sumQuantity()?.doubleValue(for: unit) {
+    sumQuantity = Quantity(
       unit: unit.unitString,
-      quantity: sumQuantity.doubleValue(for: unit)
-    )
-  }
-
-  if let mostRecent = gottenStats.mostRecentQuantity() {
-    response.mostRecentQuantity = Quantity(
-      unit: unit.unitString,
-      quantity: mostRecent.doubleValue(for: unit)
+      quantity: quantity
     )
   }
 
+  var mostRecentQuantity: Quantity?
+  if let quantity = gottenStats.mostRecentQuantity()?.doubleValue(for: unit) {
+    mostRecentQuantity = Quantity(
+      unit: unit.unitString,
+      quantity: quantity
+    )
+  }
+  var mostRecentQuantityDateInterval: QuantityDateInterval?
   if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval() {
-    response.mostRecentQuantityDateInterval = QuantityDateInterval(
+    mostRecentQuantityDateInterval = QuantityDateInterval(
       from: mostRecentDateInterval.start,
       to: mostRecentDateInterval.end
     )
   }
 
-  if let duration = gottenStats.duration() {
-    let durationUnit = HKUnit.second()
-    response.duration = Quantity(
+  var duration: Quantity?
+  let durationUnit = HKUnit.second()
+  if let quantity = gottenStats.duration()?.doubleValue(for: durationUnit) {
+    duration = Quantity(
       unit: durationUnit.unitString,
-      quantity: duration.doubleValue(for: durationUnit)
+      quantity: quantity
     )
   }
 
-  return response
+  return QueryStatisticsResponse(
+    averageQuantity: averageQuantity,
+    maximumQuantity: maximumQuantity,
+    minimumQuantity: minimumQuantity,
+    sumQuantity: sumQuantity,
+    mostRecentQuantity: mostRecentQuantity,
+    mostRecentQuantityDateInterval: mostRecentQuantityDateInterval,
+    duration: duration,
+    startDate: gottenStats.startDate,
+    endDate: gottenStats.endDate,
+    sources: sources
+  )
 }
 
 func queryStatisticsCollectionForQuantityInternal(
@@ -167,59 +184,75 @@ func serializeStatisticsPerSource(gottenStats: HKStatistics, unit: HKUnit)
   -> [QueryStatisticsResponseFromSingleSource] {
   if let sources = gottenStats.sources {
     return sources.map { source in
-      var response = QueryStatisticsResponseFromSingleSource()
-
-      response.startDate = gottenStats.startDate
-      response.endDate = gottenStats.endDate
-
-      if let averageQuantity = gottenStats.averageQuantity(for: source) {
-        response.averageQuantity = Quantity(
+      var averageQuantity: Quantity?
+      if let quantity = gottenStats.averageQuantity(for: source)?.doubleValue(for: unit) {
+        averageQuantity = Quantity(
           unit: unit.unitString,
-          quantity: averageQuantity.doubleValue(for: unit)
-        )
-      }
-      if let maximumQuantity = gottenStats.maximumQuantity(for: source) {
-        response.maximumQuantity = Quantity(
-          unit: unit.unitString,
-          quantity: maximumQuantity.doubleValue(for: unit)
-        )
-      }
-      if let minimumQuantity = gottenStats.minimumQuantity(for: source) {
-        response.minimumQuantity = Quantity(
-          unit: unit.unitString,
-          quantity: minimumQuantity.doubleValue(for: unit)
-        )
-      }
-      if let sumQuantity = gottenStats.sumQuantity(for: source) {
-        response.sumQuantity = Quantity(
-          unit: unit.unitString,
-          quantity: sumQuantity.doubleValue(for: unit)
+          quantity: quantity
         )
       }
 
-      if let mostRecent = gottenStats.mostRecentQuantity(for: source) {
-        response.mostRecentQuantity = Quantity(
+      var maximumQuantity: Quantity?
+      if let quantity = gottenStats.maximumQuantity(for: source)?.doubleValue(for: unit) {
+        maximumQuantity = Quantity(
           unit: unit.unitString,
-          quantity: mostRecent.doubleValue(for: unit)
+          quantity: quantity
         )
       }
 
+      var minimumQuantity: Quantity?
+      if let quantity = gottenStats.minimumQuantity(for: source)?.doubleValue(for: unit) {
+        minimumQuantity = Quantity(
+          unit: unit.unitString,
+          quantity: quantity
+        )
+      }
+
+      var sumQuantity: Quantity?
+      if let quantity = gottenStats.sumQuantity(for: source)?.doubleValue(for: unit) {
+        sumQuantity = Quantity(
+          unit: unit.unitString,
+          quantity: quantity
+        )
+      }
+
+      var mostRecentQuantity: Quantity?
+      if let quantity = gottenStats.mostRecentQuantity(for: source)?.doubleValue(for: unit) {
+        mostRecentQuantity = Quantity(
+          unit: unit.unitString,
+          quantity: quantity
+        )
+      }
+
+      var mostRecentQuantityDateInterval: QuantityDateInterval?
       if let mostRecentDateInterval = gottenStats.mostRecentQuantityDateInterval(for: source) {
-        response.mostRecentQuantityDateInterval = QuantityDateInterval(
+        mostRecentQuantityDateInterval = QuantityDateInterval(
           from: mostRecentDateInterval.start,
           to: mostRecentDateInterval.end
         )
       }
 
-      if let duration = gottenStats.duration(for: source) {
-        let durationUnit = HKUnit.second()
-        response.duration = Quantity(
+      var duration: Quantity?
+      let durationUnit = HKUnit.second()
+      if let quantity = gottenStats.duration(for: source)?.doubleValue(for: durationUnit) {
+        duration = Quantity(
           unit: durationUnit.unitString,
-          quantity: duration.doubleValue(for: durationUnit)
+          quantity: quantity
         )
       }
 
-      return response
+      return QueryStatisticsResponseFromSingleSource(
+        source: serializeSource(source),
+        duration: duration,
+        averageQuantity: averageQuantity,
+        maximumQuantity: maximumQuantity,
+        minimumQuantity: minimumQuantity,
+        sumQuantity: sumQuantity,
+        mostRecentQuantity: mostRecentQuantity,
+        mostRecentQuantityDateInterval: mostRecentQuantityDateInterval,
+        startDate: gottenStats.startDate,
+        endDate: gottenStats.endDate
+      )
     }
   }
   return []
@@ -241,8 +274,8 @@ func getAnyMapValue(_ anyMap: AnyMap, key: String) -> Any? {
   if anyMap.isString(key: key) {
     return anyMap.getString(key: key)
   }
-  if anyMap.isBigInt(key: key) {
-    return anyMap.getBigInt(key: key)
+  if anyMap.isInt64(key: key) {
+    return anyMap.getInt64(key: key)
   }
   if anyMap.isNull(key: key) {
     return nil
@@ -440,7 +473,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   }
 
   func saveQuantitySample(
-    identifier: QuantityTypeIdentifier,
+    identifier: QuantityTypeIdentifierWriteable,
     unit: String,
     value: Double,
     start: Date,
