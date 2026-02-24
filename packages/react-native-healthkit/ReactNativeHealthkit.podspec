@@ -35,6 +35,15 @@ Pod::Spec.new do |s|
   load 'nitrogen/generated/ios/ReactNativeHealthkit+autolinking.rb'
   add_nitrogen_files(s)
 
+  # Workaround for Swift 6.2 (Xcode 26): shared_ptr lost automatic CxxConvertibleToBool conformance,
+  # causing nitrogen-generated Bool(fromCxx:) calls to fail. Replace with use_count() > 0.
+  # This can be removed once nitrogen fixes the codegen template upstream.
+  s.script_phase = {
+    :name => '[ReactNativeHealthkit] Fix Swift 6.2 CxxConvertibleToBool',
+    :script => "perl -i -pe 's/Bool\\(fromCxx: cachedCxxPart\\)/cachedCxxPart.use_count() > 0/g' \"${PODS_TARGET_SRCROOT}/nitrogen/generated/ios/swift/\"*Spec_cxx.swift 2>/dev/null || true",
+    :execution_position => :before_compile,
+  }
+
   s.dependency 'React-jsi'
   s.dependency 'React-callinvoker'
   install_modules_dependencies(s)
