@@ -59,7 +59,7 @@
     "build": "bun run clean && bun run build:cjs && bun run build:esm && bun run build:types",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "bunx @biomejs/biome format --write",
-    "codegen": "bun run build && nitrogen --logLevel=\"debug\"",
+    "codegen": "bun run build && nitrogen --logLevel=\"debug\" && perl -i -pe 's/Bool\\(fromCxx: cachedCxxPart\\)/cachedCxxPart.use_count() > 0/g' nitrogen/generated/ios/swift/*Spec_cxx.swift",
     "test": "bun test",
     "prepublishOnly": "bun run build && bun run codegen"
   },
