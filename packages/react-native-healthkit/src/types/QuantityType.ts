@@ -31,7 +31,7 @@ export interface QueryStatisticsResponse {
   readonly duration?: Quantity
   readonly startDate?: Date
   readonly endDate?: Date
-  readonly sources: SourceProxy[]
+  sources: SourceProxy[]
 }
 
 export interface QueryStatisticsResponseFromSingleSource
