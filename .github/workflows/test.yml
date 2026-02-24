@@ -156,8 +156,8 @@ jobs:
       - name: Install dependencies
         run: bun install --ignore-scripts --frozen-lockfile
 
-      ## Xcode 26 (Swift 6.2) to verify CxxConvertibleToBool workaround
-      - run: sudo xcode-select -s /Applications/Xcode_26.0.app
+      ## Xcode 26.2 (Swift 6.2) - latest stable
+      - run: sudo xcode-select -s /Applications/Xcode_26.2.app
 
       - run: bun run codegen
         working-directory: packages/react-native-healthkit
