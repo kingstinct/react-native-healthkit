@@ -57,21 +57,23 @@ func getRouteLocations(
     let query = HKWorkoutRouteQuery(route: route) {
       (_, locationsOrNil, done, errorOrNil) in
 
-      if let error = errorOrNil {
-        continuation.resume(throwing: error)
-        return
-      }
+      DispatchQueue.main.async {
+        if let error = errorOrNil {
+          continuation.resume(throwing: error)
+          return
+        }
 
-      guard let currentLocationBatch = locationsOrNil else {
-        return continuation.resume(
-          throwing: runtimeErrorWithPrefix("Unexpected empty response")
-        )
-      }
+        guard let currentLocationBatch = locationsOrNil else {
+          return continuation.resume(
+            throwing: runtimeErrorWithPrefix("Unexpected empty response")
+          )
+        }
 
-      allLocations.append(contentsOf: currentLocationBatch)
+        allLocations.append(contentsOf: currentLocationBatch)
 
-      if done {
-        continuation.resume(returning: allLocations)
+        if done {
+          continuation.resume(returning: allLocations)
+        }
       }
     }
 

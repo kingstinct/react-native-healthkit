@@ -43,13 +43,15 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
     return Promise.async {
       try await withCheckedThrowingContinuation { continuation in
         store.startWatchApp(with: configuration) { success, error in
-          if let error {
-            continuation.resume(
-              throwing: error
-            )
+          DispatchQueue.main.async {
+            if let error {
+              continuation.resume(
+                throwing: error
+              )
+            } else {
+              continuation.resume(returning: success)
+            }
           }
-
-          continuation.resume(returning: success)
         }
       }
     }
@@ -192,19 +194,22 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
       try await withCheckedThrowingContinuation({ continuation in
         // saving workout, samples and route
         store.save(workout) { (_: Bool, error: Error?) in
-          if let error = error {
-            return continuation.resume(throwing: error)
-          } else if !initializedSamples.isEmpty {
-            store.add(initializedSamples, to: workout) { (_, error: Error?) in
-              if let error = error {
-                return continuation.resume(throwing: error)
+          DispatchQueue.main.async {
+            if let error = error {
+              return continuation.resume(throwing: error)
+            } else if !initializedSamples.isEmpty {
+              store.add(initializedSamples, to: workout) { (_, error: Error?) in
+                DispatchQueue.main.async {
+                  if let error = error {
+                    return continuation.resume(throwing: error)
+                  }
+                  return continuation.resume()
+                }
               }
+            } else {
               return continuation.resume()
             }
-          } else {
-            return continuation.resume()
           }
-
         }
       }) as Void
 

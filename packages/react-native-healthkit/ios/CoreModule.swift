@@ -59,18 +59,20 @@ async throws -> [HKQuantityType: HKUnit] {
   return try await withCheckedThrowingContinuation { continuation in
     store.preferredUnits(for: Set(quantityTypes)) {
       (typePerUnits: [HKQuantityType: HKUnit], error: Error?) in
-      if let error = error {
-        return continuation.resume(throwing: error)
-      }
-
-      // Thread-safe write: barrier ensures exclusive access
-      quantityTypeCacheQueue.sync(flags: .barrier) {
-        typePerUnits.forEach { (type: HKQuantityType, unit: HKUnit) in
-          quantityTypeUnitCache.updateValue(unit, forKey: type)
+      DispatchQueue.main.async {
+        if let error = error {
+          return continuation.resume(throwing: error)
         }
-      }
 
-      return continuation.resume(returning: typePerUnits)
+        // Thread-safe write: barrier ensures exclusive access
+        quantityTypeCacheQueue.sync(flags: .barrier) {
+          typePerUnits.forEach { (type: HKQuantityType, unit: HKUnit) in
+            quantityTypeUnitCache.updateValue(unit, forKey: type)
+          }
+        }
+
+        return continuation.resume(returning: typePerUnits)
+      }
     }
   }
 }
@@ -157,17 +159,18 @@ class CoreModule: HybridCoreModuleSpec {
         }
         return store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) {
           status, error in
-          if let error = error {
-            continuation.resume(throwing: error)
-          } else {
-            if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
-              continuation.resume(returning: authStatus)
+          DispatchQueue.main.async {
+            if let error = error {
+              continuation.resume(throwing: error)
             } else {
-              continuation.resume(
-                throwing: runtimeErrorWithPrefix(
-                  "Unrecognized authStatus returned: \(status.rawValue)"))
+              if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
+                continuation.resume(returning: authStatus)
+              } else {
+                continuation.resume(
+                  throwing: runtimeErrorWithPrefix(
+                    "Unrecognized authStatus returned: \(status.rawValue)"))
+              }
             }
-
           }
         }
       }
@@ -181,10 +184,12 @@ class CoreModule: HybridCoreModuleSpec {
 
       return try await withCheckedThrowingContinuation { continuation in
         store.requestAuthorization(toShare: share, read: toRead) { status, error in
-          if let error = error {
-            continuation.resume(throwing: error)
-          } else {
-            continuation.resume(returning: status)
+          DispatchQueue.main.async {
+            if let error = error {
+              continuation.resume(throwing: error)
+            } else {
+              continuation.resume(returning: status)
+            }
           }
         }
       }
@@ -203,25 +208,27 @@ class CoreModule: HybridCoreModuleSpec {
           sampleType: sampleType,
           samplePredicate: predicate
         ) { (_: HKSourceQuery, sources: Set<HKSource>?, error: Error?) in
-          if let error = error {
-            continuation.resume(throwing: error)
-            return
+          DispatchQueue.main.async {
+            if let error = error {
+              continuation.resume(throwing: error)
+              return
+            }
+
+            guard let sources = sources else {
+              return continuation.resume(
+                throwing: runtimeErrorWithPrefix(
+                  "Empty response for sample type \(identifier.stringValue)"))
+            }
+
+            let serializedSources = sources.map { source -> SourceProxy in
+
+              return SourceProxy(
+                source: source
+              )
+            }
+
+            continuation.resume(returning: serializedSources)
           }
-
-          guard let sources = sources else {
-            return continuation.resume(
-              throwing: runtimeErrorWithPrefix(
-                "Empty response for sample type \(identifier.stringValue)"))
-          }
-
-          let serializedSources = sources.map { source -> SourceProxy in
-
-            return SourceProxy(
-              source: source
-            )
-          }
-
-          continuation.resume(returning: serializedSources)
         }
 
         store.execute(query)
@@ -240,10 +247,12 @@ class CoreModule: HybridCoreModuleSpec {
             for: type,
             frequency: frequency
           ) { (success, error) in
-            if let err = error {
-              return continuation.resume(throwing: err)
+            DispatchQueue.main.async {
+              if let err = error {
+                return continuation.resume(throwing: err)
+              }
+              return continuation.resume(returning: success)
             }
-            return continuation.resume(returning: success)
           }
         }
       } else {
@@ -262,10 +271,12 @@ class CoreModule: HybridCoreModuleSpec {
         store.disableBackgroundDelivery(
           for: type
         ) { (success, error) in
-          if let err = error {
-            return continuation.resume(throwing: err)
+          DispatchQueue.main.async {
+            if let err = error {
+              return continuation.resume(throwing: err)
+            }
+            return continuation.resume(returning: success)
           }
-          return continuation.resume(returning: success)
         }
       }
     }
@@ -275,10 +286,12 @@ class CoreModule: HybridCoreModuleSpec {
     return Promise.async {
       try await withCheckedThrowingContinuation { continuation in
         store.disableAllBackgroundDelivery(completion: { (success, error) in
-          guard let err = error else {
-            return continuation.resume(returning: success)
+          DispatchQueue.main.async {
+            guard let err = error else {
+              return continuation.resume(returning: success)
+            }
+            return continuation.resume(throwing: err)
           }
-          return continuation.resume(throwing: err)
         })
       }
     }
@@ -345,10 +358,12 @@ class CoreModule: HybridCoreModuleSpec {
         let of = try sampleTypeFrom(sampleTypeIdentifierWriteable: objectTypeIdentifier)
         return try await withCheckedThrowingContinuation { continuation in
           store.deleteObjects(of: of, predicate: predicate) { (_, count, error) in
-            if let error = error {
-              continuation.resume(throwing: error)
-            } else {
-              continuation.resume(returning: Double(count))
+            DispatchQueue.main.async {
+              if let error = error {
+                continuation.resume(throwing: error)
+              } else {
+                continuation.resume(returning: Double(count))
+              }
             }
           }
         }

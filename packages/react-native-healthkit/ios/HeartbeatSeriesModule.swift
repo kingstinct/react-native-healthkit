@@ -60,20 +60,22 @@ func getHeartbeatSeriesHeartbeats(sample: HKHeartbeatSeriesSample) async throws 
         done: Bool, error: Error?
       ) in
 
-      if let error = error {
-        continuation.resume(throwing: error)
-        return
-      }
+      DispatchQueue.main.async {
+        if let error = error {
+          continuation.resume(throwing: error)
+          return
+        }
 
-      let heartbeat = Heartbeat(
-        timeSinceSeriesStart: timeSinceSeriesStart,
-        precededByGap: precededByGap
-      )
+        let heartbeat = Heartbeat(
+          timeSinceSeriesStart: timeSinceSeriesStart,
+          precededByGap: precededByGap
+        )
 
-      allBeats.append(heartbeat)
+        allBeats.append(heartbeat)
 
-      if done {
-        continuation.resume(returning: allBeats)
+        if done {
+          continuation.resume(returning: allBeats)
+        }
       }
     }
 
