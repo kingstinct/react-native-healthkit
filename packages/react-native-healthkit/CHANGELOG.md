@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 13.3.0
+### Minor Changes
+
+- 785c795: chore: upgrade to Nitro 0.35.0
+
 ## 13.2.3
 ### Patch Changes
 
