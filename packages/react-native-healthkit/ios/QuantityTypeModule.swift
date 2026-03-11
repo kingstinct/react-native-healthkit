@@ -163,17 +163,19 @@ func queryStatisticsCollectionForQuantityInternal(
     )
 
     query.initialResultsHandler = { (_, results: HKStatisticsCollection?, error: Error?) in
-      if let error = error {
-        return handleHKNoDataOrThrow(error: error, continuation: continuation, noDataFallback: {
-          return nil
-        })
-      }
+      DispatchQueue.main.async {
+        if let error = error {
+          return handleHKNoDataOrThrow(error: error, continuation: continuation, noDataFallback: {
+            return nil
+          })
+        }
 
-      guard let statistics = results else {
-        return continuation.resume(throwing: runtimeErrorWithPrefix("queryStatisticsCollectionForQuantityInternal: unexpected empty results"))
-      }
+        guard let statistics = results else {
+          return continuation.resume(throwing: runtimeErrorWithPrefix("queryStatisticsCollectionForQuantityInternal: unexpected empty results"))
+        }
 
-      return continuation.resume(returning: statistics)
+        return continuation.resume(returning: statistics)
+      }
     }
 
     store.execute(query)

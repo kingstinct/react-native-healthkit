@@ -54,25 +54,27 @@ func sampleAnchoredQueryAsync(
         newAnchor:
           HKQueryAnchor?, error: Error?
       ) in
-      if let error = error {
-        return continuation.resume(throwing: error)
-      }
+      DispatchQueue.main.async {
+        if let error = error {
+          return continuation.resume(throwing: error)
+        }
 
-      if let samples = samples, let deletedSamples = deletedSamples,
-        let newAnchor = serializeAnchor(anchor: newAnchor) {
-        return continuation.resume(
-          returning: AnchoredQueryResponse(
-            samples: samples,
-            deletedSamples: deletedSamples.map({ deletedSample in
-              return serializeDeletedSample(sample: deletedSample)
-            }),
-            newAnchor: newAnchor
+        if let samples = samples, let deletedSamples = deletedSamples,
+          let newAnchor = serializeAnchor(anchor: newAnchor) {
+          return continuation.resume(
+            returning: AnchoredQueryResponse(
+              samples: samples,
+              deletedSamples: deletedSamples.map({ deletedSample in
+                return serializeDeletedSample(sample: deletedSample)
+              }),
+              newAnchor: newAnchor
+            )
           )
-        )
-      }
+        }
 
-      return continuation.resume(
-        throwing: runtimeErrorWithPrefix("Unexpected empty response"))
+        return continuation.resume(
+          throwing: runtimeErrorWithPrefix("Unexpected empty response"))
+      }
     }
 
     store.execute(query)
@@ -108,16 +110,18 @@ func sampleQueryAsync(
       limit: limit,
       sortDescriptors: sortDescriptors,
     ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
-      if let error = error {
-        return continuation.resume(throwing: error)
-      }
+      DispatchQueue.main.async {
+        if let error = error {
+          return continuation.resume(throwing: error)
+        }
 
-      if let samples = samples {
-        return continuation.resume(returning: samples)
-      }
+        if let samples = samples {
+          return continuation.resume(returning: samples)
+        }
 
-      return continuation.resume(
-        throwing: runtimeErrorWithPrefix("Unexpected empty response"))
+        return continuation.resume(
+          throwing: runtimeErrorWithPrefix("Unexpected empty response"))
+      }
     }
 
     store.execute(q)
@@ -127,10 +131,12 @@ func sampleQueryAsync(
 func saveAsync(sample: HKObject) async throws -> Bool {
   return try await withCheckedThrowingContinuation { continuation in
     store.save(sample) { (success: Bool, error: Error?) in
-      if let error = error {
-        continuation.resume(throwing: error)
-      } else {
-        continuation.resume(returning: success)
+      DispatchQueue.main.async {
+        if let error = error {
+          continuation.resume(throwing: error)
+        } else {
+          continuation.resume(returning: success)
+        }
       }
     }
   }

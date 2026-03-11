@@ -84,26 +84,28 @@ func getECGVoltages(sample: HKElectrocardiogram) async throws -> [Electrocardiog
 
     // Stream measurements
     let q = HKElectrocardiogramQuery(sample) { _, result in
-      switch result {
-      case .error(let error):
-        continuation.resume(throwing: error)
+      DispatchQueue.main.async {
+        switch result {
+        case .error(let error):
+          continuation.resume(throwing: error)
 
-      case .measurement(let m):
-        // Lead I-like from Apple Watch
-        if let v = m.quantity(for: .appleWatchSimilarToLeadI)?.doubleValue(for: .volt()) {
-          let item = ElectrocardiogramVoltage(
-            timeSinceSampleStart: m.timeSinceSampleStart,
-            voltage: v,
-            lead: ElectrocardiogramLead(fromString: "appleWatchSimilarToLeadI")!
-          )
-          all.append(item)
+        case .measurement(let m):
+          // Lead I-like from Apple Watch
+          if let v = m.quantity(for: .appleWatchSimilarToLeadI)?.doubleValue(for: .volt()) {
+            let item = ElectrocardiogramVoltage(
+              timeSinceSampleStart: m.timeSinceSampleStart,
+              voltage: v,
+              lead: ElectrocardiogramLead(fromString: "appleWatchSimilarToLeadI")!
+            )
+            all.append(item)
+          }
+
+        case .done:
+          continuation.resume(returning: all)
+        @unknown default:
+          continuation.resume(
+            throwing: runtimeErrorWithPrefix("HKElectrocardiogramQuery received unknown result type"))
         }
-
-      case .done:
-        continuation.resume(returning: all)
-      @unknown default:
-        continuation.resume(
-          throwing: runtimeErrorWithPrefix("HKElectrocardiogramQuery received unknown result type"))
       }
     }
     store.execute(q)
