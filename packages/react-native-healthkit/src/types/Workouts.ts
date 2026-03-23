@@ -1,3 +1,4 @@
+import type { AnyMap } from 'react-native-nitro-modules'
 import type { WorkoutProxy } from '../specs/WorkoutProxy.nitro'
 import type { BaseSample, ComparisonPredicateOperator } from '../types'
 import type { Quantity } from './QuantityType'
@@ -95,6 +96,7 @@ export interface WorkoutEvent {
   readonly type: WorkoutEventType
   readonly startDate: Date
   readonly endDate: Date
+  readonly metadata?: AnyMap
 }
 
 export enum WorkoutEventType {

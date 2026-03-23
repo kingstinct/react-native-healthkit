@@ -498,7 +498,8 @@ class WorkoutProxy: HybridWorkoutProxySpec {
           return WorkoutEvent(
             type: type,
             startDate: event.dateInterval.start,
-            endDate: event.dateInterval.end
+            endDate: event.dateInterval.end,
+            metadata: serializeMetadata(event.metadata)
           )
         }
         warnWithPrefix(
