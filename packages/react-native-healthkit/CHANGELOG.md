@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 13.4.0
+### Minor Changes
+
+- 9cfdac9: Serialize HKWorkoutEvent.metadata in workout query results, exposing per-event metadata such as HKSwimmingStrokeStyle on swimming lap events.
+
 ## 13.3.1
 ### Patch Changes
 
