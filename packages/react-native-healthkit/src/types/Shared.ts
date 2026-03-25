@@ -1,4 +1,5 @@
 import type { AnyMap } from 'react-native-nitro-modules'
+import type { KnownObjectMetadata } from '../generated/healthkit.generated'
 import type {
   CategoryTypeIdentifier,
   CategoryTypeIdentifierWriteable,
@@ -64,22 +65,7 @@ export type SampleTypeIdentifierWriteable =
   | typeof WorkoutRouteTypeIdentifier
   | typeof WorkoutTypeIdentifier
 
-export interface GenericMetadata {
-  readonly HKExternalUUID?: string
-  readonly HKTimeZone?: string
-  readonly HKWasUserEntered?: boolean
-  readonly HKDeviceSerialNumber?: string
-  readonly HKUDIDeviceIdentifier?: string
-  readonly HKUDIProductionIdentifier?: string
-  readonly HKDigitalSignature?: string
-  readonly HKDeviceName?: string
-  readonly HKDeviceManufacturerName?: string
-  readonly HKSyncIdentifier?: string
-  readonly HKSyncVersion?: number
-  readonly HKWasTakenInLab?: boolean
-  readonly HKReferenceRangeLowerLimit?: number
-  readonly HKReferenceRangeUpperLimit?: number
-}
+export interface GenericMetadata extends KnownObjectMetadata {}
 
 export interface BaseObject {
   readonly uuid: string

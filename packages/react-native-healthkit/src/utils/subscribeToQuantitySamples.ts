@@ -3,9 +3,11 @@ import type { QuantityTypeIdentifier } from '../types'
 import type { OnQuantitySamplesCallback } from '../types/Subscriptions'
 import { subscribeToChanges } from './subscribeToChanges'
 
-export const subscribeToQuantitySamples = (
-  identifier: QuantityTypeIdentifier,
-  callback: (args: OnQuantitySamplesCallback) => void,
+export const subscribeToQuantitySamples = <
+  TIdentifier extends QuantityTypeIdentifier,
+>(
+  identifier: TIdentifier,
+  callback: (args: OnQuantitySamplesCallback<TIdentifier>) => void,
   after = new Date(),
 ) => {
   return subscribeToChanges(identifier, async ({ errorMessage }) => {

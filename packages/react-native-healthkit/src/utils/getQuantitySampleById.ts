@@ -1,8 +1,8 @@
 import { QuantityTypes } from '../modules'
 import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 
-async function getQuantitySampleById(
-  identifier: QuantityTypeIdentifier,
+async function getQuantitySampleById<T extends QuantityTypeIdentifier>(
+  identifier: T,
   uuid: string,
   unit?: string,
 ) {

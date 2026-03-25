@@ -1,6 +1,6 @@
 import type { CategorySampleTyped } from './CategoryType'
 import type { CategoryTypeIdentifier } from './CategoryTypeIdentifier'
-import type { QuantitySample } from './QuantitySample'
+import type { QuantitySampleTyped } from './QuantitySample'
 import type { QuantityTypeIdentifier } from './QuantityTypeIdentifier'
 import type { SampleTypeIdentifier } from './Shared'
 
@@ -13,32 +13,38 @@ export interface OnChangeCallbackArgs {
   readonly errorMessage?: string
 }
 
-export interface OnQuantitySamplesCallbackError {
-  readonly typeIdentifier: QuantityTypeIdentifier
+export interface OnQuantitySamplesCallbackError<
+  T extends QuantityTypeIdentifier = QuantityTypeIdentifier,
+> {
+  readonly typeIdentifier: T
   readonly errorMessage: string
 }
 
-export interface OnQuantitySamplesCallbackSuccess {
-  readonly typeIdentifier: QuantityTypeIdentifier
-  readonly samples: readonly QuantitySample[]
+export interface OnQuantitySamplesCallbackSuccess<
+  T extends QuantityTypeIdentifier = QuantityTypeIdentifier,
+> {
+  readonly typeIdentifier: T
+  readonly samples: readonly QuantitySampleTyped<T>[]
 }
 
-export type OnQuantitySamplesCallback =
-  | OnQuantitySamplesCallbackError
-  | OnQuantitySamplesCallbackSuccess
+export type OnQuantitySamplesCallback<
+  T extends QuantityTypeIdentifier = QuantityTypeIdentifier,
+> = OnQuantitySamplesCallbackError<T> | OnQuantitySamplesCallbackSuccess<T>
 
-export interface OnCategorySamplesCallbackError {
-  readonly typeIdentifier: CategoryTypeIdentifier
+export interface OnCategorySamplesCallbackError<
+  T extends CategoryTypeIdentifier = CategoryTypeIdentifier,
+> {
+  readonly typeIdentifier: T
   readonly errorMessage: string
 }
 
 export interface OnCategorySamplesCallbackSuccess<
   T extends CategoryTypeIdentifier,
 > {
-  readonly typeIdentifier: CategoryTypeIdentifier
+  readonly typeIdentifier: T
   readonly samples: readonly CategorySampleTyped<T>[]
 }
 
 export type OnCategorySamplesCallback<T extends CategoryTypeIdentifier> =
-  | OnCategorySamplesCallbackError
+  | OnCategorySamplesCallbackError<T>
   | OnCategorySamplesCallbackSuccess<T>

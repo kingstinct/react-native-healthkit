@@ -13,6 +13,7 @@ import { AuthorizationRequestStatus, AuthorizationStatus } from './types/Auth'
 import type {
   CategorySamplesWithAnchorResponseTyped,
   CategorySampleTyped,
+  MetadataForCategoryIdentifier,
 } from './types/CategoryType'
 import type { CategoryTypeIdentifier } from './types/CategoryTypeIdentifier'
 import {
@@ -21,10 +22,17 @@ import {
   FitzpatrickSkinType,
   WheelchairUse,
 } from './types/Characteristics'
-import type { QuantitySample } from './types/QuantitySample'
+import type { QuantitySampleTyped } from './types/QuantitySample'
+import type { QuantitySamplesWithAnchorResponseTyped } from './types/QuantityType'
+import type {
+  QuantityTypeIdentifier,
+  QuantityTypeIdentifierWriteable,
+} from './types/QuantityTypeIdentifier'
 import type {
   QueryOptionsWithAnchor,
+  QueryOptionsWithAnchorAndUnit,
   QueryOptionsWithSortOrder,
+  QueryOptionsWithSortOrderAndUnit,
 } from './types/QueryOptions'
 
 export * from './types'
@@ -146,18 +154,33 @@ export const getWheelchairUse = UnavailableFnFromModule(
 )
 
 // QuantityTypeModule functions
-export const queryQuantitySamples = UnavailableFnFromModule(
-  'queryQuantitySamples',
-  Promise.resolve([]),
-)
-export const queryQuantitySamplesWithAnchor = UnavailableFnFromModule(
-  'queryQuantitySamplesWithAnchor',
-  Promise.resolve({
+export function queryQuantitySamples<T extends QuantityTypeIdentifier>(
+  _identifier: T,
+  _options: QueryOptionsWithSortOrderAndUnit,
+): Promise<readonly QuantitySampleTyped<T>[]> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve([])
+}
+
+export function queryQuantitySamplesWithAnchor<
+  T extends QuantityTypeIdentifier,
+>(
+  _identifier: T,
+  _options: QueryOptionsWithAnchorAndUnit,
+): Promise<QuantitySamplesWithAnchorResponseTyped<T>> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve({
     samples: [],
     deletedSamples: [],
     newAnchor: '',
-  }),
-)
+  })
+}
 export const queryStatisticsForQuantity = UnavailableFnFromModule(
   'queryStatisticsForQuantity',
   Promise.resolve({
@@ -179,10 +202,20 @@ export const queryStatisticsCollectionForQuantitySeparateBySource =
     'queryStatisticsCollectionForQuantitySeparateBySource',
     Promise.resolve([]),
   )
-export const saveQuantitySample = UnavailableFnFromModule(
-  'saveQuantitySample',
-  Promise.resolve(undefined),
-)
+export function saveQuantitySample<T extends QuantityTypeIdentifierWriteable>(
+  _identifier: T,
+  _unit: string,
+  _value: number,
+  _start: Date,
+  _end: Date,
+  _metadata?: object,
+): Promise<QuantitySampleTyped<T> | undefined> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve(undefined)
+}
 export const isQuantityCompatibleWithUnit = UnavailableFnFromModule(
   'isQuantityCompatibleWithUnit',
   false,
@@ -216,10 +249,19 @@ export function queryCategorySamplesWithAnchor<
     newAnchor: '',
   })
 }
-export const saveCategorySample = UnavailableFnFromModule(
-  'saveCategorySample',
-  Promise.resolve(undefined),
-)
+export function saveCategorySample<T extends CategoryTypeIdentifier>(
+  _identifier: T,
+  _value: number,
+  _startDate: Date,
+  _endDate: Date,
+  _metadata?: MetadataForCategoryIdentifier<T>,
+): Promise<CategorySampleTyped<T> | undefined> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve(undefined)
+}
 
 // CorrelationTypeModule functions
 export const queryCorrelationSamples = UnavailableFnFromModule(
@@ -321,11 +363,16 @@ export function getMostRecentCategorySample<T extends CategoryTypeIdentifier>(
   return Promise.resolve(undefined)
 }
 
-export const getMostRecentQuantitySample = UnavailableFnFromModule(
-  'getMostRecentQuantitySample',
-  // biome-ignore lint/suspicious/noExplicitAny: it works
-  Promise.resolve(undefined as any as QuantitySample),
-)
+export function getMostRecentQuantitySample<T extends QuantityTypeIdentifier>(
+  _identifier: T,
+  _unit?: string,
+): Promise<QuantitySampleTyped<T> | undefined> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve(undefined)
+}
 export const getMostRecentWorkout = UnavailableFnFromModule(
   'getMostRecentWorkout',
   // biome-ignore lint/suspicious/noExplicitAny: it works
@@ -347,10 +394,16 @@ export function useMostRecentCategorySample<T extends CategoryTypeIdentifier>(
   return undefined
 }
 
-export const useMostRecentQuantitySample = UnavailableFnFromModule(
-  'useMostRecentQuantitySample',
-  undefined,
-)
+export function useMostRecentQuantitySample<T extends QuantityTypeIdentifier>(
+  _identifier: T,
+  _unit?: string,
+): QuantitySampleTyped<T> | undefined {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return undefined
+}
 export const useMostRecentWorkout = UnavailableFnFromModule(
   'useMostRecentWorkout',
   undefined,

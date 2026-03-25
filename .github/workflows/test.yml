@@ -159,6 +159,10 @@ jobs:
       ## Xcode 26.2 (Swift 6.2) - latest stable
       - run: sudo xcode-select -s /Applications/Xcode_26.2.app
 
+      - name: Verify generated HealthKit schema and bindings
+        working-directory: packages/react-native-healthkit
+        run: bun run check:generated
+
       - run: bun run codegen
         working-directory: packages/react-native-healthkit
 

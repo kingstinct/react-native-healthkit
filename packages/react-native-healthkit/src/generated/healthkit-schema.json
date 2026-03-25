@@ -1,0 +1,3560 @@
+{
+  "quantityIdentifiers": [
+    {
+      "name": "HKQuantityTypeIdentifierActiveEnergyBurned",
+      "ios": "8.0",
+      "canonicalUnit": "kcal",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierAppleExerciseTime",
+      "ios": "9.3",
+      "canonicalUnit": "min",
+      "aggregationStyle": "Cumulative",
+      "writeable": false,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierAppleMoveTime",
+      "ios": "14.5",
+      "canonicalUnit": "min",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierAppleSleepingBreathingDisturbances",
+      "ios": "18.0",
+      "canonicalUnit": "count",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierAppleSleepingWristTemperature",
+      "ios": "16.0",
+      "canonicalUnit": "degC",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierAppleStandTime",
+      "ios": "13.0",
+      "canonicalUnit": "min",
+      "aggregationStyle": "Cumulative",
+      "writeable": false,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierAppleWalkingSteadiness",
+      "ios": "15.0",
+      "canonicalUnit": "%",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": false,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierAtrialFibrillationBurden",
+      "ios": "16.0",
+      "canonicalUnit": "%",
+      "aggregationStyle": "Discrete (Temporally Weighted)",
+      "writeable": false,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierBasalBodyTemperature",
+      "ios": "9.0",
+      "canonicalUnit": "degC",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierBasalEnergyBurned",
+      "ios": "8.0",
+      "canonicalUnit": "kcal",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierBloodAlcoholContent",
+      "ios": "8.0",
+      "canonicalUnit": "%",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierBloodGlucose",
+      "ios": "8.0",
+      "canonicalUnit": "mg/dL",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierBloodPressureDiastolic",
+      "ios": "8.0",
+      "canonicalUnit": "mmHg",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierBloodPressureSystolic",
+      "ios": "8.0",
+      "canonicalUnit": "mmHg",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierBodyFatPercentage",
+      "ios": "8.0",
+      "canonicalUnit": "%",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierBodyMass",
+      "ios": "8.0",
+      "canonicalUnit": "kg",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierBodyMassIndex",
+      "ios": "8.0",
+      "canonicalUnit": "count",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierBodyTemperature",
+      "ios": "8.0",
+      "canonicalUnit": "degC",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierCrossCountrySkiingSpeed",
+      "ios": "18.0",
+      "canonicalUnit": "m/s",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierCyclingCadence",
+      "ios": "17.0",
+      "canonicalUnit": "count/min",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierCyclingFunctionalThresholdPower",
+      "ios": "17.0",
+      "canonicalUnit": "W",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierCyclingPower",
+      "ios": "17.0",
+      "canonicalUnit": "W",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierCyclingSpeed",
+      "ios": "17.0",
+      "canonicalUnit": "m/s",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryBiotin",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryCaffeine",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryCalcium",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryCarbohydrates",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryChloride",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryCholesterol",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryChromium",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryCopper",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryEnergyConsumed",
+      "ios": "8.0",
+      "canonicalUnit": "kcal",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryFatMonounsaturated",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryFatPolyunsaturated",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryFatSaturated",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryFatTotal",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryFiber",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryFolate",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryIodine",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryIron",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryMagnesium",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryManganese",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryMolybdenum",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryNiacin",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryPantothenicAcid",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryPhosphorus",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryPotassium",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryProtein",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryRiboflavin",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietarySelenium",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietarySodium",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietarySugar",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryThiamin",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryVitaminA",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryVitaminB12",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryVitaminB6",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryVitaminC",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryVitaminD",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryVitaminE",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryVitaminK",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryWater",
+      "ios": "9.0",
+      "canonicalUnit": "mL",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDietaryZinc",
+      "ios": "8.0",
+      "canonicalUnit": "g",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDistanceCrossCountrySkiing",
+      "ios": "18.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDistanceCycling",
+      "ios": "8.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDistanceDownhillSnowSports",
+      "ios": "11.2",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDistancePaddleSports",
+      "ios": "18.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDistanceRowing",
+      "ios": "18.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDistanceSkatingSports",
+      "ios": "18.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDistanceSwimming",
+      "ios": "10.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDistanceWalkingRunning",
+      "ios": "8.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierDistanceWheelchair",
+      "ios": "10.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierElectrodermalActivity",
+      "ios": "8.0",
+      "canonicalUnit": "S",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierEnvironmentalAudioExposure",
+      "ios": "13.0",
+      "canonicalUnit": "dBASPL",
+      "aggregationStyle": "Discrete (Equivalent Continuous Level)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierEnvironmentalSoundReduction",
+      "ios": "16.0",
+      "canonicalUnit": "dBASPL",
+      "aggregationStyle": "Discrete (Equivalent Continuous Level)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierEstimatedWorkoutEffortScore",
+      "ios": "18.0",
+      "canonicalUnit": "appleEffortScore",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierFlightsClimbed",
+      "ios": "8.0",
+      "canonicalUnit": "count",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierForcedExpiratoryVolume1",
+      "ios": "8.0",
+      "canonicalUnit": "L",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierForcedVitalCapacity",
+      "ios": "8.0",
+      "canonicalUnit": "L",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierHeadphoneAudioExposure",
+      "ios": "13.0",
+      "canonicalUnit": "dBASPL",
+      "aggregationStyle": "Discrete (Equivalent Continuous Level)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierHeartRate",
+      "ios": "8.0",
+      "canonicalUnit": "count/s",
+      "aggregationStyle": "Discrete (Temporally Weighted)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierHeartRateRecoveryOneMinute",
+      "ios": "16.0",
+      "canonicalUnit": "count/min",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierHeartRateVariabilitySDNN",
+      "ios": "11.0",
+      "canonicalUnit": "ms",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierHeight",
+      "ios": "8.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierInhalerUsage",
+      "ios": "8.0",
+      "canonicalUnit": "count",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierInsulinDelivery",
+      "ios": "11.0",
+      "canonicalUnit": "IU",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierLeanBodyMass",
+      "ios": "8.0",
+      "canonicalUnit": "kg",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierNikeFuel",
+      "ios": "8.0",
+      "canonicalUnit": "count",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierNumberOfAlcoholicBeverages",
+      "ios": "15.0",
+      "canonicalUnit": "count",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierNumberOfTimesFallen",
+      "ios": "8.0",
+      "canonicalUnit": "count",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierOxygenSaturation",
+      "ios": "8.0",
+      "canonicalUnit": "%",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierPaddleSportsSpeed",
+      "ios": "18.0",
+      "canonicalUnit": "m/s",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierPeakExpiratoryFlowRate",
+      "ios": "8.0",
+      "canonicalUnit": "L/min",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierPeripheralPerfusionIndex",
+      "ios": "8.0",
+      "canonicalUnit": "%",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierPhysicalEffort",
+      "ios": "17.0",
+      "canonicalUnit": "kcal/(kg*hr)",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierPushCount",
+      "ios": "10.0",
+      "canonicalUnit": "count",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierRespiratoryRate",
+      "ios": "8.0",
+      "canonicalUnit": "count/s",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierRestingHeartRate",
+      "ios": "11.0",
+      "canonicalUnit": "count/min",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierRowingSpeed",
+      "ios": "18.0",
+      "canonicalUnit": "m/s",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierRunningGroundContactTime",
+      "ios": "16.0",
+      "canonicalUnit": "ms",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierRunningPower",
+      "ios": "16.0",
+      "canonicalUnit": "W",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierRunningSpeed",
+      "ios": "16.0",
+      "canonicalUnit": "m/s",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierRunningStrideLength",
+      "ios": "16.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierRunningVerticalOscillation",
+      "ios": "16.0",
+      "canonicalUnit": "cm",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierSixMinuteWalkTestDistance",
+      "ios": "14.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierStairAscentSpeed",
+      "ios": "14.0",
+      "canonicalUnit": "m/s",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierStairDescentSpeed",
+      "ios": "14.0",
+      "canonicalUnit": "m/s",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierStepCount",
+      "ios": "8.0",
+      "canonicalUnit": "count",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierSwimmingStrokeCount",
+      "ios": "10.0",
+      "canonicalUnit": "count",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierTimeInDaylight",
+      "ios": "17.0",
+      "canonicalUnit": "min",
+      "aggregationStyle": "Cumulative",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierUnderwaterDepth",
+      "ios": "16.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierUVExposure",
+      "ios": "9.0",
+      "canonicalUnit": null,
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierVO2Max",
+      "ios": "11.0",
+      "canonicalUnit": "ml/(kg*min)",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierWaistCircumference",
+      "ios": "11.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierWalkingAsymmetryPercentage",
+      "ios": "14.0",
+      "canonicalUnit": "%",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierWalkingDoubleSupportPercentage",
+      "ios": "14.0",
+      "canonicalUnit": "%",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierWalkingHeartRateAverage",
+      "ios": "11.0",
+      "canonicalUnit": "count/min",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": false,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierWalkingSpeed",
+      "ios": "14.0",
+      "canonicalUnit": "m/s",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierWalkingStepLength",
+      "ios": "14.0",
+      "canonicalUnit": "m",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierWaterTemperature",
+      "ios": "16.0",
+      "canonicalUnit": "degC",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKQuantityTypeIdentifierWorkoutEffortScore",
+      "ios": "18.0",
+      "canonicalUnit": "appleEffortScore",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    }
+  ],
+  "categoryIdentifiers": [
+    {
+      "name": "HKCategoryTypeIdentifierAbdominalCramps",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierAcne",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierAppetiteChanges",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueAppetiteChanges",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierAppleStandHour",
+      "ios": "9.0",
+      "valueEnum": "HKCategoryValueAppleStandHour",
+      "writeable": false,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierAppleWalkingSteadinessEvent",
+      "ios": "15.0",
+      "valueEnum": "HKCategoryValueAppleWalkingSteadinessEvent",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierAudioExposureEvent",
+      "ios": "13.0",
+      "valueEnum": null,
+      "writeable": true,
+      "legacy": true
+    },
+    {
+      "name": "HKCategoryTypeIdentifierBladderIncontinence",
+      "ios": "14.0",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierBleedingAfterPregnancy",
+      "ios": "18.0",
+      "valueEnum": "HKCategoryValueVaginalBleeding",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierBleedingDuringPregnancy",
+      "ios": "18.0",
+      "valueEnum": "HKCategoryValueVaginalBleeding",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierBloating",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierBreastPain",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierCervicalMucusQuality",
+      "ios": "9.0",
+      "valueEnum": "HKCategoryValueCervicalMucusQuality",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierChestTightnessOrPain",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierChills",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierConstipation",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierContraceptive",
+      "ios": "14.3",
+      "valueEnum": "HKCategoryValueContraceptive",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierCoughing",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierDiarrhea",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierDizziness",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierDrySkin",
+      "ios": "14.0",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent",
+      "ios": "14.0",
+      "valueEnum": "HKCategoryValueEnvironmentalAudioExposureEvent",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierFainting",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierFatigue",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierFever",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierGeneralizedBodyAche",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierHairLoss",
+      "ios": "14.0",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierHandwashingEvent",
+      "ios": "14.0",
+      "valueEnum": "HKCategoryValue",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierHeadache",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierHeadphoneAudioExposureEvent",
+      "ios": "14.2",
+      "valueEnum": "HKCategoryValueHeadphoneAudioExposureEvent",
+      "writeable": false,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierHeartburn",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierHighHeartRateEvent",
+      "ios": "12.2",
+      "valueEnum": "HKCategoryValue",
+      "writeable": false,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierHotFlashes",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierHypertensionEvent",
+      "ios": "26.2",
+      "valueEnum": "HKCategoryValue",
+      "writeable": false,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierInfrequentMenstrualCycles",
+      "ios": "16.0",
+      "valueEnum": "HKCategoryValue",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierIntermenstrualBleeding",
+      "ios": "9.0",
+      "valueEnum": "HKCategoryValue",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierIrregularHeartRhythmEvent",
+      "ios": "12.2",
+      "valueEnum": "HKCategoryValue",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierIrregularMenstrualCycles",
+      "ios": "16.0",
+      "valueEnum": "HKCategoryValue",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierLactation",
+      "ios": "14.3",
+      "valueEnum": "HKCategoryValue",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierLossOfSmell",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierLossOfTaste",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierLowCardioFitnessEvent",
+      "ios": "14.3",
+      "valueEnum": "HKCategoryValueLowCardioFitnessEvent",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierLowerBackPain",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierLowHeartRateEvent",
+      "ios": "12.2",
+      "valueEnum": "HKCategoryValue",
+      "writeable": false,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierMemoryLapse",
+      "ios": "14.0",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierMenstrualFlow",
+      "ios": "9.0",
+      "valueEnum": "HKCategoryValueMenstrualFlow",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierMindfulSession",
+      "ios": "10.0",
+      "valueEnum": "HKCategoryValue",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierMoodChanges",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValuePresence",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierNausea",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierNightSweats",
+      "ios": "14.0",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierOvulationTestResult",
+      "ios": "9.0",
+      "valueEnum": "HKCategoryValueOvulationTestResult",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierPelvicPain",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierPersistentIntermenstrualBleeding",
+      "ios": "16.0",
+      "valueEnum": "HKCategoryValue",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierPregnancy",
+      "ios": "14.3",
+      "valueEnum": "HKCategoryValue",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierPregnancyTestResult",
+      "ios": "15.0",
+      "valueEnum": "HKCategoryValuePregnancyTestResult",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierProgesteroneTestResult",
+      "ios": "15.0",
+      "valueEnum": "HKCategoryValueProgesteroneTestResult",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierProlongedMenstrualPeriods",
+      "ios": "16.0",
+      "valueEnum": "HKCategoryValue",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierRapidPoundingOrFlutteringHeartbeat",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierRunnyNose",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierSexualActivity",
+      "ios": "9.0",
+      "valueEnum": "HKCategoryValue",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierShortnessOfBreath",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierSinusCongestion",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierSkippedHeartbeat",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierSleepAnalysis",
+      "ios": "8.0",
+      "valueEnum": "HKCategoryValueSleepAnalysis",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierSleepApneaEvent",
+      "ios": "18.0",
+      "valueEnum": "HKCategoryValue",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierSleepChanges",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValuePresence",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierSoreThroat",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierToothbrushingEvent",
+      "ios": "13.0",
+      "valueEnum": "HKCategoryValue",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierVaginalDryness",
+      "ios": "14.0",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierVomiting",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierWheezing",
+      "ios": "13.6",
+      "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    }
+  ],
+  "enums": [
+    {
+      "name": "AppleECGAlgorithmVersion",
+      "ios": "14.0",
+      "members": [
+        {
+          "name": "value1",
+          "swiftName": "HKAppleECGAlgorithmVersion1",
+          "rawValue": 1
+        },
+        {
+          "name": "value2",
+          "swiftName": "HKAppleECGAlgorithmVersion2",
+          "rawValue": 2
+        }
+      ]
+    },
+    {
+      "name": "BloodGlucoseMealTime",
+      "ios": "11.0",
+      "members": [
+        {
+          "name": "preprandial",
+          "swiftName": "HKBloodGlucoseMealTimePreprandial",
+          "rawValue": 1
+        },
+        {
+          "name": "postprandial",
+          "swiftName": "HKBloodGlucoseMealTimePostprandial",
+          "rawValue": 2
+        }
+      ]
+    },
+    {
+      "name": "BodyTemperatureSensorLocation",
+      "ios": "8.0",
+      "members": [
+        {
+          "name": "other",
+          "swiftName": "HKBodyTemperatureSensorLocationOther",
+          "rawValue": 0
+        },
+        {
+          "name": "armpit",
+          "swiftName": "HKBodyTemperatureSensorLocationArmpit",
+          "rawValue": 1
+        },
+        {
+          "name": "body",
+          "swiftName": "HKBodyTemperatureSensorLocationBody",
+          "rawValue": 2
+        },
+        {
+          "name": "ear",
+          "swiftName": "HKBodyTemperatureSensorLocationEar",
+          "rawValue": 3
+        },
+        {
+          "name": "finger",
+          "swiftName": "HKBodyTemperatureSensorLocationFinger",
+          "rawValue": 4
+        },
+        {
+          "name": "gastroIntestinal",
+          "swiftName": "HKBodyTemperatureSensorLocationGastroIntestinal",
+          "rawValue": 5
+        },
+        {
+          "name": "mouth",
+          "swiftName": "HKBodyTemperatureSensorLocationMouth",
+          "rawValue": 6
+        },
+        {
+          "name": "rectum",
+          "swiftName": "HKBodyTemperatureSensorLocationRectum",
+          "rawValue": 7
+        },
+        {
+          "name": "toe",
+          "swiftName": "HKBodyTemperatureSensorLocationToe",
+          "rawValue": 8
+        },
+        {
+          "name": "earDrum",
+          "swiftName": "HKBodyTemperatureSensorLocationEarDrum",
+          "rawValue": 9
+        },
+        {
+          "name": "temporalArtery",
+          "swiftName": "HKBodyTemperatureSensorLocationTemporalArtery",
+          "rawValue": 10
+        },
+        {
+          "name": "forehead",
+          "swiftName": "HKBodyTemperatureSensorLocationForehead",
+          "rawValue": 11
+        }
+      ]
+    },
+    {
+      "name": "CategoryValue",
+      "ios": "9.0",
+      "members": [
+        {
+          "name": "notApplicable",
+          "swiftName": "HKCategoryValueNotApplicable",
+          "rawValue": 0
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueAppetiteChanges",
+      "ios": "13.6",
+      "members": [
+        {
+          "name": "unspecified",
+          "swiftName": "HKCategoryValueAppetiteChangesUnspecified",
+          "rawValue": 0
+        },
+        {
+          "name": "noChange",
+          "swiftName": "HKCategoryValueAppetiteChangesNoChange",
+          "rawValue": 1
+        },
+        {
+          "name": "decreased",
+          "swiftName": "HKCategoryValueAppetiteChangesDecreased",
+          "rawValue": 2
+        },
+        {
+          "name": "increased",
+          "swiftName": "HKCategoryValueAppetiteChangesIncreased",
+          "rawValue": 3
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueAppleStandHour",
+      "ios": "9.0",
+      "members": [
+        {
+          "name": "stood",
+          "swiftName": "HKCategoryValueAppleStandHourStood",
+          "rawValue": 0
+        },
+        {
+          "name": "idle",
+          "swiftName": "HKCategoryValueAppleStandHourIdle",
+          "rawValue": 1
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueAppleWalkingSteadinessEvent",
+      "ios": "15.0",
+      "members": [
+        {
+          "name": "initialLow",
+          "swiftName": "HKCategoryValueAppleWalkingSteadinessEventInitialLow",
+          "rawValue": 1
+        },
+        {
+          "name": "initialVeryLow",
+          "swiftName": "HKCategoryValueAppleWalkingSteadinessEventInitialVeryLow",
+          "rawValue": 2
+        },
+        {
+          "name": "repeatLow",
+          "swiftName": "HKCategoryValueAppleWalkingSteadinessEventRepeatLow",
+          "rawValue": 3
+        },
+        {
+          "name": "repeatVeryLow",
+          "swiftName": "HKCategoryValueAppleWalkingSteadinessEventRepeatVeryLow",
+          "rawValue": 4
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueAudioExposureEvent",
+      "ios": "13.0",
+      "members": [
+        {
+          "name": "loudEnvironment",
+          "swiftName": "HKCategoryValueAudioExposureEventLoudEnvironment",
+          "rawValue": 1
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueCervicalMucusQuality",
+      "ios": "9.0",
+      "members": [
+        {
+          "name": "dry",
+          "swiftName": "HKCategoryValueCervicalMucusQualityDry",
+          "rawValue": 1
+        },
+        {
+          "name": "sticky",
+          "swiftName": "HKCategoryValueCervicalMucusQualitySticky",
+          "rawValue": 2
+        },
+        {
+          "name": "creamy",
+          "swiftName": "HKCategoryValueCervicalMucusQualityCreamy",
+          "rawValue": 3
+        },
+        {
+          "name": "watery",
+          "swiftName": "HKCategoryValueCervicalMucusQualityWatery",
+          "rawValue": 4
+        },
+        {
+          "name": "eggWhite",
+          "swiftName": "HKCategoryValueCervicalMucusQualityEggWhite",
+          "rawValue": 5
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueContraceptive",
+      "ios": "14.3",
+      "members": [
+        {
+          "name": "unspecified",
+          "swiftName": "HKCategoryValueContraceptiveUnspecified",
+          "rawValue": 1
+        },
+        {
+          "name": "implant",
+          "swiftName": "HKCategoryValueContraceptiveImplant",
+          "rawValue": 2
+        },
+        {
+          "name": "injection",
+          "swiftName": "HKCategoryValueContraceptiveInjection",
+          "rawValue": 3
+        },
+        {
+          "name": "intrauterineDevice",
+          "swiftName": "HKCategoryValueContraceptiveIntrauterineDevice",
+          "rawValue": 4
+        },
+        {
+          "name": "intravaginalRing",
+          "swiftName": "HKCategoryValueContraceptiveIntravaginalRing",
+          "rawValue": 5
+        },
+        {
+          "name": "oral",
+          "swiftName": "HKCategoryValueContraceptiveOral",
+          "rawValue": 6
+        },
+        {
+          "name": "patch",
+          "swiftName": "HKCategoryValueContraceptivePatch",
+          "rawValue": 7
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueEnvironmentalAudioExposureEvent",
+      "ios": "14.0",
+      "members": [
+        {
+          "name": "momentaryLimit",
+          "swiftName": "HKCategoryValueEnvironmentalAudioExposureEventMomentaryLimit",
+          "rawValue": 1
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueHeadphoneAudioExposureEvent",
+      "ios": "14.2",
+      "members": [
+        {
+          "name": "sevenDayLimit",
+          "swiftName": "HKCategoryValueHeadphoneAudioExposureEventSevenDayLimit",
+          "rawValue": 1
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueLowCardioFitnessEvent",
+      "ios": "14.3",
+      "members": [
+        {
+          "name": "lowFitness",
+          "swiftName": "HKCategoryValueLowCardioFitnessEventLowFitness",
+          "rawValue": 1
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueMenstrualFlow",
+      "ios": "9.0",
+      "members": [
+        {
+          "name": "unspecified",
+          "swiftName": "HKCategoryValueMenstrualFlowUnspecified",
+          "rawValue": 1
+        },
+        {
+          "name": "light",
+          "swiftName": "HKCategoryValueMenstrualFlowLight",
+          "rawValue": 2
+        },
+        {
+          "name": "medium",
+          "swiftName": "HKCategoryValueMenstrualFlowMedium",
+          "rawValue": 3
+        },
+        {
+          "name": "heavy",
+          "swiftName": "HKCategoryValueMenstrualFlowHeavy",
+          "rawValue": 4
+        },
+        {
+          "name": "none",
+          "swiftName": "HKCategoryValueMenstrualFlowNone",
+          "rawValue": 5
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueOvulationTestResult",
+      "ios": "9.0",
+      "members": [
+        {
+          "name": "negative",
+          "swiftName": "HKCategoryValueOvulationTestResultNegative",
+          "rawValue": 1
+        },
+        {
+          "name": "luteinizingHormoneSurge",
+          "swiftName": "HKCategoryValueOvulationTestResultLuteinizingHormoneSurge",
+          "rawValue": 2
+        },
+        {
+          "name": "positive",
+          "swiftName": "HKCategoryValueOvulationTestResultPositive",
+          "rawValue": 2
+        },
+        {
+          "name": "indeterminate",
+          "swiftName": "HKCategoryValueOvulationTestResultIndeterminate",
+          "rawValue": 3
+        },
+        {
+          "name": "estrogenSurge",
+          "swiftName": "HKCategoryValueOvulationTestResultEstrogenSurge",
+          "rawValue": 4
+        }
+      ]
+    },
+    {
+      "name": "CategoryValuePregnancyTestResult",
+      "ios": "15.0",
+      "members": [
+        {
+          "name": "negative",
+          "swiftName": "HKCategoryValuePregnancyTestResultNegative",
+          "rawValue": 1
+        },
+        {
+          "name": "positive",
+          "swiftName": "HKCategoryValuePregnancyTestResultPositive",
+          "rawValue": 2
+        },
+        {
+          "name": "indeterminate",
+          "swiftName": "HKCategoryValuePregnancyTestResultIndeterminate",
+          "rawValue": 3
+        }
+      ]
+    },
+    {
+      "name": "CategoryValuePresence",
+      "ios": "13.6",
+      "members": [
+        {
+          "name": "present",
+          "swiftName": "HKCategoryValuePresencePresent",
+          "rawValue": 0
+        },
+        {
+          "name": "notPresent",
+          "swiftName": "HKCategoryValuePresenceNotPresent",
+          "rawValue": 1
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueProgesteroneTestResult",
+      "ios": "15.0",
+      "members": [
+        {
+          "name": "negative",
+          "swiftName": "HKCategoryValueProgesteroneTestResultNegative",
+          "rawValue": 1
+        },
+        {
+          "name": "positive",
+          "swiftName": "HKCategoryValueProgesteroneTestResultPositive",
+          "rawValue": 2
+        },
+        {
+          "name": "indeterminate",
+          "swiftName": "HKCategoryValueProgesteroneTestResultIndeterminate",
+          "rawValue": 3
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueSeverity",
+      "ios": "13.6",
+      "members": [
+        {
+          "name": "unspecified",
+          "swiftName": "HKCategoryValueSeverityUnspecified",
+          "rawValue": 0
+        },
+        {
+          "name": "notPresent",
+          "swiftName": "HKCategoryValueSeverityNotPresent",
+          "rawValue": 1
+        },
+        {
+          "name": "mild",
+          "swiftName": "HKCategoryValueSeverityMild",
+          "rawValue": 2
+        },
+        {
+          "name": "moderate",
+          "swiftName": "HKCategoryValueSeverityModerate",
+          "rawValue": 3
+        },
+        {
+          "name": "severe",
+          "swiftName": "HKCategoryValueSeveritySevere",
+          "rawValue": 4
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueSleepAnalysis",
+      "ios": "8.0",
+      "members": [
+        {
+          "name": "inBed",
+          "swiftName": "HKCategoryValueSleepAnalysisInBed",
+          "rawValue": 0
+        },
+        {
+          "name": "asleepUnspecified",
+          "swiftName": "HKCategoryValueSleepAnalysisAsleepUnspecified",
+          "rawValue": 1
+        },
+        {
+          "name": "asleep",
+          "swiftName": "HKCategoryValueSleepAnalysisAsleep",
+          "rawValue": 1
+        },
+        {
+          "name": "awake",
+          "swiftName": "HKCategoryValueSleepAnalysisAwake",
+          "rawValue": 2
+        },
+        {
+          "name": "asleepCore",
+          "swiftName": "HKCategoryValueSleepAnalysisAsleepCore",
+          "rawValue": 3
+        },
+        {
+          "name": "asleepDeep",
+          "swiftName": "HKCategoryValueSleepAnalysisAsleepDeep",
+          "rawValue": 4
+        },
+        {
+          "name": "asleepREM",
+          "swiftName": "HKCategoryValueSleepAnalysisAsleepREM",
+          "rawValue": 5
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueVaginalBleeding",
+      "ios": "18.0",
+      "members": [
+        {
+          "name": "unspecified",
+          "swiftName": "HKCategoryValueVaginalBleedingUnspecified",
+          "rawValue": 1
+        },
+        {
+          "name": "light",
+          "swiftName": "HKCategoryValueVaginalBleedingLight",
+          "rawValue": 2
+        },
+        {
+          "name": "medium",
+          "swiftName": "HKCategoryValueVaginalBleedingMedium",
+          "rawValue": 3
+        },
+        {
+          "name": "heavy",
+          "swiftName": "HKCategoryValueVaginalBleedingHeavy",
+          "rawValue": 4
+        },
+        {
+          "name": "none",
+          "swiftName": "HKCategoryValueVaginalBleedingNone",
+          "rawValue": 5
+        }
+      ]
+    },
+    {
+      "name": "CyclingFunctionalThresholdPowerTestType",
+      "ios": "17.0",
+      "members": [
+        {
+          "name": "maxExercise60Minute",
+          "swiftName": "HKCyclingFunctionalThresholdPowerTestTypeMaxExercise60Minute",
+          "rawValue": 1
+        },
+        {
+          "name": "maxExercise20Minute",
+          "swiftName": "HKCyclingFunctionalThresholdPowerTestTypeMaxExercise20Minute",
+          "rawValue": 2
+        },
+        {
+          "name": "rampTest",
+          "swiftName": "HKCyclingFunctionalThresholdPowerTestTypeRampTest",
+          "rawValue": 3
+        },
+        {
+          "name": "predictionExercise",
+          "swiftName": "HKCyclingFunctionalThresholdPowerTestTypePredictionExercise",
+          "rawValue": 4
+        }
+      ]
+    },
+    {
+      "name": "DevicePlacementSide",
+      "ios": "14.0",
+      "members": [
+        {
+          "name": "unknown",
+          "swiftName": "HKDevicePlacementSideUnknown",
+          "rawValue": 0
+        },
+        {
+          "name": "left",
+          "swiftName": "HKDevicePlacementSideLeft",
+          "rawValue": 1
+        },
+        {
+          "name": "right",
+          "swiftName": "HKDevicePlacementSideRight",
+          "rawValue": 2
+        },
+        {
+          "name": "central",
+          "swiftName": "HKDevicePlacementSideCentral",
+          "rawValue": 3
+        }
+      ]
+    },
+    {
+      "name": "HeartRateMotionContext",
+      "ios": "11.0",
+      "members": [
+        {
+          "name": "notSet",
+          "swiftName": "HKHeartRateMotionContextNotSet",
+          "rawValue": 0
+        },
+        {
+          "name": "sedentary",
+          "swiftName": "HKHeartRateMotionContextSedentary",
+          "rawValue": 1
+        },
+        {
+          "name": "active",
+          "swiftName": "HKHeartRateMotionContextActive",
+          "rawValue": 2
+        }
+      ]
+    },
+    {
+      "name": "HeartRateRecoveryTestType",
+      "ios": "16.0",
+      "members": [
+        {
+          "name": "maxExercise",
+          "swiftName": "HKHeartRateRecoveryTestTypeMaxExercise",
+          "rawValue": 1
+        },
+        {
+          "name": "predictionSubMaxExercise",
+          "swiftName": "HKHeartRateRecoveryTestTypePredictionSubMaxExercise",
+          "rawValue": 2
+        },
+        {
+          "name": "predictionNonExercise",
+          "swiftName": "HKHeartRateRecoveryTestTypePredictionNonExercise",
+          "rawValue": 3
+        }
+      ]
+    },
+    {
+      "name": "HeartRateSensorLocation",
+      "ios": "8.0",
+      "members": [
+        {
+          "name": "other",
+          "swiftName": "HKHeartRateSensorLocationOther",
+          "rawValue": 0
+        },
+        {
+          "name": "chest",
+          "swiftName": "HKHeartRateSensorLocationChest",
+          "rawValue": 1
+        },
+        {
+          "name": "wrist",
+          "swiftName": "HKHeartRateSensorLocationWrist",
+          "rawValue": 2
+        },
+        {
+          "name": "finger",
+          "swiftName": "HKHeartRateSensorLocationFinger",
+          "rawValue": 3
+        },
+        {
+          "name": "hand",
+          "swiftName": "HKHeartRateSensorLocationHand",
+          "rawValue": 4
+        },
+        {
+          "name": "earLobe",
+          "swiftName": "HKHeartRateSensorLocationEarLobe",
+          "rawValue": 5
+        },
+        {
+          "name": "foot",
+          "swiftName": "HKHeartRateSensorLocationFoot",
+          "rawValue": 6
+        }
+      ]
+    },
+    {
+      "name": "InsulinDeliveryReason",
+      "ios": "11.0",
+      "members": [
+        {
+          "name": "basal",
+          "swiftName": "HKInsulinDeliveryReasonBasal",
+          "rawValue": 1
+        },
+        {
+          "name": "bolus",
+          "swiftName": "HKInsulinDeliveryReasonBolus",
+          "rawValue": 2
+        }
+      ]
+    },
+    {
+      "name": "PhysicalEffortEstimationType",
+      "ios": "17.0",
+      "members": [
+        {
+          "name": "activityLookup",
+          "swiftName": "HKPhysicalEffortEstimationTypeActivityLookup",
+          "rawValue": 1
+        },
+        {
+          "name": "deviceSensed",
+          "swiftName": "HKPhysicalEffortEstimationTypeDeviceSensed",
+          "rawValue": 2
+        }
+      ]
+    },
+    {
+      "name": "SwimmingStrokeStyle",
+      "ios": "10.0",
+      "members": [
+        {
+          "name": "unknown",
+          "swiftName": "HKSwimmingStrokeStyleUnknown",
+          "rawValue": 0
+        },
+        {
+          "name": "mixed",
+          "swiftName": "HKSwimmingStrokeStyleMixed",
+          "rawValue": 1
+        },
+        {
+          "name": "freestyle",
+          "swiftName": "HKSwimmingStrokeStyleFreestyle",
+          "rawValue": 2
+        },
+        {
+          "name": "backstroke",
+          "swiftName": "HKSwimmingStrokeStyleBackstroke",
+          "rawValue": 3
+        },
+        {
+          "name": "breaststroke",
+          "swiftName": "HKSwimmingStrokeStyleBreaststroke",
+          "rawValue": 4
+        },
+        {
+          "name": "butterfly",
+          "swiftName": "HKSwimmingStrokeStyleButterfly",
+          "rawValue": 5
+        },
+        {
+          "name": "kickboard",
+          "swiftName": "HKSwimmingStrokeStyleKickboard",
+          "rawValue": 6
+        }
+      ]
+    },
+    {
+      "name": "UserMotionContext",
+      "ios": "16.0",
+      "members": [
+        {
+          "name": "notSet",
+          "swiftName": "HKUserMotionContextNotSet",
+          "rawValue": 0
+        },
+        {
+          "name": "stationary",
+          "swiftName": "HKUserMotionContextStationary",
+          "rawValue": 1
+        },
+        {
+          "name": "active",
+          "swiftName": "HKUserMotionContextActive",
+          "rawValue": 2
+        }
+      ]
+    },
+    {
+      "name": "VO2MaxTestType",
+      "ios": "11.0",
+      "members": [
+        {
+          "name": "maxExercise",
+          "swiftName": "HKVO2MaxTestTypeMaxExercise",
+          "rawValue": 1
+        },
+        {
+          "name": "predictionSubMaxExercise",
+          "swiftName": "HKVO2MaxTestTypePredictionSubMaxExercise",
+          "rawValue": 2
+        },
+        {
+          "name": "predictionNonExercise",
+          "swiftName": "HKVO2MaxTestTypePredictionNonExercise",
+          "rawValue": 3
+        },
+        {
+          "name": "predictionStepTest",
+          "swiftName": "HKVO2MaxTestTypePredictionStepTest",
+          "rawValue": 4
+        }
+      ]
+    },
+    {
+      "name": "WaterSalinity",
+      "ios": "17.0",
+      "members": [
+        {
+          "name": "freshWater",
+          "swiftName": "HKWaterSalinityFreshWater",
+          "rawValue": 1
+        },
+        {
+          "name": "saltWater",
+          "swiftName": "HKWaterSalinitySaltWater",
+          "rawValue": 2
+        }
+      ]
+    },
+    {
+      "name": "WeatherCondition",
+      "ios": "10.0",
+      "members": [
+        {
+          "name": "none",
+          "swiftName": "HKWeatherConditionNone",
+          "rawValue": 0
+        },
+        {
+          "name": "clear",
+          "swiftName": "HKWeatherConditionClear",
+          "rawValue": 1
+        },
+        {
+          "name": "fair",
+          "swiftName": "HKWeatherConditionFair",
+          "rawValue": 2
+        },
+        {
+          "name": "partlyCloudy",
+          "swiftName": "HKWeatherConditionPartlyCloudy",
+          "rawValue": 3
+        },
+        {
+          "name": "mostlyCloudy",
+          "swiftName": "HKWeatherConditionMostlyCloudy",
+          "rawValue": 4
+        },
+        {
+          "name": "cloudy",
+          "swiftName": "HKWeatherConditionCloudy",
+          "rawValue": 5
+        },
+        {
+          "name": "foggy",
+          "swiftName": "HKWeatherConditionFoggy",
+          "rawValue": 6
+        },
+        {
+          "name": "haze",
+          "swiftName": "HKWeatherConditionHaze",
+          "rawValue": 7
+        },
+        {
+          "name": "windy",
+          "swiftName": "HKWeatherConditionWindy",
+          "rawValue": 8
+        },
+        {
+          "name": "blustery",
+          "swiftName": "HKWeatherConditionBlustery",
+          "rawValue": 9
+        },
+        {
+          "name": "smoky",
+          "swiftName": "HKWeatherConditionSmoky",
+          "rawValue": 10
+        },
+        {
+          "name": "dust",
+          "swiftName": "HKWeatherConditionDust",
+          "rawValue": 11
+        },
+        {
+          "name": "snow",
+          "swiftName": "HKWeatherConditionSnow",
+          "rawValue": 12
+        },
+        {
+          "name": "hail",
+          "swiftName": "HKWeatherConditionHail",
+          "rawValue": 13
+        },
+        {
+          "name": "sleet",
+          "swiftName": "HKWeatherConditionSleet",
+          "rawValue": 14
+        },
+        {
+          "name": "freezingDrizzle",
+          "swiftName": "HKWeatherConditionFreezingDrizzle",
+          "rawValue": 15
+        },
+        {
+          "name": "freezingRain",
+          "swiftName": "HKWeatherConditionFreezingRain",
+          "rawValue": 16
+        },
+        {
+          "name": "mixedRainAndHail",
+          "swiftName": "HKWeatherConditionMixedRainAndHail",
+          "rawValue": 17
+        },
+        {
+          "name": "mixedRainAndSnow",
+          "swiftName": "HKWeatherConditionMixedRainAndSnow",
+          "rawValue": 18
+        },
+        {
+          "name": "mixedRainAndSleet",
+          "swiftName": "HKWeatherConditionMixedRainAndSleet",
+          "rawValue": 19
+        },
+        {
+          "name": "mixedSnowAndSleet",
+          "swiftName": "HKWeatherConditionMixedSnowAndSleet",
+          "rawValue": 20
+        },
+        {
+          "name": "drizzle",
+          "swiftName": "HKWeatherConditionDrizzle",
+          "rawValue": 21
+        },
+        {
+          "name": "scatteredShowers",
+          "swiftName": "HKWeatherConditionScatteredShowers",
+          "rawValue": 22
+        },
+        {
+          "name": "showers",
+          "swiftName": "HKWeatherConditionShowers",
+          "rawValue": 23
+        },
+        {
+          "name": "thunderstorms",
+          "swiftName": "HKWeatherConditionThunderstorms",
+          "rawValue": 24
+        },
+        {
+          "name": "tropicalStorm",
+          "swiftName": "HKWeatherConditionTropicalStorm",
+          "rawValue": 25
+        },
+        {
+          "name": "hurricane",
+          "swiftName": "HKWeatherConditionHurricane",
+          "rawValue": 26
+        },
+        {
+          "name": "tornado",
+          "swiftName": "HKWeatherConditionTornado",
+          "rawValue": 27
+        }
+      ]
+    },
+    {
+      "name": "WorkoutActivityType",
+      "ios": "8.0",
+      "members": [
+        {
+          "name": "americanFootball",
+          "swiftName": "HKWorkoutActivityTypeAmericanFootball",
+          "rawValue": 1
+        },
+        {
+          "name": "archery",
+          "swiftName": "HKWorkoutActivityTypeArchery",
+          "rawValue": 2
+        },
+        {
+          "name": "australianFootball",
+          "swiftName": "HKWorkoutActivityTypeAustralianFootball",
+          "rawValue": 3
+        },
+        {
+          "name": "badminton",
+          "swiftName": "HKWorkoutActivityTypeBadminton",
+          "rawValue": 4
+        },
+        {
+          "name": "baseball",
+          "swiftName": "HKWorkoutActivityTypeBaseball",
+          "rawValue": 5
+        },
+        {
+          "name": "basketball",
+          "swiftName": "HKWorkoutActivityTypeBasketball",
+          "rawValue": 6
+        },
+        {
+          "name": "bowling",
+          "swiftName": "HKWorkoutActivityTypeBowling",
+          "rawValue": 7
+        },
+        {
+          "name": "boxing",
+          "swiftName": "HKWorkoutActivityTypeBoxing",
+          "rawValue": 8
+        },
+        {
+          "name": "climbing",
+          "swiftName": "HKWorkoutActivityTypeClimbing",
+          "rawValue": 9
+        },
+        {
+          "name": "cricket",
+          "swiftName": "HKWorkoutActivityTypeCricket",
+          "rawValue": 10
+        },
+        {
+          "name": "crossTraining",
+          "swiftName": "HKWorkoutActivityTypeCrossTraining",
+          "rawValue": 11
+        },
+        {
+          "name": "curling",
+          "swiftName": "HKWorkoutActivityTypeCurling",
+          "rawValue": 12
+        },
+        {
+          "name": "cycling",
+          "swiftName": "HKWorkoutActivityTypeCycling",
+          "rawValue": 13
+        },
+        {
+          "name": "dance",
+          "swiftName": "HKWorkoutActivityTypeDance",
+          "rawValue": 14
+        },
+        {
+          "name": "danceInspiredTraining",
+          "swiftName": "HKWorkoutActivityTypeDanceInspiredTraining",
+          "rawValue": 15
+        },
+        {
+          "name": "elliptical",
+          "swiftName": "HKWorkoutActivityTypeElliptical",
+          "rawValue": 16
+        },
+        {
+          "name": "equestrianSports",
+          "swiftName": "HKWorkoutActivityTypeEquestrianSports",
+          "rawValue": 17
+        },
+        {
+          "name": "fencing",
+          "swiftName": "HKWorkoutActivityTypeFencing",
+          "rawValue": 18
+        },
+        {
+          "name": "fishing",
+          "swiftName": "HKWorkoutActivityTypeFishing",
+          "rawValue": 19
+        },
+        {
+          "name": "functionalStrengthTraining",
+          "swiftName": "HKWorkoutActivityTypeFunctionalStrengthTraining",
+          "rawValue": 20
+        },
+        {
+          "name": "golf",
+          "swiftName": "HKWorkoutActivityTypeGolf",
+          "rawValue": 21
+        },
+        {
+          "name": "gymnastics",
+          "swiftName": "HKWorkoutActivityTypeGymnastics",
+          "rawValue": 22
+        },
+        {
+          "name": "handball",
+          "swiftName": "HKWorkoutActivityTypeHandball",
+          "rawValue": 23
+        },
+        {
+          "name": "hiking",
+          "swiftName": "HKWorkoutActivityTypeHiking",
+          "rawValue": 24
+        },
+        {
+          "name": "hockey",
+          "swiftName": "HKWorkoutActivityTypeHockey",
+          "rawValue": 25
+        },
+        {
+          "name": "hunting",
+          "swiftName": "HKWorkoutActivityTypeHunting",
+          "rawValue": 26
+        },
+        {
+          "name": "lacrosse",
+          "swiftName": "HKWorkoutActivityTypeLacrosse",
+          "rawValue": 27
+        },
+        {
+          "name": "martialArts",
+          "swiftName": "HKWorkoutActivityTypeMartialArts",
+          "rawValue": 28
+        },
+        {
+          "name": "mindAndBody",
+          "swiftName": "HKWorkoutActivityTypeMindAndBody",
+          "rawValue": 29
+        },
+        {
+          "name": "mixedMetabolicCardioTraining",
+          "swiftName": "HKWorkoutActivityTypeMixedMetabolicCardioTraining",
+          "rawValue": 30
+        },
+        {
+          "name": "paddleSports",
+          "swiftName": "HKWorkoutActivityTypePaddleSports",
+          "rawValue": 31
+        },
+        {
+          "name": "play",
+          "swiftName": "HKWorkoutActivityTypePlay",
+          "rawValue": 32
+        },
+        {
+          "name": "preparationAndRecovery",
+          "swiftName": "HKWorkoutActivityTypePreparationAndRecovery",
+          "rawValue": 33
+        },
+        {
+          "name": "racquetball",
+          "swiftName": "HKWorkoutActivityTypeRacquetball",
+          "rawValue": 34
+        },
+        {
+          "name": "rowing",
+          "swiftName": "HKWorkoutActivityTypeRowing",
+          "rawValue": 35
+        },
+        {
+          "name": "rugby",
+          "swiftName": "HKWorkoutActivityTypeRugby",
+          "rawValue": 36
+        },
+        {
+          "name": "running",
+          "swiftName": "HKWorkoutActivityTypeRunning",
+          "rawValue": 37
+        },
+        {
+          "name": "sailing",
+          "swiftName": "HKWorkoutActivityTypeSailing",
+          "rawValue": 38
+        },
+        {
+          "name": "skatingSports",
+          "swiftName": "HKWorkoutActivityTypeSkatingSports",
+          "rawValue": 39
+        },
+        {
+          "name": "snowSports",
+          "swiftName": "HKWorkoutActivityTypeSnowSports",
+          "rawValue": 40
+        },
+        {
+          "name": "soccer",
+          "swiftName": "HKWorkoutActivityTypeSoccer",
+          "rawValue": 41
+        },
+        {
+          "name": "softball",
+          "swiftName": "HKWorkoutActivityTypeSoftball",
+          "rawValue": 42
+        },
+        {
+          "name": "squash",
+          "swiftName": "HKWorkoutActivityTypeSquash",
+          "rawValue": 43
+        },
+        {
+          "name": "stairClimbing",
+          "swiftName": "HKWorkoutActivityTypeStairClimbing",
+          "rawValue": 44
+        },
+        {
+          "name": "surfingSports",
+          "swiftName": "HKWorkoutActivityTypeSurfingSports",
+          "rawValue": 45
+        },
+        {
+          "name": "swimming",
+          "swiftName": "HKWorkoutActivityTypeSwimming",
+          "rawValue": 46
+        },
+        {
+          "name": "tableTennis",
+          "swiftName": "HKWorkoutActivityTypeTableTennis",
+          "rawValue": 47
+        },
+        {
+          "name": "tennis",
+          "swiftName": "HKWorkoutActivityTypeTennis",
+          "rawValue": 48
+        },
+        {
+          "name": "trackAndField",
+          "swiftName": "HKWorkoutActivityTypeTrackAndField",
+          "rawValue": 49
+        },
+        {
+          "name": "traditionalStrengthTraining",
+          "swiftName": "HKWorkoutActivityTypeTraditionalStrengthTraining",
+          "rawValue": 50
+        },
+        {
+          "name": "volleyball",
+          "swiftName": "HKWorkoutActivityTypeVolleyball",
+          "rawValue": 51
+        },
+        {
+          "name": "walking",
+          "swiftName": "HKWorkoutActivityTypeWalking",
+          "rawValue": 52
+        },
+        {
+          "name": "waterFitness",
+          "swiftName": "HKWorkoutActivityTypeWaterFitness",
+          "rawValue": 53
+        },
+        {
+          "name": "waterPolo",
+          "swiftName": "HKWorkoutActivityTypeWaterPolo",
+          "rawValue": 54
+        },
+        {
+          "name": "waterSports",
+          "swiftName": "HKWorkoutActivityTypeWaterSports",
+          "rawValue": 55
+        },
+        {
+          "name": "wrestling",
+          "swiftName": "HKWorkoutActivityTypeWrestling",
+          "rawValue": 56
+        },
+        {
+          "name": "yoga",
+          "swiftName": "HKWorkoutActivityTypeYoga",
+          "rawValue": 57
+        },
+        {
+          "name": "barre",
+          "swiftName": "HKWorkoutActivityTypeBarre",
+          "rawValue": 58
+        },
+        {
+          "name": "coreTraining",
+          "swiftName": "HKWorkoutActivityTypeCoreTraining",
+          "rawValue": 59
+        },
+        {
+          "name": "crossCountrySkiing",
+          "swiftName": "HKWorkoutActivityTypeCrossCountrySkiing",
+          "rawValue": 60
+        },
+        {
+          "name": "downhillSkiing",
+          "swiftName": "HKWorkoutActivityTypeDownhillSkiing",
+          "rawValue": 61
+        },
+        {
+          "name": "flexibility",
+          "swiftName": "HKWorkoutActivityTypeFlexibility",
+          "rawValue": 62
+        },
+        {
+          "name": "highIntensityIntervalTraining",
+          "swiftName": "HKWorkoutActivityTypeHighIntensityIntervalTraining",
+          "rawValue": 63
+        },
+        {
+          "name": "jumpRope",
+          "swiftName": "HKWorkoutActivityTypeJumpRope",
+          "rawValue": 64
+        },
+        {
+          "name": "kickboxing",
+          "swiftName": "HKWorkoutActivityTypeKickboxing",
+          "rawValue": 65
+        },
+        {
+          "name": "pilates",
+          "swiftName": "HKWorkoutActivityTypePilates",
+          "rawValue": 66
+        },
+        {
+          "name": "snowboarding",
+          "swiftName": "HKWorkoutActivityTypeSnowboarding",
+          "rawValue": 67
+        },
+        {
+          "name": "stairs",
+          "swiftName": "HKWorkoutActivityTypeStairs",
+          "rawValue": 68
+        },
+        {
+          "name": "stepTraining",
+          "swiftName": "HKWorkoutActivityTypeStepTraining",
+          "rawValue": 69
+        },
+        {
+          "name": "wheelchairWalkPace",
+          "swiftName": "HKWorkoutActivityTypeWheelchairWalkPace",
+          "rawValue": 70
+        },
+        {
+          "name": "wheelchairRunPace",
+          "swiftName": "HKWorkoutActivityTypeWheelchairRunPace",
+          "rawValue": 71
+        },
+        {
+          "name": "taiChi",
+          "swiftName": "HKWorkoutActivityTypeTaiChi",
+          "rawValue": 72
+        },
+        {
+          "name": "mixedCardio",
+          "swiftName": "HKWorkoutActivityTypeMixedCardio",
+          "rawValue": 73
+        },
+        {
+          "name": "handCycling",
+          "swiftName": "HKWorkoutActivityTypeHandCycling",
+          "rawValue": 74
+        },
+        {
+          "name": "discSports",
+          "swiftName": "HKWorkoutActivityTypeDiscSports",
+          "rawValue": 75
+        },
+        {
+          "name": "fitnessGaming",
+          "swiftName": "HKWorkoutActivityTypeFitnessGaming",
+          "rawValue": 76
+        },
+        {
+          "name": "cardioDance",
+          "swiftName": "HKWorkoutActivityTypeCardioDance",
+          "rawValue": 77
+        },
+        {
+          "name": "socialDance",
+          "swiftName": "HKWorkoutActivityTypeSocialDance",
+          "rawValue": 78
+        },
+        {
+          "name": "pickleball",
+          "swiftName": "HKWorkoutActivityTypePickleball",
+          "rawValue": 79
+        },
+        {
+          "name": "cooldown",
+          "swiftName": "HKWorkoutActivityTypeCooldown",
+          "rawValue": 80
+        },
+        {
+          "name": "swimBikeRun",
+          "swiftName": "HKWorkoutActivityTypeSwimBikeRun",
+          "rawValue": 82
+        },
+        {
+          "name": "transition",
+          "swiftName": "HKWorkoutActivityTypeTransition",
+          "rawValue": 83
+        },
+        {
+          "name": "underwaterDiving",
+          "swiftName": "HKWorkoutActivityTypeUnderwaterDiving",
+          "rawValue": 84
+        },
+        {
+          "name": "other",
+          "swiftName": "HKWorkoutActivityTypeOther",
+          "rawValue": 3000
+        }
+      ]
+    },
+    {
+      "name": "WorkoutEventType",
+      "ios": "8.0",
+      "members": [
+        {
+          "name": "pause",
+          "swiftName": "HKWorkoutEventTypePause",
+          "rawValue": 1
+        },
+        {
+          "name": "resume",
+          "swiftName": "HKWorkoutEventTypeResume",
+          "rawValue": 2
+        },
+        {
+          "name": "lap",
+          "swiftName": "HKWorkoutEventTypeLap",
+          "rawValue": 3
+        },
+        {
+          "name": "marker",
+          "swiftName": "HKWorkoutEventTypeMarker",
+          "rawValue": 4
+        },
+        {
+          "name": "motionPaused",
+          "swiftName": "HKWorkoutEventTypeMotionPaused",
+          "rawValue": 5
+        },
+        {
+          "name": "motionResumed",
+          "swiftName": "HKWorkoutEventTypeMotionResumed",
+          "rawValue": 6
+        },
+        {
+          "name": "segment",
+          "swiftName": "HKWorkoutEventTypeSegment",
+          "rawValue": 7
+        },
+        {
+          "name": "pauseOrResumeRequest",
+          "swiftName": "HKWorkoutEventTypePauseOrResumeRequest",
+          "rawValue": 8
+        }
+      ]
+    },
+    {
+      "name": "WorkoutSwimmingLocationType",
+      "ios": "10.0",
+      "members": [
+        {
+          "name": "unknown",
+          "swiftName": "HKWorkoutSwimmingLocationTypeUnknown",
+          "rawValue": 0
+        },
+        {
+          "name": "pool",
+          "swiftName": "HKWorkoutSwimmingLocationTypePool",
+          "rawValue": 1
+        },
+        {
+          "name": "openWater",
+          "swiftName": "HKWorkoutSwimmingLocationTypeOpenWater",
+          "rawValue": 2
+        }
+      ]
+    }
+  ],
+  "metadataKeys": [
+    {
+      "keyConstant": "HKMetadataKeyActivityType",
+      "rawKey": "HKActivityType",
+      "ios": "17.0",
+      "expectedType": "an NSNumber containing a HKWorkoutActivityType value",
+      "tsType": "WorkoutActivityType",
+      "valueKind": "enum",
+      "enumName": "WorkoutActivityType",
+      "objectTypes": ["sample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyAlgorithmVersion",
+      "rawKey": "HKAlgorithmVersion",
+      "ios": "15.0",
+      "expectedType": null,
+      "tsType": "number",
+      "valueKind": "number",
+      "enumName": null,
+      "objectTypes": ["sample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyAlpineSlopeGrade",
+      "rawKey": "HKAlpineSlopeGrade",
+      "ios": "11.2",
+      "expectedType": "an HKQuantity object compatible with percent unit",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": ["HKQuantityTypeIdentifierDistanceDownhillSnowSports"]
+    },
+    {
+      "keyConstant": "HKMetadataKeyAppleECGAlgorithmVersion",
+      "rawKey": "HKAppleECGAlgorithmVersion",
+      "ios": "14.0",
+      "expectedType": "an an NSNumber containing a HKAppleECGAlgorithmVersion value",
+      "tsType": "AppleECGAlgorithmVersion",
+      "valueKind": "enum",
+      "enumName": "AppleECGAlgorithmVersion",
+      "objectTypes": [],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyAppleFitnessPlusCatalogIdentifier",
+      "rawKey": "HKAppleFitnessPlusCatalogIdentifier",
+      "ios": "18.2",
+      "expectedType": "an NSString containing the Fitness+ catalog identifier",
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyAppleFitnessPlusSession",
+      "rawKey": "HKAppleFitnessPlusSession",
+      "ios": "17.0",
+      "expectedType": "an NSNumber containing a BOOL value",
+      "tsType": "boolean",
+      "valueKind": "boolean",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyAudioExposureDuration",
+      "rawKey": "HKAudioExposureDuration",
+      "ios": "14.2",
+      "expectedType": "an HKQuantity object compatible with a time unit",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["sample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyAverageMETs",
+      "rawKey": "HKAverageMETs",
+      "ios": "13.0",
+      "expectedType": "an HKQuantity expressed in a METs (kcal/(kg*hr)) unit",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyAverageSpeed",
+      "rawKey": "HKAverageSpeed",
+      "ios": "11.2",
+      "expectedType": "an HKQuantity object compatible with a speed unit (e",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": ["HKQuantityTypeIdentifierDistanceDownhillSnowSports"]
+    },
+    {
+      "keyConstant": "HKMetadataKeyBarometricPressure",
+      "rawKey": "HKBarometricPressure",
+      "ios": "14.0",
+      "expectedType": "an HKQuantity representing a value in units of pressure (atmospheres, pascals, millimeters of Mercury)",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["sample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyBloodGlucoseMealTime",
+      "rawKey": "HKBloodGlucoseMealTime",
+      "ios": "11.0",
+      "expectedType": "an NSNumber containing a HKBloodGlucoseMealTime value",
+      "tsType": "BloodGlucoseMealTime",
+      "valueKind": "enum",
+      "enumName": "BloodGlucoseMealTime",
+      "objectTypes": ["quantitySample"],
+      "identifiers": ["HKQuantityTypeIdentifierBloodGlucose"]
+    },
+    {
+      "keyConstant": "HKMetadataKeyBodyTemperatureSensorLocation",
+      "rawKey": "HKBodyTemperatureSensorLocation",
+      "ios": "8.0",
+      "expectedType": "an NSNumber containing a HKBodyTemperatureSensorLocation value",
+      "tsType": "BodyTemperatureSensorLocation",
+      "valueKind": "enum",
+      "enumName": "BodyTemperatureSensorLocation",
+      "objectTypes": ["quantitySample"],
+      "identifiers": [
+        "HKQuantityTypeIdentifierBodyTemperature",
+        "HKQuantityTypeIdentifierBasalBodyTemperature"
+      ]
+    },
+    {
+      "keyConstant": "HKMetadataKeyCoachedWorkout",
+      "rawKey": "HKCoachedWorkout",
+      "ios": "8.0",
+      "expectedType": "an NSNumber containing a BOOL value",
+      "tsType": "boolean",
+      "valueKind": "boolean",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyCrossTrainerDistance",
+      "rawKey": "HKCrossTrainerDistance",
+      "ios": "12.0",
+      "expectedType": "an HKQuantity object compatible with a length unit",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyCyclingFunctionalThresholdPowerTestType",
+      "rawKey": "HKCyclingFunctionalThresholdPowerTestType",
+      "ios": "17.0",
+      "expectedType": "an NSNumber containing a HKCyclingFunctionalThresholdPowerTestType value",
+      "tsType": "CyclingFunctionalThresholdPowerTestType",
+      "valueKind": "enum",
+      "enumName": "CyclingFunctionalThresholdPowerTestType",
+      "objectTypes": [],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyDeviceManufacturerName",
+      "rawKey": "HKDeviceManufacturerName",
+      "ios": "8.0",
+      "expectedType": "NSString",
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyDeviceName",
+      "rawKey": "HKDeviceName",
+      "ios": "8.0",
+      "expectedType": "NSString",
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyDevicePlacementSide",
+      "rawKey": "HKDevicePlacementSide",
+      "ios": "14.0",
+      "expectedType": "an NSNumber containing a HKDevicePlacementSide value",
+      "tsType": "DevicePlacementSide",
+      "valueKind": "enum",
+      "enumName": "DevicePlacementSide",
+      "objectTypes": [],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyDeviceSerialNumber",
+      "rawKey": "HKDeviceSerialNumber",
+      "ios": "8.0",
+      "expectedType": "NSString",
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyDigitalSignature",
+      "rawKey": "HKDigitalSignature",
+      "ios": "8.0",
+      "expectedType": null,
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyElevationAscended",
+      "rawKey": "HKElevationAscended",
+      "ios": "11.2",
+      "expectedType": "an HKQuantity object compatible with length unit",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyElevationDescended",
+      "rawKey": "HKElevationDescended",
+      "ios": "11.2",
+      "expectedType": "an HKQuantity object compatible with length unit",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyExternalUUID",
+      "rawKey": "HKExternalUUID",
+      "ios": "8.0",
+      "expectedType": "NSString",
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyFitnessMachineDuration",
+      "rawKey": "HKFitnessMachineDuration",
+      "ios": "12.0",
+      "expectedType": "an HKQuantity object compatible with a time unit",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyFoodType",
+      "rawKey": "HKFoodType",
+      "ios": "8.0",
+      "expectedType": "NSString",
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyGroupFitness",
+      "rawKey": "HKGroupFitness",
+      "ios": "8.0",
+      "expectedType": "an NSNumber containing a BOOL value",
+      "tsType": "boolean",
+      "valueKind": "boolean",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyHeartRateMotionContext",
+      "rawKey": "HKHeartRateMotionContext",
+      "ios": "11.0",
+      "expectedType": "an NSNumber containing a HKHeartRateMotionContext value",
+      "tsType": "HeartRateMotionContext",
+      "valueKind": "enum",
+      "enumName": "HeartRateMotionContext",
+      "objectTypes": ["quantitySample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyHeartRateRecoveryActivityDuration",
+      "rawKey": "HKHeartRateRecoveryActivityDuration",
+      "ios": "16.0",
+      "expectedType": "an HKQuantity object compatible with a time unit",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["quantitySample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyHeartRateRecoveryActivityType",
+      "rawKey": "HKHeartRateRecoveryActivityType",
+      "ios": "16.0",
+      "expectedType": "an NSNumber containing a HKWorkoutActivityType value",
+      "tsType": "WorkoutActivityType",
+      "valueKind": "enum",
+      "enumName": "WorkoutActivityType",
+      "objectTypes": ["quantitySample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyHeartRateRecoveryMaxObservedRecoveryHeartRate",
+      "rawKey": "HKHeartRateRecoveryMaxObservedRecoveryHeartRate",
+      "ios": "16.0",
+      "expectedType": "an HKQuantity object compatible with \"count/min\" unit (eg \"BPM\")",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["quantitySample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyHeartRateRecoveryTestType",
+      "rawKey": "HKHeartRateRecoveryTestType",
+      "ios": "16.0",
+      "expectedType": "an NSNumber containing a HKHeartRateRecoveryTestType value",
+      "tsType": "HeartRateRecoveryTestType",
+      "valueKind": "enum",
+      "enumName": "HeartRateRecoveryTestType",
+      "objectTypes": ["quantitySample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyHeartRateSensorLocation",
+      "rawKey": "HKHeartRateSensorLocation",
+      "ios": "8.0",
+      "expectedType": "an NSNumber containing a HKHeartRateSensorLocation value",
+      "tsType": "HeartRateSensorLocation",
+      "valueKind": "enum",
+      "enumName": "HeartRateSensorLocation",
+      "objectTypes": ["quantitySample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyIndoorBikeDistance",
+      "rawKey": "HKIndoorBikeDistance",
+      "ios": "12.0",
+      "expectedType": "an HKQuantity object compatible with a length unit",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyIndoorWorkout",
+      "rawKey": "HKIndoorWorkout",
+      "ios": "8.0",
+      "expectedType": "an NSNumber containing a BOOL value",
+      "tsType": "boolean",
+      "valueKind": "boolean",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyInsulinDeliveryReason",
+      "rawKey": "HKInsulinDeliveryReason",
+      "ios": "11.0",
+      "expectedType": "an NSNumber containing a HKInsulinDeliveryReason value",
+      "tsType": "InsulinDeliveryReason",
+      "valueKind": "enum",
+      "enumName": "InsulinDeliveryReason",
+      "objectTypes": ["quantitySample"],
+      "identifiers": ["HKQuantityTypeIdentifierInsulinDelivery"]
+    },
+    {
+      "keyConstant": "HKMetadataKeyLapLength",
+      "rawKey": "HKLapLength",
+      "ios": "10.0",
+      "expectedType": "an HKQuantity object compatible with a length unit",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyMaximumLightIntensity",
+      "rawKey": "HKMaximumLightIntensity",
+      "ios": "17.0",
+      "expectedType": "an HKQuantity expressed in HKUnit Lux",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["sample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyMaximumSpeed",
+      "rawKey": "HKMaximumSpeed",
+      "ios": "11.2",
+      "expectedType": "an HKQuantity object compatible with a speed unit (e",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": ["HKQuantityTypeIdentifierDistanceDownhillSnowSports"]
+    },
+    {
+      "keyConstant": "HKMetadataKeyMenstrualCycleStart",
+      "rawKey": "HKMenstrualCycleStart",
+      "ios": "9.0",
+      "expectedType": "an NSNumber containing a BOOL value",
+      "tsType": "boolean",
+      "valueKind": "boolean",
+      "enumName": null,
+      "objectTypes": ["categorySample"],
+      "identifiers": ["HKCategoryTypeIdentifierMenstrualFlow"]
+    },
+    {
+      "keyConstant": "HKMetadataKeyPhysicalEffortEstimationType",
+      "rawKey": "HKPhysicalEffortEstimationType",
+      "ios": "17.0",
+      "expectedType": "an NSNumber containing a HKPhysicalEffortEstimationType value",
+      "tsType": "PhysicalEffortEstimationType",
+      "valueKind": "enum",
+      "enumName": "PhysicalEffortEstimationType",
+      "objectTypes": ["sample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyReferenceRangeLowerLimit",
+      "rawKey": "HKReferenceRangeLowerLimit",
+      "ios": "8.0",
+      "expectedType": "an NSNumber",
+      "tsType": "number",
+      "valueKind": "number",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyReferenceRangeUpperLimit",
+      "rawKey": "HKReferenceRangeUpperLimit",
+      "ios": "8.0",
+      "expectedType": "an NSNumber",
+      "tsType": "number",
+      "valueKind": "number",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeySessionEstimate",
+      "rawKey": "HKSessionEstimate",
+      "ios": "16.0",
+      "expectedType": "an HKQuantity object with a unit compatible with the associated HKQuantitySample",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["quantitySample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeySexualActivityProtectionUsed",
+      "rawKey": "HKSexualActivityProtectionUsed",
+      "ios": "9.0",
+      "expectedType": "an NSNumber containing a BOOL value",
+      "tsType": "boolean",
+      "valueKind": "boolean",
+      "enumName": null,
+      "objectTypes": ["categorySample"],
+      "identifiers": ["HKCategoryTypeIdentifierSexualActivity"]
+    },
+    {
+      "keyConstant": "HKMetadataKeySwimmingLocationType",
+      "rawKey": "HKSwimmingLocationType",
+      "ios": "10.0",
+      "expectedType": "an NSNumber containing an HKWorkoutSwimmingLocationType value",
+      "tsType": "WorkoutSwimmingLocationType",
+      "valueKind": "enum",
+      "enumName": "WorkoutSwimmingLocationType",
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeySwimmingStrokeStyle",
+      "rawKey": "HKSwimmingStrokeStyle",
+      "ios": "10.0",
+      "expectedType": "an NSNumber containing an HKSwimmingStrokeStyle value",
+      "tsType": "SwimmingStrokeStyle",
+      "valueKind": "enum",
+      "enumName": "SwimmingStrokeStyle",
+      "objectTypes": ["workoutEvent"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeySWOLFScore",
+      "rawKey": "HKSWOLFScore",
+      "ios": "16.0",
+      "expectedType": "an NSNumber containing a score",
+      "tsType": "number",
+      "valueKind": "number",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeySyncIdentifier",
+      "rawKey": "HKSyncIdentifier",
+      "ios": "11.0",
+      "expectedType": "NSString",
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeySyncVersion",
+      "rawKey": "HKSyncVersion",
+      "ios": "11.0",
+      "expectedType": "NSNumber",
+      "tsType": "number",
+      "valueKind": "number",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyTimeZone",
+      "rawKey": "HKTimeZone",
+      "ios": "8.0",
+      "expectedType": "an NSString compatible with NSTimeZone's +timeZoneWithName:",
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyUDIDeviceIdentifier",
+      "rawKey": "HKUDIDeviceIdentifier",
+      "ios": "8.0",
+      "expectedType": "NSString",
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyUDIProductionIdentifier",
+      "rawKey": "HKUDIProductionIdentifier",
+      "ios": "8.0",
+      "expectedType": "NSString",
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyUserMotionContext",
+      "rawKey": "HKUserMotionContext",
+      "ios": "16.0",
+      "expectedType": "an NSNumber containing a HKUserMotionContext value",
+      "tsType": "UserMotionContext",
+      "valueKind": "enum",
+      "enumName": "UserMotionContext",
+      "objectTypes": ["sample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyVO2MaxTestType",
+      "rawKey": "HKVO2MaxTestType",
+      "ios": "11.0",
+      "expectedType": "an NSNumber containing a HKVO2MaxTestType value",
+      "tsType": "VO2MaxTestType",
+      "valueKind": "enum",
+      "enumName": "VO2MaxTestType",
+      "objectTypes": ["quantitySample"],
+      "identifiers": ["HKQuantityTypeIdentifierVO2Max"]
+    },
+    {
+      "keyConstant": "HKMetadataKeyWasTakenInLab",
+      "rawKey": "HKWasTakenInLab",
+      "ios": "8.0",
+      "expectedType": "an NSNumber containing a BOOL value",
+      "tsType": "boolean",
+      "valueKind": "boolean",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyWasUserEntered",
+      "rawKey": "HKWasUserEntered",
+      "ios": "8.0",
+      "expectedType": "an NSNumber containing a BOOL value",
+      "tsType": "boolean",
+      "valueKind": "boolean",
+      "enumName": null,
+      "objectTypes": ["common"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyWaterSalinity",
+      "rawKey": "HKWaterSalinity",
+      "ios": "17.0",
+      "expectedType": "an NSNumber containing a HKWaterSalinity value",
+      "tsType": "WaterSalinity",
+      "valueKind": "enum",
+      "enumName": "WaterSalinity",
+      "objectTypes": ["sample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyWeatherCondition",
+      "rawKey": "HKWeatherCondition",
+      "ios": "10.0",
+      "expectedType": "an NSNumber containing an HKWeatherCondition value",
+      "tsType": "WeatherCondition",
+      "valueKind": "enum",
+      "enumName": "WeatherCondition",
+      "objectTypes": ["sample", "workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyWeatherHumidity",
+      "rawKey": "HKWeatherHumidity",
+      "ios": "10.0",
+      "expectedType": "an HKQuantity expressed in percent",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["sample", "workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyWeatherTemperature",
+      "rawKey": "HKWeatherTemperature",
+      "ios": "10.0",
+      "expectedType": "an HKQuantity expressed in a temperature unit",
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["sample", "workout"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyWorkoutBrandName",
+      "rawKey": "HKWorkoutBrandName",
+      "ios": "8.0",
+      "expectedType": "NSString",
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": ["workout"],
+      "identifiers": []
+    }
+  ]
+}

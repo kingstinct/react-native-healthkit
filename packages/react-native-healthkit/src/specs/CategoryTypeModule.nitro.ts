@@ -46,11 +46,11 @@ const _interfaceVerification: InterfaceAssertion<
 export interface CategoryTypeModuleTyped {
   saveCategorySample<T extends CategoryTypeIdentifier>(
     identifier: T,
-    value: CategoryValueForIdentifier,
+    value: CategoryValueForIdentifier<T>,
     startDate: Date,
     endDate: Date,
     metadata?: MetadataForCategoryIdentifier<T>,
-  ): Promise<CategorySample | undefined>
+  ): Promise<CategorySampleTyped<T> | undefined>
 
   queryCategorySamples<T extends CategoryTypeIdentifier>(
     identifier: T,

@@ -52,13 +52,16 @@
     "README.md"
   ],
   "scripts": {
+    "generate:healthkit": "bun ./scripts/generate-healthkit-cli.ts",
+    "verify:healthkit-sdk": "bun ./scripts/verify-healthkit-sdk.ts",
     "clean": "rm -rf lib",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:types": "tsc -p tsconfig.declarations.json",
     "build": "bun run clean && bun run build:cjs && bun run build:esm && bun run build:types",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.type-tests.json",
     "lint": "bunx @biomejs/biome format --write",
+    "check:generated": "bun run generate:healthkit && bun run verify:healthkit-sdk && git diff --exit-code -- src/generated ios/generated",
     "codegen": "bun run build && nitrogen --logLevel=\"debug\" && perl -i -pe 's/Bool\\(fromCxx: cachedCxxPart\\)/cachedCxxPart.use_count() > 0/g' nitrogen/generated/ios/swift/*Spec_cxx.swift",
     "test": "bun test",
     "prepublishOnly": "bun run build && bun run codegen"

@@ -55,6 +55,7 @@ func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) throws -> Q
       quantityType: quantityType,
       quantity: sample.quantity.doubleValue(for: unit),
       unit: unit.unitString,
+      typedMetadata: serializeQuantityTypedMetadata(metadata: sample.metadata),
       sampleType: serializeSampleType(sample.sampleType),
       startDate: sample.startDate,
       endDate: sample.endDate,
@@ -112,6 +113,7 @@ func serializeCategorySample(sample: HKCategorySample) -> CategorySample {
   return CategorySample(
     categoryType: CategoryTypeIdentifier(fromString: sample.categoryType.identifier)!,
     value: Double(sample.value),
+    typedMetadata: serializeCategoryTypedMetadata(metadata: sample.metadata),
     sampleType: serializeSampleType(sample.sampleType),
     startDate: sample.startDate,
     endDate: sample.endDate,
