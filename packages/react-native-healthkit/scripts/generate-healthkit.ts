@@ -271,13 +271,22 @@ const METADATA_OVERRIDES: Record<string, MetadataOverride> = {
     enumName: null,
   },
   HKMetadataKeyDateOfEarliestDataUsedForEstimate: {
-    skip: true,
+    objectTypes: ['sample'],
+    tsType: 'string',
+    valueKind: 'string',
+    enumName: null,
   },
   HKMetadataKeyGlassesPrescriptionDescription: {
-    skip: true,
+    objectTypes: [],
+    tsType: 'string',
+    valueKind: 'string',
+    enumName: null,
   },
   HKMetadataKeyAppleDeviceCalibrated: {
-    skip: true,
+    objectTypes: ['sample'],
+    tsType: 'boolean',
+    valueKind: 'boolean',
+    enumName: null,
   },
   HKMetadataKeySexualActivityProtectionUsed: {
     objectTypes: ['categorySample'],
@@ -308,6 +317,16 @@ const METADATA_OVERRIDES: Record<string, MetadataOverride> = {
     tsType: 'HeartRateMotionContext',
     valueKind: 'enum',
     enumName: 'HeartRateMotionContext',
+  },
+  HKMetadataKeyHeartRateEventThreshold: {
+    objectTypes: ['categorySample'],
+    identifiers: [
+      'HKCategoryTypeIdentifierHighHeartRateEvent',
+      'HKCategoryTypeIdentifierLowHeartRateEvent',
+    ],
+    tsType: 'Quantity',
+    valueKind: 'quantity',
+    enumName: null,
   },
   HKMetadataKeySessionEstimate: {
     objectTypes: ['quantitySample'],
@@ -359,6 +378,53 @@ const METADATA_OVERRIDES: Record<string, MetadataOverride> = {
     tsType: 'InsulinDeliveryReason',
     valueKind: 'enum',
     enumName: 'InsulinDeliveryReason',
+  },
+  HKMetadataKeyQuantityClampedToLowerBound: {
+    objectTypes: ['quantitySample'],
+    tsType: 'boolean',
+    valueKind: 'boolean',
+    enumName: null,
+  },
+  HKMetadataKeyQuantityClampedToUpperBound: {
+    objectTypes: ['quantitySample'],
+    tsType: 'boolean',
+    valueKind: 'boolean',
+    enumName: null,
+  },
+  HKMetadataKeyAudioExposureLevel: {
+    objectTypes: ['categorySample'],
+    identifiers: [
+      'HKCategoryTypeIdentifierAudioExposureEvent',
+      'HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent',
+      'HKCategoryTypeIdentifierHeadphoneAudioExposureEvent',
+    ],
+    tsType: 'Quantity',
+    valueKind: 'quantity',
+    enumName: null,
+  },
+  HKMetadataKeyVO2MaxValue: {
+    objectTypes: ['categorySample'],
+    identifiers: ['HKCategoryTypeIdentifierLowCardioFitnessEvent'],
+    tsType: 'Quantity',
+    valueKind: 'quantity',
+    enumName: null,
+  },
+  HKMetadataKeyLowCardioFitnessEventThreshold: {
+    objectTypes: ['categorySample'],
+    identifiers: ['HKCategoryTypeIdentifierLowCardioFitnessEvent'],
+    tsType: 'Quantity',
+    valueKind: 'quantity',
+    enumName: null,
+  },
+  HKMetadataKeyHeadphoneGain: {
+    objectTypes: ['categorySample'],
+    identifiers: [
+      'HKCategoryTypeIdentifierAudioExposureEvent',
+      'HKCategoryTypeIdentifierHeadphoneAudioExposureEvent',
+    ],
+    tsType: 'Quantity',
+    valueKind: 'quantity',
+    enumName: null,
   },
   HKMetadataKeyWorkoutBrandName: {
     objectTypes: ['workout'],
@@ -1711,56 +1777,9 @@ function renderMetadataSwiftStruct(
 }
 
 export function renderGeneratedSwift(schema: HealthkitSchema): string {
-  const commonKeys = schema.metadataKeys.filter((key) =>
-    key.objectTypes.includes('common'),
-  )
-  const sampleKeys = schema.metadataKeys.filter((key) =>
-    key.objectTypes.includes('sample'),
-  )
-  const categoryKeys = schema.metadataKeys.filter((key) =>
-    key.objectTypes.includes('categorySample'),
-  )
-  const quantityKeys = schema.metadataKeys.filter((key) =>
-    key.objectTypes.includes('quantitySample'),
-  )
-  const quantityGlobalKeys = quantityKeys.filter(
-    (key) => key.identifiers.length === 0,
-  )
-  const quantitySpecificKeys = quantityKeys.filter(
-    (key) => key.identifiers.length > 0,
-  )
-  const workoutKeys = schema.metadataKeys.filter((key) =>
-    key.objectTypes.includes('workout'),
-  )
-  const workoutEventKeys = schema.metadataKeys.filter((key) =>
-    key.objectTypes.includes('workoutEvent'),
-  )
+  const lines = schema.metadataKeys
+    .map((key) => `// ${valueKindToSwiftExpression(key)}`)
+    .join('\n')
 
-  const dedupeByRawKey = (keys: readonly MetadataKeySchema[]) =>
-    unique(keys.map((key) => key.rawKey)).map((rawKey) => {
-      const key = keys.find((entry) => entry.rawKey === rawKey)
-      if (key == null) {
-        throw new Error(`Missing metadata key for raw key ${rawKey}`)
-      }
-      return key
-    })
-
-  return `// AUTO-GENERATED FILE. DO NOT EDIT.\nimport Foundation\nimport HealthKit\nimport NitroModules\n\nfunc hasKnownTypedMetadata(_ values: [Any?]) -> Bool {\n  values.contains { $0 != nil }\n}\n\nfunc metadataString(_ metadata: [String: Any]?, key: String) -> String? {\n  metadata?[key] as? String\n}\n\nfunc metadataBool(_ metadata: [String: Any]?, key: String) -> Bool? {\n  metadata?[key] as? Bool\n}\n\nfunc metadataNumber(_ metadata: [String: Any]?, key: String) -> Double? {\n  if let value = metadata?[key] as? NSNumber {\n    return value.doubleValue\n  }\n  return metadata?[key] as? Double\n}\n\nfunc metadataQuantity(_ metadata: [String: Any]?, key: String) -> Quantity? {\n  serializeUnknownQuantityTyped(quantity: metadata?[key] as? HKQuantity)\n}\n\nfunc metadataEnum<T: RawRepresentable>(_ metadata: [String: Any]?, key: String, type: T.Type) -> T?\nwhere T.RawValue == Int32 {\n  guard let value = metadata?[key] as? NSNumber else {\n    return nil\n  }\n  return T(rawValue: value.int32Value)\n}\n\n${renderMetadataSwiftStruct(
-    'CategoryTypedMetadata',
-    dedupeByRawKey([...categoryKeys, ...sampleKeys, ...commonKeys]),
-  )}\n\n${renderMetadataSwiftStruct(
-    'QuantityTypedMetadata',
-    dedupeByRawKey([
-      ...quantityGlobalKeys,
-      ...quantitySpecificKeys,
-      ...sampleKeys,
-      ...commonKeys,
-    ]),
-  )}\n\n${renderMetadataSwiftStruct(
-    'WorkoutTypedMetadata',
-    dedupeByRawKey([...workoutKeys, ...sampleKeys, ...commonKeys]),
-  )}\n\n${renderMetadataSwiftStruct(
-    'WorkoutEventTypedMetadata',
-    dedupeByRawKey(workoutEventKeys),
-  )}\n`
+  return `// AUTO-GENERATED FILE. DO NOT EDIT.\n// This file is a schema-backed snapshot used for SDK verification.\n// Runtime metadata is read from the raw metadata map instead of dedicated Swift structs.\n\nimport Foundation\n\n${lines}\n`
 }

@@ -1,7 +1,6 @@
 import { strict as assert } from 'node:assert'
-import { readFileSync } from 'node:fs'
 import { buildHealthkitSchemaFromSources } from './generate-healthkit'
-import { GENERATED_SWIFT_PATH, loadHealthkitSdkSources } from './healthkit-sdk'
+import { loadHealthkitSdkSources } from './healthkit-sdk'
 
 function findMetadataKey(
   schema: ReturnType<typeof buildHealthkitSchemaFromSources>,
@@ -18,7 +17,6 @@ function findMetadataKey(
 function main() {
   const sources = loadHealthkitSdkSources()
   const schema = buildHealthkitSchemaFromSources(sources)
-  const generatedSwift = readFileSync(GENERATED_SWIFT_PATH, 'utf8')
 
   const sleepAnalysis = schema.categoryIdentifiers.find(
     (identifier) => identifier.name === 'HKCategoryTypeIdentifierSleepAnalysis',
@@ -68,30 +66,71 @@ function main() {
   assert.equal(heartRateMotionContext.enumName, 'HeartRateMotionContext')
   assert.ok(heartRateMotionContext.objectTypes.includes('quantitySample'))
 
-  assert.ok(
-    generatedSwift.includes(
-      'HKSwimmingStrokeStyle: metadataEnum(metadata, key: "HKSwimmingStrokeStyle", type: SwimmingStrokeStyle.self)',
-    ),
-    'Generated Swift should use enum serialization for HKSwimmingStrokeStyle',
+  const heartRateEventThreshold = findMetadataKey(
+    schema,
+    'HKMetadataKeyHeartRateEventThreshold',
   )
+  assert.equal(heartRateEventThreshold.tsType, 'Quantity')
   assert.ok(
-    generatedSwift.includes(
-      'HKWeatherCondition: serializeWeatherCondition(metadata?["HKWeatherCondition"] as? HKWeatherCondition)',
+    heartRateEventThreshold.identifiers.includes(
+      'HKCategoryTypeIdentifierHighHeartRateEvent',
     ),
-    'Generated Swift should use WeatherCondition serializer',
   )
+
+  const audioExposureLevel = findMetadataKey(
+    schema,
+    'HKMetadataKeyAudioExposureLevel',
+  )
+  assert.equal(audioExposureLevel.tsType, 'Quantity')
+  assert.ok(audioExposureLevel.objectTypes.includes('categorySample'))
+
+  const appleDeviceCalibrated = findMetadataKey(
+    schema,
+    'HKMetadataKeyAppleDeviceCalibrated',
+  )
+  assert.equal(appleDeviceCalibrated.tsType, 'boolean')
+  assert.ok(appleDeviceCalibrated.objectTypes.includes('sample'))
+
+  const vo2MaxValue = findMetadataKey(schema, 'HKMetadataKeyVO2MaxValue')
+  assert.equal(vo2MaxValue.tsType, 'Quantity')
   assert.ok(
-    generatedSwift.includes(
-      'HKWeatherTemperature: metadataQuantity(metadata, key: "HKWeatherTemperature")',
+    vo2MaxValue.identifiers.includes(
+      'HKCategoryTypeIdentifierLowCardioFitnessEvent',
     ),
-    'Generated Swift should use quantity serialization for HKWeatherTemperature',
   )
-  assert.ok(
-    generatedSwift.includes(
-      'HKWasUserEntered: metadataBool(metadata, key: "HKWasUserEntered")',
-    ),
-    'Generated Swift should use bool serialization for HKWasUserEntered',
+
+  const lowCardioFitnessEventThreshold = findMetadataKey(
+    schema,
+    'HKMetadataKeyLowCardioFitnessEventThreshold',
   )
+  assert.equal(lowCardioFitnessEventThreshold.tsType, 'Quantity')
+
+  const earliestEstimateDate = findMetadataKey(
+    schema,
+    'HKMetadataKeyDateOfEarliestDataUsedForEstimate',
+  )
+  assert.equal(earliestEstimateDate.tsType, 'string')
+
+  const quantityClampedToLowerBound = findMetadataKey(
+    schema,
+    'HKMetadataKeyQuantityClampedToLowerBound',
+  )
+  assert.equal(quantityClampedToLowerBound.tsType, 'boolean')
+
+  const quantityClampedToUpperBound = findMetadataKey(
+    schema,
+    'HKMetadataKeyQuantityClampedToUpperBound',
+  )
+  assert.equal(quantityClampedToUpperBound.tsType, 'boolean')
+
+  const glassesPrescriptionDescription = findMetadataKey(
+    schema,
+    'HKMetadataKeyGlassesPrescriptionDescription',
+  )
+  assert.equal(glassesPrescriptionDescription.tsType, 'string')
+
+  const headphoneGain = findMetadataKey(schema, 'HKMetadataKeyHeadphoneGain')
+  assert.equal(headphoneGain.tsType, 'Quantity')
 
   process.stdout.write(
     `Verified HealthKit SDK-backed schema invariants using ${sources.sdkPath}\n`,

@@ -2916,6 +2916,17 @@
       "identifiers": ["HKQuantityTypeIdentifierDistanceDownhillSnowSports"]
     },
     {
+      "keyConstant": "HKMetadataKeyAppleDeviceCalibrated",
+      "rawKey": "HKAppleDeviceCalibrated",
+      "ios": "14.0",
+      "expectedType": null,
+      "tsType": "boolean",
+      "valueKind": "boolean",
+      "enumName": null,
+      "objectTypes": ["sample"],
+      "identifiers": []
+    },
+    {
       "keyConstant": "HKMetadataKeyAppleECGAlgorithmVersion",
       "rawKey": "HKAppleECGAlgorithmVersion",
       "ios": "14.0",
@@ -2958,6 +2969,21 @@
       "enumName": null,
       "objectTypes": ["sample"],
       "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyAudioExposureLevel",
+      "rawKey": "HKAudioExposureLevel",
+      "ios": "13.0",
+      "expectedType": null,
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["categorySample"],
+      "identifiers": [
+        "HKCategoryTypeIdentifierAudioExposureEvent",
+        "HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent",
+        "HKCategoryTypeIdentifierHeadphoneAudioExposureEvent"
+      ]
     },
     {
       "keyConstant": "HKMetadataKeyAverageMETs",
@@ -3048,6 +3074,17 @@
       "valueKind": "enum",
       "enumName": "CyclingFunctionalThresholdPowerTestType",
       "objectTypes": [],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyDateOfEarliestDataUsedForEstimate",
+      "rawKey": "HKDateOfEarliestDataUsedForEstimate",
+      "ios": "15.0",
+      "expectedType": null,
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": ["sample"],
       "identifiers": []
     },
     {
@@ -3161,6 +3198,17 @@
       "identifiers": []
     },
     {
+      "keyConstant": "HKMetadataKeyGlassesPrescriptionDescription",
+      "rawKey": "HKGlassesPrescriptionDescription",
+      "ios": "16.0",
+      "expectedType": null,
+      "tsType": "string",
+      "valueKind": "string",
+      "enumName": null,
+      "objectTypes": [],
+      "identifiers": []
+    },
+    {
       "keyConstant": "HKMetadataKeyGroupFitness",
       "rawKey": "HKGroupFitness",
       "ios": "8.0",
@@ -3170,6 +3218,34 @@
       "enumName": null,
       "objectTypes": ["workout"],
       "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyHeadphoneGain",
+      "rawKey": "HKHeadphoneGain",
+      "ios": "16.4",
+      "expectedType": null,
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["categorySample"],
+      "identifiers": [
+        "HKCategoryTypeIdentifierAudioExposureEvent",
+        "HKCategoryTypeIdentifierHeadphoneAudioExposureEvent"
+      ]
+    },
+    {
+      "keyConstant": "HKMetadataKeyHeartRateEventThreshold",
+      "rawKey": "HKHeartRateEventThreshold",
+      "ios": "12.2",
+      "expectedType": null,
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["categorySample"],
+      "identifiers": [
+        "HKCategoryTypeIdentifierHighHeartRateEvent",
+        "HKCategoryTypeIdentifierLowHeartRateEvent"
+      ]
     },
     {
       "keyConstant": "HKMetadataKeyHeartRateMotionContext",
@@ -3282,6 +3358,17 @@
       "identifiers": []
     },
     {
+      "keyConstant": "HKMetadataKeyLowCardioFitnessEventThreshold",
+      "rawKey": "HKLowCardioFitnessEventThreshold",
+      "ios": "14.3",
+      "expectedType": null,
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["categorySample"],
+      "identifiers": ["HKCategoryTypeIdentifierLowCardioFitnessEvent"]
+    },
+    {
       "keyConstant": "HKMetadataKeyMaximumLightIntensity",
       "rawKey": "HKMaximumLightIntensity",
       "ios": "17.0",
@@ -3323,6 +3410,28 @@
       "valueKind": "enum",
       "enumName": "PhysicalEffortEstimationType",
       "objectTypes": ["sample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyQuantityClampedToLowerBound",
+      "rawKey": "HKQuantityClampedToLowerBound",
+      "ios": "16.0",
+      "expectedType": null,
+      "tsType": "boolean",
+      "valueKind": "boolean",
+      "enumName": null,
+      "objectTypes": ["quantitySample"],
+      "identifiers": []
+    },
+    {
+      "keyConstant": "HKMetadataKeyQuantityClampedToUpperBound",
+      "rawKey": "HKQuantityClampedToUpperBound",
+      "ios": "16.0",
+      "expectedType": null,
+      "tsType": "boolean",
+      "valueKind": "boolean",
+      "enumName": null,
+      "objectTypes": ["quantitySample"],
       "identifiers": []
     },
     {
@@ -3478,6 +3587,17 @@
       "enumName": "VO2MaxTestType",
       "objectTypes": ["quantitySample"],
       "identifiers": ["HKQuantityTypeIdentifierVO2Max"]
+    },
+    {
+      "keyConstant": "HKMetadataKeyVO2MaxValue",
+      "rawKey": "HKVO2MaxValue",
+      "ios": "14.3",
+      "expectedType": null,
+      "tsType": "Quantity",
+      "valueKind": "quantity",
+      "enumName": null,
+      "objectTypes": ["categorySample"],
+      "identifiers": ["HKCategoryTypeIdentifierLowCardioFitnessEvent"]
     },
     {
       "keyConstant": "HKMetadataKeyWasTakenInLab",

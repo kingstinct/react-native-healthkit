@@ -1024,8 +1024,10 @@ export interface KnownObjectMetadata {
 export interface KnownSampleMetadata extends KnownObjectMetadata {
   readonly HKActivityType?: WorkoutActivityType
   readonly HKAlgorithmVersion?: number
+  readonly HKAppleDeviceCalibrated?: boolean
   readonly HKAudioExposureDuration?: Quantity
   readonly HKBarometricPressure?: Quantity
+  readonly HKDateOfEarliestDataUsedForEstimate?: string
   readonly HKMaximumLightIntensity?: Quantity
   readonly HKPhysicalEffortEstimationType?: PhysicalEffortEstimationType
   readonly HKUserMotionContext?: UserMotionContext
@@ -1035,8 +1037,13 @@ export interface KnownSampleMetadata extends KnownObjectMetadata {
   readonly HKWeatherTemperature?: Quantity
 }
 export interface CategoryTypedMetadata extends KnownSampleMetadata {
+  readonly HKAudioExposureLevel?: Quantity
+  readonly HKHeadphoneGain?: Quantity
+  readonly HKHeartRateEventThreshold?: Quantity
+  readonly HKLowCardioFitnessEventThreshold?: Quantity
   readonly HKMenstrualCycleStart?: boolean
   readonly HKSexualActivityProtectionUsed?: boolean
+  readonly HKVO2MaxValue?: Quantity
 }
 export interface QuantityTypedMetadata extends KnownSampleMetadata {
   readonly HKHeartRateMotionContext?: HeartRateMotionContext
@@ -1045,6 +1052,8 @@ export interface QuantityTypedMetadata extends KnownSampleMetadata {
   readonly HKHeartRateRecoveryMaxObservedRecoveryHeartRate?: Quantity
   readonly HKHeartRateRecoveryTestType?: HeartRateRecoveryTestType
   readonly HKHeartRateSensorLocation?: HeartRateSensorLocation
+  readonly HKQuantityClampedToLowerBound?: boolean
+  readonly HKQuantityClampedToUpperBound?: boolean
   readonly HKSessionEstimate?: Quantity
   readonly HKBloodGlucoseMealTime?: BloodGlucoseMealTime
   readonly HKBodyTemperatureSensorLocation?: BodyTemperatureSensorLocation
@@ -1078,6 +1087,30 @@ export interface WorkoutEventTypedMetadata {
   readonly HKSwimmingStrokeStyle?: SwimmingStrokeStyle
 }
 export interface CategorySpecificMetadataByIdentifierMap {
+  readonly HKCategoryTypeIdentifierAudioExposureEvent: Pick<
+    CategoryTypedMetadata,
+    'HKAudioExposureLevel' | 'HKHeadphoneGain'
+  >
+  readonly HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent: Pick<
+    CategoryTypedMetadata,
+    'HKAudioExposureLevel'
+  >
+  readonly HKCategoryTypeIdentifierHeadphoneAudioExposureEvent: Pick<
+    CategoryTypedMetadata,
+    'HKAudioExposureLevel' | 'HKHeadphoneGain'
+  >
+  readonly HKCategoryTypeIdentifierHighHeartRateEvent: Pick<
+    CategoryTypedMetadata,
+    'HKHeartRateEventThreshold'
+  >
+  readonly HKCategoryTypeIdentifierLowCardioFitnessEvent: Pick<
+    CategoryTypedMetadata,
+    'HKLowCardioFitnessEventThreshold' | 'HKVO2MaxValue'
+  >
+  readonly HKCategoryTypeIdentifierLowHeartRateEvent: Pick<
+    CategoryTypedMetadata,
+    'HKHeartRateEventThreshold'
+  >
   readonly HKCategoryTypeIdentifierMenstrualFlow: Pick<
     CategoryTypedMetadata,
     'HKMenstrualCycleStart'
@@ -1126,6 +1159,8 @@ export type QuantityTypedMetadataForIdentifierGenerated<
     | 'HKHeartRateRecoveryMaxObservedRecoveryHeartRate'
     | 'HKHeartRateRecoveryTestType'
     | 'HKHeartRateSensorLocation'
+    | 'HKQuantityClampedToLowerBound'
+    | 'HKQuantityClampedToUpperBound'
     | 'HKSessionEstimate'
   > &
   (T extends keyof QuantitySpecificMetadataByIdentifierMap

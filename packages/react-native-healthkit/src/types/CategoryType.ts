@@ -24,7 +24,12 @@ import {
   CategoryValueVaginalBleeding,
 } from '../generated/healthkit.generated'
 import type { CategoryTypeIdentifier } from './CategoryTypeIdentifier'
-import type { BaseSample, DeletedSample, GenericMetadata } from './Shared'
+import type {
+  BaseSample,
+  DeletedSample,
+  GenericMetadata,
+  MetadataWithUnknown,
+} from './Shared'
 import type { SourceRevision } from './Source'
 
 export {
@@ -119,7 +124,6 @@ export interface CategorySamplesWithAnchorResponse {
 export interface CategorySample extends BaseSample {
   readonly categoryType: CategoryTypeIdentifier
   readonly value: CategoryValueForIdentifier
-  readonly typedMetadata?: CategoryTypedMetadata
 }
 
 export interface CategorySamplesWithAnchorResponseTyped<
@@ -135,14 +139,10 @@ export type MetadataForCategoryIdentifier<
 > = GenericMetadata & CategoryTypedMetadataForIdentifierGenerated<T>
 
 export interface CategorySampleTyped<T extends CategoryTypeIdentifier>
-  extends Omit<
-    CategorySample,
-    'categoryType' | 'value' | 'typedMetadata' | 'metadata'
-  > {
+  extends Omit<CategorySample, 'categoryType' | 'value' | 'metadata'> {
   readonly categoryType: T
   readonly value: CategoryValueForIdentifier<T>
   readonly metadata: MetadataForCategoryIdentifier<T>
-  readonly typedMetadata?: MetadataForCategoryIdentifier<T>
 
   readonly metadataSexualActivityProtectionUsed?: boolean
   readonly metadataMenstrualCycleStart?: boolean

@@ -59,8 +59,6 @@
       "!**/lib",
       "!**/.expo",
       "!**/ios",
-      "!packages/react-native-healthkit/scripts/swift-emitter/.build",
-      "!packages/react-native-healthkit/scripts/swift-emitter/.swiftpm",
       "!.vscode/*",
       "!.claude/*"
     ]

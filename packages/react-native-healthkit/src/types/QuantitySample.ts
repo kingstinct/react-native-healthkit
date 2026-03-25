@@ -5,7 +5,7 @@ import type {
 } from '../generated/healthkit.generated'
 import type { UnitForIdentifier } from './QuantityType'
 import type { QuantityTypeIdentifier } from './QuantityTypeIdentifier'
-import type { BaseSample } from './Shared'
+import type { BaseSample, MetadataWithUnknown } from './Shared'
 import type { SourceRevision } from './Source'
 
 /**
@@ -15,18 +15,17 @@ export interface QuantitySample extends BaseSample {
   readonly quantityType: QuantityTypeIdentifier
   readonly quantity: number
   readonly unit: string
-  readonly typedMetadata?: QuantityTypedMetadata
 }
 
-export type QuantityTypedMetadataForIdentifier<
+export type MetadataForQuantityIdentifier<
   T extends QuantityTypeIdentifier = QuantityTypeIdentifier,
 > = QuantityTypedMetadataForIdentifierGenerated<T>
 
 export interface QuantitySampleTyped<T extends QuantityTypeIdentifier>
-  extends Omit<QuantitySample, 'quantityType' | 'unit' | 'typedMetadata'> {
+  extends Omit<QuantitySample, 'quantityType' | 'unit' | 'metadata'> {
   readonly quantityType: T
   readonly unit: UnitForIdentifier<T>
-  readonly typedMetadata?: QuantityTypedMetadataForIdentifier<T>
+  readonly metadata: MetadataWithUnknown<MetadataForQuantityIdentifier<T>>
 }
 
 export interface QuantitySampleForSaving {

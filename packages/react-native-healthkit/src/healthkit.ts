@@ -22,7 +22,10 @@ import {
   FitzpatrickSkinType,
   WheelchairUse,
 } from './types/Characteristics'
-import type { QuantitySampleTyped } from './types/QuantitySample'
+import type {
+  MetadataForQuantityIdentifier,
+  QuantitySampleTyped,
+} from './types/QuantitySample'
 import type { QuantitySamplesWithAnchorResponseTyped } from './types/QuantityType'
 import type {
   QuantityTypeIdentifier,
@@ -208,7 +211,7 @@ export function saveQuantitySample<T extends QuantityTypeIdentifierWriteable>(
   _value: number,
   _start: Date,
   _end: Date,
-  _metadata?: object,
+  _metadata?: MetadataForQuantityIdentifier<T>,
 ): Promise<QuantitySampleTyped<T> | undefined> {
   if (Platform.OS !== 'ios' && !hasWarned) {
     console.warn(notAvailableError)
@@ -249,6 +252,7 @@ export function queryCategorySamplesWithAnchor<
     newAnchor: '',
   })
 }
+
 export function saveCategorySample<T extends CategoryTypeIdentifier>(
   _identifier: T,
   _value: number,

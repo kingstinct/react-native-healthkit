@@ -1,5 +1,6 @@
 import type { AnyMap, HybridObject } from 'react-native-nitro-modules'
 import type {
+  MetadataForQuantityIdentifier,
   QuantitySample,
   QuantitySampleTyped,
 } from '../types/QuantitySample'
@@ -92,7 +93,7 @@ export interface QuantityTypeModuleTyped {
     value: number,
     start: Date,
     end: Date,
-    metadata?: AnyMap,
+    metadata?: MetadataForQuantityIdentifier<T>,
   ): Promise<QuantitySampleTyped<T> | undefined>
 
   queryQuantitySamples<T extends QuantityTypeIdentifier>(

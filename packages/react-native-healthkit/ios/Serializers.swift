@@ -9,6 +9,12 @@ import Foundation
 import HealthKit
 import NitroModules
 
+private let metadataDateFormatter: ISO8601DateFormatter = {
+  let formatter = ISO8601DateFormatter()
+  formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+  return formatter
+}()
+
 func serializeQuantityTyped(unit: HKUnit, quantityNullable: HKQuantity?) -> Quantity? {
   guard let q = quantityNullable else {
     return nil
@@ -55,7 +61,6 @@ func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) throws -> Q
       quantityType: quantityType,
       quantity: sample.quantity.doubleValue(for: unit),
       unit: unit.unitString,
-      typedMetadata: serializeQuantityTypedMetadata(metadata: sample.metadata),
       sampleType: serializeSampleType(sample.sampleType),
       startDate: sample.startDate,
       endDate: sample.endDate,
@@ -113,7 +118,6 @@ func serializeCategorySample(sample: HKCategorySample) -> CategorySample {
   return CategorySample(
     categoryType: CategoryTypeIdentifier(fromString: sample.categoryType.identifier)!,
     value: Double(sample.value),
-    typedMetadata: serializeCategoryTypedMetadata(metadata: sample.metadata),
     sampleType: serializeSampleType(sample.sampleType),
     startDate: sample.startDate,
     endDate: sample.endDate,
@@ -184,6 +188,16 @@ func serializeUnknownQuantityTyped(quantity: HKQuantity?) -> Quantity? {
     return serializeQuantityTyped(unit: HKUnit.count(), quantity: quantity)
   }
 
+  let countPerMinuteUnit = HKUnit(from: "count/min")
+  if quantity.is(compatibleWith: countPerMinuteUnit) {
+    return serializeQuantityTyped(unit: countPerMinuteUnit, quantity: quantity)
+  }
+
+  let countPerSecondUnit = HKUnit(from: "count/s")
+  if quantity.is(compatibleWith: countPerSecondUnit) {
+    return serializeQuantityTyped(unit: countPerSecondUnit, quantity: quantity)
+  }
+
   if quantity.is(compatibleWith: HKUnit.meter()) {
     return serializeQuantityTyped(unit: HKUnit.meter(), quantity: quantity)
   }
@@ -212,12 +226,25 @@ func serializeUnknownQuantityTyped(quantity: HKQuantity?) -> Quantity? {
     return serializeQuantityTyped(unit: HKUnit.hertz(), quantity: quantity)
   }
 
+  let decibelAWeightedSoundPressureLevelUnit = HKUnit(from: "dBASPL")
+  if quantity.is(compatibleWith: decibelAWeightedSoundPressureLevelUnit) {
+    return serializeQuantityTyped(
+      unit: decibelAWeightedSoundPressureLevelUnit,
+      quantity: quantity
+    )
+  }
+
   if quantity.is(compatibleWith: SpeedUnit) {
     return serializeQuantityTyped(unit: SpeedUnit, quantity: quantity)
   }
 
   if quantity.is(compatibleWith: METUnit) {
     return serializeQuantityTyped(unit: METUnit, quantity: quantity)
+  }
+
+  let vo2MaxUnit = HKUnit(from: "ml/(kg*min)")
+  if quantity.is(compatibleWith: vo2MaxUnit) {
+    return serializeQuantityTyped(unit: vo2MaxUnit, quantity: quantity)
   }
 
   if quantity.is(compatibleWith: HKUnit.internationalUnit()) {
@@ -283,6 +310,13 @@ func serializeMetadata(_ metadata: [String: Any]?) -> AnyMap {
 
       if let double = item.value as? Double {
         serialized.setDouble(key: item.key, value: double)
+      }
+
+      if let date = item.value as? Date {
+        serialized.setString(
+          key: item.key,
+          value: metadataDateFormatter.string(from: date)
+        )
       }
 
       if let quantity = item.value as? HKQuantity {

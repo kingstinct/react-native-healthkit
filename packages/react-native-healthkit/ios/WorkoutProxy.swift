@@ -222,7 +222,6 @@ class WorkoutProxy: HybridWorkoutProxySpec {
       totalFlightsClimbed: self.totalFlightsClimbed,
       events: self.events,
       activities: self.activities,
-      typedMetadata: self.typedMetadata,
       metadataAverageMETs: self.metadataAverageMETs,
       metadataElevationAscended: self.metadataElevationAscended,
       metadataElevationDescended: self.metadataElevationDescended,
@@ -396,11 +395,6 @@ class WorkoutProxy: HybridWorkoutProxySpec {
       workout.metadata?[HKMetadataKeyHeartRateMotionContext] as? HKHeartRateMotionContext)
   }
 
-  // Workout-specific metadata
-  var typedMetadata: WorkoutTypedMetadata? {
-    return serializeWorkoutTypedMetadata(metadata: workout.metadata)
-  }
-
   var metadataAverageMETs: Quantity? {
     return serializeUnknownQuantityTyped(
       quantity: workout.metadata?[HKMetadataKeyAverageMETs] as? HKQuantity)
@@ -504,8 +498,7 @@ class WorkoutProxy: HybridWorkoutProxySpec {
             type: type,
             startDate: event.dateInterval.start,
             endDate: event.dateInterval.end,
-            metadata: serializeMetadata(event.metadata),
-            typedMetadata: serializeWorkoutEventTypedMetadata(metadata: event.metadata)
+            metadata: serializeMetadata(event.metadata)
           )
         }
         warnWithPrefix(

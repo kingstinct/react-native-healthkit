@@ -27,6 +27,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
+.build
 
 # Android/IJ
 #
@@ -77,8 +78,6 @@ android/keystores/debug.keystore
 lib/
 
 packages/react-native-healthkit/nitrogen/generated
-packages/react-native-healthkit/scripts/swift-emitter/.build
-packages/react-native-healthkit/scripts/swift-emitter/.swiftpm
 apps/example/android
 
 tsconfig.tsbuildinfo

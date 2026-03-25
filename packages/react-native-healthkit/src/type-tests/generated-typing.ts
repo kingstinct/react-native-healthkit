@@ -1,11 +1,12 @@
 import type {
   BloodGlucoseUnit,
+  CategorySampleTyped,
   CategoryTypeIdentifier,
   CategoryValueForIdentifier,
   CategoryValueSleepAnalysis,
   HeartRateMotionContext,
+  Quantity,
   QuantitySampleTyped,
-  WorkoutSample,
 } from '../types'
 
 type Equal<A, B> =
@@ -28,26 +29,38 @@ type _newCategoryIdentifierFromSdkIsPresent = Assert<
     : false
 >
 
-type _workoutMetadataIncludesBrandName = Assert<
+type _heartRateMetadataNarrowsToEnum = Assert<
   Equal<
-    NonNullable<WorkoutSample['typedMetadata']>['HKWorkoutBrandName'],
-    string | undefined
+    QuantitySampleTyped<'HKQuantityTypeIdentifierHeartRate'>['metadata']['HKHeartRateMotionContext'],
+    HeartRateMotionContext | undefined
   >
 >
 
-type _workoutMetadataIncludesFitnessPlusFlag = Assert<
+type _categoryMetadataIncludesKnownSampleFields = Assert<
   Equal<
-    NonNullable<WorkoutSample['typedMetadata']>['HKAppleFitnessPlusSession'],
+    CategorySampleTyped<'HKCategoryTypeIdentifierSleepAnalysis'>['metadata']['HKWasUserEntered'],
     boolean | undefined
   >
 >
 
-type _heartRateMetadataNarrowsToEnum = Assert<
+type _heartRateEventMetadataIsTypedOnMetadata = Assert<
   Equal<
-    NonNullable<
-      QuantitySampleTyped<'HKQuantityTypeIdentifierHeartRate'>['typedMetadata']
-    >['HKHeartRateMotionContext'],
-    HeartRateMotionContext | undefined
+    QuantitySampleTyped<'HKQuantityTypeIdentifierHeartRate'>['metadata']['HKAppleDeviceCalibrated'],
+    boolean | undefined
+  >
+>
+
+type _quantityMetadataIncludesEstimateDate = Assert<
+  Equal<
+    QuantitySampleTyped<'HKQuantityTypeIdentifierVO2Max'>['metadata']['HKDateOfEarliestDataUsedForEstimate'],
+    string | undefined
+  >
+>
+
+type _heartRateEventThresholdMetadataIsTyped = Assert<
+  Equal<
+    CategorySampleTyped<'HKCategoryTypeIdentifierHighHeartRateEvent'>['metadata']['HKHeartRateEventThreshold'],
+    Quantity | undefined
   >
 >
 

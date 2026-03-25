@@ -23,10 +23,6 @@ export const GENERATED_SCHEMA_PATH = join(
   ROOT,
   'src/generated/healthkit-schema.json',
 )
-export const GENERATED_SWIFT_PATH = join(
-  ROOT,
-  'ios/generated/HealthkitGenerated.swift',
-)
 const IDENTIFIER_OVERRIDES_PATH = join(
   ROOT,
   'scripts/healthkit-schema/identifier-overrides.json',
@@ -133,7 +129,6 @@ export function writeGeneratedArtifacts(
   renderedTypescript: string,
 ) {
   mkdirSync(dirname(GENERATED_TS_PATH), { recursive: true })
-  mkdirSync(dirname(GENERATED_SWIFT_PATH), { recursive: true })
 
   writeFileSync(
     GENERATED_SCHEMA_PATH,

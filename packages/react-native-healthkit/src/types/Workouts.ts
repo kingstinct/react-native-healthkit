@@ -1,8 +1,4 @@
 import type { AnyMap } from 'react-native-nitro-modules'
-import type {
-  WorkoutEventTypedMetadata,
-  WorkoutTypedMetadata,
-} from '../generated/healthkit.generated'
 import {
   WorkoutActivityType,
   WorkoutEventType,
@@ -20,7 +16,6 @@ export interface WorkoutEvent {
   readonly startDate: Date
   readonly endDate: Date
   readonly metadata?: AnyMap
-  readonly typedMetadata?: WorkoutEventTypedMetadata
 }
 
 export interface WorkoutActivity {
@@ -120,7 +115,6 @@ export interface WorkoutSample extends BaseSample {
   readonly totalFlightsClimbed?: Quantity
   readonly events?: readonly WorkoutEvent[]
   readonly activities?: readonly WorkoutActivity[]
-  readonly typedMetadata?: WorkoutTypedMetadata
 
   readonly metadataAverageMETs?: Quantity
   readonly metadataElevationAscended?: Quantity

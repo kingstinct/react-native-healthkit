@@ -1,5 +1,8 @@
 import type { AnyMap } from 'react-native-nitro-modules'
-import type { KnownObjectMetadata } from '../generated/healthkit.generated'
+import type {
+  KnownObjectMetadata,
+  KnownSampleMetadata,
+} from '../generated/healthkit.generated'
 import type {
   CategoryTypeIdentifier,
   CategoryTypeIdentifierWriteable,
@@ -65,7 +68,9 @@ export type SampleTypeIdentifierWriteable =
   | typeof WorkoutRouteTypeIdentifier
   | typeof WorkoutTypeIdentifier
 
-export interface GenericMetadata extends KnownObjectMetadata {}
+export type MetadataWithUnknown<T extends object> = AnyMap & T
+export type GenericMetadata = AnyMap & KnownObjectMetadata
+export type SampleMetadata = AnyMap & KnownSampleMetadata
 
 export interface BaseObject {
   readonly uuid: string
