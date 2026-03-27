@@ -1,9 +1,10 @@
 import { QuantityTypes } from '../modules'
+import type { UnitForIdentifier } from '../types/QuantityType'
 import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 
 async function getMostRecentQuantitySample<T extends QuantityTypeIdentifier>(
   identifier: T,
-  unit?: string,
+  unit?: UnitForIdentifier<T>,
 ) {
   const samples = await QuantityTypes.queryQuantitySamples(identifier, {
     limit: 1,

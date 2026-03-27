@@ -2,14 +2,20 @@ import type {
   BloodGlucoseUnit,
   CategorySampleTyped,
   CategoryTypeIdentifier,
+  CategoryTypeIdentifierWriteable,
   CategoryValueForIdentifier,
   CategoryValueSleepAnalysis,
+  CorrelationSampleTyped,
   HeartRateMotionContext,
   Quantity,
   QuantitySampleTyped,
+  QueryOptionsWithAnchorAndUnit,
+  QueryOptionsWithSortOrderAndUnit,
+  StateOfMindSampleTyped,
+  StatisticsQueryOptions,
   SwimmingStrokeStyle,
-  WorkoutEvent,
-  WorkoutSample,
+  WorkoutEventTyped,
+  WorkoutSampleTyped,
 } from '../types'
 
 type Equal<A, B> =
@@ -74,13 +80,54 @@ type _bloodGlucoseUnitNarrows = Assert<
   >
 >
 
+type _quantityQueryOptionsUnitNarrows = Assert<
+  Equal<
+    QueryOptionsWithSortOrderAndUnit<BloodGlucoseUnit>['unit'],
+    BloodGlucoseUnit | undefined
+  >
+>
+
+type _quantityAnchorQueryOptionsUnitNarrows = Assert<
+  Equal<
+    QueryOptionsWithAnchorAndUnit<BloodGlucoseUnit>['unit'],
+    BloodGlucoseUnit | undefined
+  >
+>
+
+type _quantityStatisticsOptionsUnitNarrows = Assert<
+  Equal<
+    StatisticsQueryOptions<BloodGlucoseUnit>['unit'],
+    BloodGlucoseUnit | undefined
+  >
+>
+
+type _categorySaveIdentifierIsWriteableOnly = Assert<
+  'HKCategoryTypeIdentifierHighHeartRateEvent' extends CategoryTypeIdentifierWriteable
+    ? false
+    : true
+>
+
+type _stateOfMindMetadataIsTyped = Assert<
+  Equal<
+    StateOfMindSampleTyped['metadata']['HKWasUserEntered'],
+    boolean | undefined
+  >
+>
+
+type _correlationMetadataIsTyped = Assert<
+  Equal<CorrelationSampleTyped['metadata']['HKFoodType'], string | undefined>
+>
+
 type _workoutMetadataIsTypedOnMetadata = Assert<
-  Equal<WorkoutSample['metadata']['HKWorkoutBrandName'], string | undefined>
+  Equal<
+    WorkoutSampleTyped['metadata']['HKWorkoutBrandName'],
+    string | undefined
+  >
 >
 
 type _workoutEventMetadataIsTypedOnMetadata = Assert<
   Equal<
-    NonNullable<WorkoutEvent['metadata']>['HKSwimmingStrokeStyle'],
+    NonNullable<WorkoutEventTyped['metadata']>['HKSwimmingStrokeStyle'],
     SwimmingStrokeStyle | undefined
   >
 >

@@ -1,4 +1,5 @@
-import type { BaseSample, DeletedSample } from './Shared'
+import type { KnownSampleMetadata } from '../generated/healthkit.generated'
+import type { BaseSample, DeletedSample, WithTypedMetadata } from './Shared'
 
 export enum StateOfMindValenceClassification {
   veryUnpleasant = 1,
@@ -23,8 +24,19 @@ export interface StateOfMindSample extends BaseSample {
   readonly labels: readonly StateOfMindLabel[]
 }
 
+export type StateOfMindSampleTyped = WithTypedMetadata<
+  StateOfMindSample,
+  KnownSampleMetadata
+>
+
 export interface StateOfMindSamplesWithAnchorResponse {
   readonly samples: readonly StateOfMindSample[]
+  readonly deletedSamples: readonly DeletedSample[]
+  readonly newAnchor: string
+}
+
+export interface StateOfMindSamplesWithAnchorResponseTyped {
+  readonly samples: readonly StateOfMindSampleTyped[]
   readonly deletedSamples: readonly DeletedSample[]
   readonly newAnchor: string
 }

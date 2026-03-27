@@ -1,4 +1,5 @@
 import type { AnyMap, HybridObject } from 'react-native-nitro-modules'
+import type { InterfaceAssertion } from '../types/InterfaceVerification'
 import type {
   MetadataForQuantityIdentifier,
   QuantitySample,
@@ -13,13 +14,17 @@ import type {
   QueryStatisticsResponseFromSingleSource,
   StatisticsOptions,
   StatisticsQueryOptions,
+  StatisticsQueryOptionsWithStringUnit,
+  UnitForIdentifier,
 } from '../types/QuantityType'
 import type {
   QuantityTypeIdentifier,
   QuantityTypeIdentifierWriteable,
 } from '../types/QuantityTypeIdentifier'
 import type {
+  QueryOptionsWithAnchorAndStringUnit,
   QueryOptionsWithAnchorAndUnit,
+  QueryOptionsWithSortOrderAndStringUnit,
   QueryOptionsWithSortOrderAndUnit,
 } from '../types/QueryOptions'
 
@@ -42,13 +47,13 @@ export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
 
   queryQuantitySamples(
     identifier: QuantityTypeIdentifier,
-    options: QueryOptionsWithSortOrderAndUnit,
+    options: QueryOptionsWithSortOrderAndStringUnit,
   ): Promise<readonly QuantitySample[]>
 
   queryStatisticsForQuantity(
     identifier: QuantityTypeIdentifier,
     statistics: readonly StatisticsOptions[],
-    options?: StatisticsQueryOptions,
+    options?: StatisticsQueryOptionsWithStringUnit,
   ): Promise<QueryStatisticsResponse>
 
   queryStatisticsCollectionForQuantity(
@@ -56,13 +61,13 @@ export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
     statistics: readonly StatisticsOptions[],
     anchorDate: Date,
     intervalComponents: IntervalComponents,
-    options?: StatisticsQueryOptions,
+    options?: StatisticsQueryOptionsWithStringUnit,
   ): Promise<readonly QueryStatisticsResponse[]>
 
   queryStatisticsForQuantitySeparateBySource(
     identifier: QuantityTypeIdentifier,
     statistics: readonly StatisticsOptions[],
-    options?: StatisticsQueryOptions,
+    options?: StatisticsQueryOptionsWithStringUnit,
   ): Promise<QueryStatisticsResponseFromSingleSource[]>
 
   queryStatisticsCollectionForQuantitySeparateBySource(
@@ -70,26 +75,32 @@ export interface QuantityTypeModule extends HybridObject<{ ios: 'swift' }> {
     statistics: readonly StatisticsOptions[],
     anchorDate: Date,
     intervalComponents: IntervalComponents,
-    options?: StatisticsQueryOptions,
+    options?: StatisticsQueryOptionsWithStringUnit,
   ): Promise<readonly QueryStatisticsResponseFromSingleSource[]>
 
   queryQuantitySamplesWithAnchor(
     identifier: QuantityTypeIdentifier,
-    options: QueryOptionsWithAnchorAndUnit,
+    options: QueryOptionsWithAnchorAndStringUnit,
   ): Promise<QuantitySamplesWithAnchorResponse>
 }
 
+const _interfaceVerification: InterfaceAssertion<
+  QuantityTypeModule,
+  QuantityTypeModuleTyped,
+  keyof HybridObject<{ ios: 'swift' }>
+> = true
+
 export interface QuantityTypeModuleTyped {
-  isQuantityCompatibleWithUnit(
-    identifier: QuantityTypeIdentifier,
-    unit: string,
+  isQuantityCompatibleWithUnit<T extends QuantityTypeIdentifier>(
+    identifier: T,
+    unit: UnitForIdentifier<T>,
   ): boolean
 
   aggregationStyle(identifier: QuantityTypeIdentifier): AggregationStyle
 
   saveQuantitySample<T extends QuantityTypeIdentifierWriteable>(
     identifier: T,
-    unit: string,
+    unit: UnitForIdentifier<T>,
     value: number,
     start: Date,
     end: Date,
@@ -98,39 +109,41 @@ export interface QuantityTypeModuleTyped {
 
   queryQuantitySamples<T extends QuantityTypeIdentifier>(
     identifier: T,
-    options: QueryOptionsWithSortOrderAndUnit,
+    options: QueryOptionsWithSortOrderAndUnit<UnitForIdentifier<T>>,
   ): Promise<readonly QuantitySampleTyped<T>[]>
 
-  queryStatisticsForQuantity(
-    identifier: QuantityTypeIdentifier,
+  queryStatisticsForQuantity<T extends QuantityTypeIdentifier>(
+    identifier: T,
     statistics: readonly StatisticsOptions[],
-    options?: StatisticsQueryOptions,
+    options?: StatisticsQueryOptions<UnitForIdentifier<T>>,
   ): Promise<QueryStatisticsResponse>
 
-  queryStatisticsCollectionForQuantity(
-    identifier: QuantityTypeIdentifier,
+  queryStatisticsCollectionForQuantity<T extends QuantityTypeIdentifier>(
+    identifier: T,
     statistics: readonly StatisticsOptions[],
     anchorDate: Date,
     intervalComponents: IntervalComponents,
-    options?: StatisticsQueryOptions,
+    options?: StatisticsQueryOptions<UnitForIdentifier<T>>,
   ): Promise<readonly QueryStatisticsResponse[]>
 
-  queryStatisticsForQuantitySeparateBySource(
-    identifier: QuantityTypeIdentifier,
+  queryStatisticsForQuantitySeparateBySource<T extends QuantityTypeIdentifier>(
+    identifier: T,
     statistics: readonly StatisticsOptions[],
-    options?: StatisticsQueryOptions,
+    options?: StatisticsQueryOptions<UnitForIdentifier<T>>,
   ): Promise<QueryStatisticsResponseFromSingleSource[]>
 
-  queryStatisticsCollectionForQuantitySeparateBySource(
-    identifier: QuantityTypeIdentifier,
+  queryStatisticsCollectionForQuantitySeparateBySource<
+    T extends QuantityTypeIdentifier,
+  >(
+    identifier: T,
     statistics: readonly StatisticsOptions[],
     anchorDate: Date,
     intervalComponents: IntervalComponents,
-    options?: StatisticsQueryOptions,
+    options?: StatisticsQueryOptions<UnitForIdentifier<T>>,
   ): Promise<readonly QueryStatisticsResponseFromSingleSource[]>
 
   queryQuantitySamplesWithAnchor<T extends QuantityTypeIdentifier>(
     identifier: T,
-    options: QueryOptionsWithAnchorAndUnit,
+    options: QueryOptionsWithAnchorAndUnit<UnitForIdentifier<T>>,
   ): Promise<QuantitySamplesWithAnchorResponseTyped<T>>
 }

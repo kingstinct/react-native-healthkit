@@ -8,7 +8,10 @@ import type {
   CategoryValueForIdentifier,
   MetadataForCategoryIdentifier,
 } from '../types/CategoryType'
-import type { CategoryTypeIdentifier } from '../types/CategoryTypeIdentifier'
+import type {
+  CategoryTypeIdentifier,
+  CategoryTypeIdentifierWriteable,
+} from '../types/CategoryTypeIdentifier'
 import type { InterfaceAssertion } from '../types/InterfaceVerification'
 import type {
   QueryOptionsWithAnchor,
@@ -17,7 +20,7 @@ import type {
 
 export interface CategoryTypeModule extends HybridObject<{ ios: 'swift' }> {
   saveCategorySample(
-    identifier: CategoryTypeIdentifier,
+    identifier: CategoryTypeIdentifierWriteable,
     value: CategoryValueForIdentifier,
     startDate: Date,
     endDate: Date,
@@ -44,7 +47,7 @@ const _interfaceVerification: InterfaceAssertion<
 > = true
 
 export interface CategoryTypeModuleTyped {
-  saveCategorySample<T extends CategoryTypeIdentifier>(
+  saveCategorySample<T extends CategoryTypeIdentifierWriteable>(
     identifier: T,
     value: CategoryValueForIdentifier<T>,
     startDate: Date,

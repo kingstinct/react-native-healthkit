@@ -1,3 +1,4 @@
+import type { AnyMap } from 'react-native-nitro-modules'
 import type {
   WorkoutEventTypedMetadata,
   WorkoutTypedMetadata,
@@ -10,7 +11,11 @@ import type { WorkoutProxy } from '../specs/WorkoutProxy.nitro'
 import type { BaseSample, ComparisonPredicateOperator } from '../types'
 import type { Quantity } from './QuantityType'
 import type { FilterForSamplesBase } from './QueryOptions'
-import type { DeletedSample, MetadataWithUnknown } from './Shared'
+import type {
+  DeletedSample,
+  WithOptionalTypedMetadata,
+  WithTypedMetadata,
+} from './Shared'
 
 export { WorkoutActivityType, WorkoutEventType }
 
@@ -18,8 +23,13 @@ export interface WorkoutEvent {
   readonly type: WorkoutEventType
   readonly startDate: Date
   readonly endDate: Date
-  readonly metadata?: MetadataWithUnknown<WorkoutEventTypedMetadata>
+  readonly metadata?: AnyMap
 }
+
+export type WorkoutEventTyped = WithOptionalTypedMetadata<
+  WorkoutEvent,
+  WorkoutEventTypedMetadata
+>
 
 export interface WorkoutActivity {
   readonly startDate: Date
@@ -36,6 +46,12 @@ export interface WorkoutRoute {
 
 export interface QueryWorkoutSamplesWithAnchorResponse {
   readonly workouts: readonly WorkoutProxy[]
+  readonly deletedSamples: readonly DeletedSample[]
+  readonly newAnchor: string
+}
+
+export interface QueryWorkoutSamplesWithAnchorResponseTyped {
+  readonly workouts: readonly WorkoutProxyTyped[]
   readonly deletedSamples: readonly DeletedSample[]
   readonly newAnchor: string
 }
@@ -118,12 +134,20 @@ export interface WorkoutSample extends Omit<BaseSample, 'metadata'> {
   readonly totalFlightsClimbed?: Quantity
   readonly events?: readonly WorkoutEvent[]
   readonly activities?: readonly WorkoutActivity[]
-  readonly metadata: MetadataWithUnknown<WorkoutTypedMetadata>
-
-  readonly metadataAverageMETs?: Quantity
-  readonly metadataElevationAscended?: Quantity
-  readonly metadataElevationDescended?: Quantity
-  readonly metadataIndoorWorkout?: boolean
-  readonly metadataAverageSpeed?: Quantity
-  readonly metadataMaximumSpeed?: Quantity
+  readonly metadata: AnyMap
 }
+
+export type WorkoutSampleTyped = WithTypedMetadata<
+  Omit<WorkoutSample, 'events'> & {
+    readonly events?: readonly WorkoutEventTyped[]
+  },
+  WorkoutTypedMetadata
+>
+
+export type WorkoutProxyTyped = Omit<
+  WorkoutProxy,
+  keyof WorkoutSample | 'toJSON'
+> &
+  WorkoutSampleTyped & {
+    toJSON(key?: string): WorkoutSampleTyped
+  }

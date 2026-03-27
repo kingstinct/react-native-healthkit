@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import type { QuantitySampleTyped } from '../types/QuantitySample'
+import type { UnitForIdentifier } from '../types/QuantityType'
 import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 import getQuantitySampleById from '../utils/getQuantitySampleById'
 import useSubscribeToChanges from './useSubscribeToChanges'
@@ -12,7 +13,7 @@ export function useQuantitySampleById<T extends QuantityTypeIdentifier>(
   uuid: string,
   options: {
     /** The unit to use for the sample. */
-    unit?: string
+    unit?: UnitForIdentifier<T>
   } = {},
 ) {
   const [sample, setSample] = useState<QuantitySampleTyped<T>>()

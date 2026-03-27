@@ -71,10 +71,10 @@ func getPredicateForWorkoutBase(_ filter: FilterForWorkouts?) -> FilterForWorkou
     return FilterForWorkoutsBase(
       workoutActivityType: filter.workoutActivityType,
       duration: filter.duration,
-      sources: filter.sources,
-      uuid: filter.uuid,
-      uuids: filter.uuids,
       metadata: filter.metadata,
+      uuid: filter.uuid,
+      sources: filter.sources,
+      uuids: filter.uuids,
       date: filter.date,
     )
   }

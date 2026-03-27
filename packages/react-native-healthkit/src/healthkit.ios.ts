@@ -21,7 +21,31 @@ import {
   StateOfMind,
   Workouts,
 } from './modules'
+import type {
+  CorrelationSampleTyped,
+  QueryCorrelationSamplesWithAnchorResponseTyped,
+} from './types/CorrelationType'
+import type {
+  ElectrocardiogramSamplesWithAnchorResponseTyped,
+  ElectrocardiogramSampleTyped,
+} from './types/ElectrocardiogramSample'
+import type {
+  HeartbeatSeriesSamplesWithAnchorResponseTyped,
+  HeartbeatSeriesSampleTyped,
+} from './types/HeartbeatSeries'
+import type {
+  MedicationDoseEventsWithAnchorResponseTyped,
+  MedicationDoseEventTyped,
+} from './types/Medication'
 import type { QuantityTypeIdentifier } from './types/QuantityTypeIdentifier'
+import type {
+  StateOfMindSamplesWithAnchorResponseTyped,
+  StateOfMindSampleTyped,
+} from './types/StateOfMind'
+import type {
+  QueryWorkoutSamplesWithAnchorResponseTyped,
+  WorkoutProxyTyped,
+} from './types/Workouts'
 import getMostRecentCategorySample from './utils/getMostRecentCategorySample'
 import getMostRecentQuantitySample from './utils/getMostRecentQuantitySample'
 import getMostRecentWorkout from './utils/getMostRecentWorkout'
@@ -119,19 +143,47 @@ export const queryCategorySamples =
 export const queryCategorySamplesWithAnchor =
   CategoryTypes.queryCategorySamplesWithAnchor.bind(CategoryTypes)
 export const queryCorrelationSamples =
-  CorrelationTypes.queryCorrelationSamples.bind(CorrelationTypes)
+  CorrelationTypes.queryCorrelationSamples.bind(
+    CorrelationTypes,
+  ) as unknown as (
+    ...args: Parameters<typeof CorrelationTypes.queryCorrelationSamples>
+  ) => Promise<readonly CorrelationSampleTyped[]>
 export const queryCorrelationSamplesWithAnchor =
-  CorrelationTypes.queryCorrelationSamplesWithAnchor.bind(CorrelationTypes)
+  CorrelationTypes.queryCorrelationSamplesWithAnchor.bind(
+    CorrelationTypes,
+  ) as unknown as (
+    ...args: Parameters<
+      typeof CorrelationTypes.queryCorrelationSamplesWithAnchor
+    >
+  ) => Promise<QueryCorrelationSamplesWithAnchorResponseTyped>
 export const queryHeartbeatSeriesSamples =
-  HeartbeatSeries.queryHeartbeatSeriesSamples.bind(HeartbeatSeries)
+  HeartbeatSeries.queryHeartbeatSeriesSamples.bind(
+    HeartbeatSeries,
+  ) as unknown as (
+    ...args: Parameters<typeof HeartbeatSeries.queryHeartbeatSeriesSamples>
+  ) => Promise<readonly HeartbeatSeriesSampleTyped[]>
 export const queryHeartbeatSeriesSamplesWithAnchor =
-  HeartbeatSeries.queryHeartbeatSeriesSamplesWithAnchor.bind(HeartbeatSeries)
+  HeartbeatSeries.queryHeartbeatSeriesSamplesWithAnchor.bind(
+    HeartbeatSeries,
+  ) as unknown as (
+    ...args: Parameters<
+      typeof HeartbeatSeries.queryHeartbeatSeriesSamplesWithAnchor
+    >
+  ) => Promise<HeartbeatSeriesSamplesWithAnchorResponseTyped>
 export const queryElectrocardiogramSamples =
-  Electrocardiograms.queryElectrocardiogramSamples.bind(Electrocardiograms)
+  Electrocardiograms.queryElectrocardiogramSamples.bind(
+    Electrocardiograms,
+  ) as unknown as (
+    ...args: Parameters<typeof Electrocardiograms.queryElectrocardiogramSamples>
+  ) => Promise<readonly ElectrocardiogramSampleTyped[]>
 export const queryElectrocardiogramSamplesWithAnchor =
   Electrocardiograms.queryElectrocardiogramSamplesWithAnchor.bind(
     Electrocardiograms,
-  )
+  ) as unknown as (
+    ...args: Parameters<
+      typeof Electrocardiograms.queryElectrocardiogramSamplesWithAnchor
+    >
+  ) => Promise<ElectrocardiogramSamplesWithAnchorResponseTyped>
 export const queryQuantitySamples =
   QuantityTypes.queryQuantitySamples.bind(QuantityTypes)
 export const queryQuantitySamplesWithAnchor =
@@ -146,28 +198,50 @@ export const queryStatisticsCollectionForQuantitySeparateBySource =
   QuantityTypes.queryStatisticsCollectionForQuantitySeparateBySource.bind(
     QuantityTypes,
   )
-export const queryWorkoutSamples = Workouts.queryWorkoutSamples.bind(Workouts)
+export const queryWorkoutSamples = Workouts.queryWorkoutSamples.bind(
+  Workouts,
+) as unknown as (
+  ...args: Parameters<typeof Workouts.queryWorkoutSamples>
+) => Promise<readonly WorkoutProxyTyped[]>
 export const queryWorkoutSamplesWithAnchor =
-  Workouts.queryWorkoutSamplesWithAnchor.bind(Workouts)
+  Workouts.queryWorkoutSamplesWithAnchor.bind(Workouts) as unknown as (
+    ...args: Parameters<typeof Workouts.queryWorkoutSamplesWithAnchor>
+  ) => Promise<QueryWorkoutSamplesWithAnchorResponseTyped>
 export const querySources = Core.querySources.bind(Core)
 export const requestAuthorization = Core.requestAuthorization.bind(Core)
 export const deleteObjects = Core.deleteObjects.bind(Core)
 export const saveCategorySample =
   CategoryTypes.saveCategorySample.bind(CategoryTypes)
 export const saveCorrelationSample =
-  CorrelationTypes.saveCorrelationSample.bind(CorrelationTypes)
+  CorrelationTypes.saveCorrelationSample.bind(CorrelationTypes) as unknown as (
+    ...args: Parameters<typeof CorrelationTypes.saveCorrelationSample>
+  ) => Promise<CorrelationSampleTyped | undefined>
 export const saveQuantitySample =
   QuantityTypes.saveQuantitySample.bind(QuantityTypes)
-export const saveWorkoutSample = Workouts.saveWorkoutSample.bind(Workouts)
+export const saveWorkoutSample = Workouts.saveWorkoutSample.bind(
+  Workouts,
+) as unknown as (
+  ...args: Parameters<typeof Workouts.saveWorkoutSample>
+) => Promise<WorkoutProxyTyped>
 export const startWatchApp =
   Workouts.startWatchAppWithWorkoutConfiguration.bind(Workouts)
 export const isProtectedDataAvailable = Core.isProtectedDataAvailable.bind(Core)
-export const queryStateOfMindSamples =
-  StateOfMind.queryStateOfMindSamples.bind(StateOfMind)
+export const queryStateOfMindSamples = StateOfMind.queryStateOfMindSamples.bind(
+  StateOfMind,
+) as unknown as (
+  ...args: Parameters<typeof StateOfMind.queryStateOfMindSamples>
+) => Promise<readonly StateOfMindSampleTyped[]>
 export const queryStateOfMindSamplesWithAnchor =
-  StateOfMind.queryStateOfMindSamplesWithAnchor.bind(StateOfMind)
-export const saveStateOfMindSample =
-  StateOfMind.saveStateOfMindSample.bind(StateOfMind)
+  StateOfMind.queryStateOfMindSamplesWithAnchor.bind(
+    StateOfMind,
+  ) as unknown as (
+    ...args: Parameters<typeof StateOfMind.queryStateOfMindSamplesWithAnchor>
+  ) => Promise<StateOfMindSamplesWithAnchorResponseTyped>
+export const saveStateOfMindSample = StateOfMind.saveStateOfMindSample.bind(
+  StateOfMind,
+) as unknown as (
+  ...args: Parameters<typeof StateOfMind.saveStateOfMindSample>
+) => Promise<StateOfMindSampleTyped | undefined>
 export const isQuantityCompatibleWithUnit =
   QuantityTypes.isQuantityCompatibleWithUnit.bind(QuantityTypes)
 
@@ -181,10 +255,15 @@ export const requestMedicationsAuthorization =
   Medication.requestMedicationsAuthorization.bind(Medication)
 
 export const queryMedications = Medication.queryMedications.bind(Medication)
-export const queryMedicationEvents =
-  Medication.queryMedicationEvents.bind(Medication)
+export const queryMedicationEvents = Medication.queryMedicationEvents.bind(
+  Medication,
+) as unknown as (
+  ...args: Parameters<typeof Medication.queryMedicationEvents>
+) => Promise<readonly MedicationDoseEventTyped[]>
 export const queryMedicationEventsWithAnchor =
-  Medication.queryMedicationEventsWithAnchor.bind(Medication)
+  Medication.queryMedicationEventsWithAnchor.bind(Medication) as unknown as (
+    ...args: Parameters<typeof Medication.queryMedicationEventsWithAnchor>
+  ) => Promise<MedicationDoseEventsWithAnchorResponseTyped>
 
 export const currentAppSource = Core.currentAppSource.bind(Core)
 

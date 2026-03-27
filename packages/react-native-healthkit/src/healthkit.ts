@@ -16,7 +16,10 @@ import type {
   CategoryValueForIdentifier,
   MetadataForCategoryIdentifier,
 } from './types/CategoryType'
-import type { CategoryTypeIdentifier } from './types/CategoryTypeIdentifier'
+import type {
+  CategoryTypeIdentifier,
+  CategoryTypeIdentifierWriteable,
+} from './types/CategoryTypeIdentifier'
 import {
   BiologicalSex,
   BloodType,
@@ -27,7 +30,15 @@ import type {
   MetadataForQuantityIdentifier,
   QuantitySampleTyped,
 } from './types/QuantitySample'
-import type { QuantitySamplesWithAnchorResponseTyped } from './types/QuantityType'
+import type {
+  IntervalComponents,
+  QuantitySamplesWithAnchorResponseTyped,
+  QueryStatisticsResponse,
+  QueryStatisticsResponseFromSingleSource,
+  StatisticsOptions,
+  StatisticsQueryOptions,
+  UnitForIdentifier,
+} from './types/QuantityType'
 import type {
   QuantityTypeIdentifier,
   QuantityTypeIdentifierWriteable,
@@ -160,7 +171,7 @@ export const getWheelchairUse = UnavailableFnFromModule(
 // QuantityTypeModule functions
 export function queryQuantitySamples<T extends QuantityTypeIdentifier>(
   _identifier: T,
-  _options: QueryOptionsWithSortOrderAndUnit,
+  _options: QueryOptionsWithSortOrderAndUnit<UnitForIdentifier<T>>,
 ): Promise<readonly QuantitySampleTyped<T>[]> {
   if (Platform.OS !== 'ios' && !hasWarned) {
     console.warn(notAvailableError)
@@ -173,7 +184,7 @@ export function queryQuantitySamplesWithAnchor<
   T extends QuantityTypeIdentifier,
 >(
   _identifier: T,
-  _options: QueryOptionsWithAnchorAndUnit,
+  _options: QueryOptionsWithAnchorAndUnit<UnitForIdentifier<T>>,
 ): Promise<QuantitySamplesWithAnchorResponseTyped<T>> {
   if (Platform.OS !== 'ios' && !hasWarned) {
     console.warn(notAvailableError)
@@ -185,30 +196,66 @@ export function queryQuantitySamplesWithAnchor<
     newAnchor: '',
   })
 }
-export const queryStatisticsForQuantity = UnavailableFnFromModule(
-  'queryStatisticsForQuantity',
-  Promise.resolve({
+export function queryStatisticsForQuantity<T extends QuantityTypeIdentifier>(
+  _identifier: T,
+  _statistics: readonly StatisticsOptions[],
+  _options?: StatisticsQueryOptions<UnitForIdentifier<T>>,
+): Promise<QueryStatisticsResponse> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve({
     sources: [],
-  }),
-)
-export const queryStatisticsCollectionForQuantity = UnavailableFnFromModule(
-  'queryStatisticsCollectionForQuantity',
-  Promise.resolve([]),
-)
+  })
+}
+export function queryStatisticsCollectionForQuantity<
+  T extends QuantityTypeIdentifier,
+>(
+  _identifier: T,
+  _statistics: readonly StatisticsOptions[],
+  _anchorDate: Date,
+  _intervalComponents: IntervalComponents,
+  _options?: StatisticsQueryOptions<UnitForIdentifier<T>>,
+): Promise<readonly QueryStatisticsResponse[]> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve([])
+}
 
-export const queryStatisticsForQuantitySeparateBySource =
-  UnavailableFnFromModule(
-    'queryStatisticsForQuantitySeparateBySource',
-    Promise.resolve([]),
-  )
-export const queryStatisticsCollectionForQuantitySeparateBySource =
-  UnavailableFnFromModule(
-    'queryStatisticsCollectionForQuantitySeparateBySource',
-    Promise.resolve([]),
-  )
+export function queryStatisticsForQuantitySeparateBySource<
+  T extends QuantityTypeIdentifier,
+>(
+  _identifier: T,
+  _statistics: readonly StatisticsOptions[],
+  _options?: StatisticsQueryOptions<UnitForIdentifier<T>>,
+): Promise<QueryStatisticsResponseFromSingleSource[]> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve([])
+}
+export function queryStatisticsCollectionForQuantitySeparateBySource<
+  T extends QuantityTypeIdentifier,
+>(
+  _identifier: T,
+  _statistics: readonly StatisticsOptions[],
+  _anchorDate: Date,
+  _intervalComponents: IntervalComponents,
+  _options?: StatisticsQueryOptions<UnitForIdentifier<T>>,
+): Promise<readonly QueryStatisticsResponseFromSingleSource[]> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve([])
+}
 export function saveQuantitySample<T extends QuantityTypeIdentifierWriteable>(
   _identifier: T,
-  _unit: string,
+  _unit: UnitForIdentifier<T>,
   _value: number,
   _start: Date,
   _end: Date,
@@ -220,10 +267,16 @@ export function saveQuantitySample<T extends QuantityTypeIdentifierWriteable>(
   }
   return Promise.resolve(undefined)
 }
-export const isQuantityCompatibleWithUnit = UnavailableFnFromModule(
-  'isQuantityCompatibleWithUnit',
-  false,
-)
+export function isQuantityCompatibleWithUnit<T extends QuantityTypeIdentifier>(
+  _identifier: T,
+  _unit: UnitForIdentifier<T>,
+): boolean {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return false
+}
 
 // CategoryTypeModule functions
 export function queryCategorySamples<T extends CategoryTypeIdentifier>(
@@ -254,7 +307,7 @@ export function queryCategorySamplesWithAnchor<
   })
 }
 
-export function saveCategorySample<T extends CategoryTypeIdentifier>(
+export function saveCategorySample<T extends CategoryTypeIdentifierWriteable>(
   _identifier: T,
   _value: CategoryValueForIdentifier<T>,
   _startDate: Date,
@@ -370,7 +423,7 @@ export function getMostRecentCategorySample<T extends CategoryTypeIdentifier>(
 
 export function getMostRecentQuantitySample<T extends QuantityTypeIdentifier>(
   _identifier: T,
-  _unit?: string,
+  _unit?: UnitForIdentifier<T>,
 ): Promise<QuantitySampleTyped<T> | undefined> {
   if (Platform.OS !== 'ios' && !hasWarned) {
     console.warn(notAvailableError)
@@ -383,10 +436,15 @@ export const getMostRecentWorkout = UnavailableFnFromModule(
   // biome-ignore lint/suspicious/noExplicitAny: it works
   Promise.resolve(undefined as any as WorkoutProxy),
 )
-export const getPreferredUnit = UnavailableFnFromModule(
-  'getPreferredUnit',
-  Promise.resolve('count'),
-) // Defaulting to 'count'
+export function getPreferredUnit<T extends QuantityTypeIdentifier>(
+  _quantityType: T,
+): Promise<UnitForIdentifier<T>> {
+  if (Platform.OS !== 'ios' && !hasWarned) {
+    console.warn(notAvailableError)
+    hasWarned = true
+  }
+  return Promise.resolve('count' as UnitForIdentifier<T>)
+}
 
 // Hooks (from original export list)
 export function useMostRecentCategorySample<T extends CategoryTypeIdentifier>(
@@ -401,7 +459,7 @@ export function useMostRecentCategorySample<T extends CategoryTypeIdentifier>(
 
 export function useMostRecentQuantitySample<T extends QuantityTypeIdentifier>(
   _identifier: T,
-  _unit?: string,
+  _unit?: UnitForIdentifier<T>,
 ): QuantitySampleTyped<T> | undefined {
   if (Platform.OS !== 'ios' && !hasWarned) {
     console.warn(notAvailableError)

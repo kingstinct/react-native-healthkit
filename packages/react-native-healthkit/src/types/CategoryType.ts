@@ -132,14 +132,13 @@ export type MetadataForCategoryIdentifier<
   T extends CategoryTypeIdentifier = CategoryTypeIdentifier,
 > = GenericMetadata & CategoryTypedMetadataForIdentifierGenerated<T>
 
-export interface CategorySampleTyped<T extends CategoryTypeIdentifier>
-  extends Omit<CategorySample, 'categoryType' | 'value' | 'metadata'> {
+export type CategorySampleTyped<T extends CategoryTypeIdentifier> = Omit<
+  CategorySample,
+  'categoryType' | 'value' | 'metadata'
+> & {
   readonly categoryType: T
   readonly value: CategoryValueForIdentifier<T>
   readonly metadata: MetadataForCategoryIdentifier<T>
-
-  readonly metadataSexualActivityProtectionUsed?: boolean
-  readonly metadataMenstrualCycleStart?: boolean
 }
 
 export type CategoryValueForIdentifier<

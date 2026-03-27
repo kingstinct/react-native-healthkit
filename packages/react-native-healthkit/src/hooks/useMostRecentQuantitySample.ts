@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import type { QuantitySampleTyped } from '../types/QuantitySample'
+import type { UnitForIdentifier } from '../types/QuantityType'
 import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 import getMostRecentQuantitySample from '../utils/getMostRecentQuantitySample'
 import useSubscribeToChanges from './useSubscribeToChanges'
@@ -9,7 +10,7 @@ import useSubscribeToChanges from './useSubscribeToChanges'
  */
 export function useMostRecentQuantitySample<T extends QuantityTypeIdentifier>(
   identifier: T,
-  unit?: string,
+  unit?: UnitForIdentifier<T>,
 ) {
   const [lastSample, setLastSample] = useState<QuantitySampleTyped<T>>()
 

@@ -68,10 +68,13 @@ export interface IntervalComponents {
   readonly year?: number
 }
 
-export interface StatisticsQueryOptions {
+export interface StatisticsQueryOptions<TUnit extends string = string> {
   filter?: FilterForSamples
-  unit?: string
+  unit?: TUnit
 }
+
+export interface StatisticsQueryOptionsWithStringUnit
+  extends StatisticsQueryOptions<string> {}
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkstatisticsoptions Apple Docs }

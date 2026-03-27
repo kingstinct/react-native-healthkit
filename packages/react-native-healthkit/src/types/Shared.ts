@@ -22,16 +22,10 @@ import type {
 import type { CorrelationTypeIdentifier } from './CorrelationType'
 import type { Device } from './Device'
 import type {
-  HeartRateMotionContext,
-  InsulinDeliveryReason,
-  Quantity,
-} from './QuantityType'
-import type {
   QuantityTypeIdentifier,
   QuantityTypeIdentifierWriteable,
 } from './QuantityTypeIdentifier'
 import type { SourceRevision } from './Source'
-import type { WeatherCondition } from './WeatherCondition'
 
 export interface DeletedSample {
   readonly uuid: string
@@ -70,30 +64,28 @@ export type SampleTypeIdentifierWriteable =
 
 export type MetadataWithUnknown<T extends object> = AnyMap & T
 export type GenericMetadata = AnyMap & KnownObjectMetadata
-export type SampleMetadata = AnyMap & KnownSampleMetadata
+export type WithTypedMetadata<T, TMetadata extends object> = Omit<
+  T,
+  'metadata'
+> & {
+  readonly metadata: AnyMap & TMetadata
+}
+export type WithOptionalTypedMetadata<T, TMetadata extends object> = Omit<
+  T,
+  'metadata'
+> & {
+  readonly metadata?: AnyMap & TMetadata
+}
+export type BaseObjectTyped<TMetadata extends object = KnownObjectMetadata> =
+  WithTypedMetadata<BaseObject, TMetadata>
+export type BaseSampleTyped<TMetadata extends object = KnownSampleMetadata> =
+  WithTypedMetadata<BaseSample, TMetadata>
 
 export interface BaseObject {
   readonly uuid: string
   readonly sourceRevision: SourceRevision
   readonly device?: Device
   readonly metadata: AnyMap
-
-  // metadata
-  readonly metadataExternalUUID?: string
-  readonly metadataTimeZone?: string
-  readonly metadataWasUserEntered?: boolean
-  readonly metadataDeviceSerialNumber?: string
-  readonly metadataUdiDeviceIdentifier?: string
-  readonly metadataUdiProductionIdentifier?: string
-  readonly metadataDigitalSignature?: string
-  readonly metadataDeviceName?: string
-  readonly metadataDeviceManufacturerName?: string
-  readonly metadataSyncIdentifier?: string
-  readonly metadataSyncVersion?: number
-  readonly metadataWasTakenInLab?: boolean
-  readonly metadataReferenceRangeLowerLimit?: number
-  readonly metadataReferenceRangeUpperLimit?: number
-  readonly metadataAlgorithmVersion?: number
 }
 
 export interface SampleType {
@@ -108,15 +100,5 @@ export interface BaseSample extends BaseObject {
   readonly startDate: Date
   readonly endDate: Date
   readonly hasUndeterminedDuration: boolean
-
-  // metadata
-  readonly metadataWeatherCondition?: WeatherCondition
-  readonly metadataWeatherHumidity?: Quantity
-  readonly metadataWeatherTemperature?: Quantity
-  readonly metadataInsulinDeliveryReason?: InsulinDeliveryReason
-  /**
-   * postprandial or preprandial (https://developer.apple.com/documentation/healthkit/hkbloodglucosemealtime)
-   */
-  // readonly metadataBloodGlucoseMealTime?: number
-  readonly metadataHeartRateMotionContext?: HeartRateMotionContext
+  readonly metadata: AnyMap
 }
