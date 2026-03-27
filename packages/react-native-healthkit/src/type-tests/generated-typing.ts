@@ -7,6 +7,9 @@ import type {
   HeartRateMotionContext,
   Quantity,
   QuantitySampleTyped,
+  SwimmingStrokeStyle,
+  WorkoutEvent,
+  WorkoutSample,
 } from '../types'
 
 type Equal<A, B> =
@@ -68,5 +71,16 @@ type _bloodGlucoseUnitNarrows = Assert<
   Equal<
     QuantitySampleTyped<'HKQuantityTypeIdentifierBloodGlucose'>['unit'],
     BloodGlucoseUnit
+  >
+>
+
+type _workoutMetadataIsTypedOnMetadata = Assert<
+  Equal<WorkoutSample['metadata']['HKWorkoutBrandName'], string | undefined>
+>
+
+type _workoutEventMetadataIsTypedOnMetadata = Assert<
+  Equal<
+    NonNullable<WorkoutEvent['metadata']>['HKSwimmingStrokeStyle'],
+    SwimmingStrokeStyle | undefined
   >
 >

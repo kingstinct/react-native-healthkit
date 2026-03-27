@@ -55,6 +55,8 @@
   "files": {
     "includes": [
       "**/*",
+      "!**/.build",
+      "!**/.swiftpm",
       "!**/docs",
       "!**/lib",
       "!**/.expo",

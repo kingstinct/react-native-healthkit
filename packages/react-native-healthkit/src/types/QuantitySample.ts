@@ -1,8 +1,5 @@
 import type { AnyMap } from 'react-native-nitro-modules'
-import type {
-  QuantityTypedMetadata,
-  QuantityTypedMetadataForIdentifierGenerated,
-} from '../generated/healthkit.generated'
+import type { QuantityTypedMetadataForIdentifierGenerated } from '../generated/healthkit.generated'
 import type { UnitForIdentifier } from './QuantityType'
 import type { QuantityTypeIdentifier } from './QuantityTypeIdentifier'
 import type { BaseSample, MetadataWithUnknown } from './Shared'
@@ -19,13 +16,13 @@ export interface QuantitySample extends BaseSample {
 
 export type MetadataForQuantityIdentifier<
   T extends QuantityTypeIdentifier = QuantityTypeIdentifier,
-> = QuantityTypedMetadataForIdentifierGenerated<T>
+> = MetadataWithUnknown<QuantityTypedMetadataForIdentifierGenerated<T>>
 
 export interface QuantitySampleTyped<T extends QuantityTypeIdentifier>
   extends Omit<QuantitySample, 'quantityType' | 'unit' | 'metadata'> {
   readonly quantityType: T
   readonly unit: UnitForIdentifier<T>
-  readonly metadata: MetadataWithUnknown<MetadataForQuantityIdentifier<T>>
+  readonly metadata: MetadataForQuantityIdentifier<T>
 }
 
 export interface QuantitySampleForSaving {

@@ -1,4 +1,7 @@
-import type { AnyMap } from 'react-native-nitro-modules'
+import type {
+  WorkoutEventTypedMetadata,
+  WorkoutTypedMetadata,
+} from '../generated/healthkit.generated'
 import {
   WorkoutActivityType,
   WorkoutEventType,
@@ -7,7 +10,7 @@ import type { WorkoutProxy } from '../specs/WorkoutProxy.nitro'
 import type { BaseSample, ComparisonPredicateOperator } from '../types'
 import type { Quantity } from './QuantityType'
 import type { FilterForSamplesBase } from './QueryOptions'
-import type { DeletedSample } from './Shared'
+import type { DeletedSample, MetadataWithUnknown } from './Shared'
 
 export { WorkoutActivityType, WorkoutEventType }
 
@@ -15,7 +18,7 @@ export interface WorkoutEvent {
   readonly type: WorkoutEventType
   readonly startDate: Date
   readonly endDate: Date
-  readonly metadata?: AnyMap
+  readonly metadata?: MetadataWithUnknown<WorkoutEventTypedMetadata>
 }
 
 export interface WorkoutActivity {
@@ -106,7 +109,7 @@ export interface WorkoutTotals {
   readonly energyBurned?: number
 }
 
-export interface WorkoutSample extends BaseSample {
+export interface WorkoutSample extends Omit<BaseSample, 'metadata'> {
   readonly workoutActivityType: WorkoutActivityType
   readonly duration: Quantity
   readonly totalEnergyBurned?: Quantity
@@ -115,6 +118,7 @@ export interface WorkoutSample extends BaseSample {
   readonly totalFlightsClimbed?: Quantity
   readonly events?: readonly WorkoutEvent[]
   readonly activities?: readonly WorkoutActivity[]
+  readonly metadata: MetadataWithUnknown<WorkoutTypedMetadata>
 
   readonly metadataAverageMETs?: Quantity
   readonly metadataElevationAscended?: Quantity

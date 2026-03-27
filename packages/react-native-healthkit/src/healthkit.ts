@@ -13,6 +13,7 @@ import { AuthorizationRequestStatus, AuthorizationStatus } from './types/Auth'
 import type {
   CategorySamplesWithAnchorResponseTyped,
   CategorySampleTyped,
+  CategoryValueForIdentifier,
   MetadataForCategoryIdentifier,
 } from './types/CategoryType'
 import type { CategoryTypeIdentifier } from './types/CategoryTypeIdentifier'
@@ -255,7 +256,7 @@ export function queryCategorySamplesWithAnchor<
 
 export function saveCategorySample<T extends CategoryTypeIdentifier>(
   _identifier: T,
-  _value: number,
+  _value: CategoryValueForIdentifier<T>,
   _startDate: Date,
   _endDate: Date,
   _metadata?: MetadataForCategoryIdentifier<T>,

@@ -1764,18 +1764,6 @@ export function renderGeneratedTypescript(schema: HealthkitSchema): string {
   return `/*\n * AUTO-GENERATED FILE. DO NOT EDIT.\n * Source: scripts/generate-healthkit.ts\n */\n\n${printed}`
 }
 
-function renderMetadataSwiftStruct(
-  typeName: string,
-  keys: readonly MetadataKeySchema[],
-): string {
-  const argumentsBlock = keys
-    .map((key) => `    ${valueKindToSwiftExpression(key)}`)
-    .join(',\n')
-  const valueChecks = keys.map((key) => `result.${key.rawKey}`).join(', ')
-
-  return `func serialize${typeName}(metadata: [String: Any]?) -> ${typeName}? {\n  let result = ${typeName}(\n${argumentsBlock}\n  )\n  return hasKnownTypedMetadata([${valueChecks}]) ? result : nil\n}`
-}
-
 export function renderGeneratedSwift(schema: HealthkitSchema): string {
   const lines = schema.metadataKeys
     .map((key) => `// ${valueKindToSwiftExpression(key)}`)

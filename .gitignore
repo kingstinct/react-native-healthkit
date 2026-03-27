@@ -27,7 +27,8 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
-.build
+**/.build
+**/.swiftpm
 
 # Android/IJ
 #

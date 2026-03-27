@@ -1,6 +1,5 @@
 import type { AnyMap } from 'react-native-nitro-modules'
 import type {
-  CategoryTypedMetadata,
   CategoryTypedMetadataForIdentifierGenerated,
   CategoryValueForIdentifierGenerated,
 } from '../generated/healthkit.generated'
@@ -24,12 +23,7 @@ import {
   CategoryValueVaginalBleeding,
 } from '../generated/healthkit.generated'
 import type { CategoryTypeIdentifier } from './CategoryTypeIdentifier'
-import type {
-  BaseSample,
-  DeletedSample,
-  GenericMetadata,
-  MetadataWithUnknown,
-} from './Shared'
+import type { BaseSample, DeletedSample, GenericMetadata } from './Shared'
 import type { SourceRevision } from './Source'
 
 export {
