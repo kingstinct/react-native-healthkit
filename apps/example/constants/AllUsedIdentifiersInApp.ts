@@ -71,6 +71,7 @@ export const AllQuantityTypeIdentifierInApp: QuantityTypeIdentifierWriteable[] =
 
 export const AllCategorySampleTypeIdentifierInApp: CategoryTypeIdentifierWriteable[] =
   [
+    'HKCategoryTypeIdentifierMenstrualFlow',
     'HKCategoryTypeIdentifierSleepAnalysis',
     'HKCategoryTypeIdentifierSleepChanges',
     'HKCategoryTypeIdentifierMindfulSession',

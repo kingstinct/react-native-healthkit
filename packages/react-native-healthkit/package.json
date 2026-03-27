@@ -26,6 +26,12 @@
       "require": "./lib/commonjs/modules.js",
       "react-native": "./src/modules.ts"
     },
+    "./contracts": {
+      "types": "./lib/typescript/contracts/index.d.ts",
+      "import": "./lib/module/contracts/index.js",
+      "require": "./lib/commonjs/contracts/index.js",
+      "react-native": "./src/contracts/index.ts"
+    },
     "./app.plugin.js": "./app.plugin.js",
     "./package.json": "./package.json"
   },

@@ -214,16 +214,32 @@ func serializeMetadata(_ metadata: [String: Any]?) -> AnyMap {
   let serialized = AnyMap()
   if let m = metadata {
     for item in m {
+      if let number = item.value as? NSNumber {
+        if isKnownBooleanMetadataKey(item.key) {
+          serialized.setBoolean(key: item.key, value: number.boolValue)
+        } else if isKnownNumericMetadataKey(item.key) {
+          serialized.setDouble(key: item.key, value: number.doubleValue)
+        } else if CFGetTypeID(number) == CFBooleanGetTypeID() {
+          serialized.setBoolean(key: item.key, value: number.boolValue)
+        } else {
+          serialized.setDouble(key: item.key, value: number.doubleValue)
+        }
+        continue
+      }
+
       if let bool = item.value as? Bool {
         serialized.setBoolean(key: item.key, value: bool)
+        continue
       }
 
       if let str = item.value as? String {
         serialized.setString(key: item.key, value: str)
+        continue
       }
 
       if let double = item.value as? Double {
         serialized.setDouble(key: item.key, value: double)
+        continue
       }
 
       if let date = item.value as? Date {
@@ -231,12 +247,14 @@ func serializeMetadata(_ metadata: [String: Any]?) -> AnyMap {
           key: item.key,
           value: metadataDateFormatter.string(from: date)
         )
+        continue
       }
 
       if let quantity = item.value as? HKQuantity {
         if let s = serializeUnknownQuantity(quantity: quantity) {
           serialized.setObject(key: item.key, value: s)
         }
+        continue
       }
 
       if let dict = item.value as? [String: AnyValue] {

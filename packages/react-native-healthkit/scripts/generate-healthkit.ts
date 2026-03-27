@@ -1088,33 +1088,6 @@ function unique<T>(values: readonly T[]): T[] {
   return [...new Set(values)]
 }
 
-function valueKindToSwiftExpression(key: MetadataKeySchema): string {
-  const rawKeyLiteral = JSON.stringify(key.rawKey)
-
-  switch (key.valueKind) {
-    case 'string':
-      return `${key.rawKey}: metadataString(metadata, key: ${rawKeyLiteral})`
-    case 'boolean':
-      return `${key.rawKey}: metadataBool(metadata, key: ${rawKeyLiteral})`
-    case 'number':
-      return `${key.rawKey}: metadataNumber(metadata, key: ${rawKeyLiteral})`
-    case 'quantity':
-      return `${key.rawKey}: metadataQuantity(metadata, key: ${rawKeyLiteral})`
-    case 'enum':
-      if (key.enumName === 'WeatherCondition') {
-        return `${key.rawKey}: serializeWeatherCondition(metadata?[${rawKeyLiteral}] as? HKWeatherCondition)`
-      }
-      if (key.enumName === 'InsulinDeliveryReason') {
-        return `${key.rawKey}: serializeInsulinDeliveryReason(metadata?[${rawKeyLiteral}] as? HKInsulinDeliveryReason)`
-      }
-      if (key.enumName === 'HeartRateMotionContext') {
-        return `${key.rawKey}: serializeHeartRateMotionContext(metadata?[${rawKeyLiteral}] as? HKHeartRateMotionContext)`
-      }
-
-      return `${key.rawKey}: metadataEnum(metadata, key: ${rawKeyLiteral}, type: ${key.tsType}.self)`
-  }
-}
-
 const FACTORY = ts.factory
 const EXPORT_MODIFIER = FACTORY.createModifier(ts.SyntaxKind.ExportKeyword)
 const READONLY_MODIFIER = FACTORY.createModifier(ts.SyntaxKind.ReadonlyKeyword)
@@ -1764,10 +1737,120 @@ export function renderGeneratedTypescript(schema: HealthkitSchema): string {
   return `/*\n * AUTO-GENERATED FILE. DO NOT EDIT.\n * Source: scripts/generate-healthkit.ts\n */\n\n${printed}`
 }
 
-export function renderGeneratedSwift(schema: HealthkitSchema): string {
-  const lines = schema.metadataKeys
-    .map((key) => `// ${valueKindToSwiftExpression(key)}`)
+function renderMetadataValueKindMap(
+  name: string,
+  keys: readonly MetadataKeySchema[],
+): string {
+  const entries = unique(keys.map((key) => key.rawKey))
+    .sort((left, right) => left.localeCompare(right))
+    .map((rawKey) => {
+      const key = keys.find((entry) => entry.rawKey === rawKey)
+      if (key == null) {
+        throw new Error(`Missing metadata key for raw key ${rawKey}`)
+      }
+      return `  ${JSON.stringify(rawKey)}: ${JSON.stringify(key.valueKind)},`
+    })
     .join('\n')
 
-  return `// AUTO-GENERATED FILE. DO NOT EDIT.\n// This file is a schema-backed snapshot used for SDK verification.\n// Runtime metadata is read from the raw metadata map instead of dedicated Swift structs.\n\nimport Foundation\n\n${lines}\n`
+  return `export const ${name} = {\n${entries}\n} as const`
+}
+
+function renderIdentifierMetadataKindMap(
+  name: string,
+  keys: readonly MetadataKeySchema[],
+): string {
+  const byIdentifier = new Map<string, MetadataKeySchema[]>()
+
+  for (const key of keys) {
+    for (const identifier of key.identifiers) {
+      const existing = byIdentifier.get(identifier) ?? []
+      existing.push(key)
+      byIdentifier.set(identifier, existing)
+    }
+  }
+
+  const entries = [...byIdentifier.entries()]
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([identifier, identifierKeys]) => {
+      const lines = unique(identifierKeys.map((key) => key.rawKey))
+        .sort((left, right) => left.localeCompare(right))
+        .map((rawKey) => {
+          const key = identifierKeys.find((entry) => entry.rawKey === rawKey)
+          if (key == null) {
+            throw new Error(`Missing metadata key for raw key ${rawKey}`)
+          }
+          return `    ${JSON.stringify(rawKey)}: ${JSON.stringify(key.valueKind)},`
+        })
+        .join('\n')
+
+      return `  ${JSON.stringify(identifier)}: {\n${lines}\n  },`
+    })
+    .join('\n')
+
+  return `export const ${name} = {\n${entries}\n} as const`
+}
+
+export function renderGeneratedContracts(schema: HealthkitSchema): string {
+  const metadataByObjectType = {
+    common: schema.metadataKeys.filter((key) =>
+      key.objectTypes.includes('common'),
+    ),
+    sample: schema.metadataKeys.filter((key) =>
+      key.objectTypes.includes('sample'),
+    ),
+    categorySample: schema.metadataKeys.filter((key) =>
+      key.objectTypes.includes('categorySample'),
+    ),
+    quantitySample: schema.metadataKeys.filter((key) =>
+      key.objectTypes.includes('quantitySample'),
+    ),
+    workout: schema.metadataKeys.filter((key) =>
+      key.objectTypes.includes('workout'),
+    ),
+    workoutEvent: schema.metadataKeys.filter((key) =>
+      key.objectTypes.includes('workoutEvent'),
+    ),
+  }
+
+  return `/*\n * AUTO-GENERATED FILE. DO NOT EDIT.\n * Source: scripts/generate-healthkit.ts\n */\n\nimport type { CategoryTypeIdentifier } from '../types/CategoryTypeIdentifier'\nimport type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'\n\nexport type ContractMetadataValueKind = 'string' | 'boolean' | 'number' | 'quantity' | 'enum'\n\n${renderMetadataValueKindMap(
+    'KNOWN_OBJECT_METADATA_KIND_BY_KEY',
+    metadataByObjectType.common,
+  )}\n\n${renderMetadataValueKindMap(
+    'KNOWN_SAMPLE_METADATA_KIND_BY_KEY',
+    metadataByObjectType.sample,
+  )}\n\n${renderMetadataValueKindMap(
+    'KNOWN_WORKOUT_METADATA_KIND_BY_KEY',
+    metadataByObjectType.workout,
+  )}\n\n${renderMetadataValueKindMap(
+    'KNOWN_WORKOUT_EVENT_METADATA_KIND_BY_KEY',
+    metadataByObjectType.workoutEvent,
+  )}\n\n${renderIdentifierMetadataKindMap(
+    'KNOWN_CATEGORY_METADATA_KIND_BY_IDENTIFIER',
+    metadataByObjectType.categorySample.filter(
+      (key) => key.identifiers.length > 0,
+    ),
+  )}\n\n${renderIdentifierMetadataKindMap(
+    'KNOWN_QUANTITY_METADATA_KIND_BY_IDENTIFIER',
+    metadataByObjectType.quantitySample.filter(
+      (key) => key.identifiers.length > 0,
+    ),
+  )}\n\nconst CATEGORY_METADATA_KIND_LOOKUP = KNOWN_CATEGORY_METADATA_KIND_BY_IDENTIFIER as Readonly<Record<string, Readonly<Record<string, ContractMetadataValueKind>>>>\nconst QUANTITY_METADATA_KIND_LOOKUP = KNOWN_QUANTITY_METADATA_KIND_BY_IDENTIFIER as Readonly<Record<string, Readonly<Record<string, ContractMetadataValueKind>>>>\n\nexport function getKnownCategoryMetadataKindMap(\n  identifier: CategoryTypeIdentifier,\n): Readonly<Record<string, ContractMetadataValueKind>> {\n  return CATEGORY_METADATA_KIND_LOOKUP[identifier] ?? {}\n}\n\nexport function getKnownQuantityMetadataKindMap(\n  identifier: QuantityTypeIdentifier,\n): Readonly<Record<string, ContractMetadataValueKind>> {\n  return QUANTITY_METADATA_KIND_LOOKUP[identifier] ?? {}\n}\n`
+}
+
+export function renderGeneratedSwift(schema: HealthkitSchema): string {
+  const booleanKeys = unique(
+    schema.metadataKeys
+      .filter((key) => key.valueKind === 'boolean')
+      .map((key) => key.rawKey),
+  )
+  const numericKeys = unique(
+    schema.metadataKeys
+      .filter((key) => key.valueKind === 'number' || key.valueKind === 'enum')
+      .map((key) => key.rawKey),
+  )
+
+  const renderSetEntries = (keys: readonly string[]) =>
+    keys.map((key) => `  ${JSON.stringify(key)},`).join('\n')
+
+  return `// AUTO-GENERATED FILE. DO NOT EDIT.\n// Source: scripts/generate-healthkit.ts\n\nimport Foundation\n\nprivate let healthkitBooleanMetadataKeys: Set<String> = [\n${renderSetEntries(booleanKeys)}\n]\n\nprivate let healthkitNumericMetadataKeys: Set<String> = [\n${renderSetEntries(numericKeys)}\n]\n\nfunc isKnownBooleanMetadataKey(_ key: String) -> Bool {\n  healthkitBooleanMetadataKeys.contains(key)\n}\n\nfunc isKnownNumericMetadataKey(_ key: String) -> Bool {\n  healthkitNumericMetadataKeys.contains(key)\n}\n`
 }

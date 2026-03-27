@@ -23,6 +23,14 @@ export const GENERATED_SCHEMA_PATH = join(
   ROOT,
   'src/generated/healthkit-schema.json',
 )
+export const GENERATED_CONTRACT_TS_PATH = join(
+  ROOT,
+  'src/generated/healthkit.contract.generated.ts',
+)
+export const GENERATED_SWIFT_PATH = join(
+  ROOT,
+  'ios/generated/HealthkitGenerated.swift',
+)
 const IDENTIFIER_OVERRIDES_PATH = join(
   ROOT,
   'scripts/healthkit-schema/identifier-overrides.json',
@@ -127,8 +135,11 @@ export function loadHealthkitSdkSources(
 export function writeGeneratedArtifacts(
   schema: HealthkitSchema,
   renderedTypescript: string,
+  renderedContracts: string,
+  renderedSwift: string,
 ) {
   mkdirSync(dirname(GENERATED_TS_PATH), { recursive: true })
+  mkdirSync(dirname(GENERATED_SWIFT_PATH), { recursive: true })
 
   writeFileSync(
     GENERATED_SCHEMA_PATH,
@@ -136,6 +147,8 @@ export function writeGeneratedArtifacts(
     'utf8',
   )
   writeFileSync(GENERATED_TS_PATH, renderedTypescript, 'utf8')
+  writeFileSync(GENERATED_CONTRACT_TS_PATH, renderedContracts, 'utf8')
+  writeFileSync(GENERATED_SWIFT_PATH, renderedSwift, 'utf8')
 }
 
 export function formatGeneratedArtifacts() {
@@ -146,6 +159,7 @@ export function formatGeneratedArtifacts() {
       'check',
       '--write',
       GENERATED_TS_PATH,
+      GENERATED_CONTRACT_TS_PATH,
       GENERATED_SCHEMA_PATH,
     ],
     {
@@ -160,6 +174,7 @@ export function formatGeneratedArtifacts() {
       'format',
       '--write',
       GENERATED_TS_PATH,
+      GENERATED_CONTRACT_TS_PATH,
       GENERATED_SCHEMA_PATH,
     ],
     {
