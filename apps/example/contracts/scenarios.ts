@@ -9,12 +9,12 @@ import {
   saveWorkoutSample,
   WorkoutActivityType,
 } from '@kingstinct/react-native-healthkit'
+import { BloodGlucoseMealTime } from '@kingstinct/react-native-healthkit/types/MetadataEnums'
 import {
   assertCategorySampleContract,
   assertQuantitySampleContract,
   assertWorkoutSampleContract,
-} from '@kingstinct/react-native-healthkit/contracts'
-import { BloodGlucoseMealTime } from '@kingstinct/react-native-healthkit/types/MetadataEnums'
+} from '@/contracts'
 
 export type ContractScenarioId =
   | 'quantity-roundtrip'

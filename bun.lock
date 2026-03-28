@@ -56,6 +56,7 @@
         "react-native-screens": "~4.16.0",
         "react-native-web": "^0.21.2",
         "react-native-webview": "13.15.0",
+        "zod": "^4.2.1",
       },
       "devDependencies": {
         "@babel/core": "^7.28.5",
@@ -67,9 +68,6 @@
     "packages/react-native-healthkit": {
       "name": "@kingstinct/react-native-healthkit",
       "version": "13.4.0",
-      "dependencies": {
-        "zod": "^4.2.1",
-      },
       "devDependencies": {
         "@testing-library/react-native": "^13.3.3",
         "@types/react": "~19.1.17",

@@ -26,12 +26,6 @@
       "require": "./lib/commonjs/modules.js",
       "react-native": "./src/modules.ts"
     },
-    "./contracts": {
-      "types": "./lib/typescript/contracts/index.d.ts",
-      "import": "./lib/module/contracts/index.js",
-      "require": "./lib/commonjs/contracts/index.js",
-      "react-native": "./src/contracts/index.ts"
-    },
     "./app.plugin.js": "./app.plugin.js",
     "./package.json": "./package.json"
   },
@@ -67,7 +61,7 @@
     "build": "bun run clean && bun run build:cjs && bun run build:esm && bun run build:types",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.type-tests.json",
     "lint": "bunx @biomejs/biome format --write",
-    "check:generated": "bun run generate:healthkit && bun run verify:healthkit-sdk && git diff --exit-code -- src/generated",
+    "check:generated": "bun run generate:healthkit && bun run verify:healthkit-sdk && git diff --exit-code -- src/generated/healthkit.generated.ts src/generated/healthkit-schema.json ../../apps/example/contracts/generated ios/generated",
     "codegen": "bun run build && nitrogen --logLevel=\"debug\" && perl -i -pe 's/Bool\\(fromCxx: cachedCxxPart\\)/cachedCxxPart.use_count() > 0/g' nitrogen/generated/ios/swift/*Spec_cxx.swift",
     "test": "bun test",
     "prepublishOnly": "bun run build && bun run codegen"
@@ -105,9 +99,6 @@
     "react-native": "0.81.5",
     "react-native-nitro-modules": "^0.35.0",
     "typescript": "~5.9.3"
-  },
-  "dependencies": {
-    "zod": "^4.2.1"
   },
   "peerDependencies": {
     "react": ">=19",

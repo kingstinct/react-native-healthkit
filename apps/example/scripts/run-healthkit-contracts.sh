@@ -5,17 +5,35 @@ set -eu
 ROOT_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
 APP_DIR="$ROOT_DIR/apps/example"
 SIMULATOR_ID="${SIMULATOR_ID:-${1:-}}"
+
+find_booted_simulator() {
+  xcrun simctl list devices |
+    sed -n 's/.*(\([0-9A-F-][0-9A-F-]*\)) (Booted).*/\1/p' |
+    head -n 1
+}
+
+find_available_simulator() {
+  xcrun simctl list devices available |
+    sed -n 's/.*iPhone 17 Pro (\([0-9A-F-][0-9A-F-]*\)) (.*/\1/p' |
+    head -n 1
+}
+
 if [ -z "$SIMULATOR_ID" ]; then
-  SIMULATOR_ID="$(
-    xcrun simctl list devices |
-      sed -n 's/.*(\([0-9A-F-][0-9A-F-]*\)) (Booted).*/\1/p' |
-      head -n 1
-  )"
+  SIMULATOR_ID="$(find_booted_simulator)"
 fi
 
 if [ -z "$SIMULATOR_ID" ]; then
-  echo "No booted simulator found. Set SIMULATOR_ID or boot a simulator first." >&2
+  SIMULATOR_ID="$(find_available_simulator)"
+fi
+
+if [ -z "$SIMULATOR_ID" ]; then
+  echo "No usable simulator found. Set SIMULATOR_ID or install an iPhone simulator runtime." >&2
   exit 1
+fi
+
+if ! xcrun simctl list devices | grep -q "$SIMULATOR_ID.*Booted"; then
+  xcrun simctl boot "$SIMULATOR_ID" >/dev/null 2>&1 || true
+  xcrun simctl bootstatus "$SIMULATOR_ID" -b
 fi
 
 if ! command -v applesimutils >/dev/null 2>&1; then

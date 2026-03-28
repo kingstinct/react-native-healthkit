@@ -3,9 +3,9 @@
  * Source: scripts/generate-healthkit.ts
  */
 
+import type { CategoryTypeIdentifier } from '@kingstinct/react-native-healthkit/types/CategoryTypeIdentifier'
+import type { QuantityTypeIdentifier } from '@kingstinct/react-native-healthkit/types/QuantityTypeIdentifier'
 import { z } from 'zod'
-import type { CategoryTypeIdentifier } from '../types/CategoryTypeIdentifier'
-import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 
 export type ContractMetadataValueKind =
   | 'string'

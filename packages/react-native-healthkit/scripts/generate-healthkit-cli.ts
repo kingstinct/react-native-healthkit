@@ -6,11 +6,13 @@ import {
 } from './generate-healthkit'
 import {
   formatGeneratedArtifacts,
+  getGeneratedArtifactPaths,
   loadHealthkitSdkSources,
   writeGeneratedArtifacts,
 } from './healthkit-sdk'
 
 function main() {
+  const generatedArtifactPaths = getGeneratedArtifactPaths()
   const sources = loadHealthkitSdkSources()
   const schema = buildHealthkitSchemaFromSources(sources)
   writeGeneratedArtifacts(
@@ -18,8 +20,9 @@ function main() {
     renderGeneratedTypescript(schema),
     renderGeneratedContracts(schema),
     renderGeneratedSwift(schema),
+    generatedArtifactPaths,
   )
-  formatGeneratedArtifacts()
+  formatGeneratedArtifacts(generatedArtifactPaths)
 }
 
 main()

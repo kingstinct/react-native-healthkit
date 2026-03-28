@@ -1,22 +1,25 @@
+import type { CategorySampleTyped } from '@kingstinct/react-native-healthkit/types/CategoryType'
+import type { CategoryTypeIdentifier } from '@kingstinct/react-native-healthkit/types/CategoryTypeIdentifier'
+import type { QuantitySampleTyped } from '@kingstinct/react-native-healthkit/types/QuantitySample'
+import type { QuantityTypeIdentifier } from '@kingstinct/react-native-healthkit/types/QuantityTypeIdentifier'
+import type {
+  WorkoutEventTyped,
+  WorkoutSampleTyped,
+} from '@kingstinct/react-native-healthkit/types/Workouts'
 import type { z } from 'zod'
 import {
   contractWorkoutEventSchema,
   contractWorkoutSampleSchema,
   getCategorySampleContractSchema,
   getQuantitySampleContractSchema,
-} from '../generated/healthkit.contract.generated'
-import type { CategorySampleTyped } from '../types/CategoryType'
-import type { CategoryTypeIdentifier } from '../types/CategoryTypeIdentifier'
-import type { QuantitySampleTyped } from '../types/QuantitySample'
-import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
-import type { WorkoutEventTyped, WorkoutSampleTyped } from '../types/Workouts'
+} from './generated/healthkit.contract.generated'
 
 export {
   contractWorkoutEventSchema,
   contractWorkoutSampleSchema,
   getCategorySampleContractSchema,
   getQuantitySampleContractSchema,
-} from '../generated/healthkit.contract.generated'
+} from './generated/healthkit.contract.generated'
 
 export interface ContractValidationIssue {
   readonly path: string

@@ -15,19 +15,21 @@ import type {
 } from './generate-healthkit'
 
 const ROOT = resolve(dirname(new URL(import.meta.url).pathname), '..')
-export const GENERATED_TS_PATH = join(
+export const DEFAULT_GENERATED_TS_PATH = join(
   ROOT,
   'src/generated/healthkit.generated.ts',
 )
-export const GENERATED_SCHEMA_PATH = join(
+export const DEFAULT_GENERATED_SCHEMA_PATH = join(
   ROOT,
   'src/generated/healthkit-schema.json',
 )
-export const GENERATED_CONTRACT_TS_PATH = join(
+export const DEFAULT_GENERATED_CONTRACT_TS_PATH = join(
   ROOT,
-  'src/generated/healthkit.contract.generated.ts',
+  '..',
+  '..',
+  'apps/example/contracts/generated/healthkit.contract.generated.ts',
 )
-export const GENERATED_SWIFT_PATH = join(
+export const DEFAULT_GENERATED_SWIFT_PATH = join(
   ROOT,
   'ios/generated/HealthkitGenerated.swift',
 )
@@ -45,6 +47,36 @@ export interface HealthkitSdkSources {
   readonly metadataHeader: string
   readonly metadataEnumsHeader: string
   readonly workoutHeader: string
+}
+
+export interface GeneratedArtifactPaths {
+  readonly typescriptPath: string
+  readonly schemaPath: string
+  readonly contractTypescriptPath: string
+  readonly swiftPath: string
+}
+
+export function getGeneratedArtifactPaths(
+  overrides: Partial<GeneratedArtifactPaths> = {},
+): GeneratedArtifactPaths {
+  return {
+    typescriptPath:
+      overrides.typescriptPath ??
+      process.env.HEALTHKIT_GENERATED_TS_PATH ??
+      DEFAULT_GENERATED_TS_PATH,
+    schemaPath:
+      overrides.schemaPath ??
+      process.env.HEALTHKIT_GENERATED_SCHEMA_PATH ??
+      DEFAULT_GENERATED_SCHEMA_PATH,
+    contractTypescriptPath:
+      overrides.contractTypescriptPath ??
+      process.env.HEALTHKIT_GENERATED_CONTRACT_TS_PATH ??
+      DEFAULT_GENERATED_CONTRACT_TS_PATH,
+    swiftPath:
+      overrides.swiftPath ??
+      process.env.HEALTHKIT_GENERATED_SWIFT_PATH ??
+      DEFAULT_GENERATED_SWIFT_PATH,
+  }
 }
 
 export function getSdkPath(): string {
@@ -137,30 +169,33 @@ export function writeGeneratedArtifacts(
   renderedTypescript: string,
   renderedContracts: string,
   renderedSwift: string,
+  paths = getGeneratedArtifactPaths(),
 ) {
-  mkdirSync(dirname(GENERATED_TS_PATH), { recursive: true })
-  mkdirSync(dirname(GENERATED_SWIFT_PATH), { recursive: true })
+  mkdirSync(dirname(paths.typescriptPath), { recursive: true })
+  mkdirSync(dirname(paths.swiftPath), { recursive: true })
+  mkdirSync(dirname(paths.contractTypescriptPath), { recursive: true })
 
   writeFileSync(
-    GENERATED_SCHEMA_PATH,
+    paths.schemaPath,
     `${JSON.stringify(schema, null, 2)}\n`,
     'utf8',
   )
-  writeFileSync(GENERATED_TS_PATH, renderedTypescript, 'utf8')
-  writeFileSync(GENERATED_CONTRACT_TS_PATH, renderedContracts, 'utf8')
-  writeFileSync(GENERATED_SWIFT_PATH, renderedSwift, 'utf8')
+  writeFileSync(paths.typescriptPath, renderedTypescript, 'utf8')
+  writeFileSync(paths.contractTypescriptPath, renderedContracts, 'utf8')
+  writeFileSync(paths.swiftPath, renderedSwift, 'utf8')
 }
 
-export function formatGeneratedArtifacts() {
+export function formatGeneratedArtifacts(paths = getGeneratedArtifactPaths()) {
   execFileSync(
     'bunx',
     [
       '@biomejs/biome',
       'check',
       '--write',
-      GENERATED_TS_PATH,
-      GENERATED_CONTRACT_TS_PATH,
-      GENERATED_SCHEMA_PATH,
+      paths.typescriptPath,
+      paths.contractTypescriptPath,
+      paths.schemaPath,
+      paths.swiftPath,
     ],
     {
       stdio: 'inherit',
@@ -173,9 +208,10 @@ export function formatGeneratedArtifacts() {
       '@biomejs/biome',
       'format',
       '--write',
-      GENERATED_TS_PATH,
-      GENERATED_CONTRACT_TS_PATH,
-      GENERATED_SCHEMA_PATH,
+      paths.typescriptPath,
+      paths.contractTypescriptPath,
+      paths.schemaPath,
+      paths.swiftPath,
     ],
     {
       stdio: 'inherit',
