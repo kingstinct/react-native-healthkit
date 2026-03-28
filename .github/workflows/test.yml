@@ -164,21 +164,6 @@ jobs:
           brew tap wix/brew
           brew install applesimutils
 
-      - name: Boot iOS simulator
-        run: |
-          SIMULATOR_ID="$(
-            xcrun simctl list devices available |
-              sed -n 's/.*iPhone 17 Pro (\([0-9A-F-][0-9A-F-]*\)) (.*/\1/p' |
-              head -n 1
-          )"
-          if [ -z "$SIMULATOR_ID" ]; then
-            echo "Unable to find an available iPhone 17 Pro simulator." >&2
-            exit 1
-          fi
-          xcrun simctl boot "$SIMULATOR_ID" || true
-          xcrun simctl bootstatus "$SIMULATOR_ID" -b
-          echo "SIMULATOR_ID=$SIMULATOR_ID" >> "$GITHUB_ENV"
-
       - name: Verify generated HealthKit schema and bindings
         working-directory: packages/react-native-healthkit
         run: bun run check:generated
@@ -195,6 +180,4 @@ jobs:
         run: bun run build-sim
 
       - name: Run HealthKit contracts
-        env:
-          SIMULATOR_ID: ${{ env.SIMULATOR_ID }}
         run: bun run test:contracts
