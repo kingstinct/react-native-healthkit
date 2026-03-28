@@ -60,6 +60,7 @@
       "!**/docs",
       "!**/lib",
       "!**/.expo",
+      "!apps/example/expo-env.d.ts",
       "!**/ios",
       "!.vscode/*",
       "!.claude/*"

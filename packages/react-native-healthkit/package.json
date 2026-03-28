@@ -106,6 +106,9 @@
     "react-native-nitro-modules": "^0.35.0",
     "typescript": "~5.9.3"
   },
+  "dependencies": {
+    "zod": "^4.2.1"
+  },
   "peerDependencies": {
     "react": ">=19",
     "react-native": ">=0.79",

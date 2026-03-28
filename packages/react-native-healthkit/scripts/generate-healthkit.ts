@@ -1088,6 +1088,20 @@ function unique<T>(values: readonly T[]): T[] {
   return [...new Set(values)]
 }
 
+function tsSource(
+  strings: TemplateStringsArray,
+  ...values: readonly string[]
+): string {
+  let output = ''
+
+  for (const [index, string] of strings.entries()) {
+    output += string
+    output += values[index] ?? ''
+  }
+
+  return output
+}
+
 const FACTORY = ts.factory
 const EXPORT_MODIFIER = FACTORY.createModifier(ts.SyntaxKind.ExportKeyword)
 const READONLY_MODIFIER = FACTORY.createModifier(ts.SyntaxKind.ReadonlyKeyword)
@@ -1812,29 +1826,277 @@ export function renderGeneratedContracts(schema: HealthkitSchema): string {
     ),
   }
 
-  return `/*\n * AUTO-GENERATED FILE. DO NOT EDIT.\n * Source: scripts/generate-healthkit.ts\n */\n\nimport type { CategoryTypeIdentifier } from '../types/CategoryTypeIdentifier'\nimport type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'\n\nexport type ContractMetadataValueKind = 'string' | 'boolean' | 'number' | 'quantity' | 'enum'\n\n${renderMetadataValueKindMap(
-    'KNOWN_OBJECT_METADATA_KIND_BY_KEY',
-    metadataByObjectType.common,
-  )}\n\n${renderMetadataValueKindMap(
-    'KNOWN_SAMPLE_METADATA_KIND_BY_KEY',
-    metadataByObjectType.sample,
-  )}\n\n${renderMetadataValueKindMap(
-    'KNOWN_WORKOUT_METADATA_KIND_BY_KEY',
-    metadataByObjectType.workout,
-  )}\n\n${renderMetadataValueKindMap(
-    'KNOWN_WORKOUT_EVENT_METADATA_KIND_BY_KEY',
-    metadataByObjectType.workoutEvent,
-  )}\n\n${renderIdentifierMetadataKindMap(
-    'KNOWN_CATEGORY_METADATA_KIND_BY_IDENTIFIER',
-    metadataByObjectType.categorySample.filter(
-      (key) => key.identifiers.length > 0,
+  return tsSource`/*
+ * AUTO-GENERATED FILE. DO NOT EDIT.
+ * Source: scripts/generate-healthkit.ts
+ */
+
+import { z } from 'zod'
+import type { CategoryTypeIdentifier } from '../types/CategoryTypeIdentifier'
+import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
+
+export type ContractMetadataValueKind = 'string' | 'boolean' | 'number' | 'quantity' | 'enum'
+
+${renderMetadataValueKindMap(
+  'KNOWN_OBJECT_METADATA_KIND_BY_KEY',
+  metadataByObjectType.common,
+)}
+
+${renderMetadataValueKindMap(
+  'KNOWN_SAMPLE_METADATA_KIND_BY_KEY',
+  metadataByObjectType.sample,
+)}
+
+${renderMetadataValueKindMap(
+  'KNOWN_WORKOUT_METADATA_KIND_BY_KEY',
+  metadataByObjectType.workout,
+)}
+
+${renderMetadataValueKindMap(
+  'KNOWN_WORKOUT_EVENT_METADATA_KIND_BY_KEY',
+  metadataByObjectType.workoutEvent,
+)}
+
+${renderIdentifierMetadataKindMap(
+  'KNOWN_CATEGORY_METADATA_KIND_BY_IDENTIFIER',
+  metadataByObjectType.categorySample.filter(
+    (key) => key.identifiers.length > 0,
+  ),
+)}
+
+${renderIdentifierMetadataKindMap(
+  'KNOWN_QUANTITY_METADATA_KIND_BY_IDENTIFIER',
+  metadataByObjectType.quantitySample.filter(
+    (key) => key.identifiers.length > 0,
+  ),
+)}
+
+const CATEGORY_METADATA_KIND_LOOKUP = KNOWN_CATEGORY_METADATA_KIND_BY_IDENTIFIER as Readonly<Record<string, Readonly<Record<string, ContractMetadataValueKind>>>>
+const QUANTITY_METADATA_KIND_LOOKUP = KNOWN_QUANTITY_METADATA_KIND_BY_IDENTIFIER as Readonly<Record<string, Readonly<Record<string, ContractMetadataValueKind>>>>
+
+export const contractQuantitySchema = z
+  .object({
+    unit: z.string(),
+    quantity: z.number(),
+  })
+  .passthrough()
+
+export const contractSourceSchema = z
+  .object({
+    name: z.string(),
+    bundleIdentifier: z.string(),
+  })
+  .passthrough()
+
+export const contractSourceRevisionSchema = z
+  .object({
+    source: contractSourceSchema,
+    operatingSystemVersion: z.string(),
+    version: z.string().optional(),
+    productType: z.string().optional(),
+  })
+  .passthrough()
+
+export const contractDeviceSchema = z
+  .object({
+    name: z.string().optional(),
+    firmwareVersion: z.string().optional(),
+    hardwareVersion: z.string().optional(),
+    localIdentifier: z.string().optional(),
+    manufacturer: z.string().optional(),
+    model: z.string().optional(),
+    softwareVersion: z.string().optional(),
+    udiDeviceIdentifier: z.string().optional(),
+  })
+  .passthrough()
+
+export const contractSampleTypeSchema = z
+  .object({
+    identifier: z.string(),
+    allowsRecalibrationForEstimates: z.boolean(),
+    isMinimumDurationRestricted: z.boolean(),
+    isMaximumDurationRestricted: z.boolean(),
+  })
+  .passthrough()
+
+export const contractWorkoutActivitySchema = z
+  .object({
+    startDate: z.date(),
+    endDate: z.date(),
+    uuid: z.string(),
+    duration: z.number(),
+  })
+  .passthrough()
+
+function contractSchemaForMetadataKind(
+  kind: ContractMetadataValueKind,
+): z.ZodTypeAny {
+  switch (kind) {
+    case 'string':
+      return z.string()
+    case 'boolean':
+      return z.boolean()
+    case 'number':
+    case 'enum':
+      return z.number()
+    case 'quantity':
+      return contractQuantitySchema
+  }
+}
+
+function contractMetadataSchemaFromKinds(
+  kinds: Readonly<Record<string, ContractMetadataValueKind>>,
+) {
+  const shape: Record<string, z.ZodTypeAny> = {}
+
+  for (const [key, kind] of Object.entries(kinds)) {
+    shape[key] = contractSchemaForMetadataKind(kind).optional()
+  }
+
+  return z.object(shape).passthrough()
+}
+
+function mergeContractMetadataKinds(
+  ...sources: ReadonlyArray<Readonly<Record<string, ContractMetadataValueKind>>>
+): Record<string, ContractMetadataValueKind> {
+  return Object.assign({}, ...sources)
+}
+
+export const contractObjectMetadataSchema = contractMetadataSchemaFromKinds(
+  KNOWN_OBJECT_METADATA_KIND_BY_KEY,
+)
+export const contractSampleMetadataSchema = contractMetadataSchemaFromKinds(
+  mergeContractMetadataKinds(
+    KNOWN_OBJECT_METADATA_KIND_BY_KEY,
+    KNOWN_SAMPLE_METADATA_KIND_BY_KEY,
+  ),
+)
+export const contractWorkoutMetadataSchema = contractMetadataSchemaFromKinds(
+  mergeContractMetadataKinds(
+    KNOWN_OBJECT_METADATA_KIND_BY_KEY,
+    KNOWN_SAMPLE_METADATA_KIND_BY_KEY,
+    KNOWN_WORKOUT_METADATA_KIND_BY_KEY,
+  ),
+)
+export const contractWorkoutEventMetadataSchema =
+  contractMetadataSchemaFromKinds(KNOWN_WORKOUT_EVENT_METADATA_KIND_BY_KEY)
+
+const categoryMetadataSchemaLookup = Object.fromEntries(
+  Object.entries(CATEGORY_METADATA_KIND_LOOKUP).map(([identifier, kinds]) => [
+    identifier,
+    contractMetadataSchemaFromKinds(
+      mergeContractMetadataKinds(
+        KNOWN_OBJECT_METADATA_KIND_BY_KEY,
+        KNOWN_SAMPLE_METADATA_KIND_BY_KEY,
+        kinds,
+      ),
     ),
-  )}\n\n${renderIdentifierMetadataKindMap(
-    'KNOWN_QUANTITY_METADATA_KIND_BY_IDENTIFIER',
-    metadataByObjectType.quantitySample.filter(
-      (key) => key.identifiers.length > 0,
+  ]),
+) as Record<string, z.ZodTypeAny>
+
+const quantityMetadataSchemaLookup = Object.fromEntries(
+  Object.entries(QUANTITY_METADATA_KIND_LOOKUP).map(([identifier, kinds]) => [
+    identifier,
+    contractMetadataSchemaFromKinds(
+      mergeContractMetadataKinds(
+        KNOWN_OBJECT_METADATA_KIND_BY_KEY,
+        KNOWN_SAMPLE_METADATA_KIND_BY_KEY,
+        kinds,
+      ),
     ),
-  )}\n\nconst CATEGORY_METADATA_KIND_LOOKUP = KNOWN_CATEGORY_METADATA_KIND_BY_IDENTIFIER as Readonly<Record<string, Readonly<Record<string, ContractMetadataValueKind>>>>\nconst QUANTITY_METADATA_KIND_LOOKUP = KNOWN_QUANTITY_METADATA_KIND_BY_IDENTIFIER as Readonly<Record<string, Readonly<Record<string, ContractMetadataValueKind>>>>\n\nexport function getKnownCategoryMetadataKindMap(\n  identifier: CategoryTypeIdentifier,\n): Readonly<Record<string, ContractMetadataValueKind>> {\n  return CATEGORY_METADATA_KIND_LOOKUP[identifier] ?? {}\n}\n\nexport function getKnownQuantityMetadataKindMap(\n  identifier: QuantityTypeIdentifier,\n): Readonly<Record<string, ContractMetadataValueKind>> {\n  return QUANTITY_METADATA_KIND_LOOKUP[identifier] ?? {}\n}\n`
+  ]),
+) as Record<string, z.ZodTypeAny>
+
+export function getKnownCategoryMetadataKindMap(
+  identifier: CategoryTypeIdentifier,
+): Readonly<Record<string, ContractMetadataValueKind>> {
+  return CATEGORY_METADATA_KIND_LOOKUP[identifier] ?? {}
+}
+
+export function getKnownQuantityMetadataKindMap(
+  identifier: QuantityTypeIdentifier,
+): Readonly<Record<string, ContractMetadataValueKind>> {
+  return QUANTITY_METADATA_KIND_LOOKUP[identifier] ?? {}
+}
+
+export function getCategoryMetadataContractSchema(
+  identifier: CategoryTypeIdentifier,
+): z.ZodTypeAny {
+  return categoryMetadataSchemaLookup[identifier] ?? contractSampleMetadataSchema
+}
+
+export function getQuantityMetadataContractSchema(
+  identifier: QuantityTypeIdentifier,
+): z.ZodTypeAny {
+  return quantityMetadataSchemaLookup[identifier] ?? contractSampleMetadataSchema
+}
+
+function createBaseSampleContractSchema(metadataSchema: z.ZodTypeAny) {
+  return z
+    .object({
+      uuid: z.string(),
+      sourceRevision: contractSourceRevisionSchema,
+      device: contractDeviceSchema.optional(),
+      metadata: metadataSchema,
+      sampleType: contractSampleTypeSchema,
+      startDate: z.date(),
+      endDate: z.date(),
+      hasUndeterminedDuration: z.boolean(),
+    })
+    .passthrough()
+}
+
+export function getQuantitySampleContractSchema(
+  identifier: QuantityTypeIdentifier,
+) {
+  return createBaseSampleContractSchema(
+    getQuantityMetadataContractSchema(identifier),
+  )
+    .extend({
+      quantityType: z.literal(identifier),
+      quantity: z.number(),
+      unit: z.string(),
+    })
+    .passthrough()
+}
+
+export function getCategorySampleContractSchema(
+  identifier: CategoryTypeIdentifier,
+) {
+  return createBaseSampleContractSchema(
+    getCategoryMetadataContractSchema(identifier),
+  )
+    .extend({
+      categoryType: z.literal(identifier),
+      value: z.number(),
+    })
+    .passthrough()
+}
+
+export const contractWorkoutEventSchema = z
+  .object({
+    type: z.number(),
+    startDate: z.date(),
+    endDate: z.date(),
+    metadata: contractWorkoutEventMetadataSchema.optional(),
+  })
+  .passthrough()
+
+export const contractWorkoutSampleSchema = createBaseSampleContractSchema(
+  contractWorkoutMetadataSchema,
+)
+  .extend({
+    workoutActivityType: z.number(),
+    duration: contractQuantitySchema,
+    totalEnergyBurned: contractQuantitySchema.optional(),
+    totalDistance: contractQuantitySchema.optional(),
+    totalSwimmingStrokeCount: contractQuantitySchema.optional(),
+    totalFlightsClimbed: contractQuantitySchema.optional(),
+    events: z.array(contractWorkoutEventSchema).optional(),
+    activities: z.array(contractWorkoutActivitySchema).optional(),
+  })
+  .passthrough()
+`
 }
 
 export function renderGeneratedSwift(schema: HealthkitSchema): string {
