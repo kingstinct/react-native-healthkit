@@ -160,7 +160,9 @@ jobs:
       - run: sudo xcode-select -s /Applications/Xcode_26.2.app
 
       - name: Install simulator tooling
-        run: brew install applesimutils
+        run: |
+          brew tap wix/brew
+          brew install applesimutils
 
       - name: Boot iOS simulator
         run: |
