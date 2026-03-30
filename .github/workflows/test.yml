@@ -30,12 +30,11 @@ on:
         default: "ubuntu-latest"
         type: choice
 
+  pull_request:
   push:
     branches:
-      - "*" # matches every branch that doesn't contain a '/'
-      - "*/*" # matches every branch containing a single '/'
-      - "**" # matches every branch
-      # - "!main" # matches every branch except main
+      - main
+      - master
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
