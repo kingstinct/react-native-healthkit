@@ -14,6 +14,13 @@
     "xcrun",
     "xcworkspace"
   ],
+  "search.exclude": {
+    ".agents/skills/**": true,
+    ".claude/skills": true,
+    "**/.ruby-lsp": true,
+    "**/*.code-search": true,
+    "**/node_modules": true
+  },
   "editor.defaultFormatter": "biomejs.biome",
   "editor.codeActionsOnSave": {
     "source.organizeImports.biome": "explicit",

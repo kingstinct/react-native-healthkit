@@ -1,0 +1,6 @@
+{
+  "enabledPlugins": {
+    "build-nitro-modules@react-native-agent-skills": true,
+    "react-native-best-practices@callstack-agent-skills": true
+  }
+}
