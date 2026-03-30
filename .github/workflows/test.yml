@@ -30,7 +30,7 @@ on:
         default: "ubuntu-latest"
         type: choice
 
-  pull_request_target:
+  pull_request:
   push:
     branches:
       - "*" # matches every branch that doesn't contain a '/'
