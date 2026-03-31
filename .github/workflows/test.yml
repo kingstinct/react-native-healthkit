@@ -209,6 +209,10 @@ jobs:
       - run: bun run codegen
         working-directory: packages/react-native-healthkit
 
+      - name: Expo Prebuild
+        working-directory: apps/example
+        run: bunx expo prebuild --platform ios --non-interactive
+
       - name: Build iOS project
         working-directory: apps/example/ios
         run: |
