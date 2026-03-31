@@ -54,6 +54,9 @@ jobs:
         with:
           filters: |
             healthkit_contracts:
+              - '.bun-version'
+              - 'bun.lock'
+              - 'package.json'
               - 'packages/react-native-healthkit/src/**'
               - 'packages/react-native-healthkit/ios/**'
               - 'packages/react-native-healthkit/cpp/**'
@@ -63,10 +66,12 @@ jobs:
               - 'packages/react-native-healthkit/tsconfig*.json'
               - 'apps/example/contracts/**'
               - 'apps/example/scripts/run-healthkit-contracts.sh'
+              - 'apps/example/app.json'
               - 'apps/example/app/contracts.tsx'
               - 'apps/example/app/_layout.tsx'
               - 'apps/example/app/auth.tsx'
               - 'apps/example/constants/AllUsedIdentifiersInApp.ts'
+              - 'apps/example/ios/**'
               - 'apps/example/package.json'
               - '.github/workflows/test.yml'
             swift_native:

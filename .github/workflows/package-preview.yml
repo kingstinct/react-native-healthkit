@@ -1,15 +1,15 @@
 name: Package Preview
 
 on:
-  pull_request_target:
+  pull_request:
+
+permissions: {}
 
 jobs:
   preview:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: refs/pull/${{ github.event.number }}/merge
 
       - uses: oven-sh/setup-bun@v2
         with:
