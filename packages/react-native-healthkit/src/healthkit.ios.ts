@@ -114,6 +114,181 @@ export type AvailableQuantityTypes<
   ? AvailableQuantityTypesIOS17Plus
   : AvailableQuantityTypesBeforeIOS17
 
+type BoundMethod<
+  TMethod extends (...args: unknown[]) => unknown,
+  TReturn = ReturnType<TMethod>,
+> = (...args: Parameters<TMethod>) => TReturn
+
+function bindRetypedMethod<
+  TModule,
+  TMethod extends (...args: unknown[]) => unknown,
+  TReturn,
+>(module: TModule, method: TMethod): BoundMethod<TMethod, TReturn> {
+  return method.bind(module) as BoundMethod<TMethod, TReturn>
+}
+
+const CorrelationTypeBindings = {
+  queryCorrelationSamples: bindRetypedMethod<
+    typeof CorrelationTypes,
+    typeof CorrelationTypes.queryCorrelationSamples,
+    Promise<readonly CorrelationSampleTyped[]>
+  >(CorrelationTypes, CorrelationTypes.queryCorrelationSamples),
+  queryCorrelationSamplesWithAnchor: bindRetypedMethod<
+    typeof CorrelationTypes,
+    typeof CorrelationTypes.queryCorrelationSamplesWithAnchor,
+    Promise<QueryCorrelationSamplesWithAnchorResponseTyped>
+  >(CorrelationTypes, CorrelationTypes.queryCorrelationSamplesWithAnchor),
+  saveCorrelationSample: bindRetypedMethod<
+    typeof CorrelationTypes,
+    typeof CorrelationTypes.saveCorrelationSample,
+    Promise<CorrelationSampleTyped | undefined>
+  >(CorrelationTypes, CorrelationTypes.saveCorrelationSample),
+} satisfies {
+  queryCorrelationSamples: BoundMethod<
+    typeof CorrelationTypes.queryCorrelationSamples,
+    Promise<readonly CorrelationSampleTyped[]>
+  >
+  queryCorrelationSamplesWithAnchor: BoundMethod<
+    typeof CorrelationTypes.queryCorrelationSamplesWithAnchor,
+    Promise<QueryCorrelationSamplesWithAnchorResponseTyped>
+  >
+  saveCorrelationSample: BoundMethod<
+    typeof CorrelationTypes.saveCorrelationSample,
+    Promise<CorrelationSampleTyped | undefined>
+  >
+}
+
+const HeartbeatSeriesBindings = {
+  queryHeartbeatSeriesSamples: bindRetypedMethod<
+    typeof HeartbeatSeries,
+    typeof HeartbeatSeries.queryHeartbeatSeriesSamples,
+    Promise<readonly HeartbeatSeriesSampleTyped[]>
+  >(HeartbeatSeries, HeartbeatSeries.queryHeartbeatSeriesSamples),
+  queryHeartbeatSeriesSamplesWithAnchor: bindRetypedMethod<
+    typeof HeartbeatSeries,
+    typeof HeartbeatSeries.queryHeartbeatSeriesSamplesWithAnchor,
+    Promise<HeartbeatSeriesSamplesWithAnchorResponseTyped>
+  >(HeartbeatSeries, HeartbeatSeries.queryHeartbeatSeriesSamplesWithAnchor),
+} satisfies {
+  queryHeartbeatSeriesSamples: BoundMethod<
+    typeof HeartbeatSeries.queryHeartbeatSeriesSamples,
+    Promise<readonly HeartbeatSeriesSampleTyped[]>
+  >
+  queryHeartbeatSeriesSamplesWithAnchor: BoundMethod<
+    typeof HeartbeatSeries.queryHeartbeatSeriesSamplesWithAnchor,
+    Promise<HeartbeatSeriesSamplesWithAnchorResponseTyped>
+  >
+}
+
+const ElectrocardiogramBindings = {
+  queryElectrocardiogramSamples: bindRetypedMethod<
+    typeof Electrocardiograms,
+    typeof Electrocardiograms.queryElectrocardiogramSamples,
+    Promise<readonly ElectrocardiogramSampleTyped[]>
+  >(Electrocardiograms, Electrocardiograms.queryElectrocardiogramSamples),
+  queryElectrocardiogramSamplesWithAnchor: bindRetypedMethod<
+    typeof Electrocardiograms,
+    typeof Electrocardiograms.queryElectrocardiogramSamplesWithAnchor,
+    Promise<ElectrocardiogramSamplesWithAnchorResponseTyped>
+  >(
+    Electrocardiograms,
+    Electrocardiograms.queryElectrocardiogramSamplesWithAnchor,
+  ),
+} satisfies {
+  queryElectrocardiogramSamples: BoundMethod<
+    typeof Electrocardiograms.queryElectrocardiogramSamples,
+    Promise<readonly ElectrocardiogramSampleTyped[]>
+  >
+  queryElectrocardiogramSamplesWithAnchor: BoundMethod<
+    typeof Electrocardiograms.queryElectrocardiogramSamplesWithAnchor,
+    Promise<ElectrocardiogramSamplesWithAnchorResponseTyped>
+  >
+}
+
+const WorkoutBindings = {
+  queryWorkoutSamples: bindRetypedMethod<
+    typeof Workouts,
+    typeof Workouts.queryWorkoutSamples,
+    Promise<readonly WorkoutProxyTyped[]>
+  >(Workouts, Workouts.queryWorkoutSamples),
+  queryWorkoutSamplesWithAnchor: bindRetypedMethod<
+    typeof Workouts,
+    typeof Workouts.queryWorkoutSamplesWithAnchor,
+    Promise<QueryWorkoutSamplesWithAnchorResponseTyped>
+  >(Workouts, Workouts.queryWorkoutSamplesWithAnchor),
+  saveWorkoutSample: bindRetypedMethod<
+    typeof Workouts,
+    typeof Workouts.saveWorkoutSample,
+    Promise<WorkoutProxyTyped>
+  >(Workouts, Workouts.saveWorkoutSample),
+} satisfies {
+  queryWorkoutSamples: BoundMethod<
+    typeof Workouts.queryWorkoutSamples,
+    Promise<readonly WorkoutProxyTyped[]>
+  >
+  queryWorkoutSamplesWithAnchor: BoundMethod<
+    typeof Workouts.queryWorkoutSamplesWithAnchor,
+    Promise<QueryWorkoutSamplesWithAnchorResponseTyped>
+  >
+  saveWorkoutSample: BoundMethod<
+    typeof Workouts.saveWorkoutSample,
+    Promise<WorkoutProxyTyped>
+  >
+}
+
+const StateOfMindBindings = {
+  queryStateOfMindSamples: bindRetypedMethod<
+    typeof StateOfMind,
+    typeof StateOfMind.queryStateOfMindSamples,
+    Promise<readonly StateOfMindSampleTyped[]>
+  >(StateOfMind, StateOfMind.queryStateOfMindSamples),
+  queryStateOfMindSamplesWithAnchor: bindRetypedMethod<
+    typeof StateOfMind,
+    typeof StateOfMind.queryStateOfMindSamplesWithAnchor,
+    Promise<StateOfMindSamplesWithAnchorResponseTyped>
+  >(StateOfMind, StateOfMind.queryStateOfMindSamplesWithAnchor),
+  saveStateOfMindSample: bindRetypedMethod<
+    typeof StateOfMind,
+    typeof StateOfMind.saveStateOfMindSample,
+    Promise<StateOfMindSampleTyped | undefined>
+  >(StateOfMind, StateOfMind.saveStateOfMindSample),
+} satisfies {
+  queryStateOfMindSamples: BoundMethod<
+    typeof StateOfMind.queryStateOfMindSamples,
+    Promise<readonly StateOfMindSampleTyped[]>
+  >
+  queryStateOfMindSamplesWithAnchor: BoundMethod<
+    typeof StateOfMind.queryStateOfMindSamplesWithAnchor,
+    Promise<StateOfMindSamplesWithAnchorResponseTyped>
+  >
+  saveStateOfMindSample: BoundMethod<
+    typeof StateOfMind.saveStateOfMindSample,
+    Promise<StateOfMindSampleTyped | undefined>
+  >
+}
+
+const MedicationBindings = {
+  queryMedicationEvents: bindRetypedMethod<
+    typeof Medication,
+    typeof Medication.queryMedicationEvents,
+    Promise<readonly MedicationDoseEventTyped[]>
+  >(Medication, Medication.queryMedicationEvents),
+  queryMedicationEventsWithAnchor: bindRetypedMethod<
+    typeof Medication,
+    typeof Medication.queryMedicationEventsWithAnchor,
+    Promise<MedicationDoseEventsWithAnchorResponseTyped>
+  >(Medication, Medication.queryMedicationEventsWithAnchor),
+} satisfies {
+  queryMedicationEvents: BoundMethod<
+    typeof Medication.queryMedicationEvents,
+    Promise<readonly MedicationDoseEventTyped[]>
+  >
+  queryMedicationEventsWithAnchor: BoundMethod<
+    typeof Medication.queryMedicationEventsWithAnchor,
+    Promise<MedicationDoseEventsWithAnchorResponseTyped>
+  >
+}
+
 // Named exports - all functions bound to their respective modules
 export const authorizationStatusFor = Core.authorizationStatusFor.bind(Core)
 export const requestPerObjectReadAuthorization =
@@ -143,47 +318,17 @@ export const queryCategorySamples =
 export const queryCategorySamplesWithAnchor =
   CategoryTypes.queryCategorySamplesWithAnchor.bind(CategoryTypes)
 export const queryCorrelationSamples =
-  CorrelationTypes.queryCorrelationSamples.bind(
-    CorrelationTypes,
-  ) as unknown as (
-    ...args: Parameters<typeof CorrelationTypes.queryCorrelationSamples>
-  ) => Promise<readonly CorrelationSampleTyped[]>
+  CorrelationTypeBindings.queryCorrelationSamples
 export const queryCorrelationSamplesWithAnchor =
-  CorrelationTypes.queryCorrelationSamplesWithAnchor.bind(
-    CorrelationTypes,
-  ) as unknown as (
-    ...args: Parameters<
-      typeof CorrelationTypes.queryCorrelationSamplesWithAnchor
-    >
-  ) => Promise<QueryCorrelationSamplesWithAnchorResponseTyped>
+  CorrelationTypeBindings.queryCorrelationSamplesWithAnchor
 export const queryHeartbeatSeriesSamples =
-  HeartbeatSeries.queryHeartbeatSeriesSamples.bind(
-    HeartbeatSeries,
-  ) as unknown as (
-    ...args: Parameters<typeof HeartbeatSeries.queryHeartbeatSeriesSamples>
-  ) => Promise<readonly HeartbeatSeriesSampleTyped[]>
+  HeartbeatSeriesBindings.queryHeartbeatSeriesSamples
 export const queryHeartbeatSeriesSamplesWithAnchor =
-  HeartbeatSeries.queryHeartbeatSeriesSamplesWithAnchor.bind(
-    HeartbeatSeries,
-  ) as unknown as (
-    ...args: Parameters<
-      typeof HeartbeatSeries.queryHeartbeatSeriesSamplesWithAnchor
-    >
-  ) => Promise<HeartbeatSeriesSamplesWithAnchorResponseTyped>
+  HeartbeatSeriesBindings.queryHeartbeatSeriesSamplesWithAnchor
 export const queryElectrocardiogramSamples =
-  Electrocardiograms.queryElectrocardiogramSamples.bind(
-    Electrocardiograms,
-  ) as unknown as (
-    ...args: Parameters<typeof Electrocardiograms.queryElectrocardiogramSamples>
-  ) => Promise<readonly ElectrocardiogramSampleTyped[]>
+  ElectrocardiogramBindings.queryElectrocardiogramSamples
 export const queryElectrocardiogramSamplesWithAnchor =
-  Electrocardiograms.queryElectrocardiogramSamplesWithAnchor.bind(
-    Electrocardiograms,
-  ) as unknown as (
-    ...args: Parameters<
-      typeof Electrocardiograms.queryElectrocardiogramSamplesWithAnchor
-    >
-  ) => Promise<ElectrocardiogramSamplesWithAnchorResponseTyped>
+  ElectrocardiogramBindings.queryElectrocardiogramSamplesWithAnchor
 export const queryQuantitySamples =
   QuantityTypes.queryQuantitySamples.bind(QuantityTypes)
 export const queryQuantitySamplesWithAnchor =
@@ -198,50 +343,27 @@ export const queryStatisticsCollectionForQuantitySeparateBySource =
   QuantityTypes.queryStatisticsCollectionForQuantitySeparateBySource.bind(
     QuantityTypes,
   )
-export const queryWorkoutSamples = Workouts.queryWorkoutSamples.bind(
-  Workouts,
-) as unknown as (
-  ...args: Parameters<typeof Workouts.queryWorkoutSamples>
-) => Promise<readonly WorkoutProxyTyped[]>
+export const queryWorkoutSamples = WorkoutBindings.queryWorkoutSamples
 export const queryWorkoutSamplesWithAnchor =
-  Workouts.queryWorkoutSamplesWithAnchor.bind(Workouts) as unknown as (
-    ...args: Parameters<typeof Workouts.queryWorkoutSamplesWithAnchor>
-  ) => Promise<QueryWorkoutSamplesWithAnchorResponseTyped>
+  WorkoutBindings.queryWorkoutSamplesWithAnchor
 export const querySources = Core.querySources.bind(Core)
 export const requestAuthorization = Core.requestAuthorization.bind(Core)
 export const deleteObjects = Core.deleteObjects.bind(Core)
 export const saveCategorySample =
   CategoryTypes.saveCategorySample.bind(CategoryTypes)
 export const saveCorrelationSample =
-  CorrelationTypes.saveCorrelationSample.bind(CorrelationTypes) as unknown as (
-    ...args: Parameters<typeof CorrelationTypes.saveCorrelationSample>
-  ) => Promise<CorrelationSampleTyped | undefined>
+  CorrelationTypeBindings.saveCorrelationSample
 export const saveQuantitySample =
   QuantityTypes.saveQuantitySample.bind(QuantityTypes)
-export const saveWorkoutSample = Workouts.saveWorkoutSample.bind(
-  Workouts,
-) as unknown as (
-  ...args: Parameters<typeof Workouts.saveWorkoutSample>
-) => Promise<WorkoutProxyTyped>
+export const saveWorkoutSample = WorkoutBindings.saveWorkoutSample
 export const startWatchApp =
   Workouts.startWatchAppWithWorkoutConfiguration.bind(Workouts)
 export const isProtectedDataAvailable = Core.isProtectedDataAvailable.bind(Core)
-export const queryStateOfMindSamples = StateOfMind.queryStateOfMindSamples.bind(
-  StateOfMind,
-) as unknown as (
-  ...args: Parameters<typeof StateOfMind.queryStateOfMindSamples>
-) => Promise<readonly StateOfMindSampleTyped[]>
+export const queryStateOfMindSamples =
+  StateOfMindBindings.queryStateOfMindSamples
 export const queryStateOfMindSamplesWithAnchor =
-  StateOfMind.queryStateOfMindSamplesWithAnchor.bind(
-    StateOfMind,
-  ) as unknown as (
-    ...args: Parameters<typeof StateOfMind.queryStateOfMindSamplesWithAnchor>
-  ) => Promise<StateOfMindSamplesWithAnchorResponseTyped>
-export const saveStateOfMindSample = StateOfMind.saveStateOfMindSample.bind(
-  StateOfMind,
-) as unknown as (
-  ...args: Parameters<typeof StateOfMind.saveStateOfMindSample>
-) => Promise<StateOfMindSampleTyped | undefined>
+  StateOfMindBindings.queryStateOfMindSamplesWithAnchor
+export const saveStateOfMindSample = StateOfMindBindings.saveStateOfMindSample
 export const isQuantityCompatibleWithUnit =
   QuantityTypes.isQuantityCompatibleWithUnit.bind(QuantityTypes)
 
@@ -255,15 +377,9 @@ export const requestMedicationsAuthorization =
   Medication.requestMedicationsAuthorization.bind(Medication)
 
 export const queryMedications = Medication.queryMedications.bind(Medication)
-export const queryMedicationEvents = Medication.queryMedicationEvents.bind(
-  Medication,
-) as unknown as (
-  ...args: Parameters<typeof Medication.queryMedicationEvents>
-) => Promise<readonly MedicationDoseEventTyped[]>
+export const queryMedicationEvents = MedicationBindings.queryMedicationEvents
 export const queryMedicationEventsWithAnchor =
-  Medication.queryMedicationEventsWithAnchor.bind(Medication) as unknown as (
-    ...args: Parameters<typeof Medication.queryMedicationEventsWithAnchor>
-  ) => Promise<MedicationDoseEventsWithAnchorResponseTyped>
+  MedicationBindings.queryMedicationEventsWithAnchor
 
 export const currentAppSource = Core.currentAppSource.bind(Core)
 
