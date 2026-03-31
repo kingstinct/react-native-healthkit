@@ -115,16 +115,23 @@ export type AvailableQuantityTypes<
   : AvailableQuantityTypesBeforeIOS17
 
 type BoundMethod<
-  TMethod extends (...args: unknown[]) => unknown,
-  TReturn = ReturnType<TMethod>,
-> = (...args: Parameters<TMethod>) => TReturn
+  TMethod,
+  TReturn = TMethod extends (...args: infer _Args) => infer TResult
+    ? TResult
+    : never,
+> = (
+  ...args: TMethod extends (...args: infer TArgs) => unknown ? TArgs : never
+) => TReturn
 
-function bindRetypedMethod<
-  TModule,
-  TMethod extends (...args: unknown[]) => unknown,
-  TReturn,
->(module: TModule, method: TMethod): BoundMethod<TMethod, TReturn> {
-  return method.bind(module) as BoundMethod<TMethod, TReturn>
+function bindRetypedMethod<TModule, TMethod, TReturn>(
+  module: TModule,
+  method: TMethod,
+): BoundMethod<TMethod, TReturn> {
+  return (
+    method as TMethod extends (...args: infer TArgs) => infer TResult
+      ? (...args: TArgs) => TResult
+      : never
+  ).bind(module) as BoundMethod<TMethod, TReturn>
 }
 
 const CorrelationTypeBindings = {
