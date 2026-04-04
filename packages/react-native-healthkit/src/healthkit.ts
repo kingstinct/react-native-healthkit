@@ -68,6 +68,14 @@ export const enableBackgroundDelivery = UnavailableFnFromModule(
   'enableBackgroundDelivery',
   Promise.resolve(false),
 )
+export const configureBackgroundTypes = UnavailableFnFromModule(
+  'configureBackgroundTypes',
+  Promise.resolve(false),
+)
+export const clearBackgroundTypes = UnavailableFnFromModule(
+  'clearBackgroundTypes',
+  Promise.resolve(false),
+)
 export const getPreferredUnits = UnavailableFnFromModule(
   'getPreferredUnits',
   Promise.resolve([]),
@@ -463,6 +471,8 @@ const HealthkitModule = {
   areObjectTypesAvailable,
   areObjectTypesAvailableAsync,
   isQuantityCompatibleWithUnit,
+  configureBackgroundTypes,
+  clearBackgroundTypes,
   disableAllBackgroundDelivery,
   disableBackgroundDelivery,
   enableBackgroundDelivery,

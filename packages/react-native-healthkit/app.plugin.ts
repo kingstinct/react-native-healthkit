@@ -1,6 +1,7 @@
 import {
   type ConfigPlugin,
   createRunOncePlugin,
+  withAppDelegate,
   withEntitlementsPlist,
   withInfoPlist,
   withPlugins,
@@ -8,8 +9,6 @@ import {
 
 import pkg from './package.json'
 
-// please note that the BackgroundConfig currently doesn't actually enable background delivery for any types, but you
-// can set it to false if you don't want the entitlement
 type BackgroundConfig = boolean
 
 type InfoPlistConfig = {
@@ -57,10 +56,49 @@ const withInfoPlistPlugin: ConfigPlugin<InfoPlistConfig> = (config, props) => {
   })
 }
 
+const withAppDelegatePlugin: ConfigPlugin<{
+  background?: BackgroundConfig
+}> = (config, props) => {
+  if (props?.background === false) {
+    return config
+  }
+
+  return withAppDelegate(config, (configDelegate) => {
+    const contents = configDelegate.modResults.contents
+
+    // Add import for HealthKit if not already present
+    if (!contents.includes('import HealthKit')) {
+      configDelegate.modResults.contents =
+        configDelegate.modResults.contents.replace(
+          /^(import .+\n)/m,
+          '$1import HealthKit\n',
+        )
+    }
+
+    // Insert BackgroundDeliveryManager setup into didFinishLaunchingWithOptions
+    const setupCall =
+      '    BackgroundDeliveryManager.shared.setupBackgroundObservers()\n'
+
+    if (
+      !configDelegate.modResults.contents.includes('BackgroundDeliveryManager')
+    ) {
+      // Match the opening of didFinishLaunchingWithOptions and insert after the opening brace
+      configDelegate.modResults.contents =
+        configDelegate.modResults.contents.replace(
+          /(func application\(.+didFinishLaunchingWithOptions.+\{)\n/,
+          `$1\n${setupCall}`,
+        )
+    }
+
+    return configDelegate
+  })
+}
+
 const healthkitAppPlugin: ConfigPlugin<AppPluginConfig> = (config, props) => {
   return withPlugins(config, [
     [withEntitlementsPlugin, props],
     [withInfoPlistPlugin, props],
+    [withAppDelegatePlugin, props],
   ])
 }
 

@@ -99,6 +99,8 @@ export const disableAllBackgroundDelivery =
 export const disableBackgroundDelivery =
   Core.disableBackgroundDelivery.bind(Core)
 export const enableBackgroundDelivery = Core.enableBackgroundDelivery.bind(Core)
+export const configureBackgroundTypes = Core.configureBackgroundTypes.bind(Core)
+export const clearBackgroundTypes = Core.clearBackgroundTypes.bind(Core)
 export const getBiologicalSex =
   Characteristics.getBiologicalSex.bind(Characteristics)
 export const getBloodType = Characteristics.getBloodType.bind(Characteristics)
@@ -206,6 +208,8 @@ export default {
   areObjectTypesAvailable,
   areObjectTypesAvailableAsync,
   isQuantityCompatibleWithUnit,
+  configureBackgroundTypes,
+  clearBackgroundTypes,
   disableAllBackgroundDelivery,
   disableBackgroundDelivery,
   enableBackgroundDelivery,

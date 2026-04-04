@@ -430,6 +430,30 @@ class CoreModule: HybridCoreModuleSpec {
     }
   }
 
+  func configureBackgroundTypes(
+    typeIdentifiers: [String], updateFrequency: UpdateFrequency
+  ) -> Promise<Bool> {
+    return Promise.async {
+      guard let frequency = HKUpdateFrequency(rawValue: Int(updateFrequency.rawValue)) else {
+        throw runtimeErrorWithPrefix("Invalid update frequency rawValue: \(updateFrequency)")
+      }
+
+      BackgroundDeliveryManager.shared.configure(
+        typeIdentifiers: typeIdentifiers,
+        frequency: frequency
+      )
+
+      return true
+    }
+  }
+
+  func clearBackgroundTypes() -> Promise<Bool> {
+    return Promise.async {
+      BackgroundDeliveryManager.shared.clearConfiguration()
+      return true
+    }
+  }
+
   func unsubscribeQueries(queryIds: [String]) -> Double {
     let successCounts = queryIds.map { queryId in
       if let query = self._runningQueries[queryId] {
