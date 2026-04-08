@@ -1,8 +1,9 @@
+import type { KnownSampleMetadata } from '../generated/healthkit.generated'
 import type {
   QueryOptionsWithAnchor,
   QueryOptionsWithSortOrder,
 } from '../types/QueryOptions'
-import type { BaseSample, DeletedSample } from './Shared'
+import type { BaseSample, DeletedSample, WithTypedMetadata } from './Shared'
 
 // Enums mirror HealthKit; keep the union literal names stable.
 export type ElectrocardiogramClassification =
@@ -33,8 +34,19 @@ export interface ElectrocardiogramSample extends BaseSample {
   readonly voltages?: readonly ElectrocardiogramVoltage[]
 }
 
+export type ElectrocardiogramSampleTyped = WithTypedMetadata<
+  ElectrocardiogramSample,
+  KnownSampleMetadata
+>
+
 export interface ElectrocardiogramSamplesWithAnchorResponse {
   readonly samples: readonly ElectrocardiogramSample[]
+  readonly deletedSamples: readonly DeletedSample[]
+  readonly newAnchor: string
+}
+
+export interface ElectrocardiogramSamplesWithAnchorResponseTyped {
+  readonly samples: readonly ElectrocardiogramSampleTyped[]
   readonly deletedSamples: readonly DeletedSample[]
   readonly newAnchor: string
 }

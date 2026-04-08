@@ -1,20 +1,15 @@
+import type { UnitForIdentifierGenerated } from '../generated/healthkit.generated'
+import {
+  HeartRateMotionContext,
+  InsulinDeliveryReason,
+} from '../generated/healthkit.generated'
 import type { SourceProxy } from '../specs/SourceProxy.nitro'
-import type { QuantitySample } from './QuantitySample'
+import type { QuantitySample, QuantitySampleTyped } from './QuantitySample'
 import type { QuantityTypeIdentifier } from './QuantityTypeIdentifier'
 import type { FilterForSamples } from './QueryOptions'
 import type { DeletedSample } from './Shared'
-import type {
-  BloodGlucoseUnit,
-  CountPerTime,
-  EnergyUnit,
-  LengthUnit,
-  MassUnit,
-  SpeedUnit,
-  TemperatureUnit,
-  TimeUnit,
-  Unit,
-  VolumeUnit,
-} from './Units'
+
+export { HeartRateMotionContext, InsulinDeliveryReason }
 
 interface QuantityDateInterval {
   readonly from: Date
@@ -52,23 +47,17 @@ export interface QuantitySamplesWithAnchorResponse {
   readonly newAnchor: string
 }
 
+export interface QuantitySamplesWithAnchorResponseTyped<
+  T extends QuantityTypeIdentifier,
+> {
+  readonly samples: readonly QuantitySampleTyped<T>[]
+  readonly deletedSamples: readonly DeletedSample[]
+  readonly newAnchor: string
+}
+
 export interface Quantity {
   readonly unit: string
   readonly quantity: number
-}
-
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkinsulindeliveryreason Apple Docs }
- */
-export enum InsulinDeliveryReason {
-  basal = 1,
-  bolus = 2,
-}
-
-export enum HeartRateMotionContext {
-  active = 2,
-  notSet = 0,
-  sedentary = 1,
 }
 
 export interface IntervalComponents {
@@ -79,10 +68,13 @@ export interface IntervalComponents {
   readonly year?: number
 }
 
-export interface StatisticsQueryOptions {
+export interface StatisticsQueryOptions<TUnit extends string = string> {
   filter?: FilterForSamples
-  unit?: string
+  unit?: TUnit
 }
+
+export interface StatisticsQueryOptionsWithStringUnit
+  extends StatisticsQueryOptions<string> {}
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkstatisticsoptions Apple Docs }
@@ -94,99 +86,7 @@ export type StatisticsOptions =
   | 'discreteMin'
   | 'duration'
   | 'mostRecent'
-// | 'separateBySource' (removed since it's handled by separate functions)
 
 export type UnitForIdentifier<
   T extends QuantityTypeIdentifier = QuantityTypeIdentifier,
-> = T extends 'QuantityTypeIdentifierBloodGlucose'
-  ? BloodGlucoseUnit
-  : T extends
-        | 'QuantityTypeIdentifierAppleExerciseTime'
-        | 'QuantityTypeIdentifierAppleMoveTime'
-        | 'QuantityTypeIdentifierAppleStandTime'
-    ? TimeUnit
-    : T extends
-          | 'QuantityTypeIdentifierActiveEnergyBurned'
-          | 'QuantityTypeIdentifierBasalEnergyBurned'
-          | 'QuantityTypeIdentifierDietaryEnergyConsumed'
-      ? EnergyUnit
-      : T extends
-            | 'QuantityTypeIdentifierDistanceCycling'
-            | 'QuantityTypeIdentifierDistanceDownhillSnowSports'
-            | 'QuantityTypeIdentifierDistanceSwimming'
-            | 'QuantityTypeIdentifierDistanceWalkingRunning'
-            | 'QuantityTypeIdentifierDistanceWheelchair'
-            | 'QuantityTypeIdentifierSixMinuteWalkTestDistance'
-            | 'QuantityTypeIdentifierWaistCircumference'
-        ? LengthUnit
-        : T extends
-              | 'QuantityTypeIdentifierBodyFatPercentage'
-              | 'QuantityTypeIdentifierOxygenSaturation'
-              | 'QuantityTypeIdentifierWalkingAsymmetryPercentage'
-              | 'QuantityTypeIdentifierWalkingDoubleSupportPercentage'
-          ? '%'
-          : T extends 'QuantityTypeIdentifierBasalBodyTemperature'
-            ? TemperatureUnit
-            : T extends
-                  | 'QuantityTypeIdentifierRunningSpeed'
-                  | 'QuantityTypeIdentifierStairAscentSpeed'
-                  | 'QuantityTypeIdentifierStairDescentSpeed'
-                  | 'QuantityTypeIdentifierWalkingSpeed'
-              ? SpeedUnit<LengthUnit, TimeUnit>
-              : T extends
-                    | 'QuantityTypeIdentifierFlightsClimbed'
-                    | 'QuantityTypeIdentifierNumberOfAlcoholicBeverages'
-                    | 'QuantityTypeIdentifierNumberOfTimesFallen'
-                    | 'QuantityTypeIdentifierPushCount'
-                    | 'QuantityTypeIdentifierStepCount'
-                    | 'QuantityTypeIdentifierSwimmingStrokeCount'
-                ? 'count'
-                : T extends
-                      | 'QuantityTypeIdentifierDietaryBiotin'
-                      | 'QuantityTypeIdentifierDietaryCaffeine'
-                      | 'QuantityTypeIdentifierDietaryCalcium'
-                      | 'QuantityTypeIdentifierDietaryCarbohydrates'
-                      | 'QuantityTypeIdentifierDietaryChloride'
-                      | 'QuantityTypeIdentifierDietaryCholesterol'
-                      | 'QuantityTypeIdentifierDietaryChromium'
-                      | 'QuantityTypeIdentifierDietaryCopper'
-                      | 'QuantityTypeIdentifierDietaryFatMonounsaturated'
-                      | 'QuantityTypeIdentifierDietaryFatPolyunsaturated'
-                      | 'QuantityTypeIdentifierDietaryFatSaturated'
-                      | 'QuantityTypeIdentifierDietaryFatTotal'
-                      | 'QuantityTypeIdentifierDietaryFiber'
-                      | 'QuantityTypeIdentifierDietaryFolate'
-                      | 'QuantityTypeIdentifierDietaryIodine'
-                      | 'QuantityTypeIdentifierDietaryIron'
-                      | 'QuantityTypeIdentifierDietaryMagnesium'
-                      | 'QuantityTypeIdentifierDietaryManganese'
-                      | 'QuantityTypeIdentifierDietaryMolybdenum'
-                      | 'QuantityTypeIdentifierDietaryNiacin'
-                      | 'QuantityTypeIdentifierDietaryPantothenicAcid'
-                      | 'QuantityTypeIdentifierDietaryPhosphorus'
-                      | 'QuantityTypeIdentifierDietaryPotassium'
-                      | 'QuantityTypeIdentifierDietaryProtein'
-                      | 'QuantityTypeIdentifierDietaryRiboflavin'
-                      | 'QuantityTypeIdentifierDietarySelenium'
-                      | 'QuantityTypeIdentifierDietarySodium'
-                      | 'QuantityTypeIdentifierDietarySugar'
-                      | 'QuantityTypeIdentifierDietaryThiamin'
-                      | 'QuantityTypeIdentifierDietaryVitaminA'
-                      | 'QuantityTypeIdentifierDietaryVitaminB6'
-                      | 'QuantityTypeIdentifierDietaryVitaminB12'
-                      | 'QuantityTypeIdentifierDietaryVitaminC'
-                      | 'QuantityTypeIdentifierDietaryVitaminD'
-                      | 'QuantityTypeIdentifierDietaryVitaminE'
-                      | 'QuantityTypeIdentifierDietaryVitaminK'
-                      | 'QuantityTypeIdentifierDietaryZinc'
-                  ? MassUnit
-                  : T extends 'QuantityTypeIdentifierDietaryWater'
-                    ? VolumeUnit
-                    : T extends 'QuantityTypeIdentifierInsulinDelivery'
-                      ? 'IU'
-                      : T extends
-                            | 'QuantityTypeIdentifierHeartRate'
-                            | 'QuantityTypeIdentifierRestingHeartRate'
-                            | 'QuantityTypeIdentifierWalkingHeartRateAverage'
-                        ? CountPerTime<TimeUnit>
-                        : Unit
+> = UnitForIdentifierGenerated<T>

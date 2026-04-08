@@ -17,12 +17,18 @@ import {
   AllObjectTypesInApp,
   AllSampleTypesInApp,
 } from '@/constants/AllUsedIdentifiersInApp'
+import {
+  clearLaunchCommand,
+  readLaunchCommand,
+} from '@/contracts/launchCommand'
 import { initSubscriptions } from '@/state/subscriptionEvents'
 import { enumKeyLookup } from '@/utils/enumKeyLookup'
 
 const authEnumLookup = enumKeyLookup(AuthorizationRequestStatus)
 
 export default function AuthScreen() {
+  const launchCommand = readLaunchCommand()
+
   const requestAuth = useCallback(async () => {
     try {
       const res = await requestAuthorization({
@@ -32,11 +38,23 @@ export default function AuthScreen() {
       initSubscriptions()
       alert(`response: ${res}`)
 
+      if (launchCommand?.route === 'contracts') {
+        clearLaunchCommand()
+        router.replace({
+          pathname: '/contracts',
+          params: {
+            autorun: launchCommand.autorun,
+            scenario: launchCommand.scenario,
+          },
+        })
+        return
+      }
+
       router.replace('/')
     } catch (error) {
       console.error('Error requesting authorization:', error)
     }
-  }, [])
+  }, [launchCommand])
 
   const [status, setStatus] = useState<AuthorizationRequestStatus | null>(null)
 
@@ -62,6 +80,29 @@ export default function AuthScreen() {
     // Check the authorization status when the component mounts
     updateStatus()
   }, [])
+
+  useEffect(() => {
+    if (status === AuthorizationRequestStatus.unnecessary) {
+      if (launchCommand?.route === 'contracts') {
+        clearLaunchCommand()
+        router.replace({
+          pathname: '/contracts',
+          params: {
+            autorun: launchCommand.autorun,
+            scenario: launchCommand.scenario,
+          },
+        })
+      }
+      return
+    }
+
+    if (
+      status === AuthorizationRequestStatus.shouldRequest &&
+      launchCommand?.route === 'contracts'
+    ) {
+      void requestAuth()
+    }
+  }, [launchCommand, requestAuth, status])
 
   return (
     <Host style={{ paddingTop: 40 }}>

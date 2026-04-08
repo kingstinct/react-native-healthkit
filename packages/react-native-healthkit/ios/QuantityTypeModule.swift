@@ -19,7 +19,7 @@ func emptyStatisticsResponse(from: Date?, to: Date?) -> QueryStatisticsResponse 
 func queryStatisticsForQuantityInternal(
   quantityType: HKQuantityType,
   statistics: [StatisticsOptions],
-  options: StatisticsQueryOptions?
+  options: StatisticsQueryOptionsWithStringUnit?
 ) async throws -> HKStatistics? {
   let predicate = createPredicateForSamples(options?.filter)
 
@@ -128,7 +128,7 @@ func queryStatisticsCollectionForQuantityInternal(
   statistics: [StatisticsOptions],
   anchorDate: Date,
   intervalComponents: IntervalComponents,
-  options: StatisticsQueryOptions?
+  options: StatisticsQueryOptionsWithStringUnit?
 ) async throws -> HKStatisticsCollection? {
   let predicate = createPredicateForSamples(options?.filter)
 
@@ -245,15 +245,15 @@ func serializeStatisticsPerSource(gottenStats: HKStatistics, unit: HKUnit)
 
       return QueryStatisticsResponseFromSingleSource(
         source: serializeSource(source),
+        startDate: gottenStats.startDate,
+        endDate: gottenStats.endDate,
         duration: duration,
         averageQuantity: averageQuantity,
         maximumQuantity: maximumQuantity,
         minimumQuantity: minimumQuantity,
         sumQuantity: sumQuantity,
         mostRecentQuantity: mostRecentQuantity,
-        mostRecentQuantityDateInterval: mostRecentQuantityDateInterval,
-        startDate: gottenStats.startDate,
-        endDate: gottenStats.endDate
+        mostRecentQuantityDateInterval: mostRecentQuantityDateInterval
       )
     }
   }
@@ -308,7 +308,7 @@ func handleHKNoDataOrThrow<T>(
 class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   func queryStatisticsForQuantitySeparateBySource(
     identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions],
-    options: StatisticsQueryOptions?
+    options: StatisticsQueryOptionsWithStringUnit?
   ) -> Promise<[QueryStatisticsResponseFromSingleSource]> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
@@ -331,7 +331,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
 
   func queryStatisticsCollectionForQuantitySeparateBySource(
     identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], anchorDate: Date,
-    intervalComponents: IntervalComponents, options: StatisticsQueryOptions?
+    intervalComponents: IntervalComponents, options: StatisticsQueryOptionsWithStringUnit?
   ) -> Promise<[QueryStatisticsResponseFromSingleSource]> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
@@ -380,7 +380,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   func queryStatisticsForQuantity(
     identifier: QuantityTypeIdentifier,
     statistics: [StatisticsOptions],
-    options: StatisticsQueryOptions?
+    options: StatisticsQueryOptionsWithStringUnit?
   ) -> Promise<QueryStatisticsResponse> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
@@ -407,7 +407,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
 
   func queryStatisticsCollectionForQuantity(
     identifier: QuantityTypeIdentifier, statistics: [StatisticsOptions], anchorDate: Date,
-    intervalComponents: IntervalComponents, options: StatisticsQueryOptions?
+    intervalComponents: IntervalComponents, options: StatisticsQueryOptionsWithStringUnit?
   ) -> Promise<[QueryStatisticsResponse]> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
@@ -434,7 +434,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   }
 
   func queryQuantitySamplesWithAnchor(
-    identifier: QuantityTypeIdentifier, options: QueryOptionsWithAnchorAndUnit
+    identifier: QuantityTypeIdentifier, options: QueryOptionsWithAnchorAndStringUnit
   ) -> Promise<QuantitySamplesWithAnchorResponse> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
@@ -505,7 +505,7 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
   }
 
   func queryQuantitySamples(
-    identifier: QuantityTypeIdentifier, options: QueryOptionsWithSortOrderAndUnit
+    identifier: QuantityTypeIdentifier, options: QueryOptionsWithSortOrderAndStringUnit
   ) -> Promise<[QuantitySample]> {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)

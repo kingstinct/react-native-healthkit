@@ -38,6 +38,47 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      healthkit_contracts: ${{ steps.filter.outputs.healthkit_contracts }}
+      swift_native: ${{ steps.filter.outputs.swift_native }}
+    permissions:
+      pull-requests: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            healthkit_contracts:
+              - '.bun-version'
+              - 'bun.lock'
+              - 'package.json'
+              - 'packages/react-native-healthkit/src/**'
+              - 'packages/react-native-healthkit/ios/**'
+              - 'packages/react-native-healthkit/cpp/**'
+              - 'packages/react-native-healthkit/scripts/**'
+              - 'packages/react-native-healthkit/nitrogen/**'
+              - 'packages/react-native-healthkit/package.json'
+              - 'packages/react-native-healthkit/tsconfig*.json'
+              - 'apps/example/contracts/**'
+              - 'apps/example/scripts/run-healthkit-contracts.sh'
+              - 'apps/example/app.json'
+              - 'apps/example/app/contracts.tsx'
+              - 'apps/example/app/_layout.tsx'
+              - 'apps/example/app/auth.tsx'
+              - 'apps/example/constants/AllUsedIdentifiersInApp.ts'
+              - 'apps/example/ios/**'
+              - 'apps/example/package.json'
+              - '.github/workflows/test.yml'
+            swift_native:
+              - 'packages/react-native-healthkit/ios/**'
+              - 'packages/react-native-healthkit/cpp/**'
+              - 'apps/example/ios/**'
+
   test:
     # The type of runner that the job will run on
     runs-on: ${{ inputs.os || 'ubuntu-latest' }}
@@ -95,8 +136,10 @@ jobs:
         run: bun run lint
 
   swiftlint:
+    needs: changes
+    if: needs.changes.outputs.swift_native == 'true'
     # The type of runner that the job will run on
-    runs-on: ${{ inputs.os || 'macos-latest' }}
+    runs-on: macos-15
     timeout-minutes: 10
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -139,9 +182,11 @@ jobs:
   #         xcodebuild -downloadPlatform iOS
   #         # optional but useful:
   build-ios:
+    needs: changes
+    if: needs.changes.outputs.healthkit_contracts == 'true'
     # Only run on macOS since we need Xcode
     runs-on: macos-15
-    timeout-minutes: 50
+    timeout-minutes: 25
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -157,13 +202,45 @@ jobs:
       ## Xcode 26.2 (Swift 6.2) - latest stable
       - run: sudo xcode-select -s /Applications/Xcode_26.2.app
 
+      - name: Install simulator tooling
+        run: |
+          brew tap wix/brew
+          brew install applesimutils
+
+      - name: Verify generated HealthKit schema and bindings
+        working-directory: packages/react-native-healthkit
+        run: bun run check:generated
+
       - run: bun run codegen
         working-directory: packages/react-native-healthkit
 
       - name: Expo Prebuild
         working-directory: apps/example
-        run: bunx expo prebuild --platform ios
+        run: bunx expo prebuild --platform ios --non-interactive
 
       - name: Build iOS project
-        working-directory: apps/example
-        run: bun run build-sim
+        working-directory: apps/example/ios
+        run: |
+          SIMULATOR_ID="$(
+            xcrun simctl list devices available |
+              sed -n 's/^[[:space:]]*iPhone[^()]* (\([0-9A-F-][0-9A-F-]*\)) (.*/\1/p' |
+              head -n 1
+          )"
+          if [ -z "$SIMULATOR_ID" ]; then
+            echo "Unable to find an available iPhone simulator." >&2
+            exit 1
+          fi
+          xcodebuild \
+            -quiet \
+            -workspace RNHealthKit.xcworkspace \
+            -scheme RNHealthKit \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "id=$SIMULATOR_ID" \
+            ONLY_ACTIVE_ARCH=YES \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            DEBUG_INFORMATION_FORMAT=dwarf \
+            build
+
+      - name: Run HealthKit contracts
+        run: bun run test:contracts

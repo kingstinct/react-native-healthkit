@@ -91,6 +91,25 @@ export type CheckParameterCounts<
 }
 
 /**
+ * Checks that typed methods remain assignable to their base counterparts.
+ */
+export type CheckMethodCompatibility<
+  BaseInterface,
+  TypedInterface,
+  ExcludeFromBase extends keyof BaseInterface = never,
+> = {
+  SharedMethodNames: ExtractMethodNames<BaseInterface, ExcludeFromBase> &
+    ExtractMethodNames<TypedInterface>
+  IncompatibleMethods: {
+    [K in ExtractMethodNames<BaseInterface, ExcludeFromBase> &
+      ExtractMethodNames<TypedInterface>]: TypedInterface[K] extends BaseInterface[K]
+      ? never
+      : K
+  }[ExtractMethodNames<BaseInterface, ExcludeFromBase> &
+    ExtractMethodNames<TypedInterface>]
+}
+
+/**
  * Complete interface verification that checks both method names and parameter counts
  */
 export type VerifyInterfaceSync<
@@ -100,6 +119,11 @@ export type VerifyInterfaceSync<
 > = {
   MethodCheck: CheckMethodNames<BaseInterface, TypedInterface, ExcludeFromBase>
   ParameterCheck: CheckParameterCounts<
+    BaseInterface,
+    TypedInterface,
+    ExcludeFromBase
+  >
+  CompatibilityCheck: CheckMethodCompatibility<
     BaseInterface,
     TypedInterface,
     ExcludeFromBase
@@ -116,7 +140,20 @@ export type VerifyInterfaceSync<
         TypedInterface,
         ExcludeFromBase
       >['ParameterCountMismatches'] extends never
-      ? true
+      ? CheckMethodCompatibility<
+          BaseInterface,
+          TypedInterface,
+          ExcludeFromBase
+        >['IncompatibleMethods'] extends never
+        ? true
+        : {
+            ERROR: 'Method signature compatibility mismatch detected'
+            IncompatibleMethods: CheckMethodCompatibility<
+              BaseInterface,
+              TypedInterface,
+              ExcludeFromBase
+            >['IncompatibleMethods']
+          }
       : {
           ERROR: 'Parameter count mismatch detected'
           MethodsWithParameterCountMismatch: CheckParameterCounts<

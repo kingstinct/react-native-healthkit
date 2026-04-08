@@ -102,11 +102,18 @@ export interface QueryOptionsWithSortOrder extends GenericQueryOptions {
   readonly ascending?: boolean
 }
 
-export interface QueryOptionsWithSortOrderAndUnit
+export interface QueryOptionsWithSortOrderAndUnit<TUnit extends string = string>
   extends QueryOptionsWithSortOrder {
-  readonly unit?: string
+  readonly unit?: TUnit
 }
 
-export interface QueryOptionsWithAnchorAndUnit extends QueryOptionsWithAnchor {
-  readonly unit?: string
+export interface QueryOptionsWithAnchorAndUnit<TUnit extends string = string>
+  extends QueryOptionsWithAnchor {
+  readonly unit?: TUnit
 }
+
+export interface QueryOptionsWithSortOrderAndStringUnit
+  extends QueryOptionsWithSortOrderAndUnit<string> {}
+
+export interface QueryOptionsWithAnchorAndStringUnit
+  extends QueryOptionsWithAnchorAndUnit<string> {}

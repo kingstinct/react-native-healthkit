@@ -1,7 +1,50 @@
 import type { AnyMap } from 'react-native-nitro-modules'
+import type {
+  CategoryTypedMetadataForIdentifierGenerated,
+  CategoryValueForIdentifierGenerated,
+} from '../generated/healthkit.generated'
+import {
+  CategoryValueAppetiteChanges,
+  CategoryValueAppleStandHour,
+  CategoryValueAppleWalkingSteadinessEvent,
+  CategoryValueCervicalMucusQuality,
+  CategoryValueContraceptive,
+  CategoryValueEnvironmentalAudioExposureEvent,
+  CategoryValueHeadphoneAudioExposureEvent,
+  CategoryValueLowCardioFitnessEvent,
+  CategoryValueMenstrualFlow,
+  CategoryValue as CategoryValueNotApplicable,
+  CategoryValueOvulationTestResult,
+  CategoryValuePregnancyTestResult,
+  CategoryValuePresence,
+  CategoryValueProgesteroneTestResult,
+  CategoryValueSeverity,
+  CategoryValueSleepAnalysis,
+  CategoryValueVaginalBleeding,
+} from '../generated/healthkit.generated'
 import type { CategoryTypeIdentifier } from './CategoryTypeIdentifier'
 import type { BaseSample, DeletedSample, GenericMetadata } from './Shared'
 import type { SourceRevision } from './Source'
+
+export {
+  CategoryValueAppetiteChanges,
+  CategoryValueAppleStandHour,
+  CategoryValueAppleWalkingSteadinessEvent,
+  CategoryValueCervicalMucusQuality,
+  CategoryValueContraceptive,
+  CategoryValueEnvironmentalAudioExposureEvent,
+  CategoryValueHeadphoneAudioExposureEvent,
+  CategoryValueLowCardioFitnessEvent,
+  CategoryValueMenstrualFlow,
+  CategoryValueNotApplicable,
+  CategoryValueOvulationTestResult,
+  CategoryValuePregnancyTestResult,
+  CategoryValuePresence,
+  CategoryValueProgesteroneTestResult,
+  CategoryValueSeverity,
+  CategoryValueSleepAnalysis,
+  CategoryValueVaginalBleeding,
+}
 
 export type CategoryTypePresenceIdentifier =
   | 'HKCategoryTypeIdentifierAppetiteChanges'
@@ -9,18 +52,11 @@ export type CategoryTypePresenceIdentifier =
 
 export type CategoryTypeValueNotApplicableIdentifier =
   | 'HKCategoryTypeIdentifierHighHeartRateEvent'
+  | 'HKCategoryTypeIdentifierHypertensionEvent'
   | 'HKCategoryTypeIdentifierIntermenstrualBleeding'
   | 'HKCategoryTypeIdentifierMindfulSession'
   | 'HKCategoryTypeIdentifierSexualActivity'
-
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluepregnancytestresult Apple Docs }
- */
-enum CategoryValuePregnancyTestResult {
-  positive = 2,
-  negative = 1,
-  indeterminate = 3,
-}
+  | 'HKCategoryTypeIdentifierSleepApneaEvent'
 
 export type CategoryTypeSeverityIdentifier =
   | 'HKCategoryTypeIdentifierAbdominalCramps'
@@ -47,7 +83,6 @@ export type CategoryTypeSeverityIdentifier =
   | 'HKCategoryTypeIdentifierLossOfTaste'
   | 'HKCategoryTypeIdentifierLowerBackPain'
   | 'HKCategoryTypeIdentifierMemoryLapse'
-  | 'HKCategoryTypeIdentifierMoodChanges'
   | 'HKCategoryTypeIdentifierNausea'
   | 'HKCategoryTypeIdentifierNightSweats'
   | 'HKCategoryTypeIdentifierPelvicPain'
@@ -61,108 +96,9 @@ export type CategoryTypeSeverityIdentifier =
   | 'HKCategoryTypeIdentifierVomiting'
   | 'HKCategoryTypeIdentifierWheezing'
 
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluecervicalmucusquality Apple Docs }
- */
-export enum CategoryValueCervicalMucusQuality {
-  dry = 1,
-  sticky = 2,
-  creamy = 3,
-  watery = 4,
-  eggWhite = 5,
-}
-
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluemenstrualflow Apple Docs }
- */
-export enum CategoryValueMenstrualFlow {
-  unspecified = 1,
-  none = 5,
-  light = 2,
-  medium = 3,
-  heavy = 4,
-}
-
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalueovulationtestresult Apple Docs }
- */
-export enum CategoryValueOvulationTestResult {
-  negative = 1,
-  luteinizingHormoneSurge = 2,
-  indeterminate = 3,
-  estrogenSurge = 4,
-}
-
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluesleepanalysis Apple Docs }
- */
-export enum CategoryValueSleepAnalysis {
-  inBed = 0,
-  asleepUnspecified = 1,
-  awake = 2,
-  asleepCore = 3,
-  asleepDeep = 4,
-  asleepREM = 5,
-}
-
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalueappetitechanges Apple Docs}
- */
-export enum CategoryValueAppetiteChanges {
-  decreased = 2,
-  increased = 3,
-  noChange = 1,
-  unspecified = 0,
-}
-
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvaluepresence Apple Docs}
- */
-export enum CategoryValuePresence {
-  notPresent = 1,
-  present = 0,
-}
-
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalueseverity Apple Docs }
- */
-export enum CategoryValueSeverity {
-  notPresent = 1,
-  mild = 2,
-  moderate = 3,
-  severe = 4,
-  unspecified = 0,
-}
-
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalue/notapplicable Apple Docs }
- */
-export enum CategoryValueNotApplicable {
-  notApplicable = 0,
-}
-
-export enum CategoryValueLowCardioFitnessEvent {
-  lowFitness = 1,
-}
-
-/**
- * @see {@link https://developer.apple.com/documentation/healthkit/hkcategoryvalue Apple Docs }
- */
 export type CategoryValue =
-  | CategoryValueAppetiteChanges
-  | CategoryValueCervicalMucusQuality
-  | CategoryValueLowCardioFitnessEvent
-  | CategoryValueMenstrualFlow
-  | CategoryValueOvulationTestResult
-  | CategoryValuePresence
-  | CategoryValueSeverity
-  | CategoryValueSleepAnalysis
+  | CategoryValueForIdentifierGenerated<CategoryTypeIdentifier>
   | number
-
-export enum CategoryValueAppleStandHour {
-  stood = 0,
-  idle = 1,
-}
 
 export interface CategorySampleForSaving {
   readonly start: Date
@@ -194,49 +130,17 @@ export interface CategorySamplesWithAnchorResponseTyped<
 
 export type MetadataForCategoryIdentifier<
   T extends CategoryTypeIdentifier = CategoryTypeIdentifier,
-> = T extends 'HKCategoryTypeIdentifierSexualActivity'
-  ? GenericMetadata & {
-      readonly HKSexualActivityProtectionUsed?: boolean
-    }
-  : T extends 'HKCategoryTypeIdentifierMenstrualFlow'
-    ? GenericMetadata & {
-        readonly HKMenstrualCycleStart?: boolean
-      }
-    : GenericMetadata
+> = GenericMetadata & CategoryTypedMetadataForIdentifierGenerated<T>
 
-export interface CategorySampleTyped<T extends CategoryTypeIdentifier>
-  extends Omit<BaseSample, 'metadata'> {
+export type CategorySampleTyped<T extends CategoryTypeIdentifier> = Omit<
+  CategorySample,
+  'categoryType' | 'value' | 'metadata'
+> & {
   readonly categoryType: T
   readonly value: CategoryValueForIdentifier<T>
-
   readonly metadata: MetadataForCategoryIdentifier<T>
-
-  readonly metadataSexualActivityProtectionUsed?: boolean
-  readonly metadataMenstrualCycleStart?: boolean
 }
 
 export type CategoryValueForIdentifier<
   T extends CategoryTypeIdentifier = CategoryTypeIdentifier,
-> = T extends 'HKCategoryTypeIdentifierCervicalMucusQuality'
-  ? CategoryValueCervicalMucusQuality
-  : T extends 'CategoryTypeIdentifierMenstrualFlow'
-    ? CategoryValueMenstrualFlow
-    : T extends 'HKCategoryTypeIdentifierOvulationTestResult'
-      ? CategoryValueOvulationTestResult
-      : T extends 'HKCategoryTypeIdentifierSleepAnalysis'
-        ? CategoryValueSleepAnalysis
-        : T extends CategoryTypeValueNotApplicableIdentifier
-          ? CategoryValueNotApplicable
-          : T extends CategoryTypeSeverityIdentifier
-            ? CategoryValueSeverity
-            : T extends CategoryTypePresenceIdentifier
-              ? CategoryValuePresence
-              : T extends 'HKCategoryTypeIdentifierLowCardioFitnessEvent'
-                ? CategoryValueLowCardioFitnessEvent
-                : T extends 'HKCategoryTypeIdentifierPregnancyTestResult'
-                  ? CategoryValuePregnancyTestResult
-                  : T extends 'HKCategoryTypeIdentifierPregnancyTestResult'
-                    ? CategoryValuePregnancyTestResult
-                    : T extends 'HKCategoryTypeIdentifierAppleStandHour'
-                      ? CategoryValueAppleStandHour
-                      : number
+> = CategoryValueForIdentifierGenerated<T>

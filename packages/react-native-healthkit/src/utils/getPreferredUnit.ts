@@ -1,9 +1,10 @@
 import { Core } from '../modules'
+import type { UnitForIdentifier } from '../types/QuantityType'
 import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 
-const getPreferredUnit = async (
-  quantityType: QuantityTypeIdentifier,
-): Promise<string> => {
+const getPreferredUnit = async <T extends QuantityTypeIdentifier>(
+  quantityType: T,
+): Promise<UnitForIdentifier<T>> => {
   const units = await Core.getPreferredUnits([quantityType])
   const unit = units[0]?.unit
 
@@ -13,6 +14,6 @@ const getPreferredUnit = async (
     )
   }
 
-  return unit
+  return unit as UnitForIdentifier<T>
 }
 export default getPreferredUnit

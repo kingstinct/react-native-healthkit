@@ -17,6 +17,7 @@ import {
   FitzpatrickSkinType,
   WheelchairUse,
 } from '@kingstinct/react-native-healthkit/types/Characteristics'
+import { router } from 'expo-router'
 import { useEffect, useMemo, useState } from 'react'
 import { ListItem, type ListItemProps } from '@/components/SwiftListItem'
 import { enumKeyLookup } from '@/utils/enumKeyLookup'
@@ -174,6 +175,15 @@ const CoreTab = () => {
               subtitle={item.subtitle}
             />
           ))}
+        </Section>
+        <Section title="Contracts">
+          <ListItem
+            title="Open Contract Harness"
+            subtitle="Hidden E2E/contract screen"
+            onPress={() => {
+              router.push('/contracts')
+            }}
+          />
         </Section>
       </List>
     </Host>

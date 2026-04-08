@@ -9,7 +9,7 @@ export function useSubscribeToQuantitySamples<
   TIdentifier extends QuantityTypeIdentifier,
 >(
   identifier: TIdentifier,
-  onChange: (args: OnQuantitySamplesCallback) => void,
+  onChange: (args: OnQuantitySamplesCallback<TIdentifier>) => void,
 ): void {
   const onChangeRef = useRef(onChange)
 

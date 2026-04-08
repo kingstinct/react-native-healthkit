@@ -1,0 +1,20 @@
+{
+  "quantity": {
+    "readOnly": [
+      "HKQuantityTypeIdentifierWalkingHeartRateAverage",
+      "HKQuantityTypeIdentifierAtrialFibrillationBurden",
+      "HKQuantityTypeIdentifierAppleExerciseTime",
+      "HKQuantityTypeIdentifierAppleStandTime",
+      "HKQuantityTypeIdentifierAppleWalkingSteadiness"
+    ]
+  },
+  "category": {
+    "readOnly": [
+      "HKCategoryTypeIdentifierAppleStandHour",
+      "HKCategoryTypeIdentifierHighHeartRateEvent",
+      "HKCategoryTypeIdentifierLowHeartRateEvent",
+      "HKCategoryTypeIdentifierHeadphoneAudioExposureEvent",
+      "HKCategoryTypeIdentifierHypertensionEvent"
+    ]
+  }
+}

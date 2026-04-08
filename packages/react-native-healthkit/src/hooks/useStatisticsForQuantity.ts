@@ -3,6 +3,7 @@ import { QuantityTypes } from '../modules'
 import type {
   QueryStatisticsResponse,
   StatisticsOptions,
+  UnitForIdentifier,
 } from '../types/QuantityType'
 import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 import useSubscribeToChanges from './useSubscribeToChanges'
@@ -14,7 +15,7 @@ export function useStatisticsForQuantity<
   options: readonly StatisticsOptions[],
   from: Date,
   to?: Date,
-  unit?: string,
+  unit?: UnitForIdentifier<TIdentifier>,
 ) {
   const [result, setResult] = useState<QueryStatisticsResponse | null>(null)
 

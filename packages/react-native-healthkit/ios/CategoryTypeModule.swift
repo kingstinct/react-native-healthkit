@@ -3,7 +3,7 @@ import NitroModules
 
 class CategoryTypeModule: HybridCategoryTypeModuleSpec {
     func saveCategorySample(
-        identifier: CategoryTypeIdentifier,
+        identifier: CategoryTypeIdentifierWriteable,
         value: Double,
         startDate: Date,
         endDate: Date,
