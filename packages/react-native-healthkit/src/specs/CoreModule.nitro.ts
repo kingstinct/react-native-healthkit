@@ -41,6 +41,26 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
   disableAllBackgroundDelivery(): Promise<boolean>
 
   /**
+   * Configure background delivery types that will be registered natively in
+   * AppDelegate.didFinishLaunchingWithOptions — surviving app termination.
+   * Types and frequency are persisted to UserDefaults so they're available
+   * before the JS bridge boots on subsequent cold launches.
+   *
+   * Requires the Expo config plugin with `background: true` (default) or
+   * manual AppDelegate setup: `BackgroundDeliveryManager.shared.setupBackgroundObservers()`
+   */
+  configureBackgroundTypes(
+    typeIdentifiers: string[],
+    updateFrequency: UpdateFrequency,
+  ): Promise<boolean>
+
+  /**
+   * Clear persisted background delivery configuration and stop all observer queries.
+   * After calling this, the app will no longer register observers on cold launch.
+   */
+  clearBackgroundTypes(): Promise<boolean>
+
+  /**
    *  @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614180-ishealthdataavailable Apple Docs }
    */
   isHealthDataAvailable(): boolean

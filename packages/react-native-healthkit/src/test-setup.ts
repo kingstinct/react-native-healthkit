@@ -14,6 +14,8 @@ const mockModule = {
   disableAllBackgroundDelivery: jest.fn(),
   disableBackgroundDelivery: jest.fn(),
   enableBackgroundDelivery: jest.fn(),
+  configureBackgroundTypes: jest.fn(),
+  clearBackgroundTypes: jest.fn(),
   queryCategorySamplesWithAnchor: jest.fn(),
   queryQuantitySamplesWithAnchor: jest.fn(),
   getBiologicalSex: jest.fn(),
