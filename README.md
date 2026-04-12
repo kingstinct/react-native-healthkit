@@ -154,6 +154,127 @@ Example:
   // etc..
 ```
 
+## Background Delivery & Native Sync
+
+HealthKit can wake your app in the background when new samples arrive, even
+after the app has been terminated by the system. This library provides two
+complementary APIs for that:
+
+| API                        | Mechanism                     | Best for                                                     |
+|----------------------------|-------------------------------|--------------------------------------------------------------|
+| `configureBackgroundTypes` | Observer queries, JS callback | Updating app state, caches, notifications when data arrives  |
+| `configureBackgroundSync`  | Observer queries, native HTTP | Shipping data to your backend without the JS bridge          |
+
+Pick `configureBackgroundTypes` if you want JS code to run on each wake (JS bridge boots, your listeners fire). Pick `configureBackgroundSync` if you just need to forward data to a server — it runs entirely in native Swift and works even when JS is unavailable (e.g. just after a cold wake from termination).
+
+The two are not mutually exclusive: you can use `configureBackgroundSync` for server forwarding and `subscribeToChanges` (foreground) for UI updates.
+
+### `configureBackgroundTypes` — observer-only
+
+Registers `HKObserverQuery` instances at AppDelegate time (before the JS bridge
+boots) and enables background delivery. When samples arrive, events are queued
+and flushed to your JS `subscribeToChanges` callback once the bridge connects.
+
+Use this when you want **JS-side logic** to run on each delivery event.
+
+```typescript
+import { configureBackgroundTypes, UpdateFrequency } from '@kingstinct/react-native-healthkit'
+
+await configureBackgroundTypes(
+  ['HKQuantityTypeIdentifierStepCount', 'HKQuantityTypeIdentifierDistanceWalkingRunning'],
+  UpdateFrequency.immediate,
+)
+```
+
+### `configureBackgroundSync` — native-first sync
+
+For apps that want to send data to a backend **without relying on the JS bridge**
+(works even when the app is terminated), this registers observer queries and
+runs a fully-native sync engine on each wake. The engine queries HealthKit for
+today's data and POSTs to your configured HTTP endpoint.
+
+- Cumulative types (marked `cumulative: true`) use `HKStatisticsCollectionQuery`
+  with `.cumulativeSum` — Apple deduplicates across iPhone + Watch and returns
+  one correct total per day.
+- Discrete types use `HKSampleQuery` — individual samples with their HK UUIDs.
+- You define the translation via `type` and `unit` fields so records arrive in
+  whatever format your backend expects.
+
+```typescript
+import { configureBackgroundSync, UpdateFrequency } from '@kingstinct/react-native-healthkit'
+
+await configureBackgroundSync(
+  {
+    url: 'https://api.example.com/ingest',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer <device-token>',
+    },
+  },
+  [
+    { identifier: 'HKQuantityTypeIdentifierStepCount', type: 'steps', unit: 'count', cumulative: true },
+    { identifier: 'HKQuantityTypeIdentifierHeartRate', type: 'heart_rate', unit: 'count/min', cumulative: false },
+  ],
+  UpdateFrequency.immediate,
+)
+```
+
+Body sent to your endpoint is a JSON object with a `records` array:
+
+```json
+{
+  "records": [
+    {
+      "type": "steps",
+      "value": 8318,
+      "unit": "count",
+      "startTime": "2026-04-11T22:00:00.000Z",
+      "endTime": "2026-04-12T22:00:00.000Z",
+      "recordId": "steps-2026-04-12",
+      "frequency": "daily"
+    }
+  ]
+}
+```
+
+Per-record fields:
+
+| Field      | Description                                                                 |
+|------------|-----------------------------------------------------------------------------|
+| `type`     | The `type` string you provided in `SyncTypeConfig`                          |
+| `value`    | Quantity sample value (in the unit you configured) or category sample rawValue |
+| `unit`     | The `unit` string you provided in `SyncTypeConfig` (omitted for category samples) |
+| `startTime`/`endTime` | ISO 8601 timestamps                                              |
+| `recordId` | HKSample UUID for discrete types; `"{type}-{YYYY-MM-DD}"` for cumulative aggregates (stable for backend deduplication) |
+| `frequency`| `"realtime"` for per-sample records, `"daily"` for cumulative daily totals  |
+| `workoutActivityType` | HKWorkoutActivityType rawValue (workouts only)                   |
+| `duration` | Workout duration in seconds (workouts only)                                 |
+
+Call `clearBackgroundSync()` to stop observers and clear stored credentials.
+
+**Important behaviors:**
+- **No retries on failure.** If your endpoint is unreachable, the sync event is dropped. iOS will fire observers again on the next HealthKit change. Ensure your endpoint is highly available; don't rely on this for reconciliation.
+- **Today-only window.** Each sync sends only the current day's data. For multi-day backfill, use the foreground API (`queryQuantitySamples`, `queryStatisticsCollectionForQuantity`, etc.) and your own sync loop when the app is open.
+- **~15 second budget per sync.** iOS gives the app ~30s of background execution; the engine enforces a 20s hard timeout internally (5s buffer for iOS). If your endpoint takes longer, syncs are terminated. Optimize for low-latency ingestion.
+
+**Requirements:**
+- `com.apple.developer.healthkit.background-delivery` entitlement (handled by
+  the Expo plugin with `background: true`, which is the default).
+- The companion pod `ReactNativeHealthkitBackground` is automatically linked
+  via `pod install` — it contains `BackgroundDeliveryManager.swift` and
+  `NativeSyncEngine.swift`, and is free of NitroModules/C++ dependencies so
+  AppDelegate can safely import it on any React Native version.
+
+**Design notes:**
+- User force-quit (swipe up in app switcher) does **not** disable HealthKit
+  background delivery — the HealthKit daemon has its own launch registry
+  separate from the general iOS scheduler.
+- iOS gives ~30 seconds of background execution per wake; the native sync
+  engine uses a 20-second hard timeout to stay within budget.
+- Native sync only handles today's data — HealthKit + iOS already queue wakes
+  for offline/catch-up scenarios, so there's no need for multi-day backfill.
+
 ## Migration to 9.0.0
 
 There are a lot of under-the-hood changes in version 9.0.0, some of them are breaking (although I've tried to reduce it as much as possible).

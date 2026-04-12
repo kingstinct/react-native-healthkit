@@ -110,7 +110,7 @@ import HealthKit
     }
 
     for typeIdentifier in typeIdentifiers {
-      guard let sampleType = sampleTypeFromString(typeIdentifier) else {
+      guard let sampleType = BackgroundDeliveryManager.sampleTypeFromString(typeIdentifier) else {
         print("[react-native-healthkit] BackgroundDeliveryManager: skipping unrecognized type \(typeIdentifier)")
         continue
       }
@@ -121,12 +121,24 @@ import HealthKit
         sampleType: sampleType,
         predicate: nil
       ) { [weak self] (_: HKObserverQuery, completionHandler: @escaping HKObserverQueryCompletionHandler, error: Error?) in
-        self?.handleObserverCallback(
-          typeIdentifier: typeIdentifier,
-          error: error
-        )
-        // Must call the completion handler promptly so iOS knows we processed the update.
-        completionHandler()
+        guard let self = self else { completionHandler(); return }
+
+        // The observer callback runs on a HealthKit-owned background queue.
+        // We check jsCallback via a synchronous barrier read — this is a fast
+        // property access (no long-running work under the lock), so it's safe
+        // to do synchronously even though iOS expects prompt progress here.
+        let hasJsCallback = self.queue.sync { self.jsCallback != nil }
+
+        if hasJsCallback {
+          // JS bridge available (foreground) — dispatch to JS, complete immediately
+          self.handleObserverCallback(typeIdentifier: typeIdentifier, error: error)
+          completionHandler()
+        } else {
+          // No JS bridge (terminated/headless) — native sync within ~30s budget
+          NativeSyncEngine.shared.syncType(typeIdentifier) {
+            completionHandler()
+          }
+        }
       }
 
       healthStore.execute(query)
@@ -163,7 +175,8 @@ import HealthKit
 
   // Local type resolution that doesn't depend on NitroModules (which isn't available at AppDelegate time).
   // Uses the older factory APIs (quantityType(forIdentifier:) etc.) for iOS 13+ compatibility.
-  private func sampleTypeFromString(_ identifier: String) -> HKSampleType? {
+  // Static so NativeSyncEngine can also resolve types without NitroModules.
+  static func sampleTypeFromString(_ identifier: String) -> HKSampleType? {
     if identifier.starts(with: "HKQuantityTypeIdentifier") {
       let typeId = HKQuantityTypeIdentifier(rawValue: identifier)
       return HKSampleType.quantityType(forIdentifier: typeId)
