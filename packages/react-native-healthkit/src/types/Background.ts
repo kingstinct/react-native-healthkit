@@ -67,7 +67,21 @@ export type SyncKind =
 export interface SyncTypeConfig {
   readonly identifier: string
   readonly type: string
+  /**
+   * Unit string emitted verbatim on output records — whatever the consumer's
+   * backend expects in its wire schema (e.g. `bpm`, `percent`, `ml`).
+   */
   readonly unit: string
+  /**
+   * HealthKit unit string in Apple's factorization grammar — used for
+   * `HKUnit(from:)` when querying the HealthKit store. Examples: `count/min`,
+   * `%`, `mL`, `kcal`, `ms`. Provide this when `unit` (the wire format) is
+   * not a valid HKUnit string. When omitted, the library falls back to
+   * `unit`. An invalid `hkUnit` causes `configureBackgroundSync` to throw
+   * a descriptive error at setup time rather than crashing on a background
+   * wake.
+   */
+  readonly hkUnit?: string
   readonly kind: SyncKind
 }
 

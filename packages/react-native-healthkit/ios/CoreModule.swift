@@ -452,12 +452,30 @@ class CoreModule: HybridCoreModuleSpec {
         throw runtimeErrorWithPrefix("typeConfigs must not be empty")
       }
 
+      // Validate HKUnit parseability at setup time so consumers see the error
+      // synchronously in `configureBackgroundSync` rather than silently
+      // failing on every background wake (HKUnit(from:) raises an ObjC
+      // NSException on invalid strings — uncatchable by Swift).
+      for config in typeConfigs {
+        let effectiveUnit = config.hkUnit ?? config.unit
+        // Category and workout kinds don't need a unit — skip validation.
+        if config.kind == .categorysample || config.kind == .workout {
+          continue
+        }
+        if HKUnitFromStringCatchingExceptions(effectiveUnit, nil) == nil {
+          throw runtimeErrorWithPrefix(
+            "Invalid HKUnit string '\(effectiveUnit)' for type '\(config.type)' — provide SyncTypeConfig.hkUnit with Apple's factorization grammar (e.g. 'count/min' instead of 'bpm', '%' instead of 'percent', 'mL' instead of 'ml')"
+          )
+        }
+      }
+
       // 1. Store endpoint + type config in UserDefaults (NativeSyncEngine reads this)
       let nativeConfigs = typeConfigs.map {
         NativeSyncEngine.TypeConfig(
           identifier: $0.identifier,
           type: $0.type,
           unit: $0.unit,
+          hkUnit: $0.hkUnit,
           kind: $0.kind.stringValue
         )
       }

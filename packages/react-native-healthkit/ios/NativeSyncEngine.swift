@@ -82,11 +82,92 @@ import HealthKit
   struct TypeConfig: Codable {
     let identifier: String
     let type: String
+    /// Unit emitted on output records — the consumer's wire format.
     let unit: String
+    /// HealthKit factorization-grammar unit used for `HKUnit(from:)`. Falls
+    /// back to `unit` when absent (which is fine when both formats align,
+    /// e.g. `count`, `kg`, `m`). Decoded as optional to stay compatible with
+    /// configs persisted by earlier fork versions that didn't emit this.
+    let hkUnit: String?
     /// Raw string value of `SyncKind` — persisted as a String so the on-disk
     /// format survives Nitro regenerations without risking an enum rawValue
     /// drift.
     let kind: String
+
+    /// The unit string to hand to `HKUnit(from:)`. Prefers `hkUnit` when
+    /// set; otherwise returns `unit`.
+    var effectiveHKUnit: String { hkUnit ?? unit }
+  }
+
+  /// Parse an HKUnit string safely — delegates to the pod-appropriate
+  /// NSException catcher (BGSafeHKUnitFromString in the companion pod,
+  /// HKUnitFromStringCatchingExceptions in the main pod). Returns nil on
+  /// invalid strings without raising an ObjC NSException.
+  private static func safeHKUnit(from string: String) -> HKUnit? {
+    #if HEALTHKIT_BACKGROUND_POD
+    return BGSafeHKUnitFromString(string, nil)
+    #else
+    return HKUnitFromStringCatchingExceptions(string, nil)
+    #endif
+  }
+
+  // MARK: - Sample metadata serializers
+
+  /// Serialize HKDevice to a dict. Returns nil if device is nil or empty.
+  private static func serializeDevice(_ device: HKDevice?) -> [String: String]? {
+    guard let d = device else { return nil }
+    var dict = [String: String]()
+    if let name = d.name { dict["name"] = name }
+    if let manufacturer = d.manufacturer { dict["manufacturer"] = manufacturer }
+    if let model = d.model { dict["model"] = model }
+    if let hardwareVersion = d.hardwareVersion { dict["hardwareVersion"] = hardwareVersion }
+    if let softwareVersion = d.softwareVersion { dict["softwareVersion"] = softwareVersion }
+    return dict.isEmpty ? nil : dict
+  }
+
+  /// Serialize HKSourceRevision to a dict.
+  private static func serializeSource(_ sr: HKSourceRevision) -> [String: String] {
+    var dict: [String: String] = [
+      "name": sr.source.name,
+      "bundleIdentifier": sr.source.bundleIdentifier,
+    ]
+    if let version = sr.version { dict["version"] = version }
+    return dict
+  }
+
+  /// Shared ISO8601 formatter for static serializers (metadata dates).
+  private static let isoFormatter: ISO8601DateFormatter = {
+    let f = ISO8601DateFormatter()
+    f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    return f
+  }()
+
+  /// Serialize sample metadata, converting known non-JSON types to strings.
+  private static func serializeMetadata(_ metadata: [String: Any]?) -> [String: Any]? {
+    guard let meta = metadata, !meta.isEmpty else { return nil }
+    var dict = [String: Any]()
+    for (key, value) in meta {
+      switch value {
+      case let date as Date:
+        dict[key] = isoFormatter.string(from: date)
+      case let quantity as HKQuantity:
+        dict[key] = quantity.description
+      default:
+        dict[key] = value
+      }
+    }
+    return dict.isEmpty ? nil : dict
+  }
+
+  /// Enrich a record dict with device, source, and metadata from an HKSample.
+  private static func enrichRecord(_ record: inout [String: Any], from sample: HKSample) {
+    if let device = serializeDevice(sample.device) {
+      record["device"] = device
+    }
+    record["source"] = serializeSource(sample.sourceRevision)
+    if let metadata = serializeMetadata(sample.metadata) {
+      record["metadata"] = metadata
+    }
   }
 
   struct SyncConfig {
@@ -306,11 +387,18 @@ import HealthKit
     guard let quantityType = BackgroundDeliveryManager.sampleTypeFromString(config.identifier)
             as? HKQuantityType
     else { return [] }
+    // configureBackgroundSync validates `effectiveHKUnit` is parseable at
+    // setup time; this catcher is a belt-and-braces guard in case the
+    // persisted UserDefaults config predates the validation (e.g. upgrades
+    // across breaking fork versions).
+    guard let hkUnit = Self.safeHKUnit(from: config.effectiveHKUnit) else {
+      print("[react-native-healthkit] NativeSyncEngine: invalid HKUnit '\(config.effectiveHKUnit)' for type '\(config.type)' at query time — skipping (consumer should re-run configureBackgroundSync)")
+      return []
+    }
 
     return try await withCheckedThrowingContinuation { cont in
       let interval = DateComponents(day: 1)
       let predicate = HKQuery.predicateForSamples(withStart: since, end: nil)
-      let hkUnit = HKUnit(from: config.unit)
 
       let query = HKStatisticsCollectionQuery(
         quantityType: quantityType,
@@ -362,10 +450,13 @@ import HealthKit
     guard let sampleType = BackgroundDeliveryManager.sampleTypeFromString(config.identifier)
             as? HKQuantityType
     else { return [] }
+    guard let hkUnit = Self.safeHKUnit(from: config.effectiveHKUnit) else {
+      print("[react-native-healthkit] NativeSyncEngine: invalid HKUnit '\(config.effectiveHKUnit)' for type '\(config.type)' at query time — skipping (consumer should re-run configureBackgroundSync)")
+      return []
+    }
 
     return try await withCheckedThrowingContinuation { cont in
       let predicate = HKQuery.predicateForSamples(withStart: since, end: nil)
-      let hkUnit = HKUnit(from: config.unit)
 
       let query = HKSampleQuery(
         sampleType: sampleType,
@@ -376,7 +467,7 @@ import HealthKit
         if let error = error { cont.resume(throwing: error); return }
         let records: [[String: Any]] = (samples ?? []).compactMap { sample in
           guard let q = sample as? HKQuantitySample else { return nil }
-          return [
+          var record: [String: Any] = [
             "type": config.type,
             "value": q.quantity.doubleValue(for: hkUnit),
             "unit": config.unit,
@@ -385,6 +476,8 @@ import HealthKit
             "recordId": q.uuid.uuidString,
             "frequency": "realtime",
           ]
+          Self.enrichRecord(&record, from: q)
+          return record
         }
         cont.resume(returning: records)
       }
@@ -440,6 +533,7 @@ import HealthKit
           } else {
             record["value"] = c.value
           }
+          Self.enrichRecord(&record, from: c)
           return record
         }
         cont.resume(returning: records)
@@ -504,6 +598,7 @@ import HealthKit
     if let max = workoutMaxHR(w) {
       record["maxHeartRate"] = max
     }
+    enrichRecord(&record, from: w)
     return record
   }
 
