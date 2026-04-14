@@ -1,17 +1,19 @@
 import Foundation
 import HealthKit
 
-/// Manages HealthKit background delivery by registering observer queries at app launch,
-/// before the JS bridge is available. This is required by Apple — observer queries must
-/// be set up in `application(_:didFinishLaunchingWithOptions:)` to receive background
+/// Manages HealthKit background delivery by registering observer queries at
+/// app launch, before the JS bridge is available. This is required by
+/// Apple — observer queries must be set up in
+/// `application(_:didFinishLaunchingWithOptions:)` to receive background
 /// delivery callbacks after the app has been terminated.
 ///
 /// Usage from AppDelegate.swift:
 ///   BackgroundDeliveryManager.shared.setupBackgroundObservers()
 ///
-/// The types to observe are persisted in UserDefaults by `configureBackgroundTypes()`
-/// called from JS. On subsequent cold launches, the manager reads these and registers
-/// observers immediately, queuing any events until JS subscribes via `drainPendingEvents()`.
+/// The registrations (identifier + kind pairs) are persisted in UserDefaults
+/// by `configure(registrations:frequency:)` called from JS via
+/// `CoreModule.configureBackgroundSync`. On subsequent cold launches the
+/// manager reads them and registers observers immediately.
 @objc public class BackgroundDeliveryManager: NSObject {
   @objc public static let shared = BackgroundDeliveryManager()
 
@@ -22,40 +24,61 @@ import HealthKit
   private var jsCallback: ((String, String?) -> Void)?
   private var isSetUp = false
 
-  static let typesKey = "com.kingstinct.healthkit.backgroundTypes"
+  static let registrationsKey = "com.kingstinct.healthkit.backgroundRegistrations"
   static let frequencyKey = "com.kingstinct.healthkit.backgroundFrequency"
+
+  /// Identifier + kind pair persisted for every registered type. Kind is
+  /// stored as the raw string value of `SyncKind` so the on-disk format
+  /// survives Nitro regenerations.
+  public struct Registration: Codable {
+    public let identifier: String
+    public let kind: String
+
+    public init(identifier: String, kind: String) {
+      self.identifier = identifier
+      self.kind = kind
+    }
+  }
 
   private override init() {
     super.init()
   }
 
-  /// Call this from AppDelegate.didFinishLaunchingWithOptions to register observer queries
-  /// for any previously configured background delivery types.
+  /// Call this from AppDelegate.didFinishLaunchingWithOptions to register
+  /// observer queries for any previously configured background delivery
+  /// types.
   @objc public func setupBackgroundObservers() {
     guard HKHealthStore.isHealthDataAvailable() else { return }
 
-    guard let typeIdentifiers = UserDefaults.standard.stringArray(forKey: BackgroundDeliveryManager.typesKey) else {
+    guard let data = UserDefaults.standard.data(forKey: BackgroundDeliveryManager.registrationsKey),
+          let registrations = try? JSONDecoder().decode([Registration].self, from: data)
+    else {
       return
     }
 
     let frequencyRaw = UserDefaults.standard.integer(forKey: BackgroundDeliveryManager.frequencyKey)
     let frequency = HKUpdateFrequency(rawValue: frequencyRaw) ?? .immediate
 
-    registerObservers(typeIdentifiers: typeIdentifiers, frequency: frequency)
+    registerObservers(registrations: registrations, frequency: frequency)
   }
 
-  /// Persist types and frequency, then register observers for the current session.
-  /// Called from JS via CoreModule.configureBackgroundTypes().
-  func configure(typeIdentifiers: [String], frequency: HKUpdateFrequency) {
-    UserDefaults.standard.set(typeIdentifiers, forKey: BackgroundDeliveryManager.typesKey)
+  /// Persist registrations and frequency, then register observers for the
+  /// current session. Called from JS via
+  /// `CoreModule.configureBackgroundSync`.
+  func configure(registrations: [Registration], frequency: HKUpdateFrequency) {
+    if let data = try? JSONEncoder().encode(registrations) {
+      UserDefaults.standard.set(data, forKey: BackgroundDeliveryManager.registrationsKey)
+    }
     UserDefaults.standard.set(frequency.rawValue, forKey: BackgroundDeliveryManager.frequencyKey)
 
-    // Tear down existing observers before re-registering
     tearDown()
-    registerObservers(typeIdentifiers: typeIdentifiers, frequency: frequency)
+    registerObservers(registrations: registrations, frequency: frequency)
   }
 
-  /// Subscribe a JS callback. Any events that arrived before JS was ready are flushed immediately.
+  /// Subscribe a JS callback for reactive foreground updates. Any events
+  /// that arrived before JS was ready are flushed immediately. Note: the
+  /// callback runs alongside the native sync path — both fire in the
+  /// foreground, backend dedup absorbs overlap.
   func setCallback(_ callback: @escaping (String, String?) -> Void) {
     queue.sync(flags: .barrier) {
       self.jsCallback = callback
@@ -75,8 +98,9 @@ import HealthKit
     }
   }
 
-  /// Returns any pending events and clears the queue. Used by CoreModule.subscribeToObserverQuery
-  /// to flush events that arrived before JS subscribed.
+  /// Returns any pending events and clears the queue. Used by
+  /// CoreModule.subscribeToObserverQuery to flush events that arrived
+  /// before JS subscribed.
   func drainPendingEvents() -> [(typeIdentifier: String, errorMessage: String?)] {
     return queue.sync(flags: .barrier) {
       let events = self.pendingEvents
@@ -98,59 +122,70 @@ import HealthKit
 
   /// Clear persisted configuration (disables background delivery on next launch).
   func clearConfiguration() {
-    UserDefaults.standard.removeObject(forKey: BackgroundDeliveryManager.typesKey)
+    UserDefaults.standard.removeObject(forKey: BackgroundDeliveryManager.registrationsKey)
     UserDefaults.standard.removeObject(forKey: BackgroundDeliveryManager.frequencyKey)
     tearDown()
   }
 
-  private func registerObservers(typeIdentifiers: [String], frequency: HKUpdateFrequency) {
+  private func registerObservers(registrations: [Registration], frequency: HKUpdateFrequency) {
     queue.sync(flags: .barrier) {
       guard !self.isSetUp else { return }
       self.isSetUp = true
     }
 
-    for typeIdentifier in typeIdentifiers {
-      guard let sampleType = sampleTypeFromString(typeIdentifier) else {
-        print("[react-native-healthkit] BackgroundDeliveryManager: skipping unrecognized type \(typeIdentifier)")
+    for reg in registrations {
+      guard let sampleType = BackgroundDeliveryManager.sampleTypeFromString(reg.identifier) else {
+        print("[react-native-healthkit] BackgroundDeliveryManager: skipping unrecognized type \(reg.identifier)")
         continue
       }
 
-      // Use nil predicate to catch all samples, including those written while the app was terminated.
-      // The current subscribeToObserverQuery uses Date.init() which misses data from when the app was dead.
+      // Capture kind so the observer callback knows which set of registered
+      // types to batch-query on fire.
+      let kind = reg.kind
+
+      // nil predicate catches all samples including those written while the
+      // app was terminated.
       let query = HKObserverQuery(
         sampleType: sampleType,
         predicate: nil
       ) { [weak self] (_: HKObserverQuery, completionHandler: @escaping HKObserverQueryCompletionHandler, error: Error?) in
-        self?.handleObserverCallback(
-          typeIdentifier: typeIdentifier,
-          error: error
-        )
-        // Must call the completion handler promptly so iOS knows we processed the update.
-        completionHandler()
+        guard let self = self else { completionHandler(); return }
+
+        // Always run native sync — deterministic, no race with JS boot.
+        // The callback runs on a HealthKit-owned background queue.
+        NativeSyncEngine.shared.syncKind(kind) {
+          completionHandler()
+        }
+
+        // In parallel, notify any subscribed JS listener for reactive
+        // foreground UI. This intentionally runs alongside the native sync;
+        // backend dedup handles any duplicate pushes.
+        self.notifyJs(typeIdentifier: reg.identifier, error: error)
       }
 
       healthStore.execute(query)
 
       healthStore.enableBackgroundDelivery(for: sampleType, frequency: frequency) { success, error in
         if let error = error {
-          print("[react-native-healthkit] BackgroundDeliveryManager: enableBackgroundDelivery failed for \(typeIdentifier): \(error.localizedDescription)")
+          print("[react-native-healthkit] BackgroundDeliveryManager: enableBackgroundDelivery failed for \(reg.identifier): \(error.localizedDescription)")
         } else if !success {
-          print("[react-native-healthkit] BackgroundDeliveryManager: enableBackgroundDelivery returned false for \(typeIdentifier)")
+          print("[react-native-healthkit] BackgroundDeliveryManager: enableBackgroundDelivery returned false for \(reg.identifier)")
         }
       }
 
       queue.sync(flags: .barrier) {
-        self.observerQueries[typeIdentifier] = query
+        self.observerQueries[reg.identifier] = query
       }
     }
   }
 
-  private func handleObserverCallback(typeIdentifier: String, error: Error?) {
+  /// Notify any subscribed JS callback (used for reactive foreground UI).
+  /// Runs independently of the native sync path — both fire concurrently.
+  private func notifyJs(typeIdentifier: String, error: Error?) {
     let errorMessage = error?.localizedDescription
 
     queue.sync(flags: .barrier) {
       if let callback = self.jsCallback {
-        // JS is connected — dispatch to main thread for JSI safety
         DispatchQueue.main.async {
           callback(typeIdentifier, errorMessage)
         }
@@ -161,9 +196,11 @@ import HealthKit
     }
   }
 
-  // Local type resolution that doesn't depend on NitroModules (which isn't available at AppDelegate time).
-  // Uses the older factory APIs (quantityType(forIdentifier:) etc.) for iOS 13+ compatibility.
-  private func sampleTypeFromString(_ identifier: String) -> HKSampleType? {
+  // Local type resolution that doesn't depend on NitroModules (which isn't
+  // available at AppDelegate time). Uses the older factory APIs
+  // (quantityType(forIdentifier:) etc.) for iOS 13+ compatibility. Static so
+  // NativeSyncEngine can also resolve types without NitroModules.
+  static func sampleTypeFromString(_ identifier: String) -> HKSampleType? {
     if identifier.starts(with: "HKQuantityTypeIdentifier") {
       let typeId = HKQuantityTypeIdentifier(rawValue: identifier)
       return HKSampleType.quantityType(forIdentifier: typeId)

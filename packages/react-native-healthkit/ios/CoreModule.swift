@@ -430,16 +430,60 @@ class CoreModule: HybridCoreModuleSpec {
     }
   }
 
-  func configureBackgroundTypes(
-    typeIdentifiers: [String], updateFrequency: UpdateFrequency
+  func configureBackgroundSync(
+    endpoint: BackgroundSyncEndpoint,
+    typeConfigs: [SyncTypeConfig],
+    updateFrequency: UpdateFrequency
   ) -> Promise<Bool> {
     return Promise.async {
+      // Validate inputs up-front so misconfiguration surfaces at setup time
+      // rather than silently failing on every background wake.
       guard let frequency = HKUpdateFrequency(rawValue: Int(updateFrequency.rawValue)) else {
         throw runtimeErrorWithPrefix("Invalid update frequency rawValue: \(updateFrequency)")
       }
+      guard URL(string: endpoint.url) != nil else {
+        throw runtimeErrorWithPrefix("Invalid endpoint URL: \(endpoint.url)")
+      }
+      let allowedMethods = ["POST", "PUT", "PATCH"]
+      guard allowedMethods.contains(endpoint.method.uppercased()) else {
+        throw runtimeErrorWithPrefix("Unsupported HTTP method '\(endpoint.method)' — must be one of \(allowedMethods.joined(separator: ", "))")
+      }
+      guard !typeConfigs.isEmpty else {
+        throw runtimeErrorWithPrefix("typeConfigs must not be empty")
+      }
 
+      // 1. Store endpoint + type config in UserDefaults (NativeSyncEngine reads this)
+      let nativeConfigs = typeConfigs.map {
+        NativeSyncEngine.TypeConfig(
+          identifier: $0.identifier,
+          type: $0.type,
+          unit: $0.unit,
+          kind: $0.kind.stringValue
+        )
+      }
+      let lookback = endpoint.lookbackDays.map { Int($0) }
+      let nativeEndpoint = NativeSyncEngine.EndpointConfig(
+        url: endpoint.url,
+        method: endpoint.method,
+        headers: endpoint.headers,
+        lookbackDays: lookback
+      )
+      try NativeSyncEngine.writeConfig(
+        endpoint: nativeEndpoint,
+        typeConfigs: nativeConfigs
+      )
+
+      // 2. Register observer queries + enable background delivery.
+      //    One observer per distinct kind (not per type) — see
+      //    BackgroundDeliveryManager for the rationale.
+      let registrations = typeConfigs.map {
+        BackgroundDeliveryManager.Registration(
+          identifier: $0.identifier,
+          kind: $0.kind.stringValue
+        )
+      }
       BackgroundDeliveryManager.shared.configure(
-        typeIdentifiers: typeIdentifiers,
+        registrations: registrations,
         frequency: frequency
       )
 
@@ -447,9 +491,10 @@ class CoreModule: HybridCoreModuleSpec {
     }
   }
 
-  func clearBackgroundTypes() -> Promise<Bool> {
+  func clearBackgroundSync() -> Promise<Bool> {
     return Promise.async {
       BackgroundDeliveryManager.shared.clearConfiguration()
+      NativeSyncEngine.clearConfig()
       return true
     }
   }

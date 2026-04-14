@@ -3,7 +3,11 @@ import type {
   AuthorizationRequestStatus,
   AuthorizationStatus,
 } from '../types/Auth'
-import type { UpdateFrequency } from '../types/Background'
+import type {
+  BackgroundSyncEndpoint,
+  SyncTypeConfig,
+  UpdateFrequency,
+} from '../types/Background'
 import type { QuantityTypeIdentifier } from '../types/QuantityTypeIdentifier'
 import type { FilterForSamples } from '../types/QueryOptions'
 import type {
@@ -41,24 +45,31 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
   disableAllBackgroundDelivery(): Promise<boolean>
 
   /**
-   * Configure background delivery types that will be registered natively in
-   * AppDelegate.didFinishLaunchingWithOptions — surviving app termination.
-   * Types and frequency are persisted to UserDefaults so they're available
-   * before the JS bridge boots on subsequent cold launches.
+   * Configure native background sync. Stores endpoint config and type mappings
+   * in UserDefaults, then registers HealthKit observer queries and enables
+   * background delivery.
    *
-   * Requires the Expo config plugin with `background: true` (default) or
-   * manual AppDelegate setup: `BackgroundDeliveryManager.shared.setupBackgroundObservers()`
+   * When HealthKit data changes and the JS bridge isn't available (app terminated),
+   * NativeSyncEngine queries HealthKit for today's data in the triggered type
+   * and sends it to the configured endpoint.
+   *
+   * Native sync only handles today — HealthKit + iOS already queue wakes for
+   * offline/catch-up scenarios. For multi-day backfill, use the foreground JS sync.
+   *
+   * @param endpoint - HTTP endpoint to send data to (url, method, headers)
+   * @param typeConfigs - HealthKit identifier → type name + unit mapping
+   * @param updateFrequency - HealthKit delivery frequency cap
    */
-  configureBackgroundTypes(
-    typeIdentifiers: string[],
+  configureBackgroundSync(
+    endpoint: BackgroundSyncEndpoint,
+    typeConfigs: SyncTypeConfig[],
     updateFrequency: UpdateFrequency,
   ): Promise<boolean>
 
   /**
-   * Clear persisted background delivery configuration and stop all observer queries.
-   * After calling this, the app will no longer register observers on cold launch.
+   * Clear all native background sync configuration and stop observer queries.
    */
-  clearBackgroundTypes(): Promise<boolean>
+  clearBackgroundSync(): Promise<boolean>
 
   /**
    *  @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614180-ishealthdataavailable Apple Docs }
