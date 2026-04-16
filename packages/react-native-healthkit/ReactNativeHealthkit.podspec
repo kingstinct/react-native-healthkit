@@ -22,6 +22,22 @@ Pod::Spec.new do |s|
     "cpp/**/*.{hpp,cpp}",
   ]
 
+  # The companion ReactNativeHealthkitBackground pod owns its own copy of a
+  # lightweight HKUnit NSException catcher (BackgroundHKUnitCatcher). It
+  # can't depend on this pod (would pull in NitroModules, defeating the
+  # point) and two pods defining the same C function symbol would cause a
+  # duplicate-symbol linker error. Exclude the companion-only helper here.
+  s.exclude_files = [
+    "ios/BackgroundHKUnitCatcher.h",
+    "ios/BackgroundHKUnitCatcher.mm",
+    # The companion pod compiles these files — excluding them from the main pod
+    # prevents duplicate @objc singletons (BackgroundDeliveryManager.shared,
+    # NativeSyncEngine.shared) which cause competing HKHealthStore instances
+    # and DispatchQueue lock contention at launch.
+    "ios/BackgroundDeliveryManager.swift",
+    "ios/NativeSyncEngine.swift",
+  ]
+
   s.public_header_files = "ios/**/*.h"
 
   s.pod_target_xcconfig = {
