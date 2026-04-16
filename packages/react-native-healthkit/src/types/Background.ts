@@ -85,14 +85,140 @@ export interface SyncTypeConfig {
   readonly kind: SyncKind
 }
 
+// ---------------------------------------------------------------------------
+// Output record types — the JSON shapes POSTed to the consumer's endpoint.
+// These are documentation-only (the native engine builds the JSON in Swift);
+// they are exported so consumers can type their backend request handlers.
+// ---------------------------------------------------------------------------
+
+/**
+ * Device that produced the sample (from `HKDevice`).
+ * Present on discrete, category, and workout records.
+ * `null` when HealthKit doesn't associate a device with the sample.
+ */
+export interface SyncRecordDevice {
+  readonly name?: string
+  readonly manufacturer?: string
+  readonly model?: string
+  readonly hardwareVersion?: string
+  readonly softwareVersion?: string
+}
+
+/**
+ * Source app/revision that wrote the sample (from `HKSourceRevision`).
+ * Present on discrete, category, and workout records.
+ */
+export interface SyncRecordSource {
+  readonly name: string
+  readonly bundleIdentifier: string
+  readonly version?: string
+}
+
+/**
+ * Fields common to every output record regardless of kind.
+ */
+export interface SyncRecordBase {
+  readonly type: string
+  readonly startTime: string
+  readonly endTime: string
+  readonly recordId: string
+  /** `"daily"` for cumulative aggregates, `"realtime"` for per-sample records. */
+  readonly frequency: 'daily' | 'realtime'
+  /** IANA timezone identifier, e.g. `"Europe/Stockholm"`. */
+  readonly timeZone: string
+  /** UTC offset in minutes at sync time. */
+  readonly timeZoneOffsetMinutes: number
+  /** ISO 8601 date string in the user's local timezone. */
+  readonly localDate: string
+}
+
+/**
+ * Cumulative record — one per day per type.
+ * Produced by `HKStatisticsCollectionQuery` with `.cumulativeSum`.
+ * Apple deduplicates across sources (iPhone + Watch + 3rd-party).
+ *
+ * **No device/source/metadata** — `HKStatistics` is an aggregate with no
+ * per-sample provenance.
+ */
+export interface SyncRecordCumulative extends SyncRecordBase {
+  readonly value: number
+  readonly unit: string
+  readonly frequency: 'daily'
+}
+
+/**
+ * Discrete quantity record — one per sample.
+ * Produced by `HKSampleQuery` on `HKQuantityType`.
+ * Includes device, source, and metadata from the original `HKQuantitySample`.
+ */
+export interface SyncRecordDiscrete extends SyncRecordBase {
+  readonly value: number
+  readonly unit: string
+  readonly frequency: 'realtime'
+  readonly device?: SyncRecordDevice
+  readonly source?: SyncRecordSource
+  readonly metadata?: Record<string, unknown>
+}
+
+/**
+ * Category record — one per sample (e.g. each sleep segment).
+ * Produced by `HKSampleQuery` on `HKCategoryType`.
+ *
+ * For sleep analysis the `category` field contains a human-readable stage name
+ * (`in_bed`, `awake`, `asleep_core`, `asleep_deep`, `asleep_rem`,
+ * `asleep_unspecified`, or `unknown:<N>` for future Apple values).
+ * For other category types the raw integer `value` is included instead.
+ */
+export interface SyncRecordCategory extends SyncRecordBase {
+  readonly frequency: 'realtime'
+  readonly category?: string
+  readonly value?: number
+  readonly device?: SyncRecordDevice
+  readonly source?: SyncRecordSource
+  readonly metadata?: Record<string, unknown>
+}
+
+/**
+ * Workout record — one per `HKWorkout` sample.
+ * Includes summary stats, and on iOS 17+ average/max heart rate via
+ * `workout.statistics(for:)`.
+ */
+export interface SyncRecordWorkout extends SyncRecordBase {
+  readonly frequency: 'realtime'
+  readonly workoutType: string
+  readonly duration: number
+  readonly distance?: { readonly value: number; readonly unit: 'm' }
+  readonly calories?: { readonly value: number; readonly unit: 'kcal' }
+  readonly averageHeartRate?: number
+  readonly maxHeartRate?: number
+  readonly device?: SyncRecordDevice
+  readonly source?: SyncRecordSource
+  readonly metadata?: Record<string, unknown>
+}
+
+/** Union of all output record types. */
+export type SyncRecord =
+  | SyncRecordCumulative
+  | SyncRecordDiscrete
+  | SyncRecordCategory
+  | SyncRecordWorkout
+
+/** Shape of the HTTP request body sent to the consumer's endpoint. */
+export interface SyncRequestBody {
+  readonly records: readonly SyncRecord[]
+}
+
 /**
  * HTTP endpoint configuration for native background sync.
  * The library sends HealthKit data as JSON to this endpoint — no assumptions
  * about auth scheme, API paths, or backend implementation.
  *
- * Body shape sent: `{ records: [...] }` where each record contains
- * `type`, `value`, `unit`, `startTime`, `endTime`, `recordId`, `frequency`,
- * plus kind-specific extras (category value name, workout fields, etc.).
+ * Body shape: {@link SyncRequestBody} — `{ records: [...] }` where each
+ * record is a {@link SyncRecord}. Cumulative records contain only core fields
+ * (type, value, unit, timestamps). Discrete, category, and workout records
+ * additionally include `device`, `source`, and `metadata` from the underlying
+ * `HKSample` — see {@link SyncRecordDiscrete}, {@link SyncRecordCategory},
+ * {@link SyncRecordWorkout}.
  *
  * - `lookbackDays`: how many days of history to re-query on every observer
  *   wake. Default `1` (today only — minimal work, minimal wire traffic). Set

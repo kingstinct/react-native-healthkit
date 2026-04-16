@@ -30,6 +30,12 @@ Pod::Spec.new do |s|
   s.exclude_files = [
     "ios/BackgroundHKUnitCatcher.h",
     "ios/BackgroundHKUnitCatcher.mm",
+    # The companion pod compiles these files — excluding them from the main pod
+    # prevents duplicate @objc singletons (BackgroundDeliveryManager.shared,
+    # NativeSyncEngine.shared) which cause competing HKHealthStore instances
+    # and DispatchQueue lock contention at launch.
+    "ios/BackgroundDeliveryManager.swift",
+    "ios/NativeSyncEngine.swift",
   ]
 
   s.public_header_files = "ios/**/*.h"
