@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 14.0.1
+### Patch Changes
+
+- f9039e7: fix: serializeAnchor uses new NSKeyedArchiver function
+
 ## 14.0.0
 ### Major Changes
 
