@@ -1,0 +1,2 @@
+[install]
+minPackageAge = 259200 # 3 days in seconds
