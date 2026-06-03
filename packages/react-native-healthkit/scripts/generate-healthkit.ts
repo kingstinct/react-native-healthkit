@@ -711,6 +711,7 @@ export function parseNsEnums(headerSource: string): EnumSchema[] {
 function parseQuantityIdentifierComments(headerSource: string): Map<
   string,
   {
+    readonly ios: string | null
     readonly canonicalUnit: string | null
     readonly aggregationStyle: string | null
   }
@@ -718,6 +719,7 @@ function parseQuantityIdentifierComments(headerSource: string): Map<
   const identifiers = new Map<
     string,
     {
+      readonly ios: string | null
       readonly canonicalUnit: string | null
       readonly aggregationStyle: string | null
     }
@@ -735,6 +737,7 @@ function parseQuantityIdentifierComments(headerSource: string): Map<
       .split(',')
       .map((value) => value.trim())
     identifiers.set(name, {
+      ios: parseIosAvailability(match[2] ?? ''),
       canonicalUnit: canonicalUnitRaw || null,
       aggregationStyle: aggregationRaw || null,
     })
@@ -824,6 +827,21 @@ function parseQuantityIdentifiers(
       aggregationStyle: commentInfo?.aggregationStyle ?? null,
       writeable: !readOnly.has(constant.name),
       legacy: constant.legacy,
+    })
+  }
+
+  for (const [name, commentInfo] of commentMap.entries()) {
+    if (identifiers.has(name)) {
+      continue
+    }
+
+    identifiers.set(name, {
+      name,
+      ios: commentInfo.ios,
+      canonicalUnit: commentInfo.canonicalUnit,
+      aggregationStyle: commentInfo.aggregationStyle,
+      writeable: !readOnly.has(name),
+      legacy: false,
     })
   }
 

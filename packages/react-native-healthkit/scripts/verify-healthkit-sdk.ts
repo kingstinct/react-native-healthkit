@@ -45,6 +45,14 @@ function main() {
     'Blood glucose should retain canonical unit mapping',
   )
 
+  const bloodKetones = schema.quantityIdentifiers.find(
+    (identifier) => identifier.name === 'HKQuantityTypeIdentifierBloodKetones',
+  )
+  assert.ok(
+    bloodKetones,
+    'Pinned SDK should expose HKQuantityTypeIdentifierBloodKetones',
+  )
+
   const workoutBrandName = findMetadataKey(
     schema,
     'HKMetadataKeyWorkoutBrandName',

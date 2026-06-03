@@ -29,6 +29,7 @@ export type QuantityTypeIdentifierWriteable =
   | 'HKQuantityTypeIdentifierBasalBodyTemperature'
   | 'HKQuantityTypeIdentifierBasalEnergyBurned'
   | 'HKQuantityTypeIdentifierBloodAlcoholContent'
+  | 'HKQuantityTypeIdentifierBloodKetones'
   | 'HKQuantityTypeIdentifierBloodGlucose'
   | 'HKQuantityTypeIdentifierBloodPressureDiastolic'
   | 'HKQuantityTypeIdentifierBloodPressureSystolic'
@@ -227,6 +228,7 @@ export const QUANTITY_IDENTIFIER_IOS_AVAILABILITY = {
   HKQuantityTypeIdentifierBasalBodyTemperature: '9.0',
   HKQuantityTypeIdentifierBasalEnergyBurned: '8.0',
   HKQuantityTypeIdentifierBloodAlcoholContent: '8.0',
+  HKQuantityTypeIdentifierBloodKetones: '8.0',
   HKQuantityTypeIdentifierBloodGlucose: '8.0',
   HKQuantityTypeIdentifierBloodPressureDiastolic: '8.0',
   HKQuantityTypeIdentifierBloodPressureSystolic: '8.0',
@@ -421,6 +423,7 @@ export const QUANTITY_IDENTIFIER_CANONICAL_UNITS = {
   HKQuantityTypeIdentifierBasalBodyTemperature: 'degC',
   HKQuantityTypeIdentifierBasalEnergyBurned: 'kcal',
   HKQuantityTypeIdentifierBloodAlcoholContent: '%',
+  HKQuantityTypeIdentifierBloodKetones: 'mmol/L',
   HKQuantityTypeIdentifierBloodGlucose: 'mg/dL',
   HKQuantityTypeIdentifierBloodPressureDiastolic: 'mmHg',
   HKQuantityTypeIdentifierBloodPressureSystolic: 'mmHg',
@@ -1178,6 +1181,7 @@ export interface QuantityUnitByIdentifierMap {
   readonly HKQuantityTypeIdentifierBasalBodyTemperature: TemperatureUnit
   readonly HKQuantityTypeIdentifierBasalEnergyBurned: EnergyUnit
   readonly HKQuantityTypeIdentifierBloodAlcoholContent: '%'
+  readonly HKQuantityTypeIdentifierBloodKetones: string
   readonly HKQuantityTypeIdentifierBloodGlucose: BloodGlucoseUnit
   readonly HKQuantityTypeIdentifierBloodPressureDiastolic: PressureUnit
   readonly HKQuantityTypeIdentifierBloodPressureSystolic: PressureUnit
