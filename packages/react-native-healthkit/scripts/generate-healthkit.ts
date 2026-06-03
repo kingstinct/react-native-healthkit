@@ -560,6 +560,12 @@ function parseIosAvailability(text: string): string | null {
   return match?.[1]?.trim() ?? null
 }
 
+function isLegacyAvailabilityDeclaration(text: string): boolean {
+  return /\bAPI_DEPRECATED\b|\bAPI_UNAVAILABLE\b|\bAPI_DEPRECATED_WITH_REPLACEMENT\b/.test(
+    text,
+  )
+}
+
 function parseSymbolGraphIosAvailability(
   symbol: SymbolGraphSymbol,
 ): string | null {
@@ -714,6 +720,7 @@ function parseQuantityIdentifierComments(headerSource: string): Map<
     readonly ios: string | null
     readonly canonicalUnit: string | null
     readonly aggregationStyle: string | null
+    readonly legacy: boolean
   }
 > {
   const identifiers = new Map<
@@ -722,6 +729,7 @@ function parseQuantityIdentifierComments(headerSource: string): Map<
       readonly ios: string | null
       readonly canonicalUnit: string | null
       readonly aggregationStyle: string | null
+      readonly legacy: boolean
     }
   >()
   const regex =
@@ -740,6 +748,7 @@ function parseQuantityIdentifierComments(headerSource: string): Map<
       ios: parseIosAvailability(match[2] ?? ''),
       canonicalUnit: canonicalUnitRaw || null,
       aggregationStyle: aggregationRaw || null,
+      legacy: isLegacyAvailabilityDeclaration(match[2] ?? ''),
     })
   }
 
@@ -830,6 +839,7 @@ function parseQuantityIdentifiers(
     })
   }
 
+  // Symbol graphs occasionally omit some constants that are still present in HKTypeIdentifiers.h.
   for (const [name, commentInfo] of commentMap.entries()) {
     if (identifiers.has(name)) {
       continue
@@ -841,7 +851,7 @@ function parseQuantityIdentifiers(
       canonicalUnit: commentInfo.canonicalUnit,
       aggregationStyle: commentInfo.aggregationStyle,
       writeable: !readOnly.has(name),
-      legacy: false,
+      legacy: commentInfo.legacy,
     })
   }
 
@@ -1159,7 +1169,7 @@ function canonicalUnitToTypeNode(unit: string | null): ts.TypeNode {
     return keywordType(ts.SyntaxKind.StringKeyword)
   }
 
-  if (unit === 'mg/dL' || unit.startsWith('mmol<')) {
+  if (unit === 'mg/dL' || unit === 'mmol/L' || unit.startsWith('mmol<')) {
     return namedType('BloodGlucoseUnit')
   }
   if (unit === '%') {

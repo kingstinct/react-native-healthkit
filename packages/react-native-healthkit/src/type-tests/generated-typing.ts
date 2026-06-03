@@ -87,6 +87,13 @@ type _bloodGlucoseUnitNarrows = Assert<
   >
 >
 
+type _bloodKetonesUnitNarrows = Assert<
+  Equal<
+    QuantitySampleTyped<'HKQuantityTypeIdentifierBloodKetones'>['unit'],
+    BloodGlucoseUnit
+  >
+>
+
 type _quantityQueryOptionsUnitNarrows = Assert<
   Equal<
     QueryOptionsWithSortOrderAndUnit<BloodGlucoseUnit>['unit'],

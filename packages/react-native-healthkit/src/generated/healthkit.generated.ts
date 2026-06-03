@@ -1181,7 +1181,7 @@ export interface QuantityUnitByIdentifierMap {
   readonly HKQuantityTypeIdentifierBasalBodyTemperature: TemperatureUnit
   readonly HKQuantityTypeIdentifierBasalEnergyBurned: EnergyUnit
   readonly HKQuantityTypeIdentifierBloodAlcoholContent: '%'
-  readonly HKQuantityTypeIdentifierBloodKetones: string
+  readonly HKQuantityTypeIdentifierBloodKetones: BloodGlucoseUnit
   readonly HKQuantityTypeIdentifierBloodGlucose: BloodGlucoseUnit
   readonly HKQuantityTypeIdentifierBloodPressureDiastolic: PressureUnit
   readonly HKQuantityTypeIdentifierBloodPressureSystolic: PressureUnit
