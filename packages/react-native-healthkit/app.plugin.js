@@ -59,14 +59,16 @@ const withInfoPlistPlugin = (
 ) =>
   withInfoPlist(config, (config) => {
     config.modResults.NSHealthShareUsageDescription =
-      typeof props.NSHealthShareUsageDescription === 'string'
+      typeof props?.NSHealthShareUsageDescription === 'string'
         ? props.NSHealthShareUsageDescription
-        : `${config.name} wants to read your health data`
+        : (config.modResults.NSHealthShareUsageDescription ??
+          `${config.name} wants to read your health data`)
 
     config.modResults.NSHealthUpdateUsageDescription =
-      typeof props.NSHealthUpdateUsageDescription === 'string'
+      typeof props?.NSHealthUpdateUsageDescription === 'string'
         ? props.NSHealthUpdateUsageDescription
-        : `${config.name} wants to update your health data`
+        : (config.modResults.NSHealthUpdateUsageDescription ??
+          `${config.name} wants to update your health data`)
 
     return config
   })

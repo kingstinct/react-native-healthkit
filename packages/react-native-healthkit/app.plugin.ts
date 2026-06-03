@@ -40,17 +40,23 @@ const withEntitlementsPlugin: ConfigPlugin<{
 
 const withInfoPlistPlugin: ConfigPlugin<InfoPlistConfig> = (config, props) => {
   return withInfoPlist(config, (configPlist) => {
+    const existingShareDescription = configPlist.modResults
+      .NSHealthShareUsageDescription as string | undefined
     configPlist.modResults.NSHealthShareUsageDescription =
-      typeof props.NSHealthShareUsageDescription === 'string'
+      typeof props?.NSHealthShareUsageDescription === 'string'
         ? props.NSHealthShareUsageDescription
-        : `${config.name ?? pkg.name} wants to read your health data`
+        : (existingShareDescription ??
+          `${config.name ?? pkg.name} wants to read your health data`)
 
     // Add description if it's not undefined and not explicitly false
 
+    const existingUpdateDescription = configPlist.modResults
+      .NSHealthUpdateUsageDescription as string | undefined
     configPlist.modResults.NSHealthUpdateUsageDescription =
-      typeof props.NSHealthUpdateUsageDescription === 'string'
+      typeof props?.NSHealthUpdateUsageDescription === 'string'
         ? props.NSHealthUpdateUsageDescription
-        : `${config.name ?? pkg.name} wants to update your health data`
+        : (existingUpdateDescription ??
+          `${config.name ?? pkg.name} wants to update your health data`)
 
     return configPlist
   })
