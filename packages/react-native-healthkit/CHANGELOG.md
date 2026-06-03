@@ -1,5 +1,10 @@
 # @kingstinct/react-native-healthkit
 
+## 14.0.2
+### Patch Changes
+
+- e60b88a: Fix plugin crash when no options are passed and preserve existing `expo.ios.infoPlist` string values for `NSHealthShareUsageDescription` and `NSHealthUpdateUsageDescription`. Pass `NSHealthUpdateUsageDescription: false` to omit the key entirely (for apps that only read health data).
+
 ## 14.0.1
 ### Patch Changes
 
