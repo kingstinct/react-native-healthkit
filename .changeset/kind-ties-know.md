@@ -2,4 +2,4 @@
 "@kingstinct/react-native-healthkit": patch
 ---
 
-[WIP] Fix package not finding NSHealthShareUsageDescription in app.json
+Fix plugin crash when no options are passed and preserve existing `expo.ios.infoPlist` string values for `NSHealthShareUsageDescription` and `NSHealthUpdateUsageDescription`
