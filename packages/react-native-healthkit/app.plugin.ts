@@ -13,7 +13,7 @@ type BackgroundConfig = boolean
 
 type InfoPlistConfig = {
   NSHealthShareUsageDescription?: string | true
-  NSHealthUpdateUsageDescription?: string | true
+  NSHealthUpdateUsageDescription?: string | false
 }
 
 type AppPluginConfig = InfoPlistConfig & {
@@ -49,14 +49,16 @@ const withInfoPlistPlugin: ConfigPlugin<InfoPlistConfig> = (config, props) => {
           ? existingShareDescription
           : `${config.name ?? pkg.name} wants to read your health data`
 
-    const existingUpdateDescription =
-      configPlist.modResults.NSHealthUpdateUsageDescription
-    configPlist.modResults.NSHealthUpdateUsageDescription =
-      typeof props?.NSHealthUpdateUsageDescription === 'string'
-        ? props.NSHealthUpdateUsageDescription
-        : typeof existingUpdateDescription === 'string'
-          ? existingUpdateDescription
-          : `${config.name ?? pkg.name} wants to update your health data`
+    if (props?.NSHealthUpdateUsageDescription !== false) {
+      const existingUpdateDescription =
+        configPlist.modResults.NSHealthUpdateUsageDescription
+      configPlist.modResults.NSHealthUpdateUsageDescription =
+        typeof props?.NSHealthUpdateUsageDescription === 'string'
+          ? props.NSHealthUpdateUsageDescription
+          : typeof existingUpdateDescription === 'string'
+            ? existingUpdateDescription
+            : `${config.name ?? pkg.name} wants to update your health data`
+    }
 
     return configPlist
   })
