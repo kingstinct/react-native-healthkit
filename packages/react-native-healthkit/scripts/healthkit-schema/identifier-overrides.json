@@ -6,6 +6,16 @@
       "HKQuantityTypeIdentifierAppleExerciseTime",
       "HKQuantityTypeIdentifierAppleStandTime",
       "HKQuantityTypeIdentifierAppleWalkingSteadiness"
+    ],
+    "forcedInclusions": [
+      {
+        "name": "HKQuantityTypeIdentifierBloodKetones",
+        "ios": "8.0",
+        "canonicalUnit": "mmol/L",
+        "aggregationStyle": "Discrete (Arithmetic)",
+        "writeable": true,
+        "legacy": false
+      }
     ]
   },
   "category": {
