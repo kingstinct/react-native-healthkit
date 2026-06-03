@@ -733,7 +733,7 @@ function parseQuantityIdentifierComments(headerSource: string): Map<
     }
   >()
   const regex =
-    /^HK_EXTERN HKQuantityTypeIdentifier const (\w+)\s+([^;]*);\s*\/\/\s*(.*)$/gm
+    /^HK_EXTERN HKQuantityTypeIdentifier const (\w+)\s+([^;]*);\s*(?:\/\/\s*(.*))?$/gm
 
   for (const match of headerSource.matchAll(regex)) {
     const name = match[1]
