@@ -123,7 +123,7 @@ rm -f "$METRO_LOG"
 if ! curl -fsS --max-time 2 "http://127.0.0.1:8081/status" >/dev/null 2>&1; then
   (
     cd "$APP_DIR"
-    bun start --clear --non-interactive >"$METRO_LOG" 2>&1
+    CI=1 bun start --clear >"$METRO_LOG" 2>&1
   ) &
   METRO_PID="$!"
 
