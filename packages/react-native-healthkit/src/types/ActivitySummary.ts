@@ -1,10 +1,12 @@
 /**
  * One HKActivitySummary — the per-day rollup behind the Apple activity rings.
  *
- * Activity summaries are keyed by calendar day ({@link https://developer.apple.com/documentation/healthkit/hkactivitysummary Apple Docs}),
- * not by timestamp, so the date is exposed as plain calendar components from
- * `HKActivitySummary.dateComponents(for:)` rather than a `Date` — converting to a
- * timestamp would force a timezone assumption onto callers.
+ * Activity summaries are keyed by calendar day, not by timestamp, so the date is
+ * exposed as plain calendar components from `HKActivitySummary.dateComponents(for:)`
+ * rather than a `Date` — converting to a timestamp would force a timezone assumption
+ * onto callers.
+ *
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkactivitysummary Apple Docs }
  */
 export interface ActivitySummary {
   /** Calendar year of the summary day (user's current calendar). */
