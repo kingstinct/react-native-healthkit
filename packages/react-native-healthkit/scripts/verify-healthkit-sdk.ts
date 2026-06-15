@@ -45,6 +45,20 @@ function main() {
     'Blood glucose should retain canonical unit mapping',
   )
 
+  // Regression guard: iOS 27 relocated HKWorkoutActivityType into its own header,
+  // so a generator that only reads HKWorkout.h drops the whole enum.
+  const workoutActivityType = schema.enums.find(
+    (schemaEnum) => schemaEnum.name === 'WorkoutActivityType',
+  )
+  assert.ok(
+    workoutActivityType,
+    'WorkoutActivityType enum should be present regardless of which header defines it',
+  )
+  assert.ok(
+    workoutActivityType.members.length > 50,
+    'WorkoutActivityType should retain its full member set, not a stub',
+  )
+
   const workoutBrandName = findMetadataKey(
     schema,
     'HKMetadataKeyWorkoutBrandName',
