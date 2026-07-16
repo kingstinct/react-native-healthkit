@@ -374,7 +374,10 @@ class WorkoutProxy: HybridWorkoutProxySpec {
           startDate: activity.startDate,
           endDate: activity.endDate ?? activity.startDate,
           uuid: activity.uuid.uuidString,
-          duration: activity.duration
+          duration: activity.duration,
+          activityType: WorkoutActivityType.init(
+            rawValue: Int32(activity.workoutConfiguration.activityType.rawValue)
+          ) ?? WorkoutActivityType.other
         )
       }
     }
