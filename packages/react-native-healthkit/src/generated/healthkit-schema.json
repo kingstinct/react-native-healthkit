@@ -156,7 +156,7 @@
       "name": "HKQuantityTypeIdentifierCyclingCadence",
       "ios": "17.0",
       "canonicalUnit": "count/min",
-      "aggregationStyle": "Discrete (Arithmetic)",
+      "aggregationStyle": "Discrete (Temporally Weighted)",
       "writeable": true,
       "legacy": false
     },
@@ -172,7 +172,7 @@
       "name": "HKQuantityTypeIdentifierCyclingPower",
       "ios": "17.0",
       "canonicalUnit": "W",
-      "aggregationStyle": "Discrete (Arithmetic)",
+      "aggregationStyle": "Discrete (Temporally Weighted)",
       "writeable": true,
       "legacy": false
     },
@@ -180,7 +180,7 @@
       "name": "HKQuantityTypeIdentifierCyclingSpeed",
       "ios": "17.0",
       "canonicalUnit": "m/s",
-      "aggregationStyle": "Discrete (Arithmetic)",
+      "aggregationStyle": "Discrete (Temporally Weighted)",
       "writeable": true,
       "legacy": false
     },
@@ -772,7 +772,7 @@
       "name": "HKQuantityTypeIdentifierRestingHeartRate",
       "ios": "11.0",
       "canonicalUnit": "count/min",
-      "aggregationStyle": "Discrete (Arithmetic)",
+      "aggregationStyle": "Discrete (Temporally Weighted)",
       "writeable": true,
       "legacy": false
     },
@@ -924,7 +924,7 @@
       "name": "HKQuantityTypeIdentifierWalkingHeartRateAverage",
       "ios": "11.0",
       "canonicalUnit": "count/min",
-      "aggregationStyle": "Discrete (Arithmetic)",
+      "aggregationStyle": "Discrete (Temporally Weighted)",
       "writeable": false,
       "legacy": false
     },
