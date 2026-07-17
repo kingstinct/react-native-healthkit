@@ -100,7 +100,7 @@ fi
 
 if ! xcrun simctl list devices | grep -q "$SIMULATOR_ID.*Booted"; then
   run_with_timeout 30 xcrun simctl boot "$SIMULATOR_ID"
-  run_with_timeout 120 xcrun simctl bootstatus "$SIMULATOR_ID" -b
+  run_with_timeout 300 xcrun simctl bootstatus "$SIMULATOR_ID" -b
 fi
 
 if ! command -v applesimutils >/dev/null 2>&1; then

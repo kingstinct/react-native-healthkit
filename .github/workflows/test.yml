@@ -185,7 +185,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.healthkit_contracts == 'true'
     # Only run on macOS since we need Xcode
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 25
 
     steps:
@@ -199,8 +199,8 @@ jobs:
       - name: Install dependencies
         run: bun install --ignore-scripts --frozen-lockfile
 
-      ## Xcode 26.3 (Swift 6.2) - latest stable
-      - run: sudo xcode-select -s /Applications/Xcode_26.3.app
+      ## Xcode 26.6 (Swift 6.2) - latest stable
+      - run: sudo xcode-select -s /Applications/Xcode_26.6.app
 
       - name: Install simulator tooling
         run: brew install wix/brew/applesimutils
@@ -220,12 +220,12 @@ jobs:
         working-directory: apps/example/ios
         run: |
           SIMULATOR_ID="$(
-            xcrun simctl list devices available 'iOS 26.2' |
+            xcrun simctl list devices available 'iOS 26.5' |
               sed -n 's/^[[:space:]]*iPhone 17 Pro (\([0-9A-F-][0-9A-F-]*\)) (.*/\1/p' |
               head -n 1
           )"
           if [ -z "$SIMULATOR_ID" ]; then
-            echo "Unable to find an available iPhone 17 Pro with iOS 26.2." >&2
+            echo "Unable to find an available iPhone 17 Pro with iOS 26.5." >&2
             exit 1
           fi
           echo "SIMULATOR_ID=$SIMULATOR_ID" >> "$GITHUB_ENV"
