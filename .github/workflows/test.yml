@@ -203,9 +203,7 @@ jobs:
       - run: sudo xcode-select -s /Applications/Xcode_26.2.app
 
       - name: Install simulator tooling
-        run: |
-          brew tap wix/brew
-          brew install applesimutils
+        run: brew install wix/brew/applesimutils
 
       - name: Verify generated HealthKit schema and bindings
         working-directory: packages/react-native-healthkit
