@@ -1,6 +1,7 @@
 import {
   type ConfigPlugin,
   createRunOncePlugin,
+  WarningAggregator,
   withAppDelegate,
   withEntitlementsPlist,
   withInfoPlist,
@@ -90,12 +91,25 @@ const withAppDelegatePlugin: ConfigPlugin<{
     if (
       !configDelegate.modResults.contents.includes('BackgroundDeliveryManager')
     ) {
-      // Match the opening of didFinishLaunchingWithOptions and insert after the opening brace
-      configDelegate.modResults.contents =
-        configDelegate.modResults.contents.replace(
-          /(func application\(.+didFinishLaunchingWithOptions.+\{)\n/,
-          `$1\n${setupCall}`,
+      // Match the opening of didFinishLaunchingWithOptions and insert after the
+      // opening brace. Expo SDK 53+ templates spread the Swift signature over
+      // multiple lines, so the pattern must span newlines.
+      const didFinishLaunching =
+        /(func application\s*\([\s\S]*?didFinishLaunchingWithOptions[\s\S]*?\)\s*->\s*Bool\s*\{\n)/
+      if (didFinishLaunching.test(configDelegate.modResults.contents)) {
+        configDelegate.modResults.contents =
+          configDelegate.modResults.contents.replace(
+            didFinishLaunching,
+            `$1${setupCall}`,
+          )
+      } else {
+        // Background delivery silently never survives app termination without
+        // this call, so an injection miss must be loud rather than invisible.
+        WarningAggregator.addWarningIOS(
+          pkg.name,
+          'Could not find didFinishLaunchingWithOptions in AppDelegate — HealthKit background delivery will not be registered on cold launch. Add BackgroundDeliveryManager.shared.setupBackgroundObservers() manually.',
         )
+      }
     }
 
     return configDelegate
