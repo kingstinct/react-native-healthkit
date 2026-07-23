@@ -157,21 +157,27 @@ class CoreModule: HybridCoreModuleSpec {
             returning: .unnecessary
           )
         }
-        return store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) {
-          status, error in
-          DispatchQueue.main.async {
-            if let error = error {
-              continuation.resume(throwing: error)
-            } else {
-              if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
-                continuation.resume(returning: authStatus)
+        var caughtError: NSError?
+        let started = RunBlockCatchingObjCExceptions({
+          store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) {
+            status, error in
+            DispatchQueue.main.async {
+              if let error = error {
+                continuation.resume(throwing: error)
               } else {
-                continuation.resume(
-                  throwing: runtimeErrorWithPrefix(
-                    "Unrecognized authStatus returned: \(status.rawValue)"))
+                if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
+                  continuation.resume(returning: authStatus)
+                } else {
+                  continuation.resume(
+                    throwing: runtimeErrorWithPrefix(
+                      "Unrecognized authStatus returned: \(status.rawValue)"))
+                }
               }
             }
           }
+        })
+        if !started, let caughtError {
+          continuation.resume(throwing: caughtError)
         }
       }
     }
@@ -183,14 +189,20 @@ class CoreModule: HybridCoreModuleSpec {
       let toRead = objectTypesFromArray(typeIdentifiers: toRequest.toRead ?? [])
 
       return try await withCheckedThrowingContinuation { continuation in
-        store.requestAuthorization(toShare: share, read: toRead) { status, error in
-          DispatchQueue.main.async {
-            if let error = error {
-              continuation.resume(throwing: error)
-            } else {
-              continuation.resume(returning: status)
+        var caughtError: NSError?
+        let started = RunBlockCatchingObjCExceptions({
+          store.requestAuthorization(toShare: share, read: toRead) { status, error in
+            DispatchQueue.main.async {
+              if let error = error {
+                continuation.resume(throwing: error)
+              } else {
+                continuation.resume(returning: status)
+              }
             }
           }
+        })
+        if !started, let caughtError {
+          continuation.resume(throwing: caughtError)
         }
       }
     }
