@@ -115,33 +115,45 @@ import HealthKit
         continue
       }
 
-      // Use nil predicate to catch all samples, including those written while the app was terminated.
-      // The current subscribeToObserverQuery uses Date.init() which misses data from when the app was dead.
-      let query = HKObserverQuery(
-        sampleType: sampleType,
-        predicate: nil
-      ) { [weak self] (_: HKObserverQuery, completionHandler: @escaping HKObserverQueryCompletionHandler, error: Error?) in
-        self?.handleObserverCallback(
-          typeIdentifier: typeIdentifier,
-          error: error
-        )
-        // Must call the completion handler promptly so iOS knows we processed the update.
-        completionHandler()
-      }
-
-      healthStore.execute(query)
-
       healthStore.enableBackgroundDelivery(for: sampleType, frequency: frequency) { success, error in
         if let error = error {
           print("[react-native-healthkit] BackgroundDeliveryManager: enableBackgroundDelivery failed for \(typeIdentifier): \(error.localizedDescription)")
         } else if !success {
           print("[react-native-healthkit] BackgroundDeliveryManager: enableBackgroundDelivery returned false for \(typeIdentifier)")
+        } else {
+          self.startObserverQuery(typeIdentifier: typeIdentifier, sampleType: sampleType)
         }
       }
+    }
+  }
 
-      queue.sync(flags: .barrier) {
-        self.observerQueries[typeIdentifier] = query
-      }
+  private func startObserverQuery(typeIdentifier: String, sampleType: HKSampleType) {
+    let shouldStart = queue.sync {
+      self.isSetUp
+    }
+
+    guard shouldStart else {
+      return
+    }
+
+    // Use nil predicate to catch all samples, including those written while the app was terminated.
+    // The current subscribeToObserverQuery uses Date.init() which misses data from when the app was dead.
+    let query = HKObserverQuery(
+      sampleType: sampleType,
+      predicate: nil
+    ) { [weak self] (_: HKObserverQuery, completionHandler: @escaping HKObserverQueryCompletionHandler, error: Error?) in
+      self?.handleObserverCallback(
+        typeIdentifier: typeIdentifier,
+        error: error
+      )
+      // Must call the completion handler promptly so iOS knows we processed the update.
+      completionHandler()
+    }
+
+    healthStore.execute(query)
+
+    queue.sync(flags: .barrier) {
+      self.observerQueries[typeIdentifier] = query
     }
   }
 
