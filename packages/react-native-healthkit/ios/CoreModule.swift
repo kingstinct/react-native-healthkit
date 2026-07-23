@@ -175,7 +175,7 @@ class CoreModule: HybridCoreModuleSpec {
               }
             }
           }
-        })
+        }, &caughtError)
         if !started, let caughtError {
           continuation.resume(throwing: caughtError)
         }
@@ -200,7 +200,7 @@ class CoreModule: HybridCoreModuleSpec {
               }
             }
           }
-        })
+        }, &caughtError)
         if !started, let caughtError {
           continuation.resume(throwing: caughtError)
         }
