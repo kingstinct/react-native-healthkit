@@ -153,6 +153,7 @@ export type CategoryTypeIdentifierWriteable =
   | 'HKCategoryTypeIdentifierAppleWalkingSteadinessEvent'
   | 'HKCategoryTypeIdentifierAudioExposureEvent'
   | 'HKCategoryTypeIdentifierBladderIncontinence'
+  | 'HKCategoryTypeIdentifierBleedingAfterMenopause'
   | 'HKCategoryTypeIdentifierBleedingAfterPregnancy'
   | 'HKCategoryTypeIdentifierBleedingDuringPregnancy'
   | 'HKCategoryTypeIdentifierBloating'
@@ -186,6 +187,7 @@ export type CategoryTypeIdentifierWriteable =
   | 'HKCategoryTypeIdentifierLowCardioFitnessEvent'
   | 'HKCategoryTypeIdentifierLowerBackPain'
   | 'HKCategoryTypeIdentifierMemoryLapse'
+  | 'HKCategoryTypeIdentifierMenopausalState'
   | 'HKCategoryTypeIdentifierMenstrualFlow'
   | 'HKCategoryTypeIdentifierMindfulSession'
   | 'HKCategoryTypeIdentifierMoodChanges'
@@ -345,6 +347,7 @@ export const CATEGORY_IDENTIFIER_IOS_AVAILABILITY = {
   HKCategoryTypeIdentifierAppleWalkingSteadinessEvent: '15.0',
   HKCategoryTypeIdentifierAudioExposureEvent: '13.0',
   HKCategoryTypeIdentifierBladderIncontinence: '14.0',
+  HKCategoryTypeIdentifierBleedingAfterMenopause: '27.0',
   HKCategoryTypeIdentifierBleedingAfterPregnancy: '18.0',
   HKCategoryTypeIdentifierBleedingDuringPregnancy: '18.0',
   HKCategoryTypeIdentifierBloating: '13.6',
@@ -382,6 +385,7 @@ export const CATEGORY_IDENTIFIER_IOS_AVAILABILITY = {
   HKCategoryTypeIdentifierLowerBackPain: '13.6',
   HKCategoryTypeIdentifierLowHeartRateEvent: '12.2',
   HKCategoryTypeIdentifierMemoryLapse: '14.0',
+  HKCategoryTypeIdentifierMenopausalState: '27.0',
   HKCategoryTypeIdentifierMenstrualFlow: '9.0',
   HKCategoryTypeIdentifierMindfulSession: '10.0',
   HKCategoryTypeIdentifierMoodChanges: '13.6',
@@ -540,6 +544,8 @@ export const CATEGORY_IDENTIFIER_VALUE_ENUMS = {
     'CategoryValueAppleWalkingSteadinessEvent',
   HKCategoryTypeIdentifierAudioExposureEvent: null,
   HKCategoryTypeIdentifierBladderIncontinence: 'CategoryValueSeverity',
+  HKCategoryTypeIdentifierBleedingAfterMenopause:
+    'CategoryValueVaginalBleeding',
   HKCategoryTypeIdentifierBleedingAfterPregnancy:
     'CategoryValueVaginalBleeding',
   HKCategoryTypeIdentifierBleedingDuringPregnancy:
@@ -583,6 +589,7 @@ export const CATEGORY_IDENTIFIER_VALUE_ENUMS = {
   HKCategoryTypeIdentifierLowerBackPain: 'CategoryValueSeverity',
   HKCategoryTypeIdentifierLowHeartRateEvent: 'CategoryValue',
   HKCategoryTypeIdentifierMemoryLapse: 'CategoryValueSeverity',
+  HKCategoryTypeIdentifierMenopausalState: 'CategoryValueMenopausalState',
   HKCategoryTypeIdentifierMenstrualFlow: 'CategoryValueMenstrualFlow',
   HKCategoryTypeIdentifierMindfulSession: 'CategoryValue',
   HKCategoryTypeIdentifierMoodChanges: 'CategoryValuePresence',
@@ -682,6 +689,11 @@ export enum CategoryValueHeadphoneAudioExposureEvent {
 }
 export enum CategoryValueLowCardioFitnessEvent {
   lowFitness = 1,
+}
+export enum CategoryValueMenopausalState {
+  menopause = 1,
+  perimenopause = 2,
+  none = 3,
 }
 export enum CategoryValueMenstrualFlow {
   unspecified = 1,
@@ -911,6 +923,8 @@ export enum WorkoutActivityType {
   swimBikeRun = 82,
   transition = 83,
   underwaterDiving = 84,
+  rest = 2998,
+  group = 2999,
   other = 3000,
 }
 export enum WorkoutEventType {
@@ -935,6 +949,7 @@ export interface CategoryValueByIdentifierMap {
   readonly HKCategoryTypeIdentifierAppleStandHour: CategoryValueAppleStandHour
   readonly HKCategoryTypeIdentifierAppleWalkingSteadinessEvent: CategoryValueAppleWalkingSteadinessEvent
   readonly HKCategoryTypeIdentifierBladderIncontinence: CategoryValueSeverity
+  readonly HKCategoryTypeIdentifierBleedingAfterMenopause: CategoryValueVaginalBleeding
   readonly HKCategoryTypeIdentifierBleedingAfterPregnancy: CategoryValueVaginalBleeding
   readonly HKCategoryTypeIdentifierBleedingDuringPregnancy: CategoryValueVaginalBleeding
   readonly HKCategoryTypeIdentifierBloating: CategoryValueSeverity
@@ -972,6 +987,7 @@ export interface CategoryValueByIdentifierMap {
   readonly HKCategoryTypeIdentifierLowerBackPain: CategoryValueSeverity
   readonly HKCategoryTypeIdentifierLowHeartRateEvent: CategoryValue
   readonly HKCategoryTypeIdentifierMemoryLapse: CategoryValueSeverity
+  readonly HKCategoryTypeIdentifierMenopausalState: CategoryValueMenopausalState
   readonly HKCategoryTypeIdentifierMenstrualFlow: CategoryValueMenstrualFlow
   readonly HKCategoryTypeIdentifierMindfulSession: CategoryValue
   readonly HKCategoryTypeIdentifierMoodChanges: CategoryValuePresence
