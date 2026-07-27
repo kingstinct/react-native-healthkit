@@ -90,12 +90,28 @@ const withAppDelegatePlugin: ConfigPlugin<{
     if (
       !configDelegate.modResults.contents.includes('BackgroundDeliveryManager')
     ) {
-      // Match the opening of didFinishLaunchingWithOptions and insert after the opening brace
-      configDelegate.modResults.contents =
-        configDelegate.modResults.contents.replace(
-          /(func application\(.+didFinishLaunchingWithOptions.+\{)\n/,
-          `$1\n${setupCall}`,
+      // Match the opening of didFinishLaunchingWithOptions and insert after the
+      // opening brace. `[^{]*` rather than `.+` for two reasons: `.` does not
+      // match newlines, and Expo SDK 54+ templates spread this signature over
+      // several lines; and refusing to cross a `{` keeps the match from
+      // spanning out of an earlier `application(...)` overload into this one.
+      const withSetup = configDelegate.modResults.contents.replace(
+        /(func application\([^{]*didFinishLaunchingWithOptions[^{]*\{)\n/,
+        `$1\n${setupCall}`,
+      )
+
+      if (withSetup === configDelegate.modResults.contents) {
+        // Don't fail the build, but don't fail silently either — background
+        // delivery just won't survive app termination, which is otherwise
+        // very hard to trace back to here.
+        console.warn(
+          '[react-native-healthkit] Could not find didFinishLaunchingWithOptions in AppDelegate; ' +
+            'BackgroundDeliveryManager.shared.setupBackgroundObservers() was not inserted. ' +
+            'HealthKit background delivery will not work until it is added manually.',
         )
+      }
+
+      configDelegate.modResults.contents = withSetup
     }
 
     return configDelegate
