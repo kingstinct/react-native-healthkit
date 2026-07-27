@@ -10,6 +10,7 @@ import useSubscribeToCategorySamples from './hooks/useSubscribeToCategorySamples
 import useSubscribeToChanges from './hooks/useSubscribeToChanges'
 import useSubscribeToQuantitySamples from './hooks/useSubscribeToQuantitySamples'
 import {
+  ActivitySummaries,
   CategoryTypes,
   Characteristics,
   Core,
@@ -38,6 +39,7 @@ import type {
   MedicationDoseEventTyped,
 } from './types/Medication'
 import type { QuantityTypeIdentifier } from './types/QuantityTypeIdentifier'
+import type { ActivitySummary } from './types/ActivitySummary'
 import type {
   StateOfMindSamplesWithAnchorResponseTyped,
   StateOfMindSampleTyped,
@@ -296,6 +298,19 @@ const MedicationBindings = {
   >
 }
 
+const ActivitySummaryBindings = {
+  queryActivitySummaries: bindRetypedMethod<
+    typeof ActivitySummaries,
+    typeof ActivitySummaries.queryActivitySummaries,
+    Promise<ActivitySummary[]>
+  >(ActivitySummaries, ActivitySummaries.queryActivitySummaries),
+} satisfies {
+  queryActivitySummaries: BoundMethod<
+    typeof ActivitySummaries.queryActivitySummaries,
+    Promise<ActivitySummary[]>
+  >
+}
+
 // Named exports - all functions bound to their respective modules
 export const authorizationStatusFor = Core.authorizationStatusFor.bind(Core)
 export const requestPerObjectReadAuthorization =
@@ -390,6 +405,9 @@ export const queryMedicationEvents = MedicationBindings.queryMedicationEvents
 export const queryMedicationEventsWithAnchor =
   MedicationBindings.queryMedicationEventsWithAnchor
 
+export const queryActivitySummaries =
+  ActivitySummaryBindings.queryActivitySummaries
+
 export const currentAppSource = Core.currentAppSource.bind(Core)
 
 export const getBiologicalSexAsync =
@@ -461,6 +479,7 @@ export default {
   subscribeToQuantitySamples,
   startWatchApp,
   isProtectedDataAvailable,
+  queryActivitySummaries,
   queryStateOfMindSamples,
   queryStateOfMindSamplesWithAnchor,
   saveStateOfMindSample,

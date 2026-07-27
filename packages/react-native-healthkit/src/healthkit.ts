@@ -390,6 +390,12 @@ export const startWatchApp = UnavailableFnFromModule(
   Promise.resolve(false),
 )
 
+// ActivitySummaryModule functions
+export const queryActivitySummaries = UnavailableFnFromModule(
+  'queryActivitySummaries',
+  Promise.resolve([]),
+)
+
 // StateOfMindModule functions
 export const queryStateOfMindSamples = UnavailableFnFromModule(
   'queryStateOfMindSamples',
@@ -630,6 +636,7 @@ const HealthkitModule = {
   subscribeToChanges,
   startWatchApp,
   isProtectedDataAvailable,
+  queryActivitySummaries,
   queryStateOfMindSamples,
   queryStateOfMindSamplesWithAnchor,
   saveStateOfMindSample,
