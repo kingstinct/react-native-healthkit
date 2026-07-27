@@ -8,6 +8,7 @@ SIMULATOR_ID="${SIMULATOR_ID:-${1:-}}"
 APP_ID="com.kingstinct.reactnativehealthkitexample"
 INITIAL_URL="exp+react-native-healthkit-example://expo-development-client/?url=http%3A%2F%2F127.0.0.1%3A8081"
 METRO_LOG="${TMPDIR:-/tmp}/healthkit-contract-metro.log"
+DIAG_DIR="${CONTRACT_DIAGNOSTICS_DIR:-}"
 APP_DATA=""
 REPORT_PATH=""
 COMMAND_PATH=""
@@ -41,12 +42,28 @@ dump_debug_artifacts() {
 
   echo "$reason" >&2
 
+  if [ -z "$DIAG_DIR" ]; then
+    DIAG_DIR="$(mktemp -d -t healthkit-contract-diagnostics)"
+  fi
+  mkdir -p "$DIAG_DIR"
+  echo "$reason" >"$DIAG_DIR/failure-reason.txt"
+
   if [ -n "$SIMULATOR_ID" ]; then
-    local screenshot_path
-    screenshot_path="$(mktemp -t healthkit-contracts-XXXXXX).png"
-    if xcrun simctl io "$SIMULATOR_ID" screenshot "$screenshot_path" >/dev/null 2>&1; then
-      echo "Simulator screenshot: $screenshot_path" >&2
+    if xcrun simctl io "$SIMULATOR_ID" screenshot "$DIAG_DIR/simulator.png" >/dev/null 2>&1; then
+      echo "Simulator screenshot: $DIAG_DIR/simulator.png" >&2
     fi
+
+    xcrun simctl spawn "$SIMULATOR_ID" log show \
+      --last 10m \
+      --style compact \
+      --predicate 'process == "RNHealthKit" OR eventMessage CONTAINS "reactnativehealthkitexample"' \
+      >"$DIAG_DIR/device-log.txt" 2>&1 || true
+
+    xcrun simctl listapps "$SIMULATOR_ID" >"$DIAG_DIR/installed-apps.txt" 2>&1 || true
+
+    find "$HOME/Library/Logs/DiagnosticReports" \
+      \( -name 'RNHealthKit*' -o -name '*reactnativehealthkitexample*' \) \
+      -exec cp {} "$DIAG_DIR/" \; 2>/dev/null || true
   fi
 
   if [ -n "$APP_DATA" ]; then
@@ -56,12 +73,16 @@ dump_debug_artifacts() {
   if [ -n "$REPORT_PATH" ] && [ -f "$REPORT_PATH" ]; then
     echo "Partial contract report:" >&2
     cat "$REPORT_PATH" >&2
+    cp "$REPORT_PATH" "$DIAG_DIR/" 2>/dev/null || true
   fi
 
   if [ -f "$METRO_LOG" ]; then
     echo "Metro log tail:" >&2
     tail -n 200 "$METRO_LOG" >&2
+    cp "$METRO_LOG" "$DIAG_DIR/metro.log" 2>/dev/null || true
   fi
+
+  echo "Diagnostics collected in: $DIAG_DIR" >&2
 }
 
 cleanup() {
@@ -100,7 +121,7 @@ fi
 
 if ! xcrun simctl list devices | grep -q "$SIMULATOR_ID.*Booted"; then
   run_with_timeout 30 xcrun simctl boot "$SIMULATOR_ID"
-  run_with_timeout 120 xcrun simctl bootstatus "$SIMULATOR_ID" -b
+  run_with_timeout 300 xcrun simctl bootstatus "$SIMULATOR_ID" -b
 fi
 
 if ! command -v applesimutils >/dev/null 2>&1; then
@@ -154,7 +175,7 @@ run_with_timeout 20 applesimutils \
   --bundle "$APP_ID" \
   --setPermissions 'health=YES,motion=YES'
 
-run_with_timeout 30 xcrun simctl launch "$SIMULATOR_ID" "$APP_ID" --initialUrl "$INITIAL_URL" >/dev/null
+run_with_timeout 90 xcrun simctl launch "$SIMULATOR_ID" "$APP_ID" --initialUrl "$INITIAL_URL" >/dev/null
 
 ATTEMPT=0
 until [ -f "$REPORT_PATH" ]; do

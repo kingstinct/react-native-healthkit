@@ -157,21 +157,27 @@ class CoreModule: HybridCoreModuleSpec {
             returning: .unnecessary
           )
         }
-        return store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) {
-          status, error in
-          DispatchQueue.main.async {
-            if let error = error {
-              continuation.resume(throwing: error)
-            } else {
-              if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
-                continuation.resume(returning: authStatus)
+        var caughtError: NSError?
+        let started = RunBlockCatchingObjCExceptions({
+          store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) {
+            status, error in
+            DispatchQueue.main.async {
+              if let error = error {
+                continuation.resume(throwing: error)
               } else {
-                continuation.resume(
-                  throwing: runtimeErrorWithPrefix(
-                    "Unrecognized authStatus returned: \(status.rawValue)"))
+                if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
+                  continuation.resume(returning: authStatus)
+                } else {
+                  continuation.resume(
+                    throwing: runtimeErrorWithPrefix(
+                      "Unrecognized authStatus returned: \(status.rawValue)"))
+                }
               }
             }
           }
+        }, &caughtError)
+        if !started, let caughtError {
+          continuation.resume(throwing: caughtError)
         }
       }
     }
@@ -183,14 +189,20 @@ class CoreModule: HybridCoreModuleSpec {
       let toRead = objectTypesFromArray(typeIdentifiers: toRequest.toRead ?? [])
 
       return try await withCheckedThrowingContinuation { continuation in
-        store.requestAuthorization(toShare: share, read: toRead) { status, error in
-          DispatchQueue.main.async {
-            if let error = error {
-              continuation.resume(throwing: error)
-            } else {
-              continuation.resume(returning: status)
+        var caughtError: NSError?
+        let started = RunBlockCatchingObjCExceptions({
+          store.requestAuthorization(toShare: share, read: toRead) { status, error in
+            DispatchQueue.main.async {
+              if let error = error {
+                continuation.resume(throwing: error)
+              } else {
+                continuation.resume(returning: status)
+              }
             }
           }
+        }, &caughtError)
+        if !started, let caughtError {
+          continuation.resume(throwing: caughtError)
         }
       }
     }
@@ -349,6 +361,10 @@ class CoreModule: HybridCoreModuleSpec {
   }
 
   var _runningQueries: [String: HKQuery] = [:]
+  // queryId -> typeIdentifier for subscriptions routed through
+  // BackgroundDeliveryManager instead of getting their own HKObserverQuery
+  // (see subscribeToObserverQuery below).
+  var _backgroundRoutedQueries: [String: String] = [:]
 
   func deleteObjects(objectTypeIdentifier: SampleTypeIdentifierWriteable, filter: FilterForSamples)
     -> Promise<Double> {
@@ -377,6 +393,25 @@ class CoreModule: HybridCoreModuleSpec {
     typeIdentifier: SampleTypeIdentifier,
     callback: @escaping (OnChangeCallbackArgs) -> Void
   ) throws -> String {
+    let typeIdString = typeIdentifier.stringValue
+
+    if BackgroundDeliveryManager.shared.isBackgroundConfigured(typeIdentifier: typeIdString) {
+      // BackgroundDeliveryManager already has an HKObserverQuery running for
+      // this type (registered at launch, survives termination) — route
+      // through it instead of registering a second, independent observer for
+      // the same type.
+      let queryId = UUID().uuidString
+      BackgroundDeliveryManager.shared.setCallback(typeIdentifier: typeIdString) {
+        (_, errorMessage) in
+        DispatchQueue.main.async {
+          callback(
+            OnChangeCallbackArgs(typeIdentifier: typeIdentifier, errorMessage: errorMessage))
+        }
+      }
+      self._backgroundRoutedQueries[queryId] = typeIdString
+      return queryId
+    }
+
     let sampleType = try sampleTypeFrom(sampleTypeIdentifier: typeIdentifier)
 
     let predicate = HKQuery.predicateForSamples(
@@ -411,6 +446,13 @@ class CoreModule: HybridCoreModuleSpec {
   }
 
   func unsubscribeQuery(queryId: String) throws -> Bool {
+    if let typeIdString = self._backgroundRoutedQueries[queryId] {
+      BackgroundDeliveryManager.shared.removeCallback(typeIdentifier: typeIdString)
+      self._backgroundRoutedQueries.removeValue(forKey: queryId)
+
+      return true
+    }
+
     guard let query = self._runningQueries[queryId] else {
       warnWithPrefix("unsubscribeQuery: Query with id \(queryId) not found")
 

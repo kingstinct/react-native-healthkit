@@ -1,5 +1,8 @@
 import Foundation
 import HealthKit
+import os.log
+
+private let bgLog = OSLog(subsystem: "com.kingstinct.healthkit", category: "BackgroundDelivery")
 
 /// Manages HealthKit background delivery by registering observer queries at app launch,
 /// before the JS bridge is available. This is required by Apple — observer queries must
@@ -20,6 +23,11 @@ import HealthKit
   private var observerQueries: [String: HKObserverQuery] = [:]
   private var pendingEvents: [(typeIdentifier: String, errorMessage: String?)] = []
   private var jsCallback: ((String, String?) -> Void)?
+  // Per-type callbacks, checked before the global `jsCallback` above. Lets
+  // CoreModule.subscribeToObserverQuery route a JS subscription for a
+  // background-configured type through this manager's already-running
+  // HKObserverQuery instead of registering a second, independent one.
+  private var typeCallbacks: [String: (String, String?) -> Void] = [:]
   private var isSetUp = false
 
   static let typesKey = "com.kingstinct.healthkit.backgroundTypes"
@@ -85,6 +93,37 @@ import HealthKit
     }
   }
 
+  /// Subscribe a JS callback for a specific type. Any events for this type
+  /// that arrived before JS subscribed (e.g. from a background wake, queued
+  /// in `pendingEvents` above) are flushed immediately.
+  func setCallback(typeIdentifier: String, callback: @escaping (String, String?) -> Void) {
+    queue.sync(flags: .barrier) {
+      self.typeCallbacks[typeIdentifier] = callback
+      let matching = self.pendingEvents.filter { $0.typeIdentifier == typeIdentifier }
+      self.pendingEvents.removeAll { $0.typeIdentifier == typeIdentifier }
+      for event in matching {
+        callback(typeIdentifier, event.errorMessage)
+      }
+    }
+  }
+
+  /// Remove the per-type JS callback (e.g., on unsubscribe).
+  func removeCallback(typeIdentifier: String) {
+    queue.sync(flags: .barrier) {
+      self.typeCallbacks.removeValue(forKey: typeIdentifier)
+    }
+  }
+
+  /// True if `typeIdentifier` has a native HKObserverQuery registered by
+  /// `registerObservers` — i.e. background delivery is configured for it.
+  /// CoreModule.subscribeToObserverQuery checks this before deciding whether
+  /// to reuse this manager's observer or register its own.
+  func isBackgroundConfigured(typeIdentifier: String) -> Bool {
+    return queue.sync {
+      self.observerQueries[typeIdentifier] != nil
+    }
+  }
+
   /// Stop all observer queries and clear state.
   func tearDown() {
     queue.sync(flags: .barrier) {
@@ -92,6 +131,7 @@ import HealthKit
         self.healthStore.stop(query)
       }
       self.observerQueries = [:]
+      self.typeCallbacks = [:]
       self.isSetUp = false
     }
   }
@@ -121,6 +161,11 @@ import HealthKit
         sampleType: sampleType,
         predicate: nil
       ) { [weak self] (_: HKObserverQuery, completionHandler: @escaping HKObserverQueryCompletionHandler, error: Error?) in
+        // handleObserverCallback opens a beginBackgroundTask() window as its
+        // first, synchronous action, before this returns to call
+        // completionHandler() — otherwise iOS is free to suspend the process
+        // the moment HealthKit's own completion handler fires, possibly
+        // before Hermes has finished booting to run the JS callback.
         self?.handleObserverCallback(
           typeIdentifier: typeIdentifier,
           error: error
@@ -147,17 +192,53 @@ import HealthKit
 
   private func handleObserverCallback(typeIdentifier: String, error: Error?) {
     let errorMessage = error?.localizedDescription
+    os_log("observer fired: %{public}@", log: bgLog, type: .info, typeIdentifier)
+
+    // Ask iOS for real execution time before doing anything else, so the
+    // process survives long enough for Hermes to boot and the JS callback to
+    // run — see the comment at this query's registration above.
+    var backgroundTaskId = UIBackgroundTaskIdentifier.invalid
+    let endTask: () -> Void = { [weak self] in
+      self?.queue.sync(flags: .barrier) {
+        guard backgroundTaskId != .invalid else { return }
+        UIApplication.shared.endBackgroundTask(backgroundTaskId)
+        backgroundTaskId = .invalid
+      }
+    }
+    backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "healthkit-observer-\(typeIdentifier)") {
+      os_log("background task expired: %{public}@", log: bgLog, type: .info, typeIdentifier)
+      endTask()
+    }
+    os_log("background task started: %{public}@", log: bgLog, type: .info, typeIdentifier)
 
     queue.sync(flags: .barrier) {
-      if let callback = self.jsCallback {
+      if let callback = self.typeCallbacks[typeIdentifier] {
+        DispatchQueue.main.async {
+          os_log("dispatching to per-type JS callback: %{public}@", log: bgLog, type: .info, typeIdentifier)
+          callback(typeIdentifier, errorMessage)
+        }
+      } else if let callback = self.jsCallback {
         // JS is connected — dispatch to main thread for JSI safety
         DispatchQueue.main.async {
+          os_log("dispatching to global JS callback: %{public}@", log: bgLog, type: .info, typeIdentifier)
           callback(typeIdentifier, errorMessage)
         }
       } else {
         // JS not ready yet — queue the event for later
+        os_log("no JS callback yet, queuing: %{public}@", log: bgLog, type: .info, typeIdentifier)
         self.pendingEvents.append((typeIdentifier: typeIdentifier, errorMessage: errorMessage))
       }
+    }
+
+    // Hold the task open for a fixed, generous window rather than trying to
+    // ack precisely when JS finishes — Hermes boot plus the JS callback's own
+    // async work (HealthKit reads + Supabase upsert) is unpredictable, and a
+    // completion-ack channel back from JS isn't worth building on the first
+    // pass for a personal-use app. First place to revisit if verification
+    // shows this window is too tight.
+    DispatchQueue.main.asyncAfter(deadline: .now() + 25) {
+      os_log("background task window elapsed: %{public}@", log: bgLog, type: .info, typeIdentifier)
+      endTask()
     }
   }
 
