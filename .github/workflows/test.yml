@@ -243,3 +243,13 @@ jobs:
 
       - name: Run HealthKit contracts
         run: bun run test:contracts
+        env:
+          CONTRACT_DIAGNOSTICS_DIR: ${{ runner.temp }}/healthkit-contract-diagnostics
+
+      - name: Upload contract diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: healthkit-contract-diagnostics
+          path: ${{ runner.temp }}/healthkit-contract-diagnostics
+          if-no-files-found: ignore
