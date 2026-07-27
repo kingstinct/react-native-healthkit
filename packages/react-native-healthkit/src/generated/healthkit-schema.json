@@ -97,6 +97,14 @@
       "legacy": false
     },
     {
+      "name": "HKQuantityTypeIdentifierBloodKetones",
+      "ios": "8.0",
+      "canonicalUnit": "mmol/L",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
       "name": "HKQuantityTypeIdentifierBloodPressureDiastolic",
       "ios": "8.0",
       "canonicalUnit": "mmHg",
