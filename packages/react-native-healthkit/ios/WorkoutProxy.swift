@@ -370,11 +370,23 @@ class WorkoutProxy: HybridWorkoutProxySpec {
       let hkActivities = workout.workoutActivities
 
       return hkActivities.map { activity in
+        let rawActivityType = activity.workoutConfiguration.activityType.rawValue
+        let activityType = Int32(exactly: rawActivityType).flatMap {
+          WorkoutActivityType.init(rawValue: $0)
+        }
+
+        if activityType == nil {
+          warnWithPrefix(
+            "Unknown workoutActivityType with rawValue: \(rawActivityType), falling back to 'other'"
+          )
+        }
+
         return WorkoutActivity(
           startDate: activity.startDate,
           endDate: activity.endDate ?? activity.startDate,
           uuid: activity.uuid.uuidString,
-          duration: activity.duration
+          duration: activity.duration,
+          activityType: activityType ?? WorkoutActivityType.other
         )
       }
     }
