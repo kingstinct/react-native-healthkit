@@ -2,4 +2,4 @@
 "@kingstinct/react-native-healthkit": patch
 ---
 
-[WIP] Fix regression of HKQuantityTypeIdentifierBloodKetones in enum
+Fix regression where HKQuantityTypeIdentifierBloodKetones was missing from generated quantity identifiers.
