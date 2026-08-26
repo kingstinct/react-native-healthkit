@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - ".changeset/**"
+      - ".github/workflows/autopublish.yml"
     branches:
       - main
       - master
