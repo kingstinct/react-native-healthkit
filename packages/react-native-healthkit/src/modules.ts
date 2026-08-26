@@ -1,4 +1,5 @@
 import { NitroModules } from 'react-native-nitro-modules'
+import type { ActivitySummaryModule } from './specs/ActivitySummaryModule.nitro'
 import type {
   CategoryTypeModule,
   CategoryTypeModuleTyped,
@@ -56,3 +57,8 @@ export const HeartbeatSeries =
 
 export const StateOfMind =
   NitroModules.createHybridObject<StateOfMindModule>('StateOfMindModule')
+
+export const ActivitySummaries =
+  NitroModules.createHybridObject<ActivitySummaryModule>(
+    'ActivitySummaryModule',
+  )

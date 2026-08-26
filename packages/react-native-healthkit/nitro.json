@@ -38,6 +38,9 @@
     },
     "MedicationModule": {
       "swift": "MedicationModule"
+    },
+    "ActivitySummaryModule": {
+      "swift": "ActivitySummaryModule"
     }
   },
   "ignorePaths": ["**/node_modules"]

@@ -1,3 +1,4 @@
+export * from './ActivitySummary'
 export * from './Auth'
 export * from './Background'
 export * from './CategoryType'
