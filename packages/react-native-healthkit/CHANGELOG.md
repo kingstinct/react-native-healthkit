@@ -1,5 +1,23 @@
 # @kingstinct/react-native-healthkit
 
+## 14.1.0
+### Minor Changes
+
+- b9b8f01: Serialize each workout sub-activity's `activityType` (the raw `HKWorkoutActivityType` from its `workoutConfiguration`) on `WorkoutActivity`, alongside `startDate`/`endDate`/`uuid`/`duration`. This lets consumers type the legs of multisport (`.swimBikeRun`) workouts — e.g. splitting a triathlon into its swim/bike/run legs — which the bridge previously didn't carry.
+
+### Patch Changes
+
+- 6d9a832: fix: insert `setupBackgroundObservers()` into multi-line `didFinishLaunchingWithOptions` signatures
+  
+  The config plugin matched the AppDelegate entry point with `/(func application\(.+didFinishLaunchingWithOptions.+\{)\n/`. `.` does not match newlines, so on Expo SDK 54+ — whose AppDelegate template spreads that signature across four lines — the match failed and `String.replace` returned the contents unchanged. The `import HealthKit` insert immediately above it still succeeded and the entitlement and Info.plist plugins still applied, so the build succeeded and the AppDelegate looked modified, while `BackgroundDeliveryManager.shared.setupBackgroundObservers()` was never added. Background delivery then only worked for observers registered by `subscribeToChanges` at runtime, and silently stopped surviving app termination.
+  
+  Match with `[^{]*` instead, which spans newlines and also refuses to cross a `{`, so it cannot run out of an earlier `application(...)` overload into this one. Also warn when the insert finds no match, rather than failing silently.
+- d0dacf8: fix: catch Objective-C exceptions in `requestAuthorization` and `getRequestStatusForAuthorization`
+  
+  `HKHealthStore.requestAuthorization` / `getRequestStatusForAuthorization` can raise a synchronous `NSException` (e.g. `NSInvalidArgumentException` for interdependent read types). The Swift wrapper never caught Objective-C exceptions, so on iOS 26 the exception escapes the `async` task and terminates the process with `EXC_BREAKPOINT (SIGTRAP)`. Wrap the calls in an ObjC `@try/@catch` and resume the continuation with the error instead of trapping. Fixes #331, #366.
+- f107bbf: Wire background-delivered HealthKit updates through to JS
+- 598f406: Fix regression where HKQuantityTypeIdentifierBloodKetones was missing from generated quantity identifiers.
+
 ## 14.0.2
 ### Patch Changes
 
