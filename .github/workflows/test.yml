@@ -62,6 +62,7 @@ jobs:
               - 'packages/react-native-healthkit/cpp/**'
               - 'packages/react-native-healthkit/scripts/**'
               - 'packages/react-native-healthkit/nitrogen/**'
+              - 'packages/react-native-healthkit/app.plugin.*'
               - 'packages/react-native-healthkit/package.json'
               - 'packages/react-native-healthkit/tsconfig*.json'
               - 'apps/example/contracts/**'
@@ -78,6 +79,7 @@ jobs:
               - 'packages/react-native-healthkit/ios/**'
               - 'packages/react-native-healthkit/cpp/**'
               - 'apps/example/ios/**'
+              - '.github/workflows/test.yml'
 
   test:
     # The type of runner that the job will run on
