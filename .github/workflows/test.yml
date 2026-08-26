@@ -188,7 +188,7 @@ jobs:
     if: needs.changes.outputs.healthkit_contracts == 'true'
     # Only run on macOS since we need Xcode
     runs-on: macos-26
-    timeout-minutes: 25
+    timeout-minutes: 45
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -207,6 +207,22 @@ jobs:
       - name: Install simulator tooling
         run: brew install wix/brew/applesimutils
 
+      - name: Select and boot simulator
+        run: |
+          SIMULATOR_ID="$(
+            xcrun simctl list devices available 'iOS 26.5' |
+              sed -n 's/^[[:space:]]*iPhone 17 Pro (\([0-9A-F-][0-9A-F-]*\)) (.*/\1/p' |
+              head -n 1
+          )"
+          if [ -z "$SIMULATOR_ID" ]; then
+            echo "Unable to find an available iPhone 17 Pro with iOS 26.5." >&2
+            exit 1
+          fi
+          echo "SIMULATOR_ID=$SIMULATOR_ID" >> "$GITHUB_ENV"
+          # Kick off the boot now and let data migration run while we build.
+          # The contract runner waits on `simctl bootstatus` before using it.
+          xcrun simctl boot "$SIMULATOR_ID" || true
+
       - name: Verify generated HealthKit schema and bindings
         working-directory: packages/react-native-healthkit
         run: bun run check:generated
@@ -221,16 +237,6 @@ jobs:
       - name: Build iOS project
         working-directory: apps/example/ios
         run: |
-          SIMULATOR_ID="$(
-            xcrun simctl list devices available 'iOS 26.5' |
-              sed -n 's/^[[:space:]]*iPhone 17 Pro (\([0-9A-F-][0-9A-F-]*\)) (.*/\1/p' |
-              head -n 1
-          )"
-          if [ -z "$SIMULATOR_ID" ]; then
-            echo "Unable to find an available iPhone 17 Pro with iOS 26.5." >&2
-            exit 1
-          fi
-          echo "SIMULATOR_ID=$SIMULATOR_ID" >> "$GITHUB_ENV"
           xcodebuild \
             -quiet \
             -workspace RNHealthKit.xcworkspace \
