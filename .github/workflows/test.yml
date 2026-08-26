@@ -185,7 +185,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.healthkit_contracts == 'true'
     # Only run on macOS since we need Xcode
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 25
 
     steps:
@@ -199,13 +199,11 @@ jobs:
       - name: Install dependencies
         run: bun install --ignore-scripts --frozen-lockfile
 
-      ## Xcode 26.2 (Swift 6.2) - latest stable
-      - run: sudo xcode-select -s /Applications/Xcode_26.2.app
+      ## Xcode 26.6 (Swift 6.2) - latest stable
+      - run: sudo xcode-select -s /Applications/Xcode_26.6.app
 
       - name: Install simulator tooling
-        run: |
-          brew tap wix/brew
-          brew install applesimutils
+        run: brew install wix/brew/applesimutils
 
       - name: Verify generated HealthKit schema and bindings
         working-directory: packages/react-native-healthkit
@@ -216,20 +214,21 @@ jobs:
 
       - name: Expo Prebuild
         working-directory: apps/example
-        run: bunx expo prebuild --platform ios --non-interactive
+        run: bunx expo prebuild --platform ios
 
       - name: Build iOS project
         working-directory: apps/example/ios
         run: |
           SIMULATOR_ID="$(
-            xcrun simctl list devices available |
-              sed -n 's/^[[:space:]]*iPhone[^()]* (\([0-9A-F-][0-9A-F-]*\)) (.*/\1/p' |
+            xcrun simctl list devices available 'iOS 26.5' |
+              sed -n 's/^[[:space:]]*iPhone 17 Pro (\([0-9A-F-][0-9A-F-]*\)) (.*/\1/p' |
               head -n 1
           )"
           if [ -z "$SIMULATOR_ID" ]; then
-            echo "Unable to find an available iPhone simulator." >&2
+            echo "Unable to find an available iPhone 17 Pro with iOS 26.5." >&2
             exit 1
           fi
+          echo "SIMULATOR_ID=$SIMULATOR_ID" >> "$GITHUB_ENV"
           xcodebuild \
             -quiet \
             -workspace RNHealthKit.xcworkspace \
@@ -244,3 +243,13 @@ jobs:
 
       - name: Run HealthKit contracts
         run: bun run test:contracts
+        env:
+          CONTRACT_DIAGNOSTICS_DIR: ${{ runner.temp }}/healthkit-contract-diagnostics
+
+      - name: Upload contract diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: healthkit-contract-diagnostics
+          path: ${{ runner.temp }}/healthkit-contract-diagnostics
+          if-no-files-found: ignore

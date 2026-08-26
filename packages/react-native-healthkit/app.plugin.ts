@@ -13,7 +13,7 @@ type BackgroundConfig = boolean
 
 type InfoPlistConfig = {
   NSHealthShareUsageDescription?: string | true
-  NSHealthUpdateUsageDescription?: string | true
+  NSHealthUpdateUsageDescription?: string | false
 }
 
 type AppPluginConfig = InfoPlistConfig & {
@@ -40,17 +40,25 @@ const withEntitlementsPlugin: ConfigPlugin<{
 
 const withInfoPlistPlugin: ConfigPlugin<InfoPlistConfig> = (config, props) => {
   return withInfoPlist(config, (configPlist) => {
+    const existingShareDescription =
+      configPlist.modResults.NSHealthShareUsageDescription
     configPlist.modResults.NSHealthShareUsageDescription =
-      typeof props.NSHealthShareUsageDescription === 'string'
+      typeof props?.NSHealthShareUsageDescription === 'string'
         ? props.NSHealthShareUsageDescription
-        : `${config.name ?? pkg.name} wants to read your health data`
+        : typeof existingShareDescription === 'string'
+          ? existingShareDescription
+          : `${config.name ?? pkg.name} wants to read your health data`
 
-    // Add description if it's not undefined and not explicitly false
-
-    configPlist.modResults.NSHealthUpdateUsageDescription =
-      typeof props.NSHealthUpdateUsageDescription === 'string'
-        ? props.NSHealthUpdateUsageDescription
-        : `${config.name ?? pkg.name} wants to update your health data`
+    if (props?.NSHealthUpdateUsageDescription !== false) {
+      const existingUpdateDescription =
+        configPlist.modResults.NSHealthUpdateUsageDescription
+      configPlist.modResults.NSHealthUpdateUsageDescription =
+        typeof props?.NSHealthUpdateUsageDescription === 'string'
+          ? props.NSHealthUpdateUsageDescription
+          : typeof existingUpdateDescription === 'string'
+            ? existingUpdateDescription
+            : `${config.name ?? pkg.name} wants to update your health data`
+    }
 
     return configPlist
   })

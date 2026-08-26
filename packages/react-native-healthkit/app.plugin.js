@@ -53,20 +53,26 @@ const withEntitlementsPlugin = (
 const withInfoPlistPlugin = (
   config,
   /**
-   * @type {{NSHealthShareUsageDescription: string | true, NSHealthUpdateUsageDescription: string | true} | undefined}
+   * @type {{NSHealthShareUsageDescription?: string | true, NSHealthUpdateUsageDescription?: string | false} | undefined}
    * */
   props,
 ) =>
   withInfoPlist(config, (config) => {
     config.modResults.NSHealthShareUsageDescription =
-      typeof props.NSHealthShareUsageDescription === 'string'
+      typeof props?.NSHealthShareUsageDescription === 'string'
         ? props.NSHealthShareUsageDescription
-        : `${config.name} wants to read your health data`
+        : typeof config.modResults.NSHealthShareUsageDescription === 'string'
+          ? config.modResults.NSHealthShareUsageDescription
+          : `${config.name} wants to read your health data`
 
-    config.modResults.NSHealthUpdateUsageDescription =
-      typeof props.NSHealthUpdateUsageDescription === 'string'
-        ? props.NSHealthUpdateUsageDescription
-        : `${config.name} wants to update your health data`
+    if (props?.NSHealthUpdateUsageDescription !== false) {
+      config.modResults.NSHealthUpdateUsageDescription =
+        typeof props?.NSHealthUpdateUsageDescription === 'string'
+          ? props.NSHealthUpdateUsageDescription
+          : typeof config.modResults.NSHealthUpdateUsageDescription === 'string'
+            ? config.modResults.NSHealthUpdateUsageDescription
+            : `${config.name} wants to update your health data`
+    }
 
     return config
   })
