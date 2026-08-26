@@ -67,9 +67,19 @@ interface MetadataOverride {
   readonly skip?: boolean
 }
 
+export interface ForcedQuantityIdentifier {
+  readonly name: string
+  readonly ios: string | null
+  readonly canonicalUnit: string | null
+  readonly aggregationStyle: string | null
+  readonly writeable: boolean
+  readonly legacy: boolean
+}
+
 export interface IdentifierOverrides {
   readonly quantity: {
     readonly readOnly: readonly string[]
+    readonly forcedInclusions?: readonly ForcedQuantityIdentifier[]
   }
   readonly category: {
     readonly readOnly: readonly string[]
@@ -560,6 +570,12 @@ function parseIosAvailability(text: string): string | null {
   return match?.[1]?.trim() ?? null
 }
 
+function isLegacyAvailabilityDeclaration(text: string): boolean {
+  return /\bAPI_DEPRECATED\b|\bAPI_UNAVAILABLE\b|\bAPI_DEPRECATED_WITH_REPLACEMENT\b/.test(
+    text,
+  )
+}
+
 function parseSymbolGraphIosAvailability(
   symbol: SymbolGraphSymbol,
 ): string | null {
@@ -711,19 +727,23 @@ export function parseNsEnums(headerSource: string): EnumSchema[] {
 function parseQuantityIdentifierComments(headerSource: string): Map<
   string,
   {
+    readonly ios: string | null
     readonly canonicalUnit: string | null
     readonly aggregationStyle: string | null
+    readonly legacy: boolean
   }
 > {
   const identifiers = new Map<
     string,
     {
+      readonly ios: string | null
       readonly canonicalUnit: string | null
       readonly aggregationStyle: string | null
+      readonly legacy: boolean
     }
   >()
   const regex =
-    /^HK_EXTERN HKQuantityTypeIdentifier const (\w+)\s+([^;]*);\s*\/\/\s*(.*)$/gm
+    /^HK_EXTERN HKQuantityTypeIdentifier const (\w+)\s+([^;]*);\s*(?:\/\/\s*(.*))?$/gm
 
   for (const match of headerSource.matchAll(regex)) {
     const name = match[1]
@@ -735,8 +755,10 @@ function parseQuantityIdentifierComments(headerSource: string): Map<
       .split(',')
       .map((value) => value.trim())
     identifiers.set(name, {
+      ios: parseIosAvailability(match[2] ?? ''),
       canonicalUnit: canonicalUnitRaw || null,
       aggregationStyle: aggregationRaw || null,
+      legacy: isLegacyAvailabilityDeclaration(match[2] ?? ''),
     })
   }
 
@@ -825,6 +847,36 @@ function parseQuantityIdentifiers(
       writeable: !readOnly.has(constant.name),
       legacy: constant.legacy,
     })
+  }
+
+  // Symbol graphs occasionally omit some constants that are still present in HKTypeIdentifiers.h.
+  for (const [name, commentInfo] of commentMap.entries()) {
+    if (identifiers.has(name)) {
+      continue
+    }
+
+    identifiers.set(name, {
+      name,
+      ios: commentInfo.ios,
+      canonicalUnit: commentInfo.canonicalUnit,
+      aggregationStyle: commentInfo.aggregationStyle,
+      writeable: !readOnly.has(name),
+      legacy: commentInfo.legacy,
+    })
+  }
+
+  // Apply explicit forced inclusions for identifiers omitted from both symbol graph and header.
+  for (const forced of overrides.quantity.forcedInclusions ?? []) {
+    if (!identifiers.has(forced.name)) {
+      identifiers.set(forced.name, {
+        name: forced.name,
+        ios: forced.ios,
+        canonicalUnit: forced.canonicalUnit,
+        aggregationStyle: forced.aggregationStyle,
+        writeable: forced.writeable,
+        legacy: forced.legacy,
+      })
+    }
   }
 
   return [...identifiers.values()].sort((left, right) =>
@@ -1141,7 +1193,7 @@ function canonicalUnitToTypeNode(unit: string | null): ts.TypeNode {
     return keywordType(ts.SyntaxKind.StringKeyword)
   }
 
-  if (unit === 'mg/dL' || unit.startsWith('mmol<')) {
+  if (unit === 'mg/dL' || unit === 'mmol/L' || unit.startsWith('mmol<')) {
     return namedType('BloodGlucoseUnit')
   }
   if (unit === '%') {

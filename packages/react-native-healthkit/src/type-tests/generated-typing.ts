@@ -9,6 +9,7 @@ import type {
   HeartRateMotionContext,
   Quantity,
   QuantitySampleTyped,
+  QuantityTypeIdentifier,
   QueryOptionsWithAnchorAndUnit,
   QueryOptionsWithSortOrderAndUnit,
   StateOfMindSampleTyped,
@@ -34,6 +35,12 @@ type _sleepAnalysisValuesAreTyped = Assert<
 
 type _newCategoryIdentifierFromSdkIsPresent = Assert<
   'HKCategoryTypeIdentifierHypertensionEvent' extends CategoryTypeIdentifier
+    ? true
+    : false
+>
+
+type _bloodKetonesIdentifierIsPresent = Assert<
+  'HKQuantityTypeIdentifierBloodKetones' extends QuantityTypeIdentifier
     ? true
     : false
 >
@@ -76,6 +83,13 @@ type _heartRateEventThresholdMetadataIsTyped = Assert<
 type _bloodGlucoseUnitNarrows = Assert<
   Equal<
     QuantitySampleTyped<'HKQuantityTypeIdentifierBloodGlucose'>['unit'],
+    BloodGlucoseUnit
+  >
+>
+
+type _bloodKetonesUnitNarrows = Assert<
+  Equal<
+    QuantitySampleTyped<'HKQuantityTypeIdentifierBloodKetones'>['unit'],
     BloodGlucoseUnit
   >
 >
