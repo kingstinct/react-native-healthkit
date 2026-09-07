@@ -104,6 +104,7 @@ cleanup() {
 
 sample_memory() {
   local log="$1"
+  mkdir -p "$(dirname "$log")"
   : >"$log"
   while true; do
     local pid

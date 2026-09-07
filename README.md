@@ -156,7 +156,7 @@ Example:
 
 ### Memory considerations for workouts and other native objects
 
-Workouts (and a few other results, like sources) are returned as *proxies*: native objects that keep the underlying `HKWorkout` alive so you can call follow-up functions such as `getWorkoutRoutes()`, `getStatistic()` or `getAllStatistics()` on them. The JavaScript garbage collector frees a proxy, and the native memory behind it, once it is no longer referenced. The library reports an estimate of each proxy's native size to the JS engine so it can schedule collections sensibly, but if you process large numbers of workouts in a loop you can release the native side eagerly by calling `dispose()` once you are done with a workout:
+Workouts (and a few other results, like sources) are returned as *proxies*: native objects that keep the underlying `HKWorkout` alive so you can call follow-up functions such as `getWorkoutRoutes()`, `getStatistic()` or `getAllStatistics()` on them. The JavaScript garbage collector frees a proxy, and the HealthKit objects behind it, once it is no longer referenced. The library reports an estimate of each proxy's native size to the JS engine so it can schedule collections sensibly. Note that react-native-nitro-modules currently keeps a small fixed amount of bookkeeping (on the order of a hundred bytes) per native object it has handed to JS for the lifetime of the JS runtime, so memory will not return exactly to baseline even after collection. If you process large numbers of workouts in a loop you can release the HealthKit side eagerly by calling `dispose()` once you are done with a workout:
 
 ```TypeScript
 const workouts = await queryWorkoutSamples({ limit: 0 })
