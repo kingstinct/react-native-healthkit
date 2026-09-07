@@ -49,29 +49,40 @@ func getWorkoutRoutesInternal(
 
 func getRouteLocations(
   route: HKWorkoutRoute
-) async -> [CLLocation] {
-  let locations = try! await withCheckedThrowingContinuation {
+) async throws -> [CLLocation] {
+  return try await withCheckedThrowingContinuation {
     (continuation: CheckedContinuation<[CLLocation], Error>) in
     var allLocations: [CLLocation] = []
+    // HealthKit delivers locations in batches and may call the handler again
+    // after an error; guard so the continuation is only ever resumed once.
+    var hasResumed = false
 
     let query = HKWorkoutRouteQuery(route: route) {
       (_, locationsOrNil, done, errorOrNil) in
 
       DispatchQueue.main.async {
+        if hasResumed {
+          return
+        }
+
         if let error = errorOrNil {
+          hasResumed = true
           continuation.resume(throwing: error)
           return
         }
 
         guard let currentLocationBatch = locationsOrNil else {
-          return continuation.resume(
+          hasResumed = true
+          continuation.resume(
             throwing: runtimeErrorWithPrefix("Unexpected empty response")
           )
+          return
         }
 
         allLocations.append(contentsOf: currentLocationBatch)
 
         if done {
+          hasResumed = true
           continuation.resume(returning: allLocations)
         }
       }
@@ -79,8 +90,6 @@ func getRouteLocations(
 
     store.execute(query)
   }
-
-  return locations
 }
 
 func serializeLocation(location: CLLocation, previousLocation: CLLocation?)
@@ -122,7 +131,7 @@ func getSerializedWorkoutLocations(
       route.metadata
     )
 
-    let routeCLLocations = await getRouteLocations(
+    let routeCLLocations = try await getRouteLocations(
       route: route
     )
 
@@ -397,6 +406,22 @@ class WorkoutProxy: HybridWorkoutProxySpec {
 
   init(workout: HKWorkout) {
     self.workout = workout
+  }
+
+  /// Estimated heap footprint of the wrapped `HKWorkout` graph, reported to
+  /// Nitro so the JS garbage collector sees the native memory that is kept
+  /// alive by each proxy. Nitro adds the proxy instance's own size on top.
+  ///
+  /// The numbers are deliberately rough: the goal is to give Hermes a
+  /// realistic sense of pressure per workout (kilobytes, not bytes) so that
+  /// hundreds of proxies from a query do not look like hundreds of empty
+  /// objects. Computed once per proxy since `HKWorkout` is immutable.
+  private lazy var estimatedMemorySize: Int = {
+    return estimateWorkoutMemorySize(workout)
+  }()
+
+  var memorySize: Int {
+    return estimatedMemorySize
   }
 
   func getWorkoutPlan() throws -> Promise<WorkoutPlan?> {

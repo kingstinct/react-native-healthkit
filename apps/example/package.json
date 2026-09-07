@@ -9,7 +9,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "build-sim": "xcodebuild -workspace ios/RNHealthKit.xcworkspace -scheme RNHealthKit -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build"
+    "build-sim": "xcodebuild -workspace ios/RNHealthKit.xcworkspace -scheme RNHealthKit -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build",
+    "benchmark:memory": "bash ./scripts/run-healthkit-memory-benchmark.sh"
   },
   "dependencies": {
     "@expo/ui": "~0.2.0-beta.9",

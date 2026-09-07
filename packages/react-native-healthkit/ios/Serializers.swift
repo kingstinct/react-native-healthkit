@@ -290,7 +290,10 @@ func serializeOperatingSystemVersion(_ version: OperatingSystemVersion) -> Strin
 
 func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision) -> SourceRevision {
   return SourceRevision(
-    source: serializeSource(hkSourceRevision.source),
+    source: Source(
+      name: hkSourceRevision.source.name,
+      bundleIdentifier: hkSourceRevision.source.bundleIdentifier
+    ),
     version: hkSourceRevision.version,
     operatingSystemVersion: serializeOperatingSystemVersion(
       hkSourceRevision.operatingSystemVersion),

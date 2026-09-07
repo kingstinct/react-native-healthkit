@@ -9,6 +9,14 @@ APP_ID="com.kingstinct.reactnativehealthkitexample"
 INITIAL_URL="exp+react-native-healthkit-example://expo-development-client/?url=http%3A%2F%2F127.0.0.1%3A8081"
 METRO_LOG="${TMPDIR:-/tmp}/healthkit-contract-metro.log"
 DIAG_DIR="${CONTRACT_DIAGNOSTICS_DIR:-}"
+# Launch command handed to the app; override to run a single scenario.
+DEFAULT_CONTRACT_COMMAND='{"route":"contracts","autorun":"all"}'
+CONTRACT_COMMAND="${CONTRACT_COMMAND:-$DEFAULT_CONTRACT_COMMAND}"
+REPORT_TIMEOUT_SECONDS="${REPORT_TIMEOUT_SECONDS:-300}"
+# When set, resident memory of the app process is sampled into this file
+# (epoch-ms, footprint-kb per line) while waiting for the report.
+MEMORY_SAMPLE_LOG="${MEMORY_SAMPLE_LOG:-}"
+SAMPLER_PID=""
 APP_DATA=""
 REPORT_PATH=""
 COMMAND_PATH=""
@@ -89,6 +97,31 @@ cleanup() {
   if [ -n "$METRO_PID" ] && kill -0 "$METRO_PID" 2>/dev/null; then
     kill "$METRO_PID" 2>/dev/null || true
   fi
+  if [ -n "$SAMPLER_PID" ] && kill -0 "$SAMPLER_PID" 2>/dev/null; then
+    kill "$SAMPLER_PID" 2>/dev/null || true
+  fi
+}
+
+sample_memory() {
+  local log="$1"
+  : >"$log"
+  while true; do
+    local pid
+    pid="$(pgrep -x RNHealthKit | head -n 1 || true)"
+    if [ -n "$pid" ]; then
+      # `footprint` reports the physical footprint (what jetsam limits on
+      # device); fall back to RSS if it is unavailable.
+      local kb
+      kb="$(footprint -p "$pid" 2>/dev/null | sed -n 's/.*Footprint: \([0-9.]*\) \([KMG]\)B.*/\1 \2/p' | awk '{ if ($2 == "G") print $1 * 1048576; else if ($2 == "M") print $1 * 1024; else print $1 }' || true)"
+      if [ -z "$kb" ]; then
+        kb="$(ps -o rss= -p "$pid" 2>/dev/null | tr -d ' ' || true)"
+      fi
+      if [ -n "$kb" ]; then
+        printf '%s %s\n' "$(python3 -c 'import time; print(int(time.time()*1000))')" "$kb" >>"$log"
+      fi
+    fi
+    sleep 0.2
+  done
 }
 
 trap cleanup EXIT INT TERM
@@ -173,7 +206,7 @@ mkdir -p "$APP_DATA/Documents"
 REPORT_PATH="$APP_DATA/Documents/healthkit-contract-report.json"
 COMMAND_PATH="$APP_DATA/Documents/healthkit-contract-command.json"
 rm -f "$REPORT_PATH"
-printf '%s\n' '{"route":"contracts","autorun":"all"}' >"$COMMAND_PATH"
+printf '%s\n' "$CONTRACT_COMMAND" >"$COMMAND_PATH"
 
 run_with_timeout 120 applesimutils \
   --byId "$SIMULATOR_ID" \
@@ -187,10 +220,15 @@ fi
 # Cold start on a CI runner has to boot the dev client and bundle ~1900 modules
 # through Metro before the first contract runs, which has taken over three
 # minutes end to end.
+if [ -n "$MEMORY_SAMPLE_LOG" ]; then
+  sample_memory "$MEMORY_SAMPLE_LOG" &
+  SAMPLER_PID="$!"
+fi
+
 ATTEMPT=0
 until [ -f "$REPORT_PATH" ]; do
   ATTEMPT=$((ATTEMPT + 1))
-  if [ "$ATTEMPT" -ge 300 ]; then
+  if [ "$ATTEMPT" -ge "$REPORT_TIMEOUT_SECONDS" ]; then
     dump_debug_artifacts "Contract report was not produced."
     exit 1
   fi

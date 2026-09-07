@@ -154,6 +154,35 @@ Example:
   // etc..
 ```
 
+### Memory considerations for workouts and other native objects
+
+Workouts (and a few other results, like sources) are returned as *proxies*: native objects that keep the underlying `HKWorkout` alive so you can call follow-up functions such as `getWorkoutRoutes()`, `getStatistic()` or `getAllStatistics()` on them. The JavaScript garbage collector frees a proxy, and the native memory behind it, once it is no longer referenced. The library reports an estimate of each proxy's native size to the JS engine so it can schedule collections sensibly, but if you process large numbers of workouts in a loop you can release the native side eagerly by calling `dispose()` once you are done with a workout:
+
+```TypeScript
+const workouts = await queryWorkoutSamples({ limit: 0 })
+
+for (const workout of workouts) {
+  const routes = await workout.getWorkoutRoutes()
+  // ... do something with the routes
+  workout.dispose()
+}
+```
+
+After `dispose()` the proxy can no longer be used - calling any function or reading any property on it will throw. If you need to keep the data around, call `toJSON()` first to get a plain object and store that instead of the proxy:
+
+```TypeScript
+const plainWorkouts = workouts.map((workout) => {
+  const json = workout.toJSON()
+  workout.dispose()
+  return json
+})
+```
+
+Other tips for keeping memory in check when working with large datasets:
+- Query in chunks (for example per month, or with `limit` and anchors) instead of fetching everything at once.
+- Prefer statistics queries (`queryStatisticsForQuantity`, `queryStatisticsCollectionForQuantity`) over fetching every sample when you only need aggregates.
+- Keep plain data (from `toJSON()` or the sample queries) in React state rather than proxies.
+
 ## Migration to 9.0.0
 
 There are a lot of under-the-hood changes in version 9.0.0, some of them are breaking (although I've tried to reduce it as much as possible).
