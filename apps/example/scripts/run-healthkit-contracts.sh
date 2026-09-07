@@ -13,10 +13,21 @@ DIAG_DIR="${CONTRACT_DIAGNOSTICS_DIR:-}"
 DEFAULT_CONTRACT_COMMAND='{"route":"contracts","autorun":"all"}'
 CONTRACT_COMMAND="${CONTRACT_COMMAND:-$DEFAULT_CONTRACT_COMMAND}"
 REPORT_TIMEOUT_SECONDS="${REPORT_TIMEOUT_SECONDS:-300}"
-# When set, resident memory of the app process is sampled into this file
-# (epoch-ms, footprint-kb per line) while waiting for the report.
+# When set, the report is copied here as soon as it exists, before the
+# pass/fail check, so callers can inspect failed runs.
+CONTRACT_REPORT_COPY="${CONTRACT_REPORT_COPY:-}"
+# When set, the physical footprint of the app process is sampled into this
+# file (epoch-ms, footprint-kb per line) while waiting for the report.
 MEMORY_SAMPLE_LOG="${MEMORY_SAMPLE_LOG:-}"
 SAMPLER_PID=""
+APP_PID=""
+
+case "$REPORT_TIMEOUT_SECONDS" in
+  ''|*[!0-9]*)
+    echo "REPORT_TIMEOUT_SECONDS must be a whole number of seconds, got '$REPORT_TIMEOUT_SECONDS'." >&2
+    exit 1
+    ;;
+esac
 APP_DATA=""
 REPORT_PATH=""
 COMMAND_PATH=""
@@ -102,26 +113,25 @@ cleanup() {
   fi
 }
 
+# Samples the launched app's physical footprint (what jetsam limits on device)
+# into "$1" until killed. Uses the pid reported by `simctl launch`, so a second
+# simulator running the same app is never sampled by mistake.
 sample_memory() {
   local log="$1"
+  local pid="$2"
   mkdir -p "$(dirname "$log")"
   : >"$log"
-  while true; do
-    local pid
-    pid="$(pgrep -x RNHealthKit | head -n 1 || true)"
-    if [ -n "$pid" ]; then
-      # `footprint` reports the physical footprint (what jetsam limits on
-      # device); fall back to RSS if it is unavailable.
-      local kb
-      kb="$(footprint -p "$pid" 2>/dev/null | sed -n 's/.*Footprint: \([0-9.]*\) \([KMG]\)B.*/\1 \2/p' | awk '{ if ($2 == "G") print $1 * 1048576; else if ($2 == "M") print $1 * 1024; else print $1 }' || true)"
-      if [ -z "$kb" ]; then
-        kb="$(ps -o rss= -p "$pid" 2>/dev/null | tr -d ' ' || true)"
-      fi
-      if [ -n "$kb" ]; then
-        printf '%s %s\n' "$(python3 -c 'import time; print(int(time.time()*1000))')" "$kb" >>"$log"
-      fi
+  while kill -0 "$pid" 2>/dev/null; do
+    local at kb
+    at="$(perl -MTime::HiRes=time -e 'printf("%d\n", time * 1000)')"
+    kb="$(footprint -p "$pid" 2>/dev/null | sed -n 's/.*Footprint: \([0-9.]*\) \([KMG]\)B.*/\1 \2/p' | awk '{ if ($2 == "G") print $1 * 1048576; else if ($2 == "M") print $1 * 1024; else print $1 }' || true)"
+    if [ -z "$kb" ]; then
+      kb="$(ps -o rss= -p "$pid" 2>/dev/null | tr -d ' ' || true)"
     fi
-    sleep 0.2
+    if [ -n "$kb" ]; then
+      printf '%s %s\n' "$at" "$kb" >>"$log"
+    fi
+    sleep 0.5
   done
 }
 
@@ -214,15 +224,22 @@ run_with_timeout 120 applesimutils \
   --bundle "$APP_ID" \
   --setPermissions 'health=YES,motion=YES'
 
-if ! run_with_timeout 180 xcrun simctl launch "$SIMULATOR_ID" "$APP_ID" --initialUrl "$INITIAL_URL" >/dev/null; then
-  echo "simctl launch did not return in time; still waiting for the contract report." >&2
+# `simctl launch` prints "<bundle id>: <pid>" on success.
+LAUNCH_OUTPUT="$(run_with_timeout 180 xcrun simctl launch "$SIMULATOR_ID" "$APP_ID" --initialUrl "$INITIAL_URL" 2>/dev/null || true)"
+APP_PID="$(printf '%s' "$LAUNCH_OUTPUT" | sed -n 's/^.*: \([0-9][0-9]*\)$/\1/p' | head -n 1)"
+if [ -z "$APP_PID" ]; then
+  echo "simctl launch did not report a pid; still waiting for the contract report." >&2
 fi
 
 # Cold start on a CI runner has to boot the dev client and bundle ~1900 modules
 # through Metro before the first contract runs, which has taken over three
 # minutes end to end.
 if [ -n "$MEMORY_SAMPLE_LOG" ]; then
-  sample_memory "$MEMORY_SAMPLE_LOG" &
+  if [ -z "$APP_PID" ]; then
+    echo "Cannot sample memory without the app pid from simctl launch." >&2
+    exit 1
+  fi
+  sample_memory "$MEMORY_SAMPLE_LOG" "$APP_PID" &
   SAMPLER_PID="$!"
 fi
 
@@ -235,6 +252,22 @@ until [ -f "$REPORT_PATH" ]; do
   fi
   sleep 1
 done
+
+# The app creates the file and then writes it; wait until it parses as JSON.
+ATTEMPT=0
+until python3 -c 'import json, sys; json.load(open(sys.argv[1]))' "$REPORT_PATH" 2>/dev/null; do
+  ATTEMPT=$((ATTEMPT + 1))
+  if [ "$ATTEMPT" -ge 30 ]; then
+    dump_debug_artifacts "Contract report is not valid JSON."
+    exit 1
+  fi
+  sleep 1
+done
+
+if [ -n "$CONTRACT_REPORT_COPY" ]; then
+  mkdir -p "$(dirname "$CONTRACT_REPORT_COPY")"
+  cp "$REPORT_PATH" "$CONTRACT_REPORT_COPY"
+fi
 
 cat "$REPORT_PATH"
 

@@ -75,9 +75,20 @@ func serializeCategorySample(sample: HKCategorySample) -> CategorySample {
   )
 }
 
+/// Wraps an `HKSource` in a proxy HybridObject. Only use this where the
+/// caller explicitly asks for a source handle (`querySources`,
+/// `currentAppSource`); everything embedded in serialized values should use
+/// `serializeSourceStruct` so that no per-sample native object is allocated.
 func serializeSource(_ source: HKSource) -> SourceProxy {
   return SourceProxy(
     source: source
+  )
+}
+
+func serializeSourceStruct(_ source: HKSource) -> Source {
+  return Source(
+    name: source.name,
+    bundleIdentifier: source.bundleIdentifier
   )
 }
 
@@ -290,10 +301,7 @@ func serializeOperatingSystemVersion(_ version: OperatingSystemVersion) -> Strin
 
 func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision) -> SourceRevision {
   return SourceRevision(
-    source: Source(
-      name: hkSourceRevision.source.name,
-      bundleIdentifier: hkSourceRevision.source.bundleIdentifier
-    ),
+    source: serializeSourceStruct(hkSourceRevision.source),
     version: hkSourceRevision.version,
     operatingSystemVersion: serializeOperatingSystemVersion(
       hkSourceRevision.operatingSystemVersion),

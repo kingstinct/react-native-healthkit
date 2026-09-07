@@ -3,7 +3,7 @@ import {
   HeartRateMotionContext,
   InsulinDeliveryReason,
 } from '../generated/healthkit.generated'
-import type { SourceProxy } from '../specs/SourceProxy.nitro'
+import type { Source } from '../specs/SourceProxy.nitro'
 import type { QuantitySample, QuantitySampleTyped } from './QuantitySample'
 import type { QuantityTypeIdentifier } from './QuantityTypeIdentifier'
 import type { FilterForSamples } from './QueryOptions'
@@ -26,12 +26,12 @@ export interface QueryStatisticsResponse {
   readonly duration?: Quantity
   readonly startDate?: Date
   readonly endDate?: Date
-  sources: SourceProxy[]
+  readonly sources: readonly Source[]
 }
 
 export interface QueryStatisticsResponseFromSingleSource
   extends Omit<QueryStatisticsResponse, 'sources'> {
-  readonly source: SourceProxy
+  readonly source: Source
 }
 
 export enum AggregationStyle {

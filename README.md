@@ -182,6 +182,7 @@ Other tips for keeping memory in check when working with large datasets:
 - Query in chunks (for example per month, or with `limit` and anchors) instead of fetching everything at once.
 - Prefer statistics queries (`queryStatisticsForQuantity`, `queryStatisticsCollectionForQuantity`) over fetching every sample when you only need aggregates.
 - Keep plain data (from `toJSON()` or the sample queries) in React state rather than proxies.
+- `sourceRevision.source` on samples and `sources` on statistics are plain objects, not proxies. To filter queries by a source, get a `SourceProxy` from `querySources()` and match it by `bundleIdentifier`.
 
 ## Migration to 9.0.0
 

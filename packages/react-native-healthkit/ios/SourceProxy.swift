@@ -14,11 +14,7 @@ class SourceProxy: HybridSourceProxySpec {
       warnWithPrefix("SourceProxy does not support toJSON with key: \(key!)")
     }
 
-    return Source(
-      name: self.name,
-      bundleIdentifier: self.bundleIdentifier
-    )
-
+    return serializeSourceStruct(source)
   }
 
   let source: HKSource
@@ -31,17 +27,18 @@ class SourceProxy: HybridSourceProxySpec {
     self.source = source
     self.name = source.name
     self.bundleIdentifier = source.bundleIdentifier
-  }
-
-  /// Estimated heap footprint of the wrapped `HKSource` plus the two cached
-  /// strings, reported to Nitro so the JS garbage collector accounts for the
-  /// native memory held by each proxy. Nitro adds the instance's own size.
-  var memorySize: Int {
-    // HKSource object with its own name and bundle identifier strings, the
-    // Swift copies of those strings, and Nitro's bridging overhead.
-    return 128
-      + 2 * estimateStringMemorySize(name)
-      + 2 * estimateStringMemorySize(bundleIdentifier)
+    // HKSource object with its own name and bundle identifier strings, plus
+    // the Swift copies of those strings. Computed once; Nitro reads it on
+    // every conversion to JS.
+    self.memorySize =
+      128
+      + 2 * estimateStringMemorySize(source.name)
+      + 2 * estimateStringMemorySize(source.bundleIdentifier)
       + nitroHybridObjectOverheadBytes
   }
+
+  /// Estimated heap footprint of the wrapped `HKSource`, reported to Nitro so
+  /// the JS garbage collector accounts for the native memory held by each
+  /// proxy. Nitro adds the Swift instance's own size on top.
+  let memorySize: Int
 }

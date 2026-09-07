@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 #
 # Runs one of the memory benchmark scenarios from contracts/memoryBenchmark.ts
-# in the simulator, samples the app's resident memory while it runs, and prints
-# a per-phase summary. Usage:
+# in the simulator, samples the app's physical footprint while it runs, and
+# prints a per-phase summary. Usage:
 #
-#   bun run benchmark:memory memory-fetch [output-dir]
+#   bun run benchmark:memory <scenario-id> [iterations]
+#
+# Reports and memory logs are written to $BENCHMARK_OUT_DIR (default:
+# $TMPDIR/healthkit-memory-benchmark).
 #
 # Scenarios: memory-seed (run once), memory-fetch, memory-fetch-dispose,
 # memory-routes, memory-routes-dispose.
@@ -13,51 +16,45 @@ set -Eeuo pipefail
 
 SCENARIO="${1:-}"
 if [ -z "$SCENARIO" ]; then
-  echo "Usage: $0 <scenario-id> [output-dir]" >&2
+  echo "Usage: $0 <scenario-id> [iterations]" >&2
   exit 1
 fi
+ITERATIONS="${2:-}"
+case "$ITERATIONS" in
+  ''|*[!0-9]*)
+    if [ -n "$ITERATIONS" ]; then
+      echo "iterations must be a whole number, got '$ITERATIONS'." >&2
+      exit 1
+    fi
+    ;;
+esac
 
-OUT_DIR="${2:-${TMPDIR:-/tmp}/healthkit-memory-benchmark}"
+OUT_DIR="${BENCHMARK_OUT_DIR:-${TMPDIR:-/tmp}/healthkit-memory-benchmark}"
 mkdir -p "$OUT_DIR"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 MEMORY_LOG="$OUT_DIR/$SCENARIO-$STAMP.memory.log"
 REPORT_COPY="$OUT_DIR/$SCENARIO-$STAMP.report.json"
 
-export CONTRACT_COMMAND="{\"route\":\"contracts\",\"scenario\":\"$SCENARIO\"}"
+# Build the launch command as real JSON so scenario ids cannot break quoting.
+CONTRACT_COMMAND="$(SCENARIO="$SCENARIO" ITERATIONS="$ITERATIONS" bun -e '
+  const iterations = process.env.ITERATIONS ? Number(process.env.ITERATIONS) : undefined
+  console.log(JSON.stringify({ route: "contracts", scenario: process.env.SCENARIO, iterations }))
+')"
+export CONTRACT_COMMAND
+export CONTRACT_REPORT_COPY="$REPORT_COPY"
 export REPORT_TIMEOUT_SECONDS="${REPORT_TIMEOUT_SECONDS:-1800}"
 export MEMORY_SAMPLE_LOG="$MEMORY_LOG"
 
-REPORT_OUTPUT="$(bash "$SCRIPT_DIR/run-healthkit-contracts.sh" | sed -n '/^[\[{]/,$p')"
-printf '%s\n' "$REPORT_OUTPUT" >"$REPORT_COPY"
+# A failed scenario makes the contract runner exit non-zero; still summarize
+# whatever phases were recorded before reporting the failure.
+STATUS=0
+bash "$SCRIPT_DIR/run-healthkit-contracts.sh" >/dev/null || STATUS=$?
 
-REPORT_PATH="$REPORT_COPY" MEMORY_LOG="$MEMORY_LOG" bun -e '
-  import { readFileSync } from "node:fs"
+if [ ! -f "$REPORT_COPY" ]; then
+  echo "No benchmark report was produced (contract runner exit code $STATUS)." >&2
+  exit "${STATUS:-1}"
+fi
 
-  const report = JSON.parse(readFileSync(process.env.REPORT_PATH, "utf8"))
-  const samples = readFileSync(process.env.MEMORY_LOG, "utf8")
-    .trim()
-    .split("\n")
-    .filter(Boolean)
-    .map((line) => line.split(" ").map(Number))
-    .map(([at, rssKb]) => ({ at, mb: rssKb / 1024 }))
-
-  const phases = report?.payload?.phases ?? []
-  const rows = phases.map((phase) => {
-    const inPhase = samples.filter((s) => s.at >= phase.startedAt && s.at <= phase.endedAt)
-    const last = inPhase.at(-1)?.mb ?? Number.NaN
-    const peak = inPhase.reduce((max, s) => Math.max(max, s.mb), 0)
-    return {
-      phase: phase.name,
-      seconds: ((phase.endedAt - phase.startedAt) / 1000).toFixed(1),
-      peakMB: peak.toFixed(0),
-      endMB: last.toFixed(0),
-      ...(phase.details ?? {}),
-    }
-  })
-  console.log(`\nScenario: ${report.id} (${report.ok ? "ok" : "FAILED"})`)
-  console.table(rows)
-  console.log(`Memory log: ${process.env.MEMORY_LOG}`)
-  console.log(`Report: ${process.env.REPORT_PATH}`)
-  if (!report.ok) process.exit(1)
-'
+bun "$SCRIPT_DIR/summarize-memory-benchmark.ts" "$REPORT_COPY" "$MEMORY_LOG"
+exit "$STATUS"

@@ -4,6 +4,8 @@ export interface LaunchCommand {
   readonly route: 'contracts'
   readonly autorun?: 'all'
   readonly scenario?: string
+  /** Iteration count for benchmark scenarios. */
+  readonly iterations?: number
 }
 
 export const contractLaunchCommandFile = new File(

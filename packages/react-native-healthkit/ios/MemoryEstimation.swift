@@ -10,10 +10,12 @@
 
 import HealthKit
 
-/// Approximate bridging overhead that every Nitro HybridObject carries on the
-/// native side but that Nitro itself does not report: the C++ HybridObject
-/// with its per-runtime cache map, the Swift bridge class, the `shared_ptr`
-/// control block and the reference-state records for the JS weak reference.
+/// Approximate per-object bridging overhead of a Nitro HybridObject that Nitro
+/// does not account for itself. The generated `*Spec_cxx.swift` adds the Swift
+/// implementation instance via `MemoryHelper.getSizeOf`; this covers the rest:
+/// the Swift `_cxx` bridge class, the C++ `HybridObject` with its per-runtime
+/// cache map, the `shared_ptr` control block and the reference-state records
+/// behind the JS weak reference. Add it once, in each proxy's `memorySize`.
 let nitroHybridObjectOverheadBytes = 512
 
 /// Rough size of an `NSString` on the heap, including its object header.
@@ -50,10 +52,12 @@ func estimateMetadataMemorySize(_ metadata: [String: Any]?) -> Int {
 /// sum/min/max/average/most-recent quantities and their date interval.
 let estimatedStatisticsEntryMemorySize = 512
 
+/// Estimate of the `HKWorkout` object graph only; the proxy adds Nitro's
+/// bridging overhead on top.
 func estimateWorkoutMemorySize(_ workout: HKWorkout) -> Int {
   // HKWorkout object, uuid, dates, HKSourceRevision (+HKSource), HKDevice,
   // and the four total quantities.
-  var total = 1_024 + nitroHybridObjectOverheadBytes
+  var total = 1_024
   total += estimateMetadataMemorySize(workout.metadata)
 
   if let events = workout.workoutEvents {

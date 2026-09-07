@@ -45,6 +45,7 @@ export default function RootLayout() {
         params: {
           autorun: launchCommand.autorun,
           scenario: launchCommand.scenario,
+          iterations: launchCommand.iterations?.toString(),
         },
       })
     }
