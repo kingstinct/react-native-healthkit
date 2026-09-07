@@ -320,7 +320,11 @@ class CoreModule: HybridCoreModuleSpec {
   }
 
   func isProtectedDataAvailableAsync() -> Promise<Bool> {
-    return Promise.resolved(withResult: UIApplication.shared.isProtectedDataAvailable)
+    return Promise.async {
+      return await MainActor.run {
+        UIApplication.shared.isProtectedDataAvailable
+      }
+    }
   }
 
   func isHealthDataAvailable() -> Bool {

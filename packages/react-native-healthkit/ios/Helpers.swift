@@ -483,3 +483,31 @@ func buildStatisticsOptions(statistics: [StatisticsOptions], quantityType: HKQua
   }
   return opts
 }
+
+private let storeReopenRetryDelay: UInt64 = 1_000_000_000
+
+/// HealthKit seals its store the moment the device locks and re-opens it a beat
+/// after it unlocks, and iOS can resume the app inside that beat. A query that
+/// hits the gap fails with `errorDatabaseInaccessible` although protected data is
+/// reported available — the store is re-opening, not sealed. Runs `operation`
+/// and, on exactly that refusal, gives it one more attempt after a short delay.
+/// A refusal while protected data is unavailable is the sealed store itself and
+/// is thrown as-is, as is every other error.
+func retryingWhileStoreReopens<T>(
+  _ operation: () async throws -> T
+) async throws -> T {
+  do {
+    return try await operation()
+  } catch {
+    let nsError = error as NSError
+    guard nsError.domain == HKError.errorDomain,
+      nsError.code == HKError.Code.errorDatabaseInaccessible.rawValue
+    else { throw error }
+    let protectedDataAvailable = await MainActor.run {
+      UIApplication.shared.isProtectedDataAvailable
+    }
+    guard protectedDataAvailable else { throw error }
+    try await Task.sleep(nanoseconds: storeReopenRetryDelay)
+    return try await operation()
+  }
+}

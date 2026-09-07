@@ -313,11 +313,13 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
 
-      if let gottenStats = try await queryStatisticsForQuantityInternal(
-        quantityType: quantityType,
-        statistics: statistics,
-        options: options
-      ) {
+      if let gottenStats = try await retryingWhileStoreReopens({
+        try await queryStatisticsForQuantityInternal(
+          quantityType: quantityType,
+          statistics: statistics,
+          options: options
+        )
+      }) {
         let unit = try await getUnitToUse(
           unitOverride: options?.unit,
           quantityType: quantityType
@@ -336,13 +338,15 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
 
-      if let statistics = try await queryStatisticsCollectionForQuantityInternal(
-        quantityType: quantityType,
-        statistics: statistics,
-        anchorDate: anchorDate,
-        intervalComponents: intervalComponents,
-        options: options
-      ) {
+      if let statistics = try await retryingWhileStoreReopens({
+        try await queryStatisticsCollectionForQuantityInternal(
+          quantityType: quantityType,
+          statistics: statistics,
+          anchorDate: anchorDate,
+          intervalComponents: intervalComponents,
+          options: options
+        )
+      }) {
 
         let unit = try await getUnitToUse(
           unitOverride: options?.unit,
@@ -385,11 +389,13 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
 
-      if let gottenStats = try await queryStatisticsForQuantityInternal(
-        quantityType: quantityType,
-        statistics: statistics,
-        options: options
-      ) {
+      if let gottenStats = try await retryingWhileStoreReopens({
+        try await queryStatisticsForQuantityInternal(
+          quantityType: quantityType,
+          statistics: statistics,
+          options: options
+        )
+      }) {
         let unit = try await getUnitToUse(
           unitOverride: options?.unit,
           quantityType: quantityType
@@ -412,13 +418,15 @@ class QuantityTypeModule: HybridQuantityTypeModuleSpec {
     return Promise.async {
       let quantityType = try initializeQuantityType(identifier.stringValue)
 
-      if let statistics = try await queryStatisticsCollectionForQuantityInternal(
-        quantityType: quantityType,
-        statistics: statistics,
-        anchorDate: anchorDate,
-        intervalComponents: intervalComponents,
-        options: options
-      ) {
+      if let statistics = try await retryingWhileStoreReopens({
+        try await queryStatisticsCollectionForQuantityInternal(
+          quantityType: quantityType,
+          statistics: statistics,
+          anchorDate: anchorDate,
+          intervalComponents: intervalComponents,
+          options: options
+        )
+      }) {
         let unit = try await getUnitToUse(
           unitOverride: options?.unit,
           quantityType: quantityType
