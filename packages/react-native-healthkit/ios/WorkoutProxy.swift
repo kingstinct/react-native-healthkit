@@ -49,38 +49,43 @@ func getWorkoutRoutesInternal(
 
 func getRouteLocations(
   route: HKWorkoutRoute
-) async -> [CLLocation] {
-  let locations = try! await withCheckedThrowingContinuation {
+) async throws -> [CLLocation] {
+  return try await withCheckedThrowingContinuation {
     (continuation: CheckedContinuation<[CLLocation], Error>) in
     var allLocations: [CLLocation] = []
+    // HealthKit streams locations in batches through the same handler; make
+    // sure the continuation is resumed exactly once whatever the sequence.
+    var hasFinished = false
+    let finish = { (result: Result<[CLLocation], Error>) in
+      guard !hasFinished else {
+        return
+      }
+      hasFinished = true
+      continuation.resume(with: result)
+    }
 
     let query = HKWorkoutRouteQuery(route: route) {
       (_, locationsOrNil, done, errorOrNil) in
 
       DispatchQueue.main.async {
         if let error = errorOrNil {
-          continuation.resume(throwing: error)
-          return
+          return finish(.failure(error))
         }
 
         guard let currentLocationBatch = locationsOrNil else {
-          return continuation.resume(
-            throwing: runtimeErrorWithPrefix("Unexpected empty response")
-          )
+          return finish(.failure(runtimeErrorWithPrefix("Unexpected empty response")))
         }
 
         allLocations.append(contentsOf: currentLocationBatch)
 
         if done {
-          continuation.resume(returning: allLocations)
+          finish(.success(allLocations))
         }
       }
     }
 
     store.execute(query)
   }
-
-  return locations
 }
 
 func serializeLocation(location: CLLocation, previousLocation: CLLocation?)
@@ -122,7 +127,7 @@ func getSerializedWorkoutLocations(
       route.metadata
     )
 
-    let routeCLLocations = await getRouteLocations(
+    let routeCLLocations = try await getRouteLocations(
       route: route
     )
 
@@ -397,7 +402,19 @@ class WorkoutProxy: HybridWorkoutProxySpec {
 
   init(workout: HKWorkout) {
     self.workout = workout
+    // Computed here rather than lazily: proxies are created inside
+    // `Promise.async` on a background executor, while Nitro reads `memorySize`
+    // on the JS thread every time the proxy is converted to a JS object.
+    self.memorySize = estimateWorkoutMemorySize(workout) + nitroHybridObjectOverheadBytes
   }
+
+  /// Estimated heap footprint of the wrapped `HKWorkout` graph (events,
+  /// activities, statistics, metadata), reported to Nitro so the JS garbage
+  /// collector sees the native memory kept alive by each proxy. Nitro adds
+  /// the Swift instance's own size on top. Rough by design: the goal is the
+  /// right order of magnitude per workout, so hundreds of proxies from a query
+  /// do not look like hundreds of empty objects.
+  let memorySize: Int
 
   func getWorkoutPlan() throws -> Promise<WorkoutPlan?> {
     return Promise.async {

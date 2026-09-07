@@ -45,6 +45,7 @@ export default function AuthScreen() {
           params: {
             autorun: launchCommand.autorun,
             scenario: launchCommand.scenario,
+            iterations: launchCommand.iterations?.toString(),
           },
         })
         return
@@ -90,6 +91,7 @@ export default function AuthScreen() {
           params: {
             autorun: launchCommand.autorun,
             scenario: launchCommand.scenario,
+            iterations: launchCommand.iterations?.toString(),
           },
         })
       }

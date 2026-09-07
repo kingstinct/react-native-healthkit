@@ -53,7 +53,7 @@ func queryStatisticsForQuantityInternal(
 
 func serializeStatistics(gottenStats: HKStatistics, unit: HKUnit) -> QueryStatisticsResponse {
   let sources = gottenStats.sources?.map { source in
-    return serializeSource(source)
+    return serializeSourceStruct(source)
   } ?? []
 
   var averageQuantity: Quantity?
@@ -244,7 +244,7 @@ func serializeStatisticsPerSource(gottenStats: HKStatistics, unit: HKUnit)
       }
 
       return QueryStatisticsResponseFromSingleSource(
-        source: serializeSource(source),
+        source: serializeSourceStruct(source),
         startDate: gottenStats.startDate,
         endDate: gottenStats.endDate,
         duration: duration,

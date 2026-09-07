@@ -12,10 +12,13 @@ import {
   AllSampleTypesInApp,
 } from '@/constants/AllUsedIdentifiersInApp'
 import { clearLaunchCommand } from '@/contracts/launchCommand'
+import { memoryBenchmarks } from '@/contracts/memoryBenchmark'
 import { writeContractReport } from '@/contracts/report'
 import {
   contractScenarios,
+  failure,
   runAllContractScenarios,
+  type ScenarioRunOptions,
 } from '@/contracts/scenarios'
 import { enumKeyLookup } from '@/utils/enumKeyLookup'
 
@@ -40,6 +43,7 @@ export default function ContractsScreen() {
   const params = useLocalSearchParams<{
     autorun?: string
     scenario?: string
+    iterations?: string
   }>()
   const [authStatus, setAuthStatus] =
     useState<AuthorizationRequestStatus | null>(null)
@@ -71,29 +75,42 @@ export default function ContractsScreen() {
     await refreshAuthStatus()
   }, [refreshAuthStatus])
 
-  const runScenario = useCallback(async (scenarioId: string) => {
-    const scenario = contractScenarios.find((item) => item.id === scenarioId)
-    if (!scenario) {
-      return
-    }
+  const runScenario = useCallback(
+    async (scenarioId: string, options?: ScenarioRunOptions) => {
+      const scenario =
+        contractScenarios.find((item) => item.id === scenarioId) ??
+        memoryBenchmarks.find((item) => item.id === scenarioId)
+      if (!scenario) {
+        // Report immediately so a host runner does not wait for its timeout.
+        const result = failure(
+          scenarioId,
+          'Unknown scenario',
+          new Error(`Unknown scenario id: ${scenarioId}`),
+        )
+        setOutput(stringifyPayload(result))
+        writeContractReport(result)
+        return
+      }
 
-    setIsRunning(true)
-    try {
-      const result = await scenario.run()
-      setResults((current) => ({
-        ...current,
-        [scenario.id]: {
-          ok: result.ok,
-          details: result.details,
-          payload: result.payload,
-        },
-      }))
-      setOutput(stringifyPayload(result))
-      writeContractReport(result)
-    } finally {
-      setIsRunning(false)
-    }
-  }, [])
+      setIsRunning(true)
+      try {
+        const result = await scenario.run(options)
+        setResults((current) => ({
+          ...current,
+          [scenario.id]: {
+            ok: result.ok,
+            details: result.details,
+            payload: result.payload,
+          },
+        }))
+        setOutput(stringifyPayload(result))
+        writeContractReport(result)
+      } finally {
+        setIsRunning(false)
+      }
+    },
+    [],
+  )
 
   const runAll = useCallback(async () => {
     setIsRunning(true)
@@ -155,13 +172,16 @@ export default function ContractsScreen() {
 
     if (typeof params.scenario === 'string') {
       setHasAutoRunStarted(true)
-      void runScenario(params.scenario)
+      void runScenario(params.scenario, {
+        iterations: params.iterations ? Number(params.iterations) : undefined,
+      })
     }
   }, [
     authStatus,
     hasAutoRunStarted,
     params.autorun,
     params.scenario,
+    params.iterations,
     runAll,
     runScenario,
   ])
