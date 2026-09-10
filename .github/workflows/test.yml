@@ -186,9 +186,7 @@ jobs:
   build-ios:
     needs: changes
     if: needs.changes.outputs.healthkit_contracts == 'true'
-    # Only run on macOS since we need Xcode. `xcode-27` is the image that carries the iOS 27
-    # SDK; `macos-26` tops out at iOS 26.5, so `check:generated` regenerates a schema with
-    # every iOS 27 identifier missing and fails on the diff.
+    # Only run on macOS since we need Xcode
     runs-on: xcode-27
     timeout-minutes: 45
 
