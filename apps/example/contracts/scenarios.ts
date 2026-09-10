@@ -15,11 +15,13 @@ import {
   assertQuantitySampleContract,
   assertWorkoutSampleContract,
 } from '@/contracts'
+import { healthRecordsScenario } from '@/contracts/healthRecordsScenario'
 
 export type ContractScenarioId =
   | 'quantity-roundtrip'
   | 'category-roundtrip'
   | 'workout-roundtrip'
+  | 'health-records-smoke'
 
 export interface ContractScenarioResult<
   Id extends string = ContractScenarioId,
@@ -293,6 +295,7 @@ export const contractScenarios: readonly ContractScenario[] = [
   quantityScenario,
   categoryScenario,
   workoutScenario,
+  healthRecordsScenario,
 ]
 
 export async function runAllContractScenarios() {

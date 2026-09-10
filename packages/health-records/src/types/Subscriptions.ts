@@ -1,7 +1,8 @@
 import type { ClinicalTypeIdentifier } from './ClinicalTypeIdentifier'
 
 export interface EmitterSubscription {
-  remove: () => void
+  /** Returns `false` if the subscription was already removed. */
+  remove: () => boolean
 }
 
 export interface OnChangeCallbackArgs {
