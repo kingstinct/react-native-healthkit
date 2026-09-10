@@ -36,6 +36,14 @@ export default function RootLayout() {
     }
 
     if (
+      launchCommand.route === 'healthRecords' &&
+      pathname !== '/healthRecords'
+    ) {
+      router.replace('/healthRecords')
+      return
+    }
+
+    if (
       launchCommand.route === 'contracts' &&
       pathname !== '/contracts' &&
       pathname !== '/auth'

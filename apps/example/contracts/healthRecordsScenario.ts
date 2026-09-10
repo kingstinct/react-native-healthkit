@@ -13,7 +13,11 @@ import {
   subscribeToClinicalRecordChanges,
   supportsHealthRecords,
 } from '@react-native-healthkit/health-records'
-import { type ContractScenario, failure, success } from '@/contracts/scenarios'
+import {
+  type ContractScenario,
+  failure,
+  success,
+} from '@/contracts/scenarioResult'
 
 export type HealthRecordsScenarioId = 'health-records-smoke'
 
