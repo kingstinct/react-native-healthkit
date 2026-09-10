@@ -121,13 +121,13 @@ Some imperative examples:
       'HKQuantityTypeIdentifierInsulinDelivery',
       'IU',
       5.5,
+      new Date(),
+      new Date(),
       {
-        metadata: {
           // Metadata keys could be arbirtary string to store app-specific data.
           // To use built-in types from https://developer.apple.com/documentation/healthkit/samples/metadata_keys
           // you need to specify string values instead of variable names (by dropping MetadataKey from the name).
           HKInsulinDeliveryReason: HKInsulinDeliveryReason.basal,
-        },
       }
     );
 ```
