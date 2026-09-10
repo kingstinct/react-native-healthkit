@@ -186,8 +186,10 @@ jobs:
   build-ios:
     needs: changes
     if: needs.changes.outputs.healthkit_contracts == 'true'
-    # Only run on macOS since we need Xcode
-    runs-on: macos-26
+    # Only run on macOS since we need Xcode. `xcode-27` is the image that carries the iOS 27
+    # SDK; `macos-26` tops out at iOS 26.5, so `check:generated` regenerates a schema with
+    # every iOS 27 identifier missing and fails on the diff.
+    runs-on: xcode-27
     timeout-minutes: 45
 
     steps:
@@ -201,8 +203,17 @@ jobs:
       - name: Install dependencies
         run: bun install --ignore-scripts --frozen-lockfile
 
-      ## Xcode 26.6 (Swift 6.2) - latest stable
-      - run: sudo xcode-select -s /Applications/Xcode_26.6.app
+      ## Xcode 27 (iOS 27 SDK). Resolved by glob rather than pinned: the preview image names the
+      ## app after the beta it ships (Xcode_27_beta_6.app today), so a literal path rots.
+      - name: Select Xcode 27
+        run: |
+          XCODE_APP="$(ls -d /Applications/Xcode_27*.app 2>/dev/null | sort -V | tail -n 1)"
+          if [ -z "$XCODE_APP" ]; then
+            echo "No Xcode 27 on this runner — the iOS 27 SDK is required." >&2
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE_APP"
+          xcodebuild -version
 
       - name: Install simulator tooling
         run: brew install wix/brew/applesimutils
@@ -210,12 +221,12 @@ jobs:
       - name: Select and boot simulator
         run: |
           SIMULATOR_ID="$(
-            xcrun simctl list devices available 'iOS 26.5' |
+            xcrun simctl list devices available 'iOS 27.0' |
               sed -n 's/^[[:space:]]*iPhone 17 Pro (\([0-9A-F-][0-9A-F-]*\)) (.*/\1/p' |
               head -n 1
           )"
           if [ -z "$SIMULATOR_ID" ]; then
-            echo "Unable to find an available iPhone 17 Pro with iOS 26.5." >&2
+            echo "Unable to find an available iPhone 17 Pro with iOS 27.0." >&2
             exit 1
           fi
           echo "SIMULATOR_ID=$SIMULATOR_ID" >> "$GITHUB_ENV"
