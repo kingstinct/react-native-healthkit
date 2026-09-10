@@ -6,7 +6,8 @@ ROOT_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
 APP_DIR="$ROOT_DIR/apps/example"
 SIMULATOR_ID="${SIMULATOR_ID:-${1:-}}"
 APP_ID="com.kingstinct.reactnativehealthkitexample"
-INITIAL_URL="exp+react-native-healthkit-example://expo-development-client/?url=http%3A%2F%2F127.0.0.1%3A8081"
+METRO_PORT="${METRO_PORT:-8081}"
+INITIAL_URL="exp+react-native-healthkit-example://expo-development-client/?url=http%3A%2F%2F127.0.0.1%3A${METRO_PORT}"
 METRO_LOG="${TMPDIR:-/tmp}/healthkit-contract-metro.log"
 DIAG_DIR="${CONTRACT_DIAGNOSTICS_DIR:-}"
 # Launch command handed to the app; override to run a single scenario.
@@ -190,15 +191,15 @@ fi
 
 rm -f "$METRO_LOG"
 
-if ! curl -fsS --max-time 2 "http://127.0.0.1:8081/status" >/dev/null 2>&1; then
+if ! curl -fsS --max-time 2 "http://127.0.0.1:${METRO_PORT}/status" >/dev/null 2>&1; then
   (
     cd "$APP_DIR"
-    CI=1 bun start --clear >"$METRO_LOG" 2>&1
+    CI=1 bun start --clear --port "$METRO_PORT" >"$METRO_LOG" 2>&1
   ) &
   METRO_PID="$!"
 
   ATTEMPT=0
-  until curl -fsS --max-time 2 "http://127.0.0.1:8081/status" >/dev/null 2>&1; do
+  until curl -fsS --max-time 2 "http://127.0.0.1:${METRO_PORT}/status" >/dev/null 2>&1; do
     ATTEMPT=$((ATTEMPT + 1))
     if [ "$ATTEMPT" -ge 60 ]; then
       dump_debug_artifacts "Metro did not start in time."

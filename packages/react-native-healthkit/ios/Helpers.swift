@@ -172,7 +172,7 @@ func deserializeHKQueryAnchor(base64String: String?) throws -> HKQueryAnchor? {
 }
 
 func initializeCategoryType(_ identifier: String) throws -> HKCategoryType {
-  let identifier = HKCategoryTypeIdentifier(rawValue: identifier)
+  let identifier = hkCategoryTypeIdentifier(fromIdentifierName: identifier)
   if let sampleType = HKSampleType.categoryType(forIdentifier: identifier) {
     return sampleType
   }

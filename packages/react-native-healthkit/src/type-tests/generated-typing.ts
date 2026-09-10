@@ -39,10 +39,11 @@ type _newCategoryIdentifierFromSdkIsPresent = Assert<
     : false
 >
 
-type _bloodKetonesIdentifierIsPresent = Assert<
+// Apple has never shipped a blood ketones quantity type (see issue #379).
+type _bloodKetonesIdentifierIsAbsent = Assert<
   'HKQuantityTypeIdentifierBloodKetones' extends QuantityTypeIdentifier
-    ? true
-    : false
+    ? false
+    : true
 >
 
 type _heartRateMetadataNarrowsToEnum = Assert<
@@ -83,13 +84,6 @@ type _heartRateEventThresholdMetadataIsTyped = Assert<
 type _bloodGlucoseUnitNarrows = Assert<
   Equal<
     QuantitySampleTyped<'HKQuantityTypeIdentifierBloodGlucose'>['unit'],
-    BloodGlucoseUnit
-  >
->
-
-type _bloodKetonesUnitNarrows = Assert<
-  Equal<
-    QuantitySampleTyped<'HKQuantityTypeIdentifierBloodKetones'>['unit'],
     BloodGlucoseUnit
   >
 >
