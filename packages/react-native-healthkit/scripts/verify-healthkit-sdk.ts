@@ -45,6 +45,14 @@ function main() {
     'Blood glucose should retain canonical unit mapping',
   )
 
+  const bloodKetones = schema.quantityIdentifiers.find(
+    (identifier) => identifier.name === 'HKQuantityTypeIdentifierBloodKetones',
+  )
+  assert.ok(
+    bloodKetones,
+    'Pinned SDK should expose HKQuantityTypeIdentifierBloodKetones',
+  )
+
   // Regression guard: iOS 27 relocated HKWorkoutActivityType into its own header,
   // so a generator that only reads HKWorkout.h drops the whole enum.
   const workoutActivityType = schema.enums.find(

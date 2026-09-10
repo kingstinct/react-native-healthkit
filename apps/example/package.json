@@ -4,12 +4,13 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "contracts": "sh ./scripts/run-healthkit-contracts.sh",
+    "contracts": "bash ./scripts/run-healthkit-contracts.sh",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "build-sim": "xcodebuild -workspace ios/RNHealthKit.xcworkspace -scheme RNHealthKit -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build"
+    "build-sim": "xcodebuild -workspace ios/RNHealthKit.xcworkspace -scheme RNHealthKit -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build",
+    "benchmark:memory": "bash ./scripts/run-healthkit-memory-benchmark.sh"
   },
   "dependencies": {
     "@expo/ui": "~0.2.0-beta.9",

@@ -36,6 +36,7 @@ export interface WorkoutActivity {
   readonly endDate: Date
   readonly uuid: string
   readonly duration: number
+  readonly activityType: WorkoutActivityType
 }
 
 export interface WorkoutRoute {

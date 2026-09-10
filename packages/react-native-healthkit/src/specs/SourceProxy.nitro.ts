@@ -1,6 +1,6 @@
 import type { HybridObject } from 'react-native-nitro-modules'
 
-interface Source {
+export interface Source {
   readonly name: string
   readonly bundleIdentifier: string
 }

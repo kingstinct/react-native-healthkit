@@ -368,6 +368,8 @@ export const saveWorkoutSample = WorkoutBindings.saveWorkoutSample
 export const startWatchApp =
   Workouts.startWatchAppWithWorkoutConfiguration.bind(Workouts)
 export const isProtectedDataAvailable = Core.isProtectedDataAvailable.bind(Core)
+export const isProtectedDataAvailableAsync =
+  Core.isProtectedDataAvailableAsync.bind(Core)
 export const queryStateOfMindSamples =
   StateOfMindBindings.queryStateOfMindSamples
 export const queryStateOfMindSamplesWithAnchor =
@@ -461,6 +463,7 @@ export default {
   subscribeToQuantitySamples,
   startWatchApp,
   isProtectedDataAvailable,
+  isProtectedDataAvailableAsync,
   queryStateOfMindSamples,
   queryStateOfMindSamplesWithAnchor,
   saveStateOfMindSample,

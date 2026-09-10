@@ -161,7 +161,7 @@ export type UnitOfEnergy = 'kcal' | 'Cal' | 'cal' | 'J'
 
 export type EnergyUnit = JouleUnit<MetricPrefix> | UnitOfEnergy
 
-export type BloodGlucoseUnit = 'mmol<180.15588000005408>/l' | 'mg/dL'
+export type BloodGlucoseUnit = 'mmol<180.15588000005408>/l' | 'mmol/L' | 'mg/dL'
 
 export type SpeedUnit<
   TLength extends LengthUnit,

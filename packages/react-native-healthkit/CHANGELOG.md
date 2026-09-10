@@ -1,5 +1,60 @@
 # @kingstinct/react-native-healthkit
 
+## 15.0.0
+### Major Changes
+
+- d279bc7: Fix unbounded memory growth when querying large numbers of samples or statistics (#274), and improve memory management for workout proxies (#370).
+  
+  ### Breaking changes
+  
+  `source` values embedded in returned data are now plain `{ name, bundleIdentifier }` objects instead of `SourceProxy` HybridObjects:
+  
+  - `sample.sourceRevision.source` on every sample type (quantity, category, workout, correlation, ECG, heartbeat series, medication, state of mind)
+  - `QueryStatisticsResponse.sources` and `QueryStatisticsResponseFromSingleSource.source`
+  
+  Reading `.name` and `.bundleIdentifier` works as before. What no longer works on these values: `toJSON()` (they already are plain JSON), `equals()`, `dispose()`, and passing them into `filter.sources`. To filter by a sample's source, look the source up through `querySources()` by `bundleIdentifier`:
+  
+  ```ts
+  const sources = await querySources('HKQuantityTypeIdentifierHeartRate')
+  const source = sources.find(
+    (candidate) => candidate.bundleIdentifier === sample.sourceRevision.source.bundleIdentifier,
+  )
+  await queryQuantitySamples('HKQuantityTypeIdentifierHeartRate', {
+    filter: { sources: source ? [source] : [] },
+  })
+  ```
+  
+  `querySources()`, `currentAppSource()` and `filter.sources` keep using `SourceProxy`.
+  
+  ### Memory improvements
+  
+  - Every serialized sample and every statistics bucket used to allocate a native HybridObject just to carry the source's two strings. react-native-nitro-modules keeps a small bookkeeping record per HybridObject for the lifetime of the JS runtime, so memory grew with every query and never came back. Measured on the #274 access pattern (200 workouts + 10,000 heart-rate samples per fetch, 120 fetches): growth dropped from about 147 MB to about 19 MB.
+  - `WorkoutProxy` and `SourceProxy` now report an estimated native memory size to the JS engine, so the garbage collector accounts for the `HKWorkout` / `HKSource` graphs they keep alive and collects stale proxies sooner.
+  - Errors while reading workout route locations are now propagated to the returned promise instead of crashing the app via `try!`.
+  - New README section on memory considerations, including when to call `dispose()`.
+
+### Patch Changes
+
+- b24b8ed: iOS: read `isProtectedDataAvailable` on the main actor in `isProtectedDataAvailableAsync` (`UIApplication` is `@MainActor`-isolated), and retry a statistics query once when HealthKit refuses with `errorDatabaseInaccessible` while protected data is available — the store re-opens a moment after the device unlocks, and a query issued in that window was surfacing as an opaque `Code=6` string.
+
+## 14.1.0
+### Minor Changes
+
+- b9b8f01: Serialize each workout sub-activity's `activityType` (the raw `HKWorkoutActivityType` from its `workoutConfiguration`) on `WorkoutActivity`, alongside `startDate`/`endDate`/`uuid`/`duration`. This lets consumers type the legs of multisport (`.swimBikeRun`) workouts — e.g. splitting a triathlon into its swim/bike/run legs — which the bridge previously didn't carry.
+
+### Patch Changes
+
+- 6d9a832: fix: insert `setupBackgroundObservers()` into multi-line `didFinishLaunchingWithOptions` signatures
+  
+  The config plugin matched the AppDelegate entry point with `/(func application\(.+didFinishLaunchingWithOptions.+\{)\n/`. `.` does not match newlines, so on Expo SDK 54+ — whose AppDelegate template spreads that signature across four lines — the match failed and `String.replace` returned the contents unchanged. The `import HealthKit` insert immediately above it still succeeded and the entitlement and Info.plist plugins still applied, so the build succeeded and the AppDelegate looked modified, while `BackgroundDeliveryManager.shared.setupBackgroundObservers()` was never added. Background delivery then only worked for observers registered by `subscribeToChanges` at runtime, and silently stopped surviving app termination.
+  
+  Match with `[^{]*` instead, which spans newlines and also refuses to cross a `{`, so it cannot run out of an earlier `application(...)` overload into this one. Also warn when the insert finds no match, rather than failing silently.
+- d0dacf8: fix: catch Objective-C exceptions in `requestAuthorization` and `getRequestStatusForAuthorization`
+  
+  `HKHealthStore.requestAuthorization` / `getRequestStatusForAuthorization` can raise a synchronous `NSException` (e.g. `NSInvalidArgumentException` for interdependent read types). The Swift wrapper never caught Objective-C exceptions, so on iOS 26 the exception escapes the `async` task and terminates the process with `EXC_BREAKPOINT (SIGTRAP)`. Wrap the calls in an ObjC `@try/@catch` and resume the continuation with the error instead of trapping. Fixes #331, #366.
+- f107bbf: Wire background-delivered HealthKit updates through to JS
+- 598f406: Fix regression where HKQuantityTypeIdentifierBloodKetones was missing from generated quantity identifiers.
+
 ## 14.0.2
 ### Patch Changes
 
