@@ -38,6 +38,12 @@
           "background": true
         }
       ],
+      [
+        "@react-native-healthkit/health-records",
+        {
+          "NSHealthClinicalHealthRecordsShareUsageDescription": "Your own custom clinical records usage description"
+        }
+      ],
       "expo-font",
       "expo-web-browser"
     ],

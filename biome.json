@@ -27,7 +27,10 @@
   },
   "overrides": [
     {
-      "includes": ["packages/react-native-healthkit/package.json"],
+      "includes": [
+        "packages/react-native-healthkit/package.json",
+        "packages/health-records/package.json"
+      ],
       "json": {
         "formatter": {
           "lineWidth": 60
@@ -38,7 +41,10 @@
       "includes": [
         "packages/react-native-healthkit/tsconfig.cjs.json",
         "packages/react-native-healthkit/tsconfig.esm.json",
-        "packages/react-native-healthkit/tsconfig.declarations.json"
+        "packages/react-native-healthkit/tsconfig.declarations.json",
+        "packages/health-records/tsconfig.cjs.json",
+        "packages/health-records/tsconfig.esm.json",
+        "packages/health-records/tsconfig.declarations.json"
       ],
       "json": {
         "parser": {

@@ -114,6 +114,20 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
+        name="healthRecords"
+        options={{
+          title: 'Records',
+          tabBarIcon: ({ color, focused }) => (
+            <IconSymbol
+              size={28}
+              name={focused ? 'doc.text.fill' : 'doc.text'}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
         name="quantityTypes"
         options={{
           title: 'Quantities',

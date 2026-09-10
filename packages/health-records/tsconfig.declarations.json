@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./lib/typescript",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/test-utils.ts",
+    "src/**/test-setup.ts"
+  ]
+}
