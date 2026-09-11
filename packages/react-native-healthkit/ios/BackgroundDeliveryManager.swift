@@ -45,11 +45,16 @@ public class BackgroundDeliveryManager: NSObject {
     guard HKHealthStore.isHealthDataAvailable() else { return }
 
     guard let typeIdentifiers = UserDefaults.standard.stringArray(forKey: BackgroundDeliveryManager.typesKey) else {
+      os_log("launch: no background delivery types configured, nothing to register", log: bgLog, type: .debug)
       return
     }
 
     let frequencyRaw = UserDefaults.standard.integer(forKey: BackgroundDeliveryManager.frequencyKey)
     let frequency = HKUpdateFrequency(rawValue: frequencyRaw) ?? .immediate
+
+    os_log(
+      "launch: registering %d background observer(s): %{public}@", log: bgLog, type: .info,
+      typeIdentifiers.count, typeIdentifiers.joined(separator: ", "))
 
     registerObservers(typeIdentifiers: typeIdentifiers, frequency: frequency)
   }
