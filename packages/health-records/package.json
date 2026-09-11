@@ -57,7 +57,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "bunx @biomejs/biome format --write",
     "codegen": "bun run build && nitrogen --logLevel=\"debug\" && perl -i -pe 's/Bool\\(fromCxx: cachedCxxPart\\)/cachedCxxPart.use_count() > 0/g' nitrogen/generated/ios/swift/*Spec_cxx.swift",
-    "prepublishOnly": "bun run build && bun run codegen"
+    "prepublishOnly": "bun run build && bun run codegen",
+    "prepack": "test -f app.plugin.js || { echo \"app.plugin.js is missing; run bun run build:plugin (it is generated, not committed)\" >&2; exit 1; }"
   },
   "keywords": [
     "react-native",
