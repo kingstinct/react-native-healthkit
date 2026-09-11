@@ -220,10 +220,22 @@ COMMAND_PATH="$APP_DATA/Documents/healthkit-contract-command.json"
 rm -f "$REPORT_PATH"
 printf '%s\n' "$CONTRACT_COMMAND" >"$COMMAND_PATH"
 
-run_with_timeout 120 applesimutils \
+# applesimutils writes straight into the simulator's TCC/HealthKit sqlite stores,
+# which healthd and friends still hold open for a few seconds after an install.
+# On CI that surfaces as "Database busy" and a non-zero exit, so retry briefly.
+PERMISSION_ATTEMPT=0
+until run_with_timeout 120 applesimutils \
   --byId "$SIMULATOR_ID" \
   --bundle "$APP_ID" \
-  --setPermissions 'health=YES,motion=YES'
+  --setPermissions 'health=YES,motion=YES'; do
+  PERMISSION_ATTEMPT=$((PERMISSION_ATTEMPT + 1))
+  if [ "$PERMISSION_ATTEMPT" -ge 5 ]; then
+    dump_debug_artifacts "applesimutils could not set permissions after $PERMISSION_ATTEMPT attempts."
+    exit 1
+  fi
+  echo "applesimutils failed (attempt $PERMISSION_ATTEMPT); retrying in 5s..." >&2
+  sleep 5
+done
 
 # `simctl launch` prints "<bundle id>: <pid>" on success.
 LAUNCH_OUTPUT="$(run_with_timeout 180 xcrun simctl launch "$SIMULATOR_ID" "$APP_ID" --initialUrl "$INITIAL_URL" 2>/dev/null || true)"
