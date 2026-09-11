@@ -67,19 +67,9 @@ interface MetadataOverride {
   readonly skip?: boolean
 }
 
-export interface ForcedQuantityIdentifier {
-  readonly name: string
-  readonly ios: string | null
-  readonly canonicalUnit: string | null
-  readonly aggregationStyle: string | null
-  readonly writeable: boolean
-  readonly legacy: boolean
-}
-
 export interface IdentifierOverrides {
   readonly quantity: {
     readonly readOnly: readonly string[]
-    readonly forcedInclusions?: readonly ForcedQuantityIdentifier[]
   }
   readonly category: {
     readonly readOnly: readonly string[]
@@ -865,20 +855,6 @@ function parseQuantityIdentifiers(
     })
   }
 
-  // Apply explicit forced inclusions for identifiers omitted from both symbol graph and header.
-  for (const forced of overrides.quantity.forcedInclusions ?? []) {
-    if (!identifiers.has(forced.name)) {
-      identifiers.set(forced.name, {
-        name: forced.name,
-        ios: forced.ios,
-        canonicalUnit: forced.canonicalUnit,
-        aggregationStyle: forced.aggregationStyle,
-        writeable: forced.writeable,
-        legacy: forced.legacy,
-      })
-    }
-  }
-
   return [...identifiers.values()].sort((left, right) =>
     left.name.localeCompare(right.name),
   )
@@ -1193,7 +1169,7 @@ function canonicalUnitToTypeNode(unit: string | null): ts.TypeNode {
     return keywordType(ts.SyntaxKind.StringKeyword)
   }
 
-  if (unit === 'mg/dL' || unit === 'mmol/L' || unit.startsWith('mmol<')) {
+  if (unit === 'mg/dL' || unit.startsWith('mmol<')) {
     return namedType('BloodGlucoseUnit')
   }
   if (unit === '%') {

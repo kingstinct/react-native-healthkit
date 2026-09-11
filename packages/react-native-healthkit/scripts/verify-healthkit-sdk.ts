@@ -48,9 +48,10 @@ function main() {
   const bloodKetones = schema.quantityIdentifiers.find(
     (identifier) => identifier.name === 'HKQuantityTypeIdentifierBloodKetones',
   )
-  assert.ok(
+  assert.equal(
     bloodKetones,
-    'Pinned SDK should expose HKQuantityTypeIdentifierBloodKetones',
+    undefined,
+    'HKQuantityTypeIdentifierBloodKetones is not a HealthKit identifier and must not be generated',
   )
 
   const workoutBrandName = findMetadataKey(

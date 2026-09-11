@@ -62,7 +62,9 @@ func serializeDeletedSample(sample: HKDeletedObject) -> DeletedSample {
 
 func serializeCategorySample(sample: HKCategorySample) -> CategorySample {
   return CategorySample(
-    categoryType: CategoryTypeIdentifier(fromString: sample.categoryType.identifier)!,
+    categoryType: CategoryTypeIdentifier(
+      fromString: categoryTypeIdentifierName(
+        fromHealthKitIdentifier: sample.categoryType.identifier))!,
     value: Double(sample.value),
     sampleType: serializeSampleType(sample.sampleType),
     startDate: sample.startDate,
@@ -311,7 +313,9 @@ func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision) -> SourceRevi
 
 func serializeSampleType(_ sampleType: HKSampleType) -> SampleType {
   return SampleType(
-    identifier: sampleType.identifier,
+    identifier: sampleType is HKCategoryType
+      ? categoryTypeIdentifierName(fromHealthKitIdentifier: sampleType.identifier)
+      : sampleType.identifier,
     allowsRecalibrationForEstimates: sampleType.allowsRecalibrationForEstimates,
     isMinimumDurationRestricted: sampleType.isMinimumDurationRestricted,
     isMaximumDurationRestricted: sampleType.isMaximumDurationRestricted

@@ -1,4 +1,5 @@
 import {
+  CategoryValueEnvironmentalAudioExposureEvent,
   CategoryValueMenstrualFlow,
   deleteObjects,
   queryCategorySamples,
@@ -19,6 +20,7 @@ import {
 export type ContractScenarioId =
   | 'quantity-roundtrip'
   | 'category-roundtrip'
+  | 'environmental-audio-exposure-roundtrip'
   | 'workout-roundtrip'
 
 export interface ContractScenarioResult<
@@ -222,6 +224,79 @@ const categoryScenario: ContractScenario = {
   },
 }
 
+// Regression for kingstinct/react-native-healthkit#379: Apple's
+// HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent constant carries the legacy
+// raw string HKCategoryTypeIdentifierAudioExposureEvent at runtime, so this identifier
+// must be translated on the native side in both directions.
+const environmentalAudioExposureScenario: ContractScenario = {
+  id: 'environmental-audio-exposure-roundtrip',
+  title: 'Environmental Audio Exposure Event Round-trip',
+  run: async () => {
+    const identifier = 'HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent'
+    const start = new Date(Date.now() - 60_000)
+    const end = new Date()
+
+    try {
+      const saved = await saveCategorySample(
+        identifier,
+        CategoryValueEnvironmentalAudioExposureEvent.momentaryLimit,
+        start,
+        end,
+        {
+          HKWasUserEntered: true,
+        },
+      )
+
+      if (!saved) {
+        throw new Error('saveCategorySample returned undefined')
+      }
+
+      assertCategorySampleContract(identifier, saved)
+
+      const queried = await queryCategorySamples(identifier, {
+        limit: 1,
+        filter: {
+          uuids: [saved.uuid],
+        },
+      })
+
+      const roundTripped = queried[0]
+      if (!roundTripped) {
+        throw new Error('queryCategorySamples returned no matching sample')
+      }
+
+      assertCategorySampleContract(identifier, roundTripped)
+
+      if (roundTripped.categoryType !== identifier) {
+        throw new Error(
+          `Expected categoryType ${identifier}, got ${roundTripped.categoryType}`,
+        )
+      }
+
+      if (roundTripped.sampleType.identifier !== identifier) {
+        throw new Error(
+          `Expected sampleType.identifier ${identifier}, got ${roundTripped.sampleType.identifier}`,
+        )
+      }
+
+      await cleanupSample(identifier, saved.uuid)
+
+      return success(
+        environmentalAudioExposureScenario.id,
+        environmentalAudioExposureScenario.title,
+        roundTripped,
+        ['saveCategorySample', 'queryCategorySamples'],
+      )
+    } catch (error) {
+      return failure(
+        environmentalAudioExposureScenario.id,
+        environmentalAudioExposureScenario.title,
+        error,
+      )
+    }
+  },
+}
+
 const workoutScenario: ContractScenario = {
   id: 'workout-roundtrip',
   title: 'Workout Round-trip',
@@ -292,6 +367,7 @@ const workoutScenario: ContractScenario = {
 export const contractScenarios: readonly ContractScenario[] = [
   quantityScenario,
   categoryScenario,
+  environmentalAudioExposureScenario,
   workoutScenario,
 ]
 

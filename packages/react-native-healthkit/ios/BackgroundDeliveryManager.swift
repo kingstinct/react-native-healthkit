@@ -250,7 +250,7 @@ private let bgLog = OSLog(subsystem: "com.kingstinct.healthkit", category: "Back
       return HKSampleType.quantityType(forIdentifier: typeId)
     }
     if identifier.starts(with: "HKCategoryTypeIdentifier") {
-      let typeId = HKCategoryTypeIdentifier(rawValue: identifier)
+      let typeId = hkCategoryTypeIdentifier(fromIdentifierName: identifier)
       return HKSampleType.categoryType(forIdentifier: typeId)
     }
     if identifier == "HKWorkoutTypeIdentifier" {
