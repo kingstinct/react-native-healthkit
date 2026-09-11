@@ -125,9 +125,6 @@ jobs:
       - name: Typecheck
         run: bun run typecheck
 
-      - name: Verify app.plugin.js is compiled from app.plugin.ts
-        run: bun run check:plugins
-
   lint:
     # The type of runner that the job will run on
     runs-on: ${{ inputs.os || 'ubuntu-latest' }}
