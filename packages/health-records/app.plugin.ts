@@ -8,6 +8,8 @@ import {
 
 import pkg from './package.json'
 
+type BackgroundConfig = boolean
+
 type InfoPlistConfig = {
   /**
    * Shown when asking the user for access to clinical health records.
@@ -21,11 +23,20 @@ type InfoPlistConfig = {
   NSHealthShareUsageDescription?: string
 }
 
-type AppPluginConfig = InfoPlistConfig
+type AppPluginConfig = InfoPlistConfig & {
+  /**
+   * Adds the background-delivery entitlement. Enabled by default; set to
+   * `false` to opt out. Launch-time observer registration needs no AppDelegate
+   * change: the pod hooks UIApplicationDidFinishLaunchingNotification itself.
+   */
+  background?: BackgroundConfig
+}
 
 const HEALTH_RECORDS_ACCESS = 'health-records'
 
-const withEntitlementsPlugin: ConfigPlugin = (config) => {
+const withEntitlementsPlugin: ConfigPlugin<{
+  background?: BackgroundConfig
+}> = (config, props) => {
   return withEntitlementsPlist(config, (configPlist) => {
     configPlist.modResults['com.apple.developer.healthkit'] = true
 
@@ -36,6 +47,12 @@ const withEntitlementsPlugin: ConfigPlugin = (config) => {
       access.push(HEALTH_RECORDS_ACCESS)
     }
     configPlist.modResults['com.apple.developer.healthkit.access'] = access
+
+    if (props?.background !== false) {
+      configPlist.modResults[
+        'com.apple.developer.healthkit.background-delivery'
+      ] = true
+    }
 
     return configPlist
   })
@@ -71,7 +88,7 @@ const healthRecordsAppPlugin: ConfigPlugin<AppPluginConfig> = (
   props,
 ) => {
   return withPlugins(config, [
-    withEntitlementsPlugin,
+    [withEntitlementsPlugin, props],
     [withInfoPlistPlugin, props],
   ])
 }

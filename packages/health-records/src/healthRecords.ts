@@ -60,6 +60,14 @@ export const subscribeToClinicalRecordChanges = UnavailableFnFromModule(
   'subscribeToClinicalRecordChanges',
   { remove: () => false },
 )
+export const configureBackgroundTypes = UnavailableFnFromModule(
+  'configureBackgroundTypes',
+  Promise.resolve(false),
+)
+export const clearBackgroundTypes = UnavailableFnFromModule(
+  'clearBackgroundTypes',
+  Promise.resolve(false),
+)
 export const enableBackgroundDelivery = UnavailableFnFromModule(
   'enableBackgroundDelivery',
   Promise.resolve(false),
@@ -91,6 +99,8 @@ export { parseFHIRResourceData }
 
 const HealthRecordsModule = {
   authorizationStatusFor,
+  clearBackgroundTypes,
+  configureBackgroundTypes,
   disableBackgroundDelivery,
   enableBackgroundDelivery,
   getRequestStatusForAuthorization,

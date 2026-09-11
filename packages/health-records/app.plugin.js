@@ -15,12 +15,17 @@ const pkg = require('./package.json')
  * }}
  */
 
+/**
+ * @typedef AppPluginConfig
+ * @type {InfoPlistConfig & { background?: boolean }}
+ */
+
 const HEALTH_RECORDS_ACCESS = 'health-records'
 
 /**
- * @type {import('@expo/config-plugins').ConfigPlugin}
+ * @type {import('@expo/config-plugins').ConfigPlugin<{ background?: boolean }>}
  */
-const withEntitlementsPlugin = (config) => {
+const withEntitlementsPlugin = (config, props) => {
   return withEntitlementsPlist(config, (configPlist) => {
     configPlist.modResults['com.apple.developer.healthkit'] = true
 
@@ -31,6 +36,12 @@ const withEntitlementsPlugin = (config) => {
       access.push(HEALTH_RECORDS_ACCESS)
     }
     configPlist.modResults['com.apple.developer.healthkit.access'] = access
+
+    if (props?.background !== false) {
+      configPlist.modResults[
+        'com.apple.developer.healthkit.background-delivery'
+      ] = true
+    }
 
     return configPlist
   })
@@ -65,11 +76,11 @@ const withInfoPlistPlugin = (config, props) => {
 }
 
 /**
- * @type {import('@expo/config-plugins').ConfigPlugin<InfoPlistConfig>}
+ * @type {import('@expo/config-plugins').ConfigPlugin<AppPluginConfig>}
  */
 const healthRecordsAppPlugin = (config, props) => {
   return withPlugins(config, [
-    withEntitlementsPlugin,
+    [withEntitlementsPlugin, props],
     [withInfoPlistPlugin, props],
   ])
 }

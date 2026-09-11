@@ -21,6 +21,10 @@ const queryClinicalRecords =
   HealthRecords.queryClinicalRecords.bind(HealthRecords)
 const queryClinicalRecordsWithAnchor =
   HealthRecords.queryClinicalRecordsWithAnchor.bind(HealthRecords)
+const configureBackgroundTypes =
+  HealthRecords.configureBackgroundTypes.bind(HealthRecords)
+const clearBackgroundTypes =
+  HealthRecords.clearBackgroundTypes.bind(HealthRecords)
 const enableBackgroundDelivery =
   HealthRecords.enableBackgroundDelivery.bind(HealthRecords)
 const disableBackgroundDelivery =
@@ -28,6 +32,8 @@ const disableBackgroundDelivery =
 
 export {
   authorizationStatusFor,
+  clearBackgroundTypes,
+  configureBackgroundTypes,
   disableBackgroundDelivery,
   enableBackgroundDelivery,
   getRequestStatusForAuthorization,
@@ -45,6 +51,8 @@ export {
 
 export default {
   authorizationStatusFor,
+  clearBackgroundTypes,
+  configureBackgroundTypes,
   disableBackgroundDelivery,
   enableBackgroundDelivery,
   getRequestStatusForAuthorization,

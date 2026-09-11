@@ -4,6 +4,8 @@ import {
   authorizationStatusFor,
   type ClinicalRecord,
   type ClinicalTypeIdentifier,
+  clearBackgroundTypes,
+  configureBackgroundTypes,
   getRequestStatusForAuthorization,
   isHealthDataAvailable,
   parseFHIRResourceData,
@@ -12,6 +14,7 @@ import {
   requestAuthorization,
   subscribeToClinicalRecordChanges,
   supportsHealthRecords,
+  UpdateFrequency,
 } from '@react-native-healthkit/health-records'
 import {
   type ContractScenario,
@@ -231,6 +234,27 @@ export const healthRecordsScenario: ContractScenario<HealthRecordsScenarioId> =
           throw new Error('unsubscribing twice should return false')
         }
         payload.subscription = 'ok'
+
+        // Background configuration: subscriptions for a configured type are
+        // routed through the launch-time observer manager.
+        const configured = await configureBackgroundTypes(
+          [anchorType],
+          UpdateFrequency.immediate,
+        )
+        if (configured !== true) {
+          throw new Error('configureBackgroundTypes returned false')
+        }
+        const routed = subscribeToClinicalRecordChanges(anchorType, () => {})
+        if (routed.remove() !== true) {
+          throw new Error(
+            'removing a background-routed subscription returned false',
+          )
+        }
+        const cleared = await clearBackgroundTypes()
+        if (cleared !== true) {
+          throw new Error('clearBackgroundTypes returned false')
+        }
+        payload.background = 'ok'
 
         return success(id, title, payload, details)
       } catch (error) {

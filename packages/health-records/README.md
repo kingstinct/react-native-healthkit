@@ -14,7 +14,7 @@ bun add @react-native-healthkit/health-records react-native-nitro-modules
 
 ### Expo
 
-Add the config plugin. It adds the `com.apple.developer.healthkit` entitlement, appends `health-records` to `com.apple.developer.healthkit.access`, and sets `NSHealthClinicalHealthRecordsShareUsageDescription` in Info.plist.
+Add the config plugin. It adds the `com.apple.developer.healthkit` and background-delivery entitlements, appends `health-records` to `com.apple.developer.healthkit.access`, and sets `NSHealthClinicalHealthRecordsShareUsageDescription` in Info.plist.
 
 ```json
 {
@@ -114,15 +114,31 @@ const { records, error, refetch } = useClinicalRecords(
 | `queryClinicalRecords(type, options)` | Fetch records with filters, limit and sort order. |
 | `queryClinicalRecordsWithAnchor(type, options)` | Anchored query returning records, deletions and a new anchor. |
 | `subscribeToClinicalRecordChanges(type, callback)` | Observer query; returns `{ remove }`. |
-| `enableBackgroundDelivery(type, frequency)` / `disableBackgroundDelivery(type)` | Background delivery for a clinical type. |
+| `configureBackgroundTypes(types, frequency)` / `clearBackgroundTypes()` | Persist types whose observers are registered at launch for background delivery. |
+| `enableBackgroundDelivery(type, frequency)` / `disableBackgroundDelivery(type)` | Low-level HealthKit calls; prefer `configureBackgroundTypes`. |
 | `parseFHIRResourceData(recordOrResource)` | Parse the FHIR JSON string. |
 | `useHealthRecordsAuthorization`, `useClinicalRecords`, `useSubscribeToClinicalRecordChanges` | React hooks. |
 
 Filters support `uuid`, `uuids`, `date`, `metadata` and `fhirResourceType`, combinable with `AND`, `OR` and `NOT`.
 
-## Testing in the Simulator
+## Background delivery
 
-The iOS Simulator's Health app can add sample clinical records: open Health, go to **Browse → Clinical Records** (or **Summary → Health Records**) and add the sample provider data.
+To be woken when clinical records change while the app is terminated, HealthKit needs an observer query registered at launch. Configure the types once from JS and the package re-registers them natively on every cold start. No AppDelegate change is needed: the pod hooks `UIApplicationDidFinishLaunchingNotification` itself. Pass `background: false` to the config plugin to skip the entitlement:
+
+```ts
+await configureBackgroundTypes(
+  ['HKClinicalTypeIdentifierLabResultRecord'],
+  UpdateFrequency.immediate,
+)
+// later
+subscribeToClinicalRecordChanges('HKClinicalTypeIdentifierLabResultRecord', refetch)
+```
+
+Bare React Native: enable the HealthKit **Background Delivery** entitlement; the launch hook is part of the pod.
+
+## Testing
+
+The iOS Simulator reports `supportsHealthRecords()` as `false` and has no clinical sample data, so it can only exercise authorization and empty queries. To see real records you need a physical device in a region where Health Records is available, signed in to a supported healthcare provider in the Health app.
 
 ## License
 

@@ -328,15 +328,24 @@ func createAndPredicateForClinicalRecords(_ AND: [FilterForClinicalRecordsBase]?
     : allFilters.first
 }
 
+/// `NOT: [A, B]` excludes records matching A and records matching B, i.e.
+/// `NOT A AND NOT B`. Each entry is negated on its own and the negations are
+/// combined with AND.
 func createNotPredicateForClinicalRecords(NOT: [FilterForClinicalRecordsBase]?) -> NSPredicate? {
   guard let filter = NOT else {
     return nil
   }
 
-  if let allFilters = createAndPredicateForClinicalRecords(filter) {
-    return NSCompoundPredicate.init(notPredicateWithSubpredicate: allFilters)
+  let notPredicates = filter.compactMap { entry -> NSPredicate? in
+    if let predicate = createPredicateForClinicalRecordsBase(entry) {
+      return NSCompoundPredicate.init(notPredicateWithSubpredicate: predicate)
+    }
+    return nil
   }
-  return nil
+
+  return notPredicates.count > 1
+    ? NSCompoundPredicate.init(andPredicateWithSubpredicates: notPredicates)
+    : notPredicates.first
 }
 
 func createOrPredicateForClinicalRecords(OR: [FilterForClinicalRecordsBase]?) -> NSPredicate? {

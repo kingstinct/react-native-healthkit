@@ -81,6 +81,29 @@ export interface HealthRecordsModule extends HybridObject<{ ios: 'swift' }> {
   unsubscribeQuery(queryId: string): boolean
 
   /**
+   * Configure clinical record types whose observer queries are registered
+   * natively at launch (AppDelegate.didFinishLaunchingWithOptions), so
+   * background delivery survives app termination. Types and frequency are
+   * persisted to UserDefaults.
+   *
+   * Requires the background-delivery entitlement (added by the config plugin
+   * unless `background: false`). No AppDelegate change is needed; the pod
+   * registers the observers on UIApplicationDidFinishLaunchingNotification.
+   */
+  configureBackgroundTypes(
+    typeIdentifiers: readonly ClinicalTypeIdentifier[],
+    updateFrequency: UpdateFrequency,
+  ): Promise<boolean>
+
+  /**
+   * Clear the persisted background configuration and stop its observer queries.
+   */
+  clearBackgroundTypes(): Promise<boolean>
+
+  /**
+   * Low-level HealthKit call. Prefer `configureBackgroundTypes`, which also
+   * registers the observer query at launch; without that, HealthKit has nothing
+   * to deliver to after the app is terminated.
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/1614175-enablebackgrounddelivery Apple Docs }
    */
   enableBackgroundDelivery(

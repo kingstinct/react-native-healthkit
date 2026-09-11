@@ -84,6 +84,7 @@ jobs:
             swift_native:
               - 'packages/react-native-healthkit/ios/**'
               - 'packages/react-native-healthkit/cpp/**'
+              - 'packages/health-records/ios/**'
               - 'apps/example/ios/**'
               - '.github/workflows/test.yml'
 
