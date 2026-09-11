@@ -1,7 +1,6 @@
 import {
   type ConfigPlugin,
   createRunOncePlugin,
-  withAppDelegate,
   withEntitlementsPlist,
   withInfoPlist,
   withPlugins,
@@ -17,6 +16,12 @@ type InfoPlistConfig = {
 }
 
 type AppPluginConfig = InfoPlistConfig & {
+  /**
+   * Adds the background-delivery entitlement. Enabled by default; set to
+   * `false` to opt out. Launch-time observer registration needs no AppDelegate
+   * change: the pod hooks UIApplicationDidFinishLaunchingNotification itself
+   * (see ios/BackgroundLaunchHook.mm).
+   */
   background?: BackgroundConfig
 }
 
@@ -64,65 +69,10 @@ const withInfoPlistPlugin: ConfigPlugin<InfoPlistConfig> = (config, props) => {
   })
 }
 
-const withAppDelegatePlugin: ConfigPlugin<{
-  background?: BackgroundConfig
-}> = (config, props) => {
-  if (props?.background === false) {
-    return config
-  }
-
-  return withAppDelegate(config, (configDelegate) => {
-    const contents = configDelegate.modResults.contents
-
-    // Add import for HealthKit if not already present
-    if (!contents.includes('import HealthKit')) {
-      configDelegate.modResults.contents =
-        configDelegate.modResults.contents.replace(
-          /^(import .+\n)/m,
-          '$1import HealthKit\n',
-        )
-    }
-
-    // Insert BackgroundDeliveryManager setup into didFinishLaunchingWithOptions
-    const setupCall =
-      '    BackgroundDeliveryManager.shared.setupBackgroundObservers()\n'
-
-    if (
-      !configDelegate.modResults.contents.includes('BackgroundDeliveryManager')
-    ) {
-      // Match the opening of didFinishLaunchingWithOptions and insert after the
-      // opening brace. `[^{]*` rather than `.+` for two reasons: `.` does not
-      // match newlines, and Expo SDK 54+ templates spread this signature over
-      // several lines; and refusing to cross a `{` keeps the match from
-      // spanning out of an earlier `application(...)` overload into this one.
-      const withSetup = configDelegate.modResults.contents.replace(
-        /(func application\([^{]*didFinishLaunchingWithOptions[^{]*\{)\n/,
-        `$1\n${setupCall}`,
-      )
-
-      if (withSetup === configDelegate.modResults.contents) {
-        // Don't fail the build, but don't fail silently either — background
-        // delivery just won't survive app termination, which is otherwise
-        // very hard to trace back to here.
-        console.warn(
-          '[react-native-healthkit] Could not find didFinishLaunchingWithOptions in AppDelegate; ' +
-            'BackgroundDeliveryManager.shared.setupBackgroundObservers() was not inserted. ' +
-            'HealthKit background delivery will not work until it is added manually.',
-        )
-      }
-
-      configDelegate.modResults.contents = withSetup
-    }
-
-    return configDelegate
-  })
-}
-
 const healthkitAppPlugin: ConfigPlugin<AppPluginConfig> = (config, props) => {
   return withPlugins(config, [
     [withEntitlementsPlugin, props],
     [withInfoPlistPlugin, props],
-    [withAppDelegatePlugin, props],
   ])
 }
 

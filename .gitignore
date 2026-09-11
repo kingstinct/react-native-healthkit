@@ -80,6 +80,8 @@ lib/
 
 packages/react-native-healthkit/nitrogen/generated
 packages/health-records/nitrogen/generated
+# compiled from app.plugin.ts by scripts/build-app-plugin.ts (build, codegen, postinstall, prepublishOnly)
+packages/*/app.plugin.js
 apps/example/android
 
 tsconfig.tsbuildinfo

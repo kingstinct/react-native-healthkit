@@ -9,6 +9,11 @@ We're now using [Nitro Modules](https://nitro.margelo.com/docs/nitro-modules) an
 bun codegen
 ```
 
+The Expo config plugins live in `packages/*/app.plugin.ts`. Expo only loads the sibling `app.plugin.js`, which is gitignored and compiled from the `.ts` file: `bun install` (root `postinstall`), each package's `build`/`codegen`, and `prepublishOnly` all generate it, so the published tarball always carries a fresh copy. If Expo complains that it cannot resolve the plugin, rebuild it:
+```sh
+cd packages/react-native-healthkit && bun run build:plugin
+```
+
 While developing, you can run the [example app](/apps/example/) to test your changes.
 
 To start the packager:

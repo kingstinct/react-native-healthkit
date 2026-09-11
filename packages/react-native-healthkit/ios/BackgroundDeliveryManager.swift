@@ -9,13 +9,15 @@ private let bgLog = OSLog(subsystem: "com.kingstinct.healthkit", category: "Back
 /// be set up in `application(_:didFinishLaunchingWithOptions:)` to receive background
 /// delivery callbacks after the app has been terminated.
 ///
-/// Usage from AppDelegate.swift:
-///   BackgroundDeliveryManager.shared.setupBackgroundObservers()
+/// `BackgroundLaunchHook.mm` calls `setupBackgroundObservers()` on
+/// UIApplicationDidFinishLaunchingNotification, so no AppDelegate change is needed.
+/// The `@objc(BackgroundDeliveryManager)` name is what that hook looks up at runtime.
 ///
 /// The types to observe are persisted in UserDefaults by `configureBackgroundTypes()`
 /// called from JS. On subsequent cold launches, the manager reads these and registers
 /// observers immediately, queuing any events until JS subscribes via `drainPendingEvents()`.
-@objc public class BackgroundDeliveryManager: NSObject {
+@objc(BackgroundDeliveryManager)
+public class BackgroundDeliveryManager: NSObject {
   @objc public static let shared = BackgroundDeliveryManager()
 
   private let healthStore = HKHealthStore()
@@ -37,17 +39,22 @@ private let bgLog = OSLog(subsystem: "com.kingstinct.healthkit", category: "Back
     super.init()
   }
 
-  /// Call this from AppDelegate.didFinishLaunchingWithOptions to register observer queries
-  /// for any previously configured background delivery types.
+  /// Registers observer queries for any previously configured background delivery
+  /// types. Called at launch by `BackgroundLaunchHook.mm`; safe to call again.
   @objc public func setupBackgroundObservers() {
     guard HKHealthStore.isHealthDataAvailable() else { return }
 
     guard let typeIdentifiers = UserDefaults.standard.stringArray(forKey: BackgroundDeliveryManager.typesKey) else {
+      os_log("launch: no background delivery types configured, nothing to register", log: bgLog, type: .debug)
       return
     }
 
     let frequencyRaw = UserDefaults.standard.integer(forKey: BackgroundDeliveryManager.frequencyKey)
     let frequency = HKUpdateFrequency(rawValue: frequencyRaw) ?? .immediate
+
+    os_log(
+      "launch: registering %d background observer(s): %{public}@", log: bgLog, type: .info,
+      typeIdentifiers.count, typeIdentifiers.joined(separator: ", "))
 
     registerObservers(typeIdentifiers: typeIdentifiers, frequency: frequency)
   }
