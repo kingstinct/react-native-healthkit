@@ -1686,10 +1686,7 @@ export function renderGeneratedTypescript(schema: HealthkitSchema): string {
       'CategoryTypedMetadataForIdentifierGenerated',
       'KnownSampleMetadata',
       'CategorySpecificMetadataByIdentifierMap',
-      namedType('Record', [
-        keywordType(ts.SyntaxKind.StringKeyword),
-        keywordType(ts.SyntaxKind.NeverKeyword),
-      ]),
+      keywordType(ts.SyntaxKind.UnknownKeyword),
     ),
     exportedInterface(
       'QuantitySpecificMetadataByIdentifierMap',
@@ -1721,10 +1718,7 @@ export function renderGeneratedTypescript(schema: HealthkitSchema): string {
               namedType('QuantitySpecificMetadataByIdentifierMap'),
               namedType('T'),
             ),
-            namedType('Record', [
-              keywordType(ts.SyntaxKind.StringKeyword),
-              keywordType(ts.SyntaxKind.NeverKeyword),
-            ]),
+            keywordType(ts.SyntaxKind.UnknownKeyword),
           ),
         ),
       ]),

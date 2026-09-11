@@ -1141,7 +1141,7 @@ export type CategoryTypedMetadataForIdentifierGenerated<
 > = KnownSampleMetadata &
   (T extends keyof CategorySpecificMetadataByIdentifierMap
     ? CategorySpecificMetadataByIdentifierMap[T]
-    : Record<string, never>)
+    : unknown)
 export interface QuantitySpecificMetadataByIdentifierMap {
   readonly HKQuantityTypeIdentifierBasalBodyTemperature: Pick<
     QuantityTypedMetadata,
@@ -1181,7 +1181,7 @@ export type QuantityTypedMetadataForIdentifierGenerated<
   > &
   (T extends keyof QuantitySpecificMetadataByIdentifierMap
     ? QuantitySpecificMetadataByIdentifierMap[T]
-    : Record<string, never>)
+    : unknown)
 export interface QuantityUnitByIdentifierMap {
   readonly HKQuantityTypeIdentifierActiveEnergyBurned: EnergyUnit
   readonly HKQuantityTypeIdentifierAppleExerciseTime: TimeUnit

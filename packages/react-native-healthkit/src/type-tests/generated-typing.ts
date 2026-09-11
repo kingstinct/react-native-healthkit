@@ -7,14 +7,18 @@ import type {
   CategoryValueSleepAnalysis,
   CorrelationSampleTyped,
   HeartRateMotionContext,
+  InsulinDeliveryReason,
+  MetadataForQuantityIdentifier,
   Quantity,
   QuantitySampleTyped,
   QuantityTypeIdentifier,
+  QuantityTypeIdentifierWriteable,
   QueryOptionsWithAnchorAndUnit,
   QueryOptionsWithSortOrderAndUnit,
   StateOfMindSampleTyped,
   StatisticsQueryOptions,
   SwimmingStrokeStyle,
+  UnitForIdentifier,
   WorkoutEventTyped,
   WorkoutSampleTyped,
 } from '../types'
@@ -25,6 +29,13 @@ type Equal<A, B> =
     : false
 
 type Assert<T extends true> = T
+
+// Mirrors saveQuantitySample(identifier, unit, value, start, end, metadata?).
+type AssertSaveQuantitySampleCall<
+  T extends QuantityTypeIdentifierWriteable,
+  _TUnit extends UnitForIdentifier<T>,
+  _TMetadata extends MetadataForQuantityIdentifier<T>,
+> = true
 
 type _sleepAnalysisValuesAreTyped = Assert<
   Equal<
@@ -87,6 +98,23 @@ type _bloodGlucoseUnitNarrows = Assert<
     BloodGlucoseUnit
   >
 >
+
+type _saveQuantitySampleBodyMassAcceptsAppSpecificMetadata =
+  AssertSaveQuantitySampleCall<
+    'HKQuantityTypeIdentifierBodyMass',
+    'kg',
+    { APP_CUSTOM_KEY: 'v1'; HKWasUserEntered: true }
+  >
+
+type _saveQuantitySampleInsulinAcceptsOfficialAndAppSpecificMetadata =
+  AssertSaveQuantitySampleCall<
+    'HKQuantityTypeIdentifierInsulinDelivery',
+    'IU',
+    {
+      HKInsulinDeliveryReason: InsulinDeliveryReason.basal
+      APP_CUSTOM_KEY: 'v1'
+    }
+  >
 
 type _quantityQueryOptionsUnitNarrows = Assert<
   Equal<
