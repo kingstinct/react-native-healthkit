@@ -1,5 +1,19 @@
 # @kingstinct/react-native-healthkit
 
+## 15.1.0
+### Minor Changes
+
+- 4a4238e: Add iOS 27 category types `HKCategoryTypeIdentifierMenopausalState` and `HKCategoryTypeIdentifierBleedingAfterMenopause`. Fix the schema generator to read `HKWorkoutActivityType` from its relocated header (`HKWorkoutActivityType.h`) on iOS 27 SDKs — where it moved out of `HKWorkout.h` — and add a verify guard so the enum can't silently drop again.
+- 42f9cc1: Remove `HKQuantityTypeIdentifierBloodKetones` from `QuantityTypeIdentifier`. Apple has never shipped a blood ketones quantity type: it is absent from `HKTypeIdentifiers.h` in every SDK and `HKQuantityType.quantityType(forIdentifier:)` returns nil for it at runtime, so any query or authorization request using it always failed. The identifier had been added from an issue citing a non-existent Apple docs page and was later pinned back in via a generator override. The override mechanism and the `'mmol/L'` member of `BloodGlucoseUnit` that only existed for it are removed as well.
+
+### Patch Changes
+
+- f8c9f37: Allow app-specific metadata keys on quantity and category types that have no identifier-specific official keys (#376).
+- 42f9cc1: Fix `HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent` failing with "unrecognized categoryType". Apple's `HKCategoryTypeIdentifier.environmentalAudioExposureEvent` constant still carries the pre-iOS 14 raw string `HKCategoryTypeIdentifierAudioExposureEvent`, so building the identifier from the modern name as a raw string made `categoryType(forIdentifier:)` return nil. The native side now maps the modern name to Apple's constant for queries, authorization, and background delivery, and maps samples read back from HealthKit to the modern identifier. Note that samples of this type now report `HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent` as their `categoryType` and `sampleType.identifier`, even when queried through the deprecated `HKCategoryTypeIdentifierAudioExposureEvent` alias.
+- 568cefd: fix(plugin): `app.plugin.js` is no longer checked in; it is compiled from `app.plugin.ts` on build and on publish, so the published Expo config plugin can no longer drift from its source. The hand-maintained `app.plugin.js` had fallen behind `app.plugin.ts` since 14.0: it never contained the AppDelegate step that was supposed to call `BackgroundDeliveryManager.shared.setupBackgroundObservers()` at launch, so background-delivery observers configured via `configureBackgroundTypes` were not re-registered after the app was terminated.
+  
+  That AppDelegate step also could not have compiled once emitted (the app target cannot import the pod's Swift module without pulling in Nitro's C++ headers), so it has been removed. The pod now registers the observers itself on `UIApplicationDidFinishLaunchingNotification`, the same approach `@react-native-healthkit/health-records` uses, and no AppDelegate change is needed in Expo or bare React Native apps.
+
 ## 15.0.0
 ### Major Changes
 

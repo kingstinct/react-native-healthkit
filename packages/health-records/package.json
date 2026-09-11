@@ -1,6 +1,6 @@
 {
   "name": "@react-native-healthkit/health-records",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "React Native bindings for HealthKit clinical health records (FHIR)",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
