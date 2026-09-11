@@ -1012,6 +1012,13 @@
       "legacy": false
     },
     {
+      "name": "HKCategoryTypeIdentifierBleedingAfterMenopause",
+      "ios": "27.0",
+      "valueEnum": "HKCategoryValueVaginalBleeding",
+      "writeable": true,
+      "legacy": false
+    },
+    {
       "name": "HKCategoryTypeIdentifierBleedingAfterPregnancy",
       "ios": "18.0",
       "valueEnum": "HKCategoryValueVaginalBleeding",
@@ -1267,6 +1274,13 @@
       "name": "HKCategoryTypeIdentifierMemoryLapse",
       "ios": "14.0",
       "valueEnum": "HKCategoryValueSeverity",
+      "writeable": true,
+      "legacy": false
+    },
+    {
+      "name": "HKCategoryTypeIdentifierMenopausalState",
+      "ios": "27.0",
+      "valueEnum": "HKCategoryValueMenopausalState",
       "writeable": true,
       "legacy": false
     },
@@ -1744,6 +1758,27 @@
           "name": "lowFitness",
           "swiftName": "HKCategoryValueLowCardioFitnessEventLowFitness",
           "rawValue": 1
+        }
+      ]
+    },
+    {
+      "name": "CategoryValueMenopausalState",
+      "ios": "27.0",
+      "members": [
+        {
+          "name": "menopause",
+          "swiftName": "HKCategoryValueMenopausalStateMenopause",
+          "rawValue": 1
+        },
+        {
+          "name": "perimenopause",
+          "swiftName": "HKCategoryValueMenopausalStatePerimenopause",
+          "rawValue": 2
+        },
+        {
+          "name": "none",
+          "swiftName": "HKCategoryValueMenopausalStateNone",
+          "rawValue": 3
         }
       ]
     },
@@ -2805,6 +2840,16 @@
           "name": "underwaterDiving",
           "swiftName": "HKWorkoutActivityTypeUnderwaterDiving",
           "rawValue": 84
+        },
+        {
+          "name": "rest",
+          "swiftName": "HKWorkoutActivityTypeRest",
+          "rawValue": 2998
+        },
+        {
+          "name": "group",
+          "swiftName": "HKWorkoutActivityTypeGroup",
+          "rawValue": 2999
         },
         {
           "name": "other",

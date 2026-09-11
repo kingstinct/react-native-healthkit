@@ -1077,12 +1077,15 @@ export function buildHealthkitSchemaFromSources(sources: {
   readonly metadataHeader: string
   readonly metadataEnumsHeader: string
   readonly workoutHeader: string
+  readonly workoutActivityTypeHeader: string
 }): HealthkitSchema {
   const enumsByName = new Map<string, EnumSchema>()
   for (const enumSchema of [
     ...parseNsEnums(sources.categoryValuesHeader),
     ...parseNsEnums(sources.metadataEnumsHeader),
-    ...parseNsEnums(sources.workoutHeader).filter(
+    ...parseNsEnums(
+      `${sources.workoutHeader}\n${sources.workoutActivityTypeHeader}`,
+    ).filter(
       (schema) =>
         schema.name === 'WorkoutActivityType' ||
         schema.name === 'WorkoutEventType',

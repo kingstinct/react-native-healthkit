@@ -183,6 +183,41 @@ jobs:
   #       run: |
   #         xcodebuild -downloadPlatform iOS
   #         # optional but useful:
+  # Split out of build-ios: the generator reads whichever iOS SDK xcode-select points at, so this
+  # needs the newest SDK, while the example app has to keep building on the stable Xcode below.
+  # No simulator and no build here, so it costs a few minutes rather than the full build's time.
+  verify-generated:
+    needs: changes
+    if: needs.changes.outputs.healthkit_contracts == 'true'
+    runs-on: xcode-27
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: ".bun-version"
+
+      - name: Install dependencies
+        run: bun install --ignore-scripts --frozen-lockfile
+
+      ## Resolved by glob rather than pinned: the preview image names the app after the beta it
+      ## ships (Xcode_27_beta_6.app today), so a literal path rots.
+      - name: Select Xcode 27
+        run: |
+          XCODE_APP="$(ls -d /Applications/Xcode_27*.app 2>/dev/null | sort -V | tail -n 1)"
+          if [ -z "$XCODE_APP" ]; then
+            echo "No Xcode 27 on this runner — the iOS 27 SDK is required." >&2
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE_APP"
+          xcodebuild -version
+
+      - name: Verify generated HealthKit schema and bindings
+        working-directory: packages/react-native-healthkit
+        run: bun run check:generated
+
   build-ios:
     needs: changes
     if: needs.changes.outputs.healthkit_contracts == 'true'
@@ -222,10 +257,6 @@ jobs:
           # Kick off the boot now and let data migration run while we build.
           # The contract runner waits on `simctl bootstatus` before using it.
           xcrun simctl boot "$SIMULATOR_ID" || true
-
-      - name: Verify generated HealthKit schema and bindings
-        working-directory: packages/react-native-healthkit
-        run: bun run check:generated
 
       - run: bun run codegen
         working-directory: packages/react-native-healthkit

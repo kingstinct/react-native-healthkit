@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process'
 import {
+  existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
@@ -47,6 +48,7 @@ export interface HealthkitSdkSources {
   readonly metadataHeader: string
   readonly metadataEnumsHeader: string
   readonly workoutHeader: string
+  readonly workoutActivityTypeHeader: string
 }
 
 export interface GeneratedArtifactPaths {
@@ -110,6 +112,20 @@ function readHealthkitHeader(relativePath: string, sdkPath: string): string {
   )
 }
 
+// Some enums (e.g. HKWorkoutActivityType, relocated into its own header in newer
+// SDKs) only exist in certain SDK versions; missing headers read as empty.
+function readOptionalHealthkitHeader(
+  relativePath: string,
+  sdkPath: string,
+): string {
+  const headerPath = join(
+    sdkPath,
+    'System/Library/Frameworks/HealthKit.framework',
+    relativePath,
+  )
+  return existsSync(headerPath) ? readFileSync(headerPath, 'utf8') : ''
+}
+
 function readHealthkitSymbolGraph(sdkPath: string): SymbolGraphDocument {
   const outputDir = mkdtempSync(join(tmpdir(), 'healthkit-symbolgraph-'))
 
@@ -161,6 +177,10 @@ export function loadHealthkitSdkSources(
       sdkPath,
     ),
     workoutHeader: readHealthkitHeader('Headers/HKWorkout.h', sdkPath),
+    workoutActivityTypeHeader: readOptionalHealthkitHeader(
+      'Headers/HKWorkoutActivityType.h',
+      sdkPath,
+    ),
   }
 }
 
