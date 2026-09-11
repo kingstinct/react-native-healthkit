@@ -12,9 +12,18 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
+# Publishing uses npm trusted publishing (OIDC): no NPM_TOKEN secret. Each
+# package on npmjs.com must list this repository and this workflow file
+# (autopublish.yml) as a trusted publisher. Provenance is attached automatically.
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
 jobs:
   release:
     name: Release
+    # Trusted publishing only works on GitHub-hosted runners.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -23,6 +32,17 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: ".bun-version"
+
+      # `changeset publish` shells out to `npm publish`; trusted publishing
+      # needs npm >= 11.5.1 (Node >= 22.14), newer than the runner default.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Verify npm supports trusted publishing
+        run: |
+          npm --version
+          node -e "const [maj, min, patch] = require('child_process').execSync('npm --version').toString().trim().split('.').map(Number); if (maj < 11 || (maj === 11 && (min < 5 || (min === 5 && patch < 1)))) { console.error('npm >= 11.5.1 required for trusted publishing'); process.exit(1) }"
 
       - run: HUSKY=0 bun install --ignore-scripts
         env:
@@ -38,4 +58,3 @@ jobs:
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

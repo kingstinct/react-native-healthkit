@@ -1,0 +1,17 @@
+{
+  "$schema": "https://nitro.margelo.com/nitro.schema.json",
+  "cxxNamespace": ["healthrecords"],
+  "ios": {
+    "iosModuleName": "ReactNativeHealthkitHealthRecords"
+  },
+  "android": {
+    "androidCxxLibName": "ReactNativeHealthkitHealthRecords",
+    "androidNamespace": ["healthrecords"]
+  },
+  "autolinking": {
+    "HealthRecordsModule": {
+      "swift": "HealthRecordsModule"
+    }
+  },
+  "ignorePaths": ["**/node_modules"]
+}

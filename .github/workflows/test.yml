@@ -65,6 +65,12 @@ jobs:
               - 'packages/react-native-healthkit/app.plugin.*'
               - 'packages/react-native-healthkit/package.json'
               - 'packages/react-native-healthkit/tsconfig*.json'
+              - 'packages/health-records/src/**'
+              - 'packages/health-records/ios/**'
+              - 'packages/health-records/nitrogen/**'
+              - 'packages/health-records/app.plugin.*'
+              - 'packages/health-records/package.json'
+              - 'packages/health-records/tsconfig*.json'
               - 'apps/example/contracts/**'
               - 'apps/example/scripts/run-healthkit-contracts.sh'
               - 'apps/example/app.json'
@@ -78,6 +84,7 @@ jobs:
             swift_native:
               - 'packages/react-native-healthkit/ios/**'
               - 'packages/react-native-healthkit/cpp/**'
+              - 'packages/health-records/ios/**'
               - 'apps/example/ios/**'
               - '.github/workflows/test.yml'
 
@@ -260,6 +267,9 @@ jobs:
 
       - run: bun run codegen
         working-directory: packages/react-native-healthkit
+
+      - run: bun run codegen
+        working-directory: packages/health-records
 
       - name: Expo Prebuild
         working-directory: apps/example

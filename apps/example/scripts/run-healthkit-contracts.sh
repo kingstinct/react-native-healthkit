@@ -107,6 +107,9 @@ dump_debug_artifacts() {
 
 cleanup() {
   if [ -n "$METRO_PID" ] && kill -0 "$METRO_PID" 2>/dev/null; then
+    # Metro runs in a subshell; kill its node child too, or it outlives the
+    # run and the next invocation silently reuses a stale CI-mode bundler.
+    pkill -P "$METRO_PID" 2>/dev/null || true
     kill "$METRO_PID" 2>/dev/null || true
   fi
   if [ -n "$SAMPLER_PID" ] && kill -0 "$SAMPLER_PID" 2>/dev/null; then

@@ -1,0 +1,103 @@
+{
+  "name": "@react-native-healthkit/health-records",
+  "version": "0.0.1",
+  "description": "React Native bindings for HealthKit clinical health records (FHIR)",
+  "main": "lib/commonjs/index.js",
+  "module": "lib/module/index.js",
+  "types": "lib/typescript/index.d.ts",
+  "react-native": "src/index.ts",
+  "source": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/typescript/index.d.ts",
+      "import": "./lib/module/index.js",
+      "require": "./lib/commonjs/index.js",
+      "react-native": "./src/index.ts"
+    },
+    "./types": {
+      "types": "./lib/typescript/types/index.d.ts",
+      "import": "./lib/module/types/index.js",
+      "require": "./lib/commonjs/types/index.js",
+      "react-native": "./src/types/index.ts"
+    },
+    "./modules": {
+      "types": "./lib/typescript/modules.d.ts",
+      "import": "./lib/module/modules.js",
+      "require": "./lib/commonjs/modules.js",
+      "react-native": "./src/modules.ts"
+    },
+    "./app.plugin.js": "./app.plugin.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "react-native.config.js",
+    "lib/commonjs",
+    "lib/module",
+    "lib/typescript",
+    "nitrogen/**/*",
+    "ios/**/*.h",
+    "ios/**/*.m",
+    "ios/**/*.mm",
+    "ios/**/*.cpp",
+    "ios/**/*.swift",
+    "ios/**/*.modulemap",
+    "app.plugin.ts",
+    "app.plugin.js",
+    "*.podspec",
+    "README.md"
+  ],
+  "scripts": {
+    "clean": "rm -rf lib",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:types": "tsc -p tsconfig.declarations.json",
+    "build": "bun run clean && bun run build:cjs && bun run build:esm && bun run build:types",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "bunx @biomejs/biome format --write",
+    "codegen": "bun run build && nitrogen --logLevel=\"debug\" && perl -i -pe 's/Bool\\(fromCxx: cachedCxxPart\\)/cachedCxxPart.use_count() > 0/g' nitrogen/generated/ios/swift/*Spec_cxx.swift",
+    "prepublishOnly": "bun run build && bun run codegen"
+  },
+  "keywords": [
+    "react-native",
+    "nitro",
+    "healthkit",
+    "health-records",
+    "clinical-records",
+    "fhir",
+    "ios",
+    "typescript"
+  ],
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/kingstinct"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kingstinct/react-native-healthkit.git",
+    "directory": "packages/health-records"
+  },
+  "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kingstinct/react-native-healthkit/issues"
+  },
+  "homepage": "https://github.com/kingstinct/react-native-healthkit/tree/master/packages/health-records#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.17",
+    "nitrogen": "^0.35.0",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-nitro-modules": "^0.35.0",
+    "typescript": "~5.9.3"
+  },
+  "peerDependencies": {
+    "react": ">=19",
+    "react-native": ">=0.79",
+    "react-native-nitro-modules": ">=0.35"
+  }
+}

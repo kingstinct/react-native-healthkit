@@ -1,0 +1,5 @@
+module ReactNativeHealthkitHealthRecords_Private {
+  header "HealthRecordsBridge.h"
+  header "HealthRecordsExceptionCatcher.h"
+  export *
+}

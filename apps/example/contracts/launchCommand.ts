@@ -1,7 +1,7 @@
 import { File, Paths } from 'expo-file-system'
 
 export interface LaunchCommand {
-  readonly route: 'contracts'
+  readonly route: 'contracts' | 'healthRecords'
   readonly autorun?: 'all'
   readonly scenario?: string
   /** Iteration count for benchmark scenarios. */

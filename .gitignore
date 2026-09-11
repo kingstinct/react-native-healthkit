@@ -79,6 +79,7 @@ android/keystores/debug.keystore
 lib/
 
 packages/react-native-healthkit/nitrogen/generated
+packages/health-records/nitrogen/generated
 apps/example/android
 
 tsconfig.tsbuildinfo
