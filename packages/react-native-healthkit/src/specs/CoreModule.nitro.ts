@@ -41,13 +41,15 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
   disableAllBackgroundDelivery(): Promise<boolean>
 
   /**
-   * Configure background delivery types that will be registered natively in
-   * AppDelegate.didFinishLaunchingWithOptions — surviving app termination.
+   * Configure background delivery types whose observer queries are registered
+   * natively at launch (during didFinishLaunchingWithOptions), so background
+   * delivery survives app termination.
    * Types and frequency are persisted to UserDefaults so they're available
    * before the JS bridge boots on subsequent cold launches.
    *
-   * Requires the Expo config plugin with `background: true` (default) or
-   * manual AppDelegate setup: `BackgroundDeliveryManager.shared.setupBackgroundObservers()`
+   * Requires the background-delivery entitlement (added by the config plugin
+   * unless `background: false`). No AppDelegate change is needed; the pod
+   * registers the observers on UIApplicationDidFinishLaunchingNotification.
    */
   configureBackgroundTypes(
     typeIdentifiers: string[],

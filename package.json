@@ -6,6 +6,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "bunx @biomejs/biome check",
     "lint-fix": "bunx @biomejs/biome check --fix",
+    "check:plugins": "bun scripts/build-app-plugin.ts packages/react-native-healthkit packages/health-records && git diff --exit-code -- \"packages/*/app.plugin.js\"",
     "create-changeset": "bunx changeset",
     "swiftlint": "swiftlint",
     "changeset-release": "cp README.md packages/react-native-healthkit && bunx changeset publish",
@@ -31,6 +32,7 @@
     "url": "git+https://github.com/kingstinct/react-native-healthkit.git"
   },
   "lint-staged": {
+    "packages/*/app.plugin.ts": "bun scripts/build-app-plugin.ts --stage",
     "*.swift": "swiftlint --fix",
     "*.ts": "bunx @biomejs/biome check --fix --no-errors-on-unmatched",
     "*.tsx": "bunx @biomejs/biome check --fix --no-errors-on-unmatched",

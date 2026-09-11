@@ -1,0 +1,23 @@
+{
+  // Compiles app.plugin.ts -> lib/plugin/app.plugin.js; scripts/build-app-plugin.ts
+  // then copies it to ./app.plugin.js (the file Expo actually loads).
+  // Emits to lib/ rather than in place because tsc also copies the imported
+  // package.json and refuses to overwrite its own input.
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "target": "es2020",
+    "lib": ["es2020", "dom"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "declaration": false,
+    "rootDir": "./",
+    "outDir": "./lib/plugin"
+  },
+  "include": ["app.plugin.ts"]
+}

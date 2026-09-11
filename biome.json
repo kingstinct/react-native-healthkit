@@ -44,7 +44,9 @@
         "packages/react-native-healthkit/tsconfig.declarations.json",
         "packages/health-records/tsconfig.cjs.json",
         "packages/health-records/tsconfig.esm.json",
-        "packages/health-records/tsconfig.declarations.json"
+        "packages/health-records/tsconfig.declarations.json",
+        "packages/react-native-healthkit/tsconfig.plugin.json",
+        "packages/health-records/tsconfig.plugin.json"
       ],
       "json": {
         "parser": {
@@ -65,6 +67,7 @@
       "!**/.swiftpm",
       "!**/docs",
       "!**/lib",
+      "!packages/*/app.plugin.js",
       "!**/.expo",
       "!apps/example/expo-env.d.ts",
       "!**/ios",
