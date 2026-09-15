@@ -6,6 +6,7 @@
 //
 
 import HealthKit
+import ReactNativeHealthkitCore
 
 func createSourcePredicate(_ sources: [HybridSourceProxySpec]?) -> NSPredicate? {
   if let sources = sources {
@@ -147,103 +148,32 @@ func createPredicateForWorkout(_ filter: FilterForWorkouts?) -> NSPredicate? {
   return nil
 }
 
-func createDatePredicate(_ dateFilter: DateFilter?) -> NSPredicate? {
-  if let dateFilter = dateFilter {
-    let strictStartDate = dateFilter.strictStartDate ?? false
-    let strictEndDate = dateFilter.strictEndDate ?? false
+// The generated filter structs adopt the core protocols so the shared
+// predicate builders in ReactNativeHealthkitCore can read them.
+extension DateFilter: DateFilterConvertible {}
 
-    let options: HKQueryOptions =
-      strictStartDate && strictEndDate
-      ? [.strictStartDate, .strictEndDate]
-      : strictEndDate
-        ? .strictEndDate
-        : strictStartDate
-          ? .strictStartDate
-          : []
-
-    return HKQuery.predicateForSamples(
-      withStart: dateFilter.startDate,
-      end: dateFilter.endDate,
-      options: options
-    )
-  }
-  return nil
-}
-
-func createUUIDsPredicate(uuids: [String]?) -> NSPredicate? {
-  if let uuids = uuids {
-    let uuids = uuids.compactMap { uuidStr -> UUID? in
-      do {
-        let uuid = try initializeUUID(uuidStr)
-        return uuid
-      } catch {
-        warnWithPrefix(error.localizedDescription)
-        return nil
-      }
+extension PredicateWithMetadataKey: MetadataPredicateConvertible {
+  public var operatorRawValue: Int? {
+    guard let operatorType = operatorType else {
+      return nil
     }
-    return HKQuery.predicateForObjects(with: Set(uuids))
+    return Int(operatorType.rawValue)
   }
-  return nil
-}
 
-func createUUIDPredicate(_ uuid: String?) -> NSPredicate? {
-  if let uuidStr = uuid {
-    do {
-      let uuid = try initializeUUID(uuidStr)
-      return HKQuery.predicateForObject(with: uuid)
-    } catch {
-      warnWithPrefix("createUUIDPredicate: \(error.localizedDescription)")
+  public var metadataValue: Any? {
+    switch value {
+    case .first(let boolValue):
+      return NSNumber(value: boolValue ? 1 : 0)
+    case .second(let stringValue):
+      return stringValue
+    case .third(let doubleValue):
+      return NSNumber(value: doubleValue)
+    case .fourth(let dateValue):
+      return dateValue
+    case nil:
       return nil
     }
   }
-  return nil
-}
-
-func getComparisonPredicateOperator(_ op: ComparisonPredicateOperator?) -> NSComparisonPredicate
-  .Operator? {
-  if let rawValue = op?.rawValue {
-    if let op = NSComparisonPredicate.Operator.init(rawValue: UInt(rawValue)) {
-      return op
-    } else {
-      warnWithPrefix(
-        "getComparisonPredicateOperator: Unsupported operator in metadata filter: \(rawValue)")
-    }
-  }
-  return nil
-}
-
-func createMetadataPredicate(_ metadata: PredicateWithMetadataKey?) -> NSPredicate? {
-  if let metadata = metadata {
-
-    guard let valueVariant = metadata.value else {
-      return HKQuery.predicateForObjects(withMetadataKey: metadata.withMetadataKey)
-    }
-
-    let actualValue: Any
-
-    switch valueVariant {
-    case .first(let boolValue):
-      actualValue = NSNumber(value: boolValue ? 1 : 0)
-    case .second(let stringValue):
-      actualValue = stringValue
-    case .third(let doubleValue):
-      actualValue = NSNumber(value: doubleValue)
-    case .fourth(let dateValue):
-      actualValue = dateValue
-    }
-
-    if let operatorType = metadata.operatorType != nil
-      ? getComparisonPredicateOperator(metadata.operatorType)
-      : .equalTo {
-      return HKQuery.predicateForObjects(
-        withMetadataKey: metadata.withMetadataKey,
-        operatorType: operatorType,
-        value: actualValue
-      )
-    }
-
-  }
-  return nil
 }
 
 func createPredicateForSamplesBase(_ filter: FilterForSamplesBase?) -> NSPredicate? {

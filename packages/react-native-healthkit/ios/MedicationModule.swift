@@ -7,6 +7,7 @@
 
 import HealthKit
 import NitroModules
+import ReactNativeHealthkitCore
 
 #if compiler(>=6.2)
   @available(iOS 26.0, *)
@@ -50,7 +51,7 @@ import NitroModules
     var lookup: [String: (name: String, nickname: String?)] = [:]
     do {
       let q = HKUserAnnotatedMedicationQueryDescriptor()
-      let medications = try await q.result(for: store)
+      let medications = try await q.result(for: healthStore)
       for med in medications {
         let medPredicate = HKQuery.predicateForMedicationDoseEvent(
           medicationConceptIdentifier: med.medication.identifier)
@@ -97,16 +98,16 @@ import NitroModules
       startDate: sample.startDate,
       endDate: sample.endDate,
       hasUndeterminedDuration: sample.hasUndeterminedDuration,
+      uuid: sample.uuid.uuidString,
+      sourceRevision: serializeSourceRevision(sample.sourceRevision),
+      device: serializeDevice(hkDevice: sample.device),
       metadata: {
         var meta = serializeMetadata(sample.metadata)
         if let nick = info?.nickname {
           meta.setString(key: "HKMedicationNickname", value: nick)
         }
         return meta
-      }(),
-      uuid: sample.uuid.uuidString,
-      sourceRevision: serializeSourceRevision(sample.sourceRevision),
-      device: serializeDevice(hkDevice: sample.device)
+      }()
     )
   }
 
@@ -152,7 +153,7 @@ import NitroModules
         if #available(iOS 26.0, *) {
           let q = HKUserAnnotatedMedicationQueryDescriptor()
 
-          let medications = try await q.result(for: store)
+          let medications = try await q.result(for: healthStore)
 
           return try medications.compactMap({ medication in
             return try serializeMedication(medication: medication)
@@ -193,7 +194,7 @@ import NitroModules
     func requestMedicationsAuthorization() -> Promise<Bool> {
       return Promise.async {
         if #available(iOS 26.0, *) {
-          try await store.requestPerObjectReadAuthorization(
+          try await healthStore.requestPerObjectReadAuthorization(
             for: .userAnnotatedMedicationType(), predicate: nil)
           return true
         } else {

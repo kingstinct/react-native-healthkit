@@ -1,9 +1,7 @@
+import type { Source } from '@react-native-healthkit/core'
 import type { HybridObject } from 'react-native-nitro-modules'
 
-export interface Source {
-  readonly name: string
-  readonly bundleIdentifier: string
-}
+export type { Source }
 
 /**
  * @see {@link https://developer.apple.com/documentation/healthkit/hkobject/1615781-source Apple Docs }

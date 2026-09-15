@@ -3,11 +3,11 @@ import {
   HeartRateMotionContext,
   InsulinDeliveryReason,
 } from '../generated/healthkit.generated'
-import type { Source } from '../specs/SourceProxy.nitro'
 import type { QuantitySample, QuantitySampleTyped } from './QuantitySample'
 import type { QuantityTypeIdentifier } from './QuantityTypeIdentifier'
 import type { FilterForSamples } from './QueryOptions'
 import type { DeletedSample } from './Shared'
+import type { Source } from './Source'
 
 export { HeartRateMotionContext, InsulinDeliveryReason }
 

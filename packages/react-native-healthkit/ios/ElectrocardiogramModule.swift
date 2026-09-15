@@ -1,5 +1,6 @@
 import HealthKit
 import NitroModules
+import ReactNativeHealthkitCore
 
 // MARK: - Helpers
 
@@ -38,10 +39,10 @@ private func serializeECGSample(sample: HKElectrocardiogram, includeVoltages: Bo
     startDate: sample.startDate,
     endDate: sample.endDate,
     hasUndeterminedDuration: sample.hasUndeterminedDuration,
-    metadata: serializeMetadata(sample.metadata),
     uuid: sample.uuid.uuidString,
     sourceRevision: serializeSourceRevision(sample.sourceRevision),
-    device: serializeDevice(hkDevice: sample.device)
+    device: serializeDevice(hkDevice: sample.device),
+    metadata: serializeMetadata(sample.metadata)
   )
 }
 
@@ -76,7 +77,7 @@ func getECGVoltages(sample: HKElectrocardiogram) async throws -> [Electrocardiog
         }
       }
     }
-    store.execute(q)
+    healthStore.execute(q)
   }
 }
 

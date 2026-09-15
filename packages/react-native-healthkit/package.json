@@ -58,7 +58,8 @@
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:types": "tsc -p tsconfig.declarations.json",
-    "build": "bun run clean && bun run build:cjs && bun run build:esm && bun run build:types && bun run build:plugin",
+    "build:core": "cd ../core && bun run build",
+    "build": "bun run clean && bun run build:core && bun run build:cjs && bun run build:esm && bun run build:types && bun run build:plugin",
     "build:plugin": "bun ../../scripts/build-app-plugin.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.type-tests.json",
     "lint": "bunx @biomejs/biome format --write",
@@ -94,6 +95,7 @@
     "access": "public"
   },
   "devDependencies": {
+    "@react-native-healthkit/core": "workspace:*",
     "@testing-library/react-native": "^13.3.3",
     "@types/react": "~19.1.17",
     "nitrogen": "^0.35.0",
@@ -103,6 +105,7 @@
     "typescript": "~5.9.3"
   },
   "peerDependencies": {
+    "@react-native-healthkit/core": ">=0.0.1",
     "react": ">=19",
     "react-native": ">=0.79",
     "react-native-nitro-modules": ">=0.35"

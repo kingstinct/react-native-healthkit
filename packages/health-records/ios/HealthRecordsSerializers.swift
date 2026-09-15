@@ -9,48 +9,10 @@
 import Foundation
 import HealthKit
 import NitroModules
-
-let metadataDateFormatter: ISO8601DateFormatter = {
-  let formatter = ISO8601DateFormatter()
-  formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-  return formatter
-}()
+import ReactNativeHealthkitCore
 
 func serializeMetadata(_ metadata: [String: Any]?) -> AnyMap {
-  let serialized = AnyMap()
-  guard let metadata = metadata else {
-    return serialized
-  }
-
-  for (key, value) in metadata {
-    if let number = value as? NSNumber {
-      if CFGetTypeID(number) == CFBooleanGetTypeID() {
-        serialized.setBoolean(key: key, value: number.boolValue)
-      } else {
-        serialized.setDouble(key: key, value: number.doubleValue)
-      }
-      continue
-    }
-
-    if let string = value as? String {
-      serialized.setString(key: key, value: string)
-      continue
-    }
-
-    if let date = value as? Date {
-      serialized.setString(key: key, value: metadataDateFormatter.string(from: date))
-      continue
-    }
-
-    if let quantity = value as? HKQuantity {
-      serialized.setString(key: key, value: quantity.description)
-      continue
-    }
-
-    warnWithPrefix("serializeMetadata: dropping metadata key \(key) with unsupported value type")
-  }
-
-  return serialized
+  return ReactNativeHealthkitCore.serializeMetadata(metadata, options: .default)
 }
 
 func serializeDeletedSample(sample: HKDeletedObject) -> DeletedSample {
@@ -65,10 +27,6 @@ func serializeSourceStruct(_ source: HKSource) -> Source {
     name: source.name,
     bundleIdentifier: source.bundleIdentifier
   )
-}
-
-func serializeOperatingSystemVersion(_ version: OperatingSystemVersion) -> String {
-  return "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
 }
 
 func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision) -> SourceRevision {

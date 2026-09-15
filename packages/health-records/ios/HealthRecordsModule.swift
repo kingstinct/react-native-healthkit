@@ -9,10 +9,11 @@
 import Foundation
 import HealthKit
 import NitroModules
+import ReactNativeHealthkitCore
 
 class HealthRecordsModule: HybridHealthRecordsModuleSpec {
   var _runningQueries: [String: HKQuery] = [:]
-  // JS subscriptions routed through HealthRecordsBackgroundDeliveryManager's
+  // JS subscriptions routed through the shared BackgroundDeliveryManager's
   // launch-time observer instead of a second HKObserverQuery.
   var _backgroundRoutedQueries: [String: String] = [:]
 
@@ -21,13 +22,13 @@ class HealthRecordsModule: HybridHealthRecordsModuleSpec {
   }
 
   func supportsHealthRecords() -> Bool {
-    return store.supportsHealthRecords()
+    return healthStore.supportsHealthRecords()
   }
 
   func authorizationStatusFor(type: ClinicalTypeIdentifier) throws -> AuthorizationStatus {
     let clinicalType = try clinicalTypeFrom(type)
 
-    let authStatus = store.authorizationStatus(for: clinicalType)
+    let authStatus = healthStore.authorizationStatus(for: clinicalType)
 
     if let authStatus = AuthorizationStatus(rawValue: Int32(authStatus.rawValue)) {
       return authStatus
@@ -51,24 +52,24 @@ class HealthRecordsModule: HybridHealthRecordsModuleSpec {
       return try await withCheckedThrowingContinuation { continuation in
         // HealthKit can raise an Objective-C exception synchronously here;
         // convert it into a rejection instead of letting it take the app down.
-        var caughtError: NSError?
-        let started = HRRunBlockCatchingObjCExceptions({
-          store.getRequestStatusForAuthorization(toShare: [], read: types) { status, error in
-            DispatchQueue.main.async {
-              if let error = error {
-                return continuation.resume(throwing: error)
+        do {
+          try runCatchingObjCExceptions {
+            healthStore.getRequestStatusForAuthorization(toShare: [], read: types) { status, error in
+              DispatchQueue.main.async {
+                if let error = error {
+                  return continuation.resume(throwing: error)
+                }
+                if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
+                  return continuation.resume(returning: authStatus)
+                }
+                continuation.resume(
+                  throwing: runtimeErrorWithPrefix(
+                    "Unrecognized authStatus returned: \(status.rawValue)"))
               }
-              if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
-                return continuation.resume(returning: authStatus)
-              }
-              continuation.resume(
-                throwing: runtimeErrorWithPrefix(
-                  "Unrecognized authStatus returned: \(status.rawValue)"))
             }
           }
-        }, &caughtError)
-        if !started, let caughtError {
-          continuation.resume(throwing: caughtError)
+        } catch {
+          continuation.resume(throwing: error)
         }
       }
     }
@@ -83,19 +84,19 @@ class HealthRecordsModule: HybridHealthRecordsModuleSpec {
       }
 
       return try await withCheckedThrowingContinuation { continuation in
-        var caughtError: NSError?
-        let started = HRRunBlockCatchingObjCExceptions({
-          store.requestAuthorization(toShare: nil, read: types) { success, error in
-            DispatchQueue.main.async {
-              if let error = error {
-                return continuation.resume(throwing: error)
+        do {
+          try runCatchingObjCExceptions {
+            healthStore.requestAuthorization(toShare: nil, read: types) { success, error in
+              DispatchQueue.main.async {
+                if let error = error {
+                  return continuation.resume(throwing: error)
+                }
+                continuation.resume(returning: success)
               }
-              continuation.resume(returning: success)
             }
           }
-        }, &caughtError)
-        if !started, let caughtError {
-          continuation.resume(throwing: caughtError)
+        } catch {
+          continuation.resume(throwing: error)
         }
       }
     }
@@ -159,12 +160,12 @@ class HealthRecordsModule: HybridHealthRecordsModuleSpec {
   ) throws -> String {
     let typeIdString = clinicalType.stringValue
 
-    if HealthRecordsBackgroundDeliveryManager.shared.isBackgroundConfigured(
+    if BackgroundDeliveryManager.shared.isBackgroundConfigured(
       typeIdentifier: typeIdString) {
       // The manager already runs a launch-time HKObserverQuery for this type;
       // route through it rather than registering a second observer.
       let queryId = UUID().uuidString
-      HealthRecordsBackgroundDeliveryManager.shared.setCallback(typeIdentifier: typeIdString) {
+      BackgroundDeliveryManager.shared.setCallback(typeIdentifier: typeIdString) {
         (_, errorMessage) in
         DispatchQueue.main.async {
           callback(OnChangeCallbackArgs(typeIdentifier: clinicalType, errorMessage: errorMessage))
@@ -188,7 +189,7 @@ class HealthRecordsModule: HybridHealthRecordsModuleSpec {
       }
     }
 
-    store.execute(query)
+    healthStore.execute(query)
 
     self._runningQueries.updateValue(query, forKey: queryId)
 
@@ -197,7 +198,7 @@ class HealthRecordsModule: HybridHealthRecordsModuleSpec {
 
   func unsubscribeQuery(queryId: String) -> Bool {
     if let typeIdString = self._backgroundRoutedQueries[queryId] {
-      HealthRecordsBackgroundDeliveryManager.shared.removeCallback(typeIdentifier: typeIdString)
+      BackgroundDeliveryManager.shared.removeCallback(typeIdentifier: typeIdString)
       self._backgroundRoutedQueries.removeValue(forKey: queryId)
       return true
     }
@@ -207,7 +208,7 @@ class HealthRecordsModule: HybridHealthRecordsModuleSpec {
       return false
     }
 
-    store.stop(query)
+    healthStore.stop(query)
 
     self._runningQueries.removeValue(forKey: queryId)
 
@@ -222,7 +223,8 @@ class HealthRecordsModule: HybridHealthRecordsModuleSpec {
         throw runtimeErrorWithPrefix("Invalid update frequency rawValue: \(updateFrequency)")
       }
 
-      HealthRecordsBackgroundDeliveryManager.shared.configure(
+      BackgroundDeliveryManager.shared.configure(
+        scope: backgroundDeliveryScope,
         typeIdentifiers: typeIdentifiers.map { $0.stringValue },
         frequency: frequency
       )
@@ -232,7 +234,7 @@ class HealthRecordsModule: HybridHealthRecordsModuleSpec {
 
   func clearBackgroundTypes() -> Promise<Bool> {
     return Promise.async {
-      HealthRecordsBackgroundDeliveryManager.shared.clearConfiguration()
+      BackgroundDeliveryManager.shared.clearConfiguration(scope: backgroundDeliveryScope)
       return true
     }
   }
@@ -247,7 +249,7 @@ class HealthRecordsModule: HybridHealthRecordsModuleSpec {
       let type = try clinicalTypeFrom(clinicalType)
 
       return try await withCheckedThrowingContinuation { continuation in
-        store.enableBackgroundDelivery(for: type, frequency: frequency) { success, error in
+        healthStore.enableBackgroundDelivery(for: type, frequency: frequency) { success, error in
           DispatchQueue.main.async {
             if let error = error {
               return continuation.resume(throwing: error)
@@ -264,7 +266,7 @@ class HealthRecordsModule: HybridHealthRecordsModuleSpec {
       let type = try clinicalTypeFrom(clinicalType)
 
       return try await withCheckedThrowingContinuation { continuation in
-        store.disableBackgroundDelivery(for: type) { success, error in
+        healthStore.disableBackgroundDelivery(for: type) { success, error in
           DispatchQueue.main.async {
             if let error = error {
               return continuation.resume(throwing: error)

@@ -8,6 +8,7 @@
 import CoreLocation
 import HealthKit
 import NitroModules
+import ReactNativeHealthkitCore
 
 @available(iOS 17.0.0, *)
 func getWorkoutPlanInternal(workout: HKWorkout) async throws -> WorkoutPlan? {
@@ -84,7 +85,7 @@ func getRouteLocations(
       }
     }
 
-    store.execute(query)
+    healthStore.execute(query)
   }
 }
 
@@ -166,7 +167,7 @@ func saveWorkoutRouteInternal(
         // create CLLocations and return if locations are empty
         let clLocations = mapLocations(from: locations)
         let routeBuilder = HKWorkoutRouteBuilder(
-          healthStore: store,
+          healthStore: healthStore,
           device: nil
         )
         try await routeBuilder.insertRouteData(clLocations)

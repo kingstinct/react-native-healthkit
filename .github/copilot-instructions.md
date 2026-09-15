@@ -3,7 +3,7 @@
 This file contains instructions for Copilot to follow when working with code in this repository.
 
 ## Project Overview
-This repository is a monorepo centering around the package react-native-healthkit (`packages/react-native-healthkit`, published as `@kingstinct/react-native-healthkit`), with a sibling package `packages/health-records` (published as `@react-native-healthkit/health-records`) for clinical health records. They expose Apple Healthkit APIs to React Native and use react-native-nitro-modules with nitrogen to generate type-safe types. We use React Native and Expo.
+This repository is a monorepo centering around the package react-native-healthkit (`packages/react-native-healthkit`, published as `@kingstinct/react-native-healthkit`), with a sibling package `packages/health-records` (published as `@react-native-healthkit/health-records`) for clinical health records. Both depend on `packages/core` (published as `@react-native-healthkit/core`), which holds their shared TypeScript types, Expo config plugin building blocks and the `ReactNativeHealthkitCore` pod (shared `HKHealthStore`, queries, predicates, metadata serialization, background delivery). Core has no Nitro specs of its own; the other packages import its types into theirs, so nitrogen generates per-package copies of them. Core must be built (`bun run build:core`) before the other packages build, codegen or typecheck on their own; `bun install` does this in `postinstall`. They expose Apple Healthkit APIs to React Native and use react-native-nitro-modules with nitrogen to generate type-safe types. We use React Native and Expo.
 
 ## Development Commands
 ```bash
@@ -13,7 +13,7 @@ bun install
 # install cocoapods (after adding any packages with native code)
 cd apps/example/ios && pod install
 
-# After changes to any Nitro types (in `/packages/react-native-healthkit/src/specs` or `/packages/health-records/src/specs` and types referenced from there; not necessary when ios/Swift files or unrelated TS-files have changed)
+# After changes to any Nitro types (in `/packages/react-native-healthkit/src/specs` or `/packages/health-records/src/specs` and types referenced from there, including `/packages/core/src/types`; not necessary when ios/Swift files or unrelated TS-files have changed)
 bun codegen # or bun codegen:healthkit / bun codegen:health-records for one package
 
 # start packager
