@@ -77,7 +77,7 @@ public func createUUIDPredicate(_ uuid: String?) -> NSPredicate? {
   }
 }
 
-public func comparisonPredicateOperator(fromRawValue rawValue: Int?) -> NSComparisonPredicate.Operator? {
+func comparisonPredicateOperator(fromRawValue rawValue: Int?) -> NSComparisonPredicate.Operator? {
   guard let rawValue = rawValue else {
     return nil
   }

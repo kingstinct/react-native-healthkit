@@ -42,6 +42,12 @@ Pod::Spec.new do |s|
     "SWIFT_OBJC_INTEROP_MODE" => "objcxx",
     # Enables stricter modular headers
     "DEFINES_MODULE" => "YES",
+    # With C++ interop on, the generated -Swift.h header (part of this module's
+    # clang module, so dependents compile it) would contain C++ thunks for every
+    # public Swift function, and older toolchains (Xcode 26.6) fail on some of
+    # them. Only expose declarations marked @_expose(Cxx), i.e. none; the
+    # launch hook looks the manager up by name and needs no header.
+    "OTHER_SWIFT_FLAGS" => "$(inherited) -Xfrontend -clang-header-expose-decls=has-expose-attr",
   }
 
   s.dependency 'NitroModules'
