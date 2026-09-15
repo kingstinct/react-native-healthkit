@@ -1,0 +1,4 @@
+module ReactNativeHealthkitCore_Private {
+  header "ExceptionCatcher.h"
+  export *
+}

@@ -1,6 +1,7 @@
 import CoreLocation
 import HealthKit
 import NitroModules
+import ReactNativeHealthkitCore
 
 #if canImport(WorkoutKit)
 import WorkoutKit
@@ -42,7 +43,7 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
 
     return Promise.async {
       try await withCheckedThrowingContinuation { continuation in
-        store.startWatchApp(with: configuration) { success, error in
+        healthStore.startWatchApp(with: configuration) { success, error in
           DispatchQueue.main.async {
             if let error {
               continuation.resume(
@@ -193,12 +194,12 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
       }
       try await withCheckedThrowingContinuation({ continuation in
         // saving workout, samples and route
-        store.save(workout) { (_: Bool, error: Error?) in
+        healthStore.save(workout) { (_: Bool, error: Error?) in
           DispatchQueue.main.async {
             if let error = error {
               return continuation.resume(throwing: error)
             } else if !initializedSamples.isEmpty {
-              store.add(initializedSamples, to: workout) { (_, error: Error?) in
+              healthStore.add(initializedSamples, to: workout) { (_, error: Error?) in
                 DispatchQueue.main.async {
                   if let error = error {
                     return continuation.resume(throwing: error)

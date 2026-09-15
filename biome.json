@@ -28,6 +28,7 @@
   "overrides": [
     {
       "includes": [
+        "packages/core/package.json",
         "packages/react-native-healthkit/package.json",
         "packages/health-records/package.json"
       ],
@@ -39,6 +40,9 @@
     },
     {
       "includes": [
+        "packages/core/tsconfig.cjs.json",
+        "packages/core/tsconfig.esm.json",
+        "packages/core/tsconfig.declarations.json",
         "packages/react-native-healthkit/tsconfig.cjs.json",
         "packages/react-native-healthkit/tsconfig.esm.json",
         "packages/react-native-healthkit/tsconfig.declarations.json",

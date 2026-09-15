@@ -1,5 +1,6 @@
 import HealthKit
 import NitroModules
+import ReactNativeHealthkitCore
 
 func emptyStatisticsResponse(from: Date?, to: Date?) -> QueryStatisticsResponse {
   return QueryStatisticsResponse(
@@ -47,7 +48,7 @@ func queryStatisticsForQuantityInternal(
       }
     }
 
-    store.execute(query)
+    healthStore.execute(query)
   }
 }
 
@@ -178,7 +179,7 @@ func queryStatisticsCollectionForQuantityInternal(
       }
     }
 
-    store.execute(query)
+    healthStore.execute(query)
   }
 }
 

@@ -7,6 +7,7 @@
 
 import HealthKit
 import NitroModules
+import ReactNativeHealthkitCore
 
 class SourceProxy: HybridSourceProxySpec {
   func toJSON(key: String?) throws -> Source {

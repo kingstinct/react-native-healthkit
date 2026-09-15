@@ -57,6 +57,10 @@ jobs:
               - '.bun-version'
               - 'bun.lock'
               - 'package.json'
+              - 'packages/core/src/**'
+              - 'packages/core/ios/**'
+              - 'packages/core/package.json'
+              - 'packages/core/tsconfig*.json'
               - 'packages/react-native-healthkit/src/**'
               - 'packages/react-native-healthkit/ios/**'
               - 'packages/react-native-healthkit/cpp/**'
@@ -82,6 +86,7 @@ jobs:
               - 'apps/example/package.json'
               - '.github/workflows/test.yml'
             swift_native:
+              - 'packages/core/ios/**'
               - 'packages/react-native-healthkit/ios/**'
               - 'packages/react-native-healthkit/cpp/**'
               - 'packages/health-records/ios/**'

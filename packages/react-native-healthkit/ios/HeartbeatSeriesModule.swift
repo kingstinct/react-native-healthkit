@@ -1,5 +1,6 @@
 import HealthKit
 import NitroModules
+import ReactNativeHealthkitCore
 
 func serializeHeartbeatSeriesSample(sample: HKHeartbeatSeriesSample) async throws
   -> HeartbeatSeriesSample {
@@ -11,10 +12,10 @@ func serializeHeartbeatSeriesSample(sample: HKHeartbeatSeriesSample) async throw
     startDate: sample.startDate,
     endDate: sample.endDate,
     hasUndeterminedDuration: sample.hasUndeterminedDuration,
-    metadata: serializeMetadata(sample.metadata),
     uuid: sample.uuid.uuidString,
     sourceRevision: serializeSourceRevision(sample.sourceRevision),
-    device: serializeDevice(hkDevice: sample.device)
+    device: serializeDevice(hkDevice: sample.device),
+    metadata: serializeMetadata(sample.metadata)
   )
 }
 
@@ -47,7 +48,7 @@ func getHeartbeatSeriesHeartbeats(sample: HKHeartbeatSeriesSample) async throws 
       }
     }
 
-    store.execute(query)
+    healthStore.execute(query)
   }
 }
 

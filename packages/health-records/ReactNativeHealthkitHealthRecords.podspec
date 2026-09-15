@@ -16,18 +16,13 @@ Pod::Spec.new do |s|
   s.source_files = [
     # Implementation (Swift)
     "ios/**/*.{swift}",
-    # Autolinking/Registration (Objective-C++)
-    "ios/**/*.{m,mm}",
   ]
-
-  s.public_header_files = "ios/**/*.h"
 
   s.pod_target_xcconfig = {
     # C++ compiler flags, mainly for folly.
     "GCC_PREPROCESSOR_DEFINITIONS" => "$(inherited) FOLLY_NO_CONFIG FOLLY_CFG_NO_COROUTINES",
     # Allow importing Objective-C headers in Swift without bridging header
-    "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES" => "YES",
-    "SWIFT_INCLUDE_PATHS" => "$(inherited) $(PODS_TARGET_SRCROOT)/ios"
+    "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES" => "YES"
   }
 
   load 'nitrogen/generated/ios/ReactNativeHealthkitHealthRecords+autolinking.rb'
@@ -42,6 +37,7 @@ Pod::Spec.new do |s|
     :execution_position => :before_compile,
   }
 
+  s.dependency 'ReactNativeHealthkitCore'
   s.dependency 'React-jsi'
   s.dependency 'React-callinvoker'
   install_modules_dependencies(s)

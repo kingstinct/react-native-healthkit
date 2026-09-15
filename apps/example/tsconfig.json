@@ -12,6 +12,8 @@
       "@kingstinct/react-native-healthkit/*": [
         "../../packages/react-native-healthkit/src/*"
       ],
+      "@react-native-healthkit/core": ["../../packages/core/src/index"],
+      "@react-native-healthkit/core/*": ["../../packages/core/src/*"],
       "@react-native-healthkit/health-records": [
         "../../packages/health-records/src/index"
       ],

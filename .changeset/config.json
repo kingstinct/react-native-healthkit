@@ -9,5 +9,8 @@
   "prettier": false,
   "updateInternalDependencies": "patch",
   "privatePackages": false,
+  "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
+    "onlyUpdatePeerDependentsWhenOutOfRange": true
+  },
   "ignore": ["react-native-healthkit-example"]
 }

@@ -1,5 +1,6 @@
 import HealthKit
 import NitroModules
+import ReactNativeHealthkitCore
 
 class CharacteristicTypeModule: HybridCharacteristicTypeModuleSpec {
   func getBloodTypeAsync() -> Promise<BloodType> {
@@ -32,10 +33,10 @@ class CharacteristicTypeModule: HybridCharacteristicTypeModuleSpec {
     }
   }
 
-  // Using the global 'store' instance defined in Auth.swift
+  // Uses the healthStore shared through ReactNativeHealthkitCore
 
   func getBiologicalSex() throws -> BiologicalSex {
-    let biologicalSexObject = try store.biologicalSex()
+    let biologicalSexObject = try healthStore.biologicalSex()
     if let biologicalSex = BiologicalSex(
       rawValue: Int32(biologicalSexObject.biologicalSex.rawValue)) {
       return biologicalSex
@@ -46,7 +47,7 @@ class CharacteristicTypeModule: HybridCharacteristicTypeModuleSpec {
 
   func getDateOfBirth() throws -> Date? {
     do {
-      let components = try store.dateOfBirthComponents()
+      let components = try healthStore.dateOfBirthComponents()
       return components.date
     } catch {
       let nsError = error as NSError
@@ -69,7 +70,7 @@ class CharacteristicTypeModule: HybridCharacteristicTypeModuleSpec {
   }
 
   func getBloodType() throws -> BloodType {
-    let bloodTypeObject = try store.bloodType()
+    let bloodTypeObject = try healthStore.bloodType()
 
     if let bloodType = BloodType(rawValue: Int32(bloodTypeObject.bloodType.rawValue)) {
       return bloodType
@@ -80,7 +81,7 @@ class CharacteristicTypeModule: HybridCharacteristicTypeModuleSpec {
   }
 
   func getFitzpatrickSkinType() throws -> FitzpatrickSkinType {
-    let skinTypeObject = try store.fitzpatrickSkinType()
+    let skinTypeObject = try healthStore.fitzpatrickSkinType()
 
     if let skinType = FitzpatrickSkinType(rawValue: Int32(skinTypeObject.skinType.rawValue)) {
       return skinType
@@ -91,7 +92,7 @@ class CharacteristicTypeModule: HybridCharacteristicTypeModuleSpec {
   }
 
   func getWheelchairUse() throws -> WheelchairUse {
-    let wheelchairUseObject = try store.wheelchairUse()
+    let wheelchairUseObject = try healthStore.wheelchairUse()
     if let wheelChairUse = WheelchairUse(
       rawValue: Int32(wheelchairUseObject.wheelchairUse.rawValue)) {
       return wheelChairUse

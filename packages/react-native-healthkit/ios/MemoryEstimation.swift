@@ -9,6 +9,7 @@
 //
 
 import HealthKit
+import ReactNativeHealthkitCore
 
 /// Approximate per-object bridging overhead of a Nitro HybridObject that Nitro
 /// does not account for itself. The generated `*Spec_cxx.swift` adds the Swift
