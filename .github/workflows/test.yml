@@ -277,6 +277,12 @@ jobs:
           # The contract runner waits on `simctl bootstatus` before using it.
           xcrun simctl boot "$SIMULATOR_ID" || true
 
+      # Core has no nitrogen specs but the other packages import its types, so it must be
+      # built before their codegen. Doing it here keeps it to one build per job: the
+      # packages' own `build` deliberately no longer touches core's shared output.
+      - name: Build core
+        run: bun run build:core
+
       - run: bun run codegen
         working-directory: packages/react-native-healthkit
 
