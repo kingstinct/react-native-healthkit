@@ -25,6 +25,22 @@ public func logWarning(_ message: String, prefix: String = coreLogPrefix) {
   print("\(prefix) \(message)")
 }
 
+private let warnedOnceLock = NSLock()
+private nonisolated(unsafe) var warnedOnceKeys = Set<String>()
+
+/// Logs `message` the first time it is called with `key`, then stays quiet for
+/// the rest of the process. For conditions that recur per sample, where warning
+/// every time would flood the console (and the background-delivery window) but
+/// warning never would hide a real data problem.
+public func logWarningOnce(key: String, _ message: String, prefix: String = coreLogPrefix) {
+  warnedOnceLock.lock()
+  let isFirst = warnedOnceKeys.insert(key).inserted
+  warnedOnceLock.unlock()
+
+  guard isFirst else { return }
+  print("\(prefix) \(message)")
+}
+
 public func initializeUUID(_ uuidString: String) throws -> UUID {
   if let uuid = UUID(uuidString: uuidString) {
     return uuid

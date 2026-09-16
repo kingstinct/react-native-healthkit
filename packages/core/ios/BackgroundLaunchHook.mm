@@ -22,7 +22,7 @@
                   object:nil
                    queue:nil
               usingBlock:^(NSNotification *_Nonnull note) {
-                Class managerClass = NSClassFromString(@"BackgroundDeliveryManager");
+                Class managerClass = NSClassFromString(@"RNHealthKitCoreBackgroundDeliveryManager");
                 SEL sharedSelector = NSSelectorFromString(@"shared");
                 SEL setupSelector = NSSelectorFromString(@"setupBackgroundObservers");
                 if (managerClass == nil || ![managerClass respondsToSelector:sharedSelector]) {

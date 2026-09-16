@@ -23,7 +23,6 @@ let TYPE_IDENTIFIER_ERROR = "HEALTHKIT_TYPE_IDENTIFIER_NOT_RECOGNIZED_ERROR"
 let QUERY_ERROR = "HEALTHKIT_QUERY_ERROR"
 let GENERIC_ERROR = "HEALTHKIT_ERROR"
 
-let HKCharacteristicTypeIdentifier_PREFIX = "HKCharacteristicTypeIdentifier"
 let HKActivitySummaryTypeIdentifier = "HKActivitySummaryTypeIdentifier"
 
 let HKWorkoutActivityTypePropertyName = "activityType"

@@ -28,13 +28,17 @@ public struct BackgroundDeliveryScope: Hashable {
 ///
 /// `BackgroundLaunchHook.mm` calls `setupBackgroundObservers()` on
 /// UIApplicationDidFinishLaunchingNotification, so no AppDelegate change is needed.
-/// The `@objc(BackgroundDeliveryManager)` name is what that hook looks up at runtime.
+/// The `@objc(RNHealthKitCoreBackgroundDeliveryManager)` name is what that hook looks up
+/// at runtime. It is deliberately not the bare `BackgroundDeliveryManager`: versions of
+/// `@kingstinct/react-native-healthkit` from before this pod existed export a class under
+/// that name, and an app that upgrades only `@react-native-healthkit/health-records` would
+/// otherwise load two classes with one name, leaving `NSClassFromString` to pick either.
 ///
 /// The types to observe are persisted in UserDefaults per scope by `configure(scope:...)`,
 /// called from each package's `configureBackgroundTypes()`. On subsequent cold launches
 /// the manager reads them and registers observers immediately, queuing any events until
 /// JS subscribes via `setCallback(typeIdentifier:callback:)`.
-@objc(BackgroundDeliveryManager)
+@objc(RNHealthKitCoreBackgroundDeliveryManager)
 public final class BackgroundDeliveryManager: NSObject {
   @objc public static let shared = BackgroundDeliveryManager()
 

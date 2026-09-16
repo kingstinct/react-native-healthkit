@@ -13,7 +13,7 @@ import ReactNativeHealthkitCore
   @available(iOS 26.0, *)
   func deserializeHKMedicationConceptIdentifier(base64String: String?) throws
     -> HKHealthConceptIdentifier? {
-    return try fromBase64(base64String: base64String) as? HKHealthConceptIdentifier
+    return try fromBase64(base64String: base64String, as: HKHealthConceptIdentifier.self)
   }
 
   @available(iOS 26.0, *)

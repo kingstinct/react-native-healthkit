@@ -143,7 +143,7 @@ func objectTypeFrom(objectTypeIdentifier: ObjectTypeIdentifier) throws -> HKObje
     return sampleType
   }
 
-  if typeIdentifier.starts(with: HKCharacteristicTypeIdentifier_PREFIX) {
+  if typeIdentifier.starts(with: characteristicTypeIdentifierPrefix) {
     let identifier = HKCharacteristicTypeIdentifier.init(rawValue: typeIdentifier)
     if let type = HKObjectType.characteristicType(forIdentifier: identifier) as HKObjectType? {
       return type

@@ -82,7 +82,12 @@ public func serializeMetadata(
       continue
     }
 
-    logWarning("serializeMetadata: dropping metadata key \(key) with unsupported value type")
+    logWarningOnce(
+      key: "serializeMetadata.unsupported.\(key)",
+      """
+      serializeMetadata: dropping metadata key \(key), unsupported value type \
+      \(Swift.type(of: value)). Further samples carrying this key are dropped silently.
+      """)
   }
 
   return serialized
