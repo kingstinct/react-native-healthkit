@@ -37,11 +37,15 @@ Pod::Spec.new do |s|
     :execution_position => :before_compile,
   }
 
-  # The three packages are released in lockstep on a single version
-  # (changesets `fixed`), so this pod is only ever built against a core of the
-  # same major. Pinning it makes a mismatched install fail here, with a version
-  # conflict naming both pods, instead of as a Swift compile error inside Pods.
-  s.dependency 'ReactNativeHealthkitCore', "~> #{s.version.to_s.split('.').first}.0"
+  # The three packages are released in lockstep on a single version (changesets
+  # `fixed`), so the only combination this pod is ever built and tested against
+  # is a core of the exact same version. Requiring that here turns a mismatch --
+  # including a mixed-version family, e.g. this pod at 16.0.0 next to its
+  # sibling at 16.1.0 -- into a `pod install` version conflict naming both pods,
+  # instead of a Swift compile error inside Pods or a runtime surprise. Core's
+  # Swift surface is internal to these packages and is not semver-managed, so a
+  # same-major requirement would not be enough.
+  s.dependency 'ReactNativeHealthkitCore', s.version.to_s
   s.dependency 'React-jsi'
   s.dependency 'React-callinvoker'
   install_modules_dependencies(s)

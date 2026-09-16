@@ -21,4 +21,4 @@ bun add @react-native-healthkit/core react-native-nitro-modules
 
 Expo autolinks it through the peer dependency. In a bare React Native app it must be listed in your own `package.json` for autolinking to pick up the pod.
 
-This package shares its version with the two packages above. All three are released together on the same number, both of them require this package within the same major, and their podspecs require a matching core pod, so a mismatched install fails at `pod install` rather than during the Swift build. Upgrade them together.
+This package shares its version with the two packages above. All three are released together on the same number, and their podspecs require a core pod of exactly their own version, so any mismatched or mixed-version combination fails at `pod install` rather than during the Swift build or at runtime. Upgrade them together.
