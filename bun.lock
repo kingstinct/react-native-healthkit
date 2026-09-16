@@ -85,8 +85,10 @@
     "packages/health-records": {
       "name": "@react-native-healthkit/health-records",
       "version": "15.1.0",
+      "dependencies": {
+        "@react-native-healthkit/core": "15.1.0",
+      },
       "devDependencies": {
-        "@react-native-healthkit/core": "workspace:*",
         "@types/react": "~19.1.17",
         "nitrogen": "^0.35.0",
         "react": "19.1.0",
@@ -95,7 +97,6 @@
         "typescript": "~5.9.3",
       },
       "peerDependencies": {
-        "@react-native-healthkit/core": "^15.1.0",
         "react": ">=19",
         "react-native": ">=0.79",
         "react-native-nitro-modules": ">=0.35",
@@ -104,8 +105,10 @@
     "packages/react-native-healthkit": {
       "name": "@kingstinct/react-native-healthkit",
       "version": "15.1.0",
+      "dependencies": {
+        "@react-native-healthkit/core": "15.1.0",
+      },
       "devDependencies": {
-        "@react-native-healthkit/core": "workspace:*",
         "@testing-library/react-native": "^13.3.3",
         "@types/react": "~19.1.17",
         "nitrogen": "^0.35.0",
@@ -115,7 +118,6 @@
         "typescript": "~5.9.3",
       },
       "peerDependencies": {
-        "@react-native-healthkit/core": "^15.1.0",
         "react": ">=19",
         "react-native": ">=0.79",
         "react-native-nitro-modules": ">=0.35",

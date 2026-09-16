@@ -23,12 +23,12 @@ This library is provided as-is without any warranty and is not affiliated with A
 
 ## Installation
 
-`@react-native-healthkit/core` is a peer dependency holding the code shared with [`@react-native-healthkit/health-records`](packages/health-records) (types, config plugin building blocks and the `ReactNativeHealthkitCore` pod). Install it alongside this package; Expo autolinks it through the peer dependency, a bare React Native app needs it in its own `package.json`. The three packages share one version and are released together, so keep them on the same major and upgrade them together.
+[`@react-native-healthkit/core`](packages/core) holds the code shared with [`@react-native-healthkit/health-records`](packages/health-records): types, config plugin building blocks and the `ReactNativeHealthkitCore` pod. It is a regular dependency pinned to an exact version, so your package manager installs the matching copy for you and there is no version to keep in sync. In a bare React Native app you additionally need it in your own `package.json`, because the React Native CLI only autolinks packages listed there.
 
 ### Expo
 Usage with Expo is possible - just keep in mind it will not work in Expo Go and [you'll need to roll your own Dev Client](https://docs.expo.dev/development/getting-started/). 
 
-1. `yarn add @kingstinct/react-native-healthkit @react-native-healthkit/core react-native-nitro-modules`
+1. `yarn add @kingstinct/react-native-healthkit react-native-nitro-modules`
 2. Update your app.json with the config plugin:
 ```json
 {
@@ -55,6 +55,8 @@ this will give you defaults that make the app build without any further configur
 
 ### Native or Expo Bare Workflow
 1. `yarn add @kingstinct/react-native-healthkit @react-native-healthkit/core react-native-nitro-modules`
+
+   `@react-native-healthkit/core` is installed automatically as a dependency, but the React Native CLI only autolinks packages listed in your own `package.json`, so name it explicitly here.
 2. `npx pod-install`
 3. Set `NSHealthUpdateUsageDescription` and `NSHealthShareUsageDescription` in your `Info.plist` 
 4. Enable the HealthKit capability for the project in Xcode.

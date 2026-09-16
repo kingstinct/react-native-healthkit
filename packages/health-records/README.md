@@ -9,10 +9,10 @@ Built on [Nitro Modules](https://nitro.margelo.com) and designed to sit next to 
 ## Installation
 
 ```sh
-bun add @react-native-healthkit/health-records @react-native-healthkit/core react-native-nitro-modules
+bun add @react-native-healthkit/health-records react-native-nitro-modules
 ```
 
-`@react-native-healthkit/core` is a peer dependency holding the code shared with `@kingstinct/react-native-healthkit`. Expo autolinks it through the peer dependency; a bare React Native app needs it in its own `package.json`. The three packages share one version and are released together, so keep them on the same major and upgrade them together.
+`@react-native-healthkit/core` holds the code shared with `@kingstinct/react-native-healthkit`. It is a regular dependency pinned to an exact version, so it is installed for you and cannot drift. In a bare React Native app, add it to your own `package.json` as well, because the React Native CLI only autolinks packages listed there.
 
 ### Expo
 
