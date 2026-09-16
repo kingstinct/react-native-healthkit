@@ -1,5 +1,5 @@
 ---
-"@react-native-healthkit/health-records": minor
+"@react-native-healthkit/health-records": major
 ---
 
 refactor: move the code shared with `@kingstinct/react-native-healthkit` into the new `@react-native-healthkit/core` peer dependency. Add it when upgrading:

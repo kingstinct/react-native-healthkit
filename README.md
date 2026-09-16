@@ -23,7 +23,7 @@ This library is provided as-is without any warranty and is not affiliated with A
 
 ## Installation
 
-`@react-native-healthkit/core` is a peer dependency holding the code shared with [`@react-native-healthkit/health-records`](packages/health-records) (types, config plugin building blocks and the `ReactNativeHealthkitCore` pod). Install it alongside this package; Expo autolinks it through the peer dependency, a bare React Native app needs it in its own `package.json`.
+`@react-native-healthkit/core` is a peer dependency holding the code shared with [`@react-native-healthkit/health-records`](packages/health-records) (types, config plugin building blocks and the `ReactNativeHealthkitCore` pod). Install it alongside this package; Expo autolinks it through the peer dependency, a bare React Native app needs it in its own `package.json`. The three packages share one version and are released together, so keep them on the same major and upgrade them together.
 
 ### Expo
 Usage with Expo is possible - just keep in mind it will not work in Expo Go and [you'll need to roll your own Dev Client](https://docs.expo.dev/development/getting-started/). 

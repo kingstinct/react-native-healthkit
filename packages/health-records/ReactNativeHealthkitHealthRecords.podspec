@@ -37,7 +37,11 @@ Pod::Spec.new do |s|
     :execution_position => :before_compile,
   }
 
-  s.dependency 'ReactNativeHealthkitCore'
+  # The three packages are released in lockstep on a single version
+  # (changesets `fixed`), so this pod is only ever built against a core of the
+  # same major. Pinning it makes a mismatched install fail here, with a version
+  # conflict naming both pods, instead of as a Swift compile error inside Pods.
+  s.dependency 'ReactNativeHealthkitCore', "~> #{s.version.to_s.split('.').first}.0"
   s.dependency 'React-jsi'
   s.dependency 'React-callinvoker'
   install_modules_dependencies(s)

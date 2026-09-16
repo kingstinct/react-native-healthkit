@@ -12,7 +12,7 @@ Built on [Nitro Modules](https://nitro.margelo.com) and designed to sit next to 
 bun add @react-native-healthkit/health-records @react-native-healthkit/core react-native-nitro-modules
 ```
 
-`@react-native-healthkit/core` is a peer dependency holding the code shared with `@kingstinct/react-native-healthkit`. Expo autolinks it through the peer dependency; a bare React Native app needs it in its own `package.json`.
+`@react-native-healthkit/core` is a peer dependency holding the code shared with `@kingstinct/react-native-healthkit`. Expo autolinks it through the peer dependency; a bare React Native app needs it in its own `package.json`. The three packages share one version and are released together, so keep them on the same major and upgrade them together.
 
 ### Expo
 

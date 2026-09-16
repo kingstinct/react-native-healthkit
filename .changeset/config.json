@@ -2,7 +2,13 @@
   "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "fixed": [],
+  "fixed": [
+    [
+      "@kingstinct/react-native-healthkit",
+      "@react-native-healthkit/core",
+      "@react-native-healthkit/health-records"
+    ]
+  ],
   "linked": [],
   "access": "public",
   "baseBranch": "master",
