@@ -569,6 +569,11 @@ export const requestPerObjectReadAuthorization = UnavailableFnFromModule(
   Promise.resolve(undefined),
 ) // Mocking callback structure
 
+export const getEarliestAuthorizedSampleDates = UnavailableFnFromModule(
+  'getEarliestAuthorizedSampleDates',
+  Promise.resolve({}),
+)
+
 export const subscribeToCategorySamples = UnavailableFnFromModule(
   'subscribeToCategorySamples',
   {
@@ -646,6 +651,7 @@ const HealthkitModule = {
   queryMedicationEventsWithAnchor,
   requestMedicationsAuthorization,
   requestPerObjectReadAuthorization,
+  getEarliestAuthorizedSampleDates,
 
   subscribeToCategorySamples,
   currentAppSource,

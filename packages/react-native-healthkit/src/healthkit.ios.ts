@@ -300,6 +300,8 @@ const MedicationBindings = {
 export const authorizationStatusFor = Core.authorizationStatusFor.bind(Core)
 export const requestPerObjectReadAuthorization =
   Core.requestPerObjectReadAuthorization.bind(Core)
+export const getEarliestAuthorizedSampleDates =
+  Core.getEarliestAuthorizedSampleDates.bind(Core)
 export const disableAllBackgroundDelivery =
   Core.disableAllBackgroundDelivery.bind(Core)
 export const disableBackgroundDelivery =
@@ -454,6 +456,7 @@ export default {
   querySources,
   requestAuthorization,
   requestPerObjectReadAuthorization,
+  getEarliestAuthorizedSampleDates,
   deleteObjects,
   saveCategorySample,
   saveCorrelationSample,

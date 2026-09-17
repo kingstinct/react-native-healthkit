@@ -50,6 +50,7 @@ const mockModule = {
   isObjectTypeAvailableAsync: jest.fn(),
   areObjectTypesAvailable: jest.fn(),
   areObjectTypesAvailableAsync: jest.fn(),
+  getEarliestAuthorizedSampleDates: jest.fn(),
   queryStateOfMindSamples: jest.fn(),
   workoutSessionMirroringStartHandler: jest.fn(),
 }

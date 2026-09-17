@@ -649,6 +649,14 @@
       "legacy": false
     },
     {
+      "name": "HKQuantityTypeIdentifierHeartRateVariabilityRMSSD",
+      "ios": "27.0",
+      "canonicalUnit": "ms",
+      "aggregationStyle": "Discrete (Arithmetic)",
+      "writeable": true,
+      "legacy": false
+    },
+    {
       "name": "HKQuantityTypeIdentifierHeartRateVariabilitySDNN",
       "ios": "11.0",
       "canonicalUnit": "ms",
