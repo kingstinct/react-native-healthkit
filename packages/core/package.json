@@ -58,7 +58,7 @@
     "build": "bun run clean && bun run build:cjs && bun run build:types",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "bunx @biomejs/biome format --write",
-    "prepublishOnly": "bun run build"
+    "prepublishOnly": "test -d lib/typescript || bun run build"
   },
   "keywords": [
     "react-native",
