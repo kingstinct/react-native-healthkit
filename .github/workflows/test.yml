@@ -222,12 +222,17 @@ jobs:
             runner: macos-26
             xcode-app: /Applications/Xcode_26.6.app
             ios: "26.5"
+            contracts: true
           ## Xcode 27 - the image ships exactly one, named after the release it carries, so it is
-          ## resolved by glob (see verify-generated).
+          ## resolved by glob (see verify-generated). Build only for now: apps linked against the
+          ## iOS 27 SDK must adopt the UIScene life cycle or UIKit traps at launch, and the example
+          ## app's Expo SDK 54 does not (see https://github.com/expo/fyi/blob/main/ios-scene-lifecycle.md).
+          ## Flip `contracts` to true once the example app is on an Expo SDK with scene support.
           - xcode: "27"
             runner: xcode-27
             xcode-app: /Applications/Xcode_27*.app
             ios: "27.0"
+            contracts: false
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -251,11 +256,13 @@ jobs:
           xcodebuild -version
 
       - name: Install simulator tooling
+        if: matrix.contracts
         run: brew install wix/brew/applesimutils
 
       # The device set differs per Xcode (Xcode 26 ships iPhone 17 Pro, Xcode 27 ships iPhone 18
       # Pro), so pick the newest non-Max "iPhone N Pro" the runtime offers rather than a fixed name.
       - name: Select and boot simulator
+        if: matrix.contracts
         run: |
           DEVICE_LINE="$(
             xcrun simctl list devices available 'iOS ${{ matrix.ios }}' |
@@ -285,28 +292,35 @@ jobs:
         working-directory: apps/example
         run: bunx expo prebuild --platform ios
 
+      # Without a booted simulator (build-only legs) the generic simulator destination is enough.
       - name: Build iOS project
         working-directory: apps/example/ios
         run: |
+          if [ -n "${SIMULATOR_ID:-}" ]; then
+            DESTINATION="id=$SIMULATOR_ID"
+          else
+            DESTINATION="generic/platform=iOS Simulator"
+          fi
           xcodebuild \
             -quiet \
             -workspace RNHealthKit.xcworkspace \
             -scheme RNHealthKit \
             -configuration Debug \
             -sdk iphonesimulator \
-            -destination "id=$SIMULATOR_ID" \
+            -destination "$DESTINATION" \
             ONLY_ACTIVE_ARCH=YES \
             COMPILER_INDEX_STORE_ENABLE=NO \
             DEBUG_INFORMATION_FORMAT=dwarf \
             build
 
       - name: Run HealthKit contracts
+        if: matrix.contracts
         run: bun run test:contracts
         env:
           CONTRACT_DIAGNOSTICS_DIR: ${{ runner.temp }}/healthkit-contract-diagnostics
 
       - name: Upload contract diagnostics
-        if: failure()
+        if: failure() && matrix.contracts
         uses: actions/upload-artifact@v4
         with:
           name: healthkit-contract-diagnostics-xcode-${{ matrix.xcode }}
