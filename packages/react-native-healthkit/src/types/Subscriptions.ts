@@ -1,12 +1,11 @@
+import type { EmitterSubscription } from '@react-native-healthkit/core'
 import type { CategorySampleTyped } from './CategoryType'
 import type { CategoryTypeIdentifier } from './CategoryTypeIdentifier'
 import type { QuantitySampleTyped } from './QuantitySample'
 import type { QuantityTypeIdentifier } from './QuantityTypeIdentifier'
 import type { SampleTypeIdentifier } from './Shared'
 
-export interface EmitterSubscription {
-  remove: () => void
-}
+export type { EmitterSubscription }
 
 export interface OnChangeCallbackArgs {
   readonly typeIdentifier: SampleTypeIdentifier

@@ -1,5 +1,0 @@
-module ReactNativeHealthkit_Private {
-  header "Bridge.h"
-  header "ExceptionCatcher.h"
-  export *
-}

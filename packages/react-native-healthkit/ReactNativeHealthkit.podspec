@@ -16,20 +16,15 @@ Pod::Spec.new do |s|
   s.source_files = [
     # Implementation (Swift)
     "ios/**/*.{swift}",
-    # Autolinking/Registration (Objective-C++)
-    "ios/**/*.{m,mm}",
-    # Implementation (C++ objects)
+        # Implementation (C++ objects)
     "cpp/**/*.{hpp,cpp}",
   ]
-
-  s.public_header_files = "ios/**/*.h"
 
   s.pod_target_xcconfig = {
     # C++ compiler flags, mainly for folly.
     "GCC_PREPROCESSOR_DEFINITIONS" => "$(inherited) FOLLY_NO_CONFIG FOLLY_CFG_NO_COROUTINES",
     # Allow importing Objective-C headers in Swift without bridging header
-    "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES" => "YES",
-    "SWIFT_INCLUDE_PATHS" => "$(inherited) $(PODS_TARGET_SRCROOT)/ios"
+    "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES" => "YES"
   }
 
   load 'nitrogen/generated/ios/ReactNativeHealthkit+autolinking.rb'
@@ -45,6 +40,15 @@ Pod::Spec.new do |s|
     :execution_position => :before_compile,
   }
 
+  # The three packages are released in lockstep on a single version (changesets
+  # `fixed`), so the only combination this pod is ever built and tested against
+  # is a core of the exact same version. Requiring that here turns a mismatch --
+  # including a mixed-version family, e.g. this pod at 16.0.0 next to its
+  # sibling at 16.1.0 -- into a `pod install` version conflict naming both pods,
+  # instead of a Swift compile error inside Pods or a runtime surprise. Core's
+  # Swift surface is internal to these packages and is not semver-managed, so a
+  # same-major requirement would not be enough.
+  s.dependency 'ReactNativeHealthkitCore', s.version.to_s
   s.dependency 'React-jsi'
   s.dependency 'React-callinvoker'
   install_modules_dependencies(s)

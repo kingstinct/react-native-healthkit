@@ -11,10 +11,10 @@
 /// looked up by name at runtime: importing this pod's Swift module from the
 /// app's AppDelegate would drag NitroModules' C++ headers into a target
 /// compiled without C++ interop and fail to build.
-@interface BackgroundLaunchHook : NSObject
+@interface HealthKitBackgroundLaunchHook : NSObject
 @end
 
-@implementation BackgroundLaunchHook
+@implementation HealthKitBackgroundLaunchHook
 
 + (void)load {
   [[NSNotificationCenter defaultCenter]
@@ -22,7 +22,7 @@
                   object:nil
                    queue:nil
               usingBlock:^(NSNotification *_Nonnull note) {
-                Class managerClass = NSClassFromString(@"BackgroundDeliveryManager");
+                Class managerClass = NSClassFromString(@"RNHealthKitCoreBackgroundDeliveryManager");
                 SEL sharedSelector = NSSelectorFromString(@"shared");
                 SEL setupSelector = NSSelectorFromString(@"setupBackgroundObservers");
                 if (managerClass == nil || ![managerClass respondsToSelector:sharedSelector]) {

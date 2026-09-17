@@ -1,36 +1,11 @@
+import type {
+  DateFilter,
+  PredicateWithMetadataKey,
+} from '@react-native-healthkit/core'
 import type { FHIRResourceType } from './FHIR'
 
-export enum ComparisonPredicateOperator {
-  lessThan = 0,
-  lessThanOrEqualTo = 1,
-  greaterThan = 2,
-  greaterThanOrEqualTo = 3,
-  equalTo = 4,
-  notEqualTo = 5,
-  matches = 6,
-  like = 7,
-  beginsWith = 8,
-  endsWith = 9,
-  IN = 10,
-  customSelector = 11,
-  contains = 99,
-  between = 100,
-}
-
-type PredicateWithMetadataValue = string | number | Date | boolean
-
-export interface PredicateWithMetadataKey {
-  readonly withMetadataKey: string
-  readonly operatorType?: ComparisonPredicateOperator
-  readonly value?: PredicateWithMetadataValue
-}
-
-export interface DateFilter {
-  readonly startDate?: Date
-  readonly endDate?: Date
-  readonly strictEndDate?: boolean
-  readonly strictStartDate?: boolean
-}
+export { ComparisonPredicateOperator } from '@react-native-healthkit/core'
+export type { DateFilter, PredicateWithMetadataKey }
 
 export interface FilterForClinicalRecordsBase {
   readonly uuid?: string

@@ -66,9 +66,28 @@
         "typescript": "~5.9.3",
       },
     },
+    "packages/core": {
+      "name": "@react-native-healthkit/core",
+      "version": "15.1.0",
+      "devDependencies": {
+        "@types/react": "~19.1.17",
+        "react": "19.1.0",
+        "react-native": "0.81.5",
+        "react-native-nitro-modules": "^0.35.0",
+        "typescript": "~5.9.3",
+      },
+      "peerDependencies": {
+        "react": ">=19",
+        "react-native": ">=0.79",
+        "react-native-nitro-modules": ">=0.35",
+      },
+    },
     "packages/health-records": {
       "name": "@react-native-healthkit/health-records",
-      "version": "0.0.1",
+      "version": "15.1.0",
+      "dependencies": {
+        "@react-native-healthkit/core": "15.1.0",
+      },
       "devDependencies": {
         "@types/react": "~19.1.17",
         "nitrogen": "^0.35.0",
@@ -85,7 +104,10 @@
     },
     "packages/react-native-healthkit": {
       "name": "@kingstinct/react-native-healthkit",
-      "version": "15.0.0",
+      "version": "15.1.0",
+      "dependencies": {
+        "@react-native-healthkit/core": "15.1.0",
+      },
       "devDependencies": {
         "@testing-library/react-native": "^13.3.3",
         "@types/react": "~19.1.17",
@@ -566,6 +588,8 @@
     "@radix-ui/react-use-escape-keydown": ["@radix-ui/react-use-escape-keydown@1.1.1", "", { "dependencies": { "@radix-ui/react-use-callback-ref": "1.1.1" }, "peerDependencies": { "@types/react": "*", "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc" }, "optionalPeers": ["@types/react"] }, "sha512-Il0+boE7w/XebUHyBjroE+DbByORGR9KKmITzbR7MyQ4akpORYP/ZmbhAr0DG7RmmBqoOnZdy2QlvajJ2QA59g=="],
 
     "@radix-ui/react-use-layout-effect": ["@radix-ui/react-use-layout-effect@1.1.1", "", { "peerDependencies": { "@types/react": "*", "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc" }, "optionalPeers": ["@types/react"] }, "sha512-RbJRS4UWQFkzHTTwVymMTUv8EqYhOp8dOOviLj2ugtTiXRaRQS7GLGxZTLL1jWhMeoSCf5zmcZkqTl9IiYfXcQ=="],
+
+    "@react-native-healthkit/core": ["@react-native-healthkit/core@workspace:packages/core"],
 
     "@react-native-healthkit/health-records": ["@react-native-healthkit/health-records@workspace:packages/health-records"],
 

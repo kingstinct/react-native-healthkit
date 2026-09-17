@@ -1,5 +1,6 @@
 import HealthKit
 import NitroModules
+import ReactNativeHealthkitCore
 
 func serializeCorrelationSample(correlation: HKCorrelation, unitMap: [HKQuantityType: HKUnit])
   -> CorrelationSample {
@@ -28,10 +29,10 @@ func serializeCorrelationSample(correlation: HKCorrelation, unitMap: [HKQuantity
     startDate: correlation.startDate,
     endDate: correlation.endDate,
     hasUndeterminedDuration: correlation.hasUndeterminedDuration,
-    metadata: serializeMetadata(correlation.metadata),
     uuid: correlation.uuid.uuidString,
     sourceRevision: serializeSourceRevision(correlation.sourceRevision),
-    device: serializeDevice(hkDevice: correlation.device)
+    device: serializeDevice(hkDevice: correlation.device),
+    metadata: serializeMetadata(correlation.metadata)
   )
 }
 

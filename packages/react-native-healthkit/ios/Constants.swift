@@ -7,6 +7,15 @@
 
 import Foundation
 import HealthKit
+import ReactNativeHealthkitCore
+
+let logPrefix = "[react-native-healthkit]"
+
+/// Namespaces this package's persisted background-delivery types in the shared
+/// BackgroundDeliveryManager. The id matches the UserDefaults keys used before
+/// the manager moved to ReactNativeHealthkitCore, so existing installs keep
+/// their configuration.
+let backgroundDeliveryScope = BackgroundDeliveryScope(id: "com.kingstinct.healthkit")
 
 let INIT_ERROR = "HEALTHKIT_INIT_ERROR"
 let INIT_ERROR_MESSAGE = "HealthKit not initialized"
@@ -14,17 +23,7 @@ let TYPE_IDENTIFIER_ERROR = "HEALTHKIT_TYPE_IDENTIFIER_NOT_RECOGNIZED_ERROR"
 let QUERY_ERROR = "HEALTHKIT_QUERY_ERROR"
 let GENERIC_ERROR = "HEALTHKIT_ERROR"
 
-let HKCharacteristicTypeIdentifier_PREFIX = "HKCharacteristicTypeIdentifier"
-let HKQuantityTypeIdentifier_PREFIX = "HKQuantityTypeIdentifier"
-let HKCategoryTypeIdentifier_PREFIX = "HKCategoryTypeIdentifier"
-let HKCorrelationTypeIdentifier_PREFIX = "HKCorrelationTypeIdentifier"
 let HKActivitySummaryTypeIdentifier = "HKActivitySummaryTypeIdentifier"
-let HKAudiogramTypeIdentifier = "HKAudiogramSampleType"
-let HKWorkoutTypeIdentifier = "HKWorkoutTypeIdentifier"
-let HKWorkoutRouteTypeIdentifier = "HKWorkoutRouteTypeIdentifier"
-let HKDataTypeIdentifierHeartbeatSeries = "HKDataTypeIdentifierHeartbeatSeries"
-let HKStateOfMindTypeIdentifier = "HKStateOfMindTypeIdentifier"
-let HKElectrocardiogramType = "HKElectrocardiogramType"
 
 let HKWorkoutActivityTypePropertyName = "activityType"
 let HKWorkoutSessionLocationTypePropertyName = "locationType"
@@ -34,27 +33,3 @@ let SpeedUnit =  HKUnit(from: "m/s") // HKUnit.meter().unitDivided(by: HKUnit.se
 let METUnit = HKUnit(from: "kcal/hr·kg")
 
 let DEFAULT_QUERY_LIMIT = 20
-
-/// Apple renamed `HKCategoryTypeIdentifierAudioExposureEvent` to
-/// `HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent` in iOS 14, but the new
-/// constant still carries the old raw string at runtime. Building the identifier from the
-/// modern name as a raw string therefore makes `categoryType(forIdentifier:)` return nil,
-/// and samples read back from HealthKit report the legacy name. These helpers translate
-/// in both directions so JS only ever sees the modern identifier.
-let HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent_NAME =
-  "HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent"
-let HKCategoryTypeIdentifierAudioExposureEvent_NAME = "HKCategoryTypeIdentifierAudioExposureEvent"
-
-func hkCategoryTypeIdentifier(fromIdentifierName name: String) -> HKCategoryTypeIdentifier {
-  if name == HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent_NAME {
-    return .environmentalAudioExposureEvent
-  }
-  return HKCategoryTypeIdentifier(rawValue: name)
-}
-
-func categoryTypeIdentifierName(fromHealthKitIdentifier identifier: String) -> String {
-  if identifier == HKCategoryTypeIdentifierAudioExposureEvent_NAME {
-    return HKCategoryTypeIdentifierEnvironmentalAudioExposureEvent_NAME
-  }
-  return identifier
-}

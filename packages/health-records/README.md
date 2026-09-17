@@ -12,6 +12,8 @@ Built on [Nitro Modules](https://nitro.margelo.com) and designed to sit next to 
 bun add @react-native-healthkit/health-records react-native-nitro-modules
 ```
 
+`@react-native-healthkit/core` holds the code shared with `@kingstinct/react-native-healthkit`. It is a regular dependency pinned to an exact version, so it is installed for you and cannot drift. In a bare React Native app, add it to your own `package.json` as well, because the React Native CLI only autolinks packages listed there.
+
 ### Expo
 
 Add the config plugin. It adds the `com.apple.developer.healthkit` and background-delivery entitlements, appends `health-records` to `com.apple.developer.healthkit.access`, and sets `NSHealthClinicalHealthRecordsShareUsageDescription` in Info.plist.

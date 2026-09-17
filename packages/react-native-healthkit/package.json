@@ -102,6 +102,9 @@
     "react-native-nitro-modules": "^0.35.0",
     "typescript": "~5.9.3"
   },
+  "dependencies": {
+    "@react-native-healthkit/core": "15.1.0"
+  },
   "peerDependencies": {
     "react": ">=19",
     "react-native": ">=0.79",

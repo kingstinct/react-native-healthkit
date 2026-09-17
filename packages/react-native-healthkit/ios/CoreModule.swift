@@ -1,5 +1,6 @@
 import HealthKit
 import NitroModules
+import ReactNativeHealthkitCore
 
 //
 //  Core.swift
@@ -7,8 +8,6 @@ import NitroModules
 //
 //  Created by Robert Herber on 2025-05-28.
 //
-
-var store = HKHealthStore.init()
 
 // Thread-safe cache with concurrent read/exclusive write access
 private let quantityTypeCacheQueue = DispatchQueue(
@@ -57,7 +56,7 @@ async throws -> [HKQuantityType: HKUnit] {
   }
 
   return try await withCheckedThrowingContinuation { continuation in
-    store.preferredUnits(for: Set(quantityTypes)) {
+    healthStore.preferredUnits(for: Set(quantityTypes)) {
       (typePerUnits: [HKQuantityType: HKUnit], error: Error?) in
       DispatchQueue.main.async {
         if let error = error {
@@ -82,7 +81,7 @@ class CoreModule: HybridCoreModuleSpec {
     return Promise.async {
       let objectType = try perObjectTypeFrom(objectTypeIdentifier: typeIdentifier)
       if #available(iOS 16.0, *) {
-        try await store.requestPerObjectReadAuthorization(
+        try await healthStore.requestPerObjectReadAuthorization(
           for: objectType,
           predicate: nil
         )
@@ -104,7 +103,7 @@ class CoreModule: HybridCoreModuleSpec {
             return [String: Date]()
           }
 
-          let earliestDates = try await store.earliestAuthorizedSampleDate(for: objectTypes)
+          let earliestDates = try await healthStore.earliestAuthorizedSampleDate(for: objectTypes)
 
           return earliestDates.reduce(into: [String: Date]()) { result, entry in
             result[entry.key.identifier] = entry.value
@@ -164,7 +163,7 @@ class CoreModule: HybridCoreModuleSpec {
   ) throws -> AuthorizationStatus {
     let objectType = try objectTypeFrom(objectTypeIdentifier: type)
 
-    let authStatus = store.authorizationStatus(for: objectType)
+    let authStatus = healthStore.authorizationStatus(for: objectType)
 
     if let authStatus = AuthorizationStatus(rawValue: Int32(authStatus.rawValue)) {
       return authStatus
@@ -188,27 +187,27 @@ class CoreModule: HybridCoreModuleSpec {
             returning: .unnecessary
           )
         }
-        var caughtError: NSError?
-        let started = RunBlockCatchingObjCExceptions({
-          store.getRequestStatusForAuthorization(toShare: toShare, read: toRead) {
-            status, error in
-            DispatchQueue.main.async {
-              if let error = error {
-                continuation.resume(throwing: error)
-              } else {
-                if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
-                  continuation.resume(returning: authStatus)
+        do {
+          try runCatchingObjCExceptions {
+            healthStore.getRequestStatusForAuthorization(toShare: toShare, read: toRead) {
+              status, error in
+              DispatchQueue.main.async {
+                if let error = error {
+                  continuation.resume(throwing: error)
                 } else {
-                  continuation.resume(
-                    throwing: runtimeErrorWithPrefix(
-                      "Unrecognized authStatus returned: \(status.rawValue)"))
+                  if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
+                    continuation.resume(returning: authStatus)
+                  } else {
+                    continuation.resume(
+                      throwing: runtimeErrorWithPrefix(
+                        "Unrecognized authStatus returned: \(status.rawValue)"))
+                  }
                 }
               }
             }
           }
-        }, &caughtError)
-        if !started, let caughtError {
-          continuation.resume(throwing: caughtError)
+        } catch {
+          continuation.resume(throwing: error)
         }
       }
     }
@@ -220,20 +219,20 @@ class CoreModule: HybridCoreModuleSpec {
       let toRead = objectTypesFromArray(typeIdentifiers: toRequest.toRead ?? [])
 
       return try await withCheckedThrowingContinuation { continuation in
-        var caughtError: NSError?
-        let started = RunBlockCatchingObjCExceptions({
-          store.requestAuthorization(toShare: share, read: toRead) { status, error in
-            DispatchQueue.main.async {
-              if let error = error {
-                continuation.resume(throwing: error)
-              } else {
-                continuation.resume(returning: status)
+        do {
+          try runCatchingObjCExceptions {
+            healthStore.requestAuthorization(toShare: share, read: toRead) { status, error in
+              DispatchQueue.main.async {
+                if let error = error {
+                  continuation.resume(throwing: error)
+                } else {
+                  continuation.resume(returning: status)
+                }
               }
             }
           }
-        }, &caughtError)
-        if !started, let caughtError {
-          continuation.resume(throwing: caughtError)
+        } catch {
+          continuation.resume(throwing: error)
         }
       }
     }
@@ -274,7 +273,7 @@ class CoreModule: HybridCoreModuleSpec {
           }
         }
 
-        store.execute(query)
+        healthStore.execute(query)
       }
     }
   }
@@ -286,7 +285,7 @@ class CoreModule: HybridCoreModuleSpec {
       if let frequency = HKUpdateFrequency(rawValue: Int(updateFrequency.rawValue)) {
         let type = try objectTypeFrom(objectTypeIdentifier: typeIdentifier)
         return try await withCheckedThrowingContinuation { continuation in
-          store.enableBackgroundDelivery(
+          healthStore.enableBackgroundDelivery(
             for: type,
             frequency: frequency
           ) { (success, error) in
@@ -311,7 +310,7 @@ class CoreModule: HybridCoreModuleSpec {
     return Promise.async {
       let type = try objectTypeFrom(objectTypeIdentifier: typeIdentifier)
       return try await withCheckedThrowingContinuation { continuation in
-        store.disableBackgroundDelivery(
+        healthStore.disableBackgroundDelivery(
           for: type
         ) { (success, error) in
           DispatchQueue.main.async {
@@ -328,7 +327,7 @@ class CoreModule: HybridCoreModuleSpec {
   func disableAllBackgroundDelivery() -> Promise<Bool> {
     return Promise.async {
       try await withCheckedThrowingContinuation { continuation in
-        store.disableAllBackgroundDelivery(completion: { (success, error) in
+        healthStore.disableAllBackgroundDelivery(completion: { (success, error) in
           DispatchQueue.main.async {
             guard let err = error else {
               return continuation.resume(returning: success)
@@ -408,7 +407,7 @@ class CoreModule: HybridCoreModuleSpec {
 
         let of = try sampleTypeFrom(sampleTypeIdentifierWriteable: objectTypeIdentifier)
         return try await withCheckedThrowingContinuation { continuation in
-          store.deleteObjects(of: of, predicate: predicate) { (_, count, error) in
+          healthStore.deleteObjects(of: of, predicate: predicate) { (_, count, error) in
             DispatchQueue.main.async {
               if let error = error {
                 continuation.resume(throwing: error)
@@ -473,7 +472,7 @@ class CoreModule: HybridCoreModuleSpec {
 
     }
 
-    store.execute(query)
+    healthStore.execute(query)
 
     self._runningQueries.updateValue(query, forKey: queryId)
 
@@ -494,7 +493,7 @@ class CoreModule: HybridCoreModuleSpec {
       return false
     }
 
-    store.stop(query)
+    healthStore.stop(query)
 
     self._runningQueries.removeValue(forKey: queryId)
 
@@ -516,6 +515,7 @@ class CoreModule: HybridCoreModuleSpec {
       }
 
       BackgroundDeliveryManager.shared.configure(
+        scope: backgroundDeliveryScope,
         typeIdentifiers: typeIdentifiers,
         frequency: frequency
       )
@@ -526,7 +526,7 @@ class CoreModule: HybridCoreModuleSpec {
 
   func clearBackgroundTypes() -> Promise<Bool> {
     return Promise.async {
-      BackgroundDeliveryManager.shared.clearConfiguration()
+      BackgroundDeliveryManager.shared.clearConfiguration(scope: backgroundDeliveryScope)
       return true
     }
   }
@@ -534,7 +534,7 @@ class CoreModule: HybridCoreModuleSpec {
   func unsubscribeQueries(queryIds: [String]) -> Double {
     let successCounts = queryIds.map { queryId in
       if let query = self._runningQueries[queryId] {
-        store.stop(query)
+        healthStore.stop(query)
 
         self._runningQueries.removeValue(forKey: queryId)
 

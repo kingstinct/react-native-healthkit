@@ -1,5 +1,6 @@
 import HealthKit
 import NitroModules
+import ReactNativeHealthkitCore
 
 class CategoryTypeModule: HybridCategoryTypeModuleSpec {
     func saveCategorySample(

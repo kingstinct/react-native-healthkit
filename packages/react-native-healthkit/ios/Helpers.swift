@@ -8,167 +8,14 @@
 import Foundation
 import HealthKit
 import NitroModules
+import ReactNativeHealthkitCore
 
-func parseUnitStringSafe(_ unitString: String) throws -> HKUnit {
-  var err: NSError?
-  let unitOut = HKUnitFromStringCatchingExceptions(unitString, &err)
-
-  if let hkUnit = unitOut {
-    return hkUnit
+/// Anchored query results come back with raw HKDeletedObjects; this package
+/// serializes them into its own DeletedSample struct.
+extension AnchoredQueryResponse {
+  var deletedSamples: [DeletedSample] {
+    return deletedObjects.map { serializeDeletedSample(sample: $0) }
   }
-
-  throw runtimeErrorWithPrefix("Supplied invalid '\(unitString)' as HKUnit")
-}
-
-func getQueryLimit(_ limit: Double) -> Int {
-  if limit == .infinity || limit <= 0 || limit == .nan || limit == .signalingNaN {
-    return HKObjectQueryNoLimit
-  }
-
-  return Int(limit)
-}
-
-struct AnchoredQueryResponse {
-  var samples: [HKSample]
-  var deletedSamples: [DeletedSample]
-  var newAnchor: String
-}
-
-func sampleAnchoredQueryAsync(
-  sampleType: HKSampleType,
-  limit: Double,
-  queryAnchor: String?,
-  predicate: NSPredicate?
-) async throws -> AnchoredQueryResponse {
-  let queryAnchor = try deserializeHKQueryAnchor(base64String: queryAnchor)
-
-  return try await withCheckedThrowingContinuation { continuation in
-    let query = HKAnchoredObjectQuery(
-      type: sampleType,
-      predicate: predicate,
-      anchor: queryAnchor,
-      limit: getQueryLimit(limit)
-    ) {
-      (
-        _: HKAnchoredObjectQuery, samples: [HKSample]?, deletedSamples: [HKDeletedObject]?,
-        newAnchor:
-          HKQueryAnchor?, error: Error?
-      ) in
-      DispatchQueue.main.async {
-        if let error = error {
-          return continuation.resume(throwing: error)
-        }
-
-        if let samples = samples, let deletedSamples = deletedSamples,
-          let newAnchor = serializeAnchor(anchor: newAnchor) {
-          return continuation.resume(
-            returning: AnchoredQueryResponse(
-              samples: samples,
-              deletedSamples: deletedSamples.map({ deletedSample in
-                return serializeDeletedSample(sample: deletedSample)
-              }),
-              newAnchor: newAnchor
-            )
-          )
-        }
-
-        return continuation.resume(
-          throwing: runtimeErrorWithPrefix("Unexpected empty response"))
-      }
-    }
-
-    store.execute(query)
-  }
-}
-
-func serializeAnchor(anchor: HKQueryAnchor?) -> String? {
-  return toBase64(anchor)
-}
-
-func toBase64(_ data: Any?) -> String? {
-  guard let archivedData = try? NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: true) else {
-    return nil
-  }
-
-  return archivedData.base64EncodedString()
-}
-
-func sampleQueryAsync(
-  sampleType: HKSampleType,
-  limit: Double,
-  predicate: NSPredicate?,
-  sortDescriptors: [NSSortDescriptor]?
-) async throws -> [HKSample] {
-  let limit = getQueryLimit(limit)
-  return try await withCheckedThrowingContinuation { continuation in
-    let q = HKSampleQuery(
-      sampleType: sampleType,
-      predicate: predicate,
-      limit: limit,
-      sortDescriptors: sortDescriptors,
-    ) { (_: HKSampleQuery, samples: [HKSample]?, error: Error?) in
-      DispatchQueue.main.async {
-        if let error = error {
-          return continuation.resume(throwing: error)
-        }
-
-        if let samples = samples {
-          return continuation.resume(returning: samples)
-        }
-
-        return continuation.resume(
-          throwing: runtimeErrorWithPrefix("Unexpected empty response"))
-      }
-    }
-
-    store.execute(q)
-  }
-}
-
-func saveAsync(sample: HKObject) async throws -> Bool {
-  return try await withCheckedThrowingContinuation { continuation in
-    store.save(sample) { (success: Bool, error: Error?) in
-      DispatchQueue.main.async {
-        if let error = error {
-          continuation.resume(throwing: error)
-        } else {
-          continuation.resume(returning: success)
-        }
-      }
-    }
-  }
-}
-
-func getSortDescriptors(ascending: Bool?) -> [NSSortDescriptor] {
-  return [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: ascending ?? false)]
-}
-
-func fromBase64(base64String: String?) throws -> Any? {
-  if let base64String = base64String {
-    if base64String.isEmpty {
-      return nil
-    }
-
-    // Step 1: Decode the base64 string to a Data object
-    guard let data = Data(base64Encoded: base64String) else {
-      throw runtimeErrorWithPrefix("Invalid base64 string: \(base64String)")
-    }
-
-    // Step 2: Use NSKeyedUnarchiver to unarchive the data and create an HKQueryAnchor object
-    do {
-      let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
-      unarchiver.requiresSecureCoding = true
-      return try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
-    } catch {
-      throw runtimeErrorWithPrefix(
-        "Error recreating HKQueryAnchor object: \(error.localizedDescription)")
-    }
-  }
-  return nil
-}
-
-func deserializeHKQueryAnchor(base64String: String?) throws -> HKQueryAnchor? {
-  return try fromBase64(base64String: base64String) as? HKQueryAnchor
 }
 
 func initializeCategoryType(_ identifier: String) throws -> HKCategoryType {
@@ -245,51 +92,7 @@ func sampleTypeFrom(sampleTypeIdentifierWriteable: SampleTypeIdentifierWriteable
 }
 
 private func sampleTypeFromStringNullable(typeIdentifier: String) throws -> HKSampleType? {
-  if typeIdentifier.starts(with: HKQuantityTypeIdentifier_PREFIX) {
-    return try initializeQuantityType(typeIdentifier)
-  }
-
-  if typeIdentifier.starts(with: HKCategoryTypeIdentifier_PREFIX) {
-    return try initializeCategoryType(typeIdentifier)
-  }
-
-  if typeIdentifier.starts(with: HKCorrelationTypeIdentifier_PREFIX) {
-    return try initializeCorrelationType(typeIdentifier)
-  }
-
-  if typeIdentifier == HKWorkoutTypeIdentifier {
-    return HKSampleType.workoutType()
-  }
-
-  if typeIdentifier == HKWorkoutRouteTypeIdentifier {
-    return try initializeSeriesType(typeIdentifier)
-  }
-
-  if typeIdentifier == HKAudiogramTypeIdentifier {
-    return HKObjectType.audiogramSampleType()
-  }
-
-  if typeIdentifier == HKDataTypeIdentifierHeartbeatSeries {
-    return try initializeSeriesType(typeIdentifier)
-  }
-
-  if typeIdentifier == HKAudiogramTypeIdentifier {
-    return HKSampleType.audiogramSampleType()
-  }
-
-  if typeIdentifier == HKElectrocardiogramType {
-    return HKSampleType.electrocardiogramType()
-  }
-
-  #if compiler(>=6)
-    if #available(iOS 18, *) {
-      if typeIdentifier == HKStateOfMindTypeIdentifier {
-        return HKObjectType.stateOfMindType()
-      }
-    }
-  #endif
-
-  return nil
+  return sampleType(fromIdentifier: typeIdentifier)
 }
 
 func objectTypesFromArray(typeIdentifiers: [ObjectTypeIdentifier]) -> Set<HKObjectType> {
@@ -303,14 +106,6 @@ func objectTypesFromArray(typeIdentifiers: [ObjectTypeIdentifier]) -> Set<HKObje
     }
   }
   return share
-}
-
-func initializeUUID(_ uuidString: String) throws -> UUID {
-  if let uuid = UUID(uuidString: uuidString) {
-    return uuid
-  }
-
-  throw runtimeErrorWithPrefix("Got invalid UUID: \(uuidString)")
 }
 
 func sampleTypesFromArray(typeIdentifiers: [SampleTypeIdentifier]) -> Set<HKSampleType> {
@@ -348,7 +143,7 @@ func objectTypeFrom(objectTypeIdentifier: ObjectTypeIdentifier) throws -> HKObje
     return sampleType
   }
 
-  if typeIdentifier.starts(with: HKCharacteristicTypeIdentifier_PREFIX) {
+  if typeIdentifier.starts(with: characteristicTypeIdentifierPrefix) {
     let identifier = HKCharacteristicTypeIdentifier.init(rawValue: typeIdentifier)
     if let type = HKObjectType.characteristicType(forIdentifier: identifier) as HKObjectType? {
       return type
@@ -434,11 +229,11 @@ func anyMapToDictionary(_ anyMap: AnyMap) -> [String: Any] {
 }
 
 func runtimeErrorWithPrefix(_ withMessage: String) -> Error {
-  return RuntimeError.error(withMessage: "[react-native-healthkit] \(withMessage)")
+  return makeRuntimeError(withMessage, prefix: logPrefix)
 }
 
 func warnWithPrefix(_ withMessage: String) {
-  print("[react-native-healthkit] \(withMessage)")
+  logWarning(withMessage, prefix: logPrefix)
 }
 
 func buildStatisticsOptions(statistics: [StatisticsOptions], quantityType: HKQuantityType) -> HKStatisticsOptions {
@@ -482,32 +277,4 @@ func buildStatisticsOptions(statistics: [StatisticsOptions], quantityType: HKQua
     }
   }
   return opts
-}
-
-private let storeReopenRetryDelay: UInt64 = 1_000_000_000
-
-/// HealthKit seals its store the moment the device locks and re-opens it a beat
-/// after it unlocks, and iOS can resume the app inside that beat. A query that
-/// hits the gap fails with `errorDatabaseInaccessible` although protected data is
-/// reported available — the store is re-opening, not sealed. Runs `operation`
-/// and, on exactly that refusal, gives it one more attempt after a short delay.
-/// A refusal while protected data is unavailable is the sealed store itself and
-/// is thrown as-is, as is every other error.
-func retryingWhileStoreReopens<T>(
-  _ operation: () async throws -> T
-) async throws -> T {
-  do {
-    return try await operation()
-  } catch {
-    let nsError = error as NSError
-    guard nsError.domain == HKError.errorDomain,
-      nsError.code == HKError.Code.errorDatabaseInaccessible.rawValue
-    else { throw error }
-    let protectedDataAvailable = await MainActor.run {
-      UIApplication.shared.isProtectedDataAvailable
-    }
-    guard protectedDataAvailable else { throw error }
-    try await Task.sleep(nanoseconds: storeReopenRetryDelay)
-    return try await operation()
-  }
 }

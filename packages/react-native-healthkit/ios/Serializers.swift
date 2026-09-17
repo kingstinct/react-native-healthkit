@@ -8,12 +8,7 @@
 import Foundation
 import HealthKit
 import NitroModules
-
-private let metadataDateFormatter: ISO8601DateFormatter = {
-  let formatter = ISO8601DateFormatter()
-  formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-  return formatter
-}()
+import ReactNativeHealthkitCore
 
 func serializeQuantityTyped(unit: HKUnit, quantityNullable: HKQuantity?) -> Quantity? {
   guard let q = quantityNullable else {
@@ -43,10 +38,10 @@ func serializeQuantitySample(sample: HKQuantitySample, unit: HKUnit) throws -> Q
       startDate: sample.startDate,
       endDate: sample.endDate,
       hasUndeterminedDuration: sample.hasUndeterminedDuration,
-      metadata: serializeMetadata(sample.metadata),
       uuid: sample.uuid.uuidString,
       sourceRevision: serializeSourceRevision(sample.sourceRevision),
-      device: serializeDevice(hkDevice: sample.device)
+      device: serializeDevice(hkDevice: sample.device),
+      metadata: serializeMetadata(sample.metadata)
     )
   }
   throw runtimeErrorWithPrefix(
@@ -70,10 +65,10 @@ func serializeCategorySample(sample: HKCategorySample) -> CategorySample {
     startDate: sample.startDate,
     endDate: sample.endDate,
     hasUndeterminedDuration: sample.hasUndeterminedDuration,
-    metadata: serializeMetadata(sample.metadata),
     uuid: sample.uuid.uuidString,
     sourceRevision: serializeSourceRevision(sample.sourceRevision),
-    device: serializeDevice(hkDevice: sample.device)
+    device: serializeDevice(hkDevice: sample.device),
+    metadata: serializeMetadata(sample.metadata)
   )
 }
 
@@ -223,59 +218,19 @@ func serializeUnknownQuantity(quantity: HKQuantity) -> [String: AnyValue]? {
   return nil
 }
 
-func serializeMetadata(_ metadata: [String: Any]?) -> AnyMap {
-  let serialized = AnyMap()
-  if let m = metadata {
-    for item in m {
-      if let number = item.value as? NSNumber {
-        if isKnownBooleanMetadataKey(item.key) {
-          serialized.setBoolean(key: item.key, value: number.boolValue)
-        } else if isKnownNumericMetadataKey(item.key) {
-          serialized.setDouble(key: item.key, value: number.doubleValue)
-        } else if CFGetTypeID(number) == CFBooleanGetTypeID() {
-          serialized.setBoolean(key: item.key, value: number.boolValue)
-        } else {
-          serialized.setDouble(key: item.key, value: number.doubleValue)
-        }
-        continue
-      }
-
-      if let bool = item.value as? Bool {
-        serialized.setBoolean(key: item.key, value: bool)
-        continue
-      }
-
-      if let str = item.value as? String {
-        serialized.setString(key: item.key, value: str)
-        continue
-      }
-
-      if let double = item.value as? Double {
-        serialized.setDouble(key: item.key, value: double)
-        continue
-      }
-
-      if let date = item.value as? Date {
-        serialized.setString(
-          key: item.key,
-          value: metadataDateFormatter.string(from: date)
-        )
-        continue
-      }
-
-      if let quantity = item.value as? HKQuantity {
-        if let s = serializeUnknownQuantity(quantity: quantity) {
-          serialized.setObject(key: item.key, value: s)
-        }
-        continue
-      }
-
-      if let dict = item.value as? [String: AnyValue] {
-        serialized.setObject(key: item.key, value: dict)
-      }
+private let metadataSerializationOptions = MetadataSerializationOptions(
+  isBooleanKey: isKnownBooleanMetadataKey,
+  isNumericKey: isKnownNumericMetadataKey,
+  serializeQuantity: { quantity in
+    if let serialized = serializeUnknownQuantity(quantity: quantity) {
+      return .object(serialized)
     }
+    return nil
   }
-  return serialized
+)
+
+func serializeMetadata(_ metadata: [String: Any]?) -> AnyMap {
+  return ReactNativeHealthkitCore.serializeMetadata(metadata, options: metadataSerializationOptions)
 }
 
 func serializeDevice(hkDevice: HKDevice?) -> Device? {
@@ -293,12 +248,6 @@ func serializeDevice(hkDevice: HKDevice?) -> Device? {
     softwareVersion: hkDevice.softwareVersion,
     udiDeviceIdentifier: hkDevice.udiDeviceIdentifier
   )
-}
-
-func serializeOperatingSystemVersion(_ version: OperatingSystemVersion) -> String {
-  let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
-
-  return versionString
 }
 
 func serializeSourceRevision(_ hkSourceRevision: HKSourceRevision) -> SourceRevision {
