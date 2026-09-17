@@ -45,7 +45,8 @@
         }
       ],
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      "./plugins/withPodsDeploymentTargetFloor.js"
     ],
     "experiments": {
       "typedRoutes": true
