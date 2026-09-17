@@ -220,7 +220,7 @@ jobs:
           ## Xcode 26.6 (Swift 6.2) - latest stable
           - xcode: "26"
             runner: macos-26
-            xcode-app: /Applications/Xcode_26.6.app
+            xcode_app: /Applications/Xcode_26.6.app
             ios: "26.5"
             contracts: true
           ## Xcode 27 - the image ships exactly one, named after the release it carries, so it is
@@ -230,7 +230,7 @@ jobs:
           ## Flip `contracts` to true once the example app is on an Expo SDK with scene support.
           - xcode: "27"
             runner: xcode-27
-            xcode-app: /Applications/Xcode_27*.app
+            xcode_app: /Applications/Xcode_27*.app
             ios: "27.0"
             contracts: false
 
@@ -247,9 +247,9 @@ jobs:
 
       - name: Select Xcode ${{ matrix.xcode }}
         run: |
-          XCODE_APP="$(ls -d ${{ matrix.xcode-app }} 2>/dev/null | sort -V | tail -n 1)"
+          XCODE_APP="$(ls -d ${{ matrix.xcode_app }} 2>/dev/null | sort -V | tail -n 1)"
           if [ -z "$XCODE_APP" ]; then
-            echo "No Xcode matching '${{ matrix.xcode-app }}' on this runner." >&2
+            echo "No Xcode matching '${{ matrix.xcode_app }}' on this runner." >&2
             exit 1
           fi
           sudo xcode-select -s "$XCODE_APP"
