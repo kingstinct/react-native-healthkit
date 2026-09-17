@@ -167,31 +167,8 @@ jobs:
       - name: Lint
         run: bun run swiftlint
 
-  # build-ios-beta:
-  #   # Only run on macOS since we need Xcode
-  #   runs-on: macos-15
-  #   timeout-minutes: 50
-
-  #   steps:
-  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-  #     - uses: actions/checkout@v4
-
-  #     - uses: oven-sh/setup-bun@v2
-  #       with:
-  #         bun-version-file: .bun-version
-
-  #     - name: Install dependencies
-  #       run: bun install --ignore-scripts --frozen-lockfile
-
-  #     ## latest stable
-  #     - run: sudo xcode-select -s /Applications/Xcode_26.0.app
-
-  #     - name: Install iOS 26 simulator runtime
-  #       run: |
-  #         xcodebuild -downloadPlatform iOS
-  #         # optional but useful:
-  # Split out of build-ios: the generator reads whichever iOS SDK xcode-select points at, so this
-  # needs the newest SDK, while the example app has to keep building on the stable Xcode below.
+  # Split out of build-ios: the generator reads whichever iOS SDK xcode-select points at and the
+  # committed schema is generated from the newest one, so this always runs on the newest Xcode.
   # No simulator and no build here, so it costs a few minutes rather than the full build's time.
   verify-generated:
     needs: changes
@@ -209,8 +186,9 @@ jobs:
       - name: Install dependencies
         run: bun install --ignore-scripts --frozen-lockfile
 
-      ## Resolved by glob rather than pinned: the preview image names the app after the beta it
-      ## ships (Xcode_27_beta_6.app today), so a literal path rots.
+      ## Resolved by glob rather than pinned: the xcode-27 image ships a single Xcode named after
+      ## the exact release it carries (Xcode_27_beta_6.app, Xcode_27.0.app, ...), so a literal path
+      ## rots every time the image is updated.
       - name: Select Xcode 27
         run: |
           XCODE_APP="$(ls -d /Applications/Xcode_27*.app 2>/dev/null | sort -V | tail -n 1)"
@@ -225,12 +203,36 @@ jobs:
         working-directory: packages/react-native-healthkit
         run: bun run check:generated
 
-  build-ios:
+  # Builds the example app and runs the HealthKit contracts on every Xcode major we support:
+  # the latest stable Xcode 26 on the macos-26 image, and Xcode 27 on GitHub's xcode-27 image
+  # (one Xcode per image, updated in place as 27.x releases ship).
+  build-ios-xcode:
+    name: build-ios (Xcode ${{ matrix.xcode }})
     needs: changes
     if: needs.changes.outputs.healthkit_contracts == 'true'
-    # Only run on macOS since we need Xcode
-    runs-on: macos-26
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          ## Xcode 26.6 (Swift 6.2) - latest stable
+          - xcode: "26"
+            runner: macos-26
+            xcode_app: /Applications/Xcode_26.6.app
+            ios: "26.5"
+            contracts: true
+          ## Xcode 27 - the image ships exactly one, named after the release it carries, so it is
+          ## resolved by glob (see verify-generated). Build only for now: apps linked against the
+          ## iOS 27 SDK must adopt the UIScene life cycle or UIKit traps at launch, and the example
+          ## app's Expo SDK 54 does not (see https://github.com/expo/fyi/blob/main/ios-scene-lifecycle.md).
+          ## Flip `contracts` to true once the example app is on an Expo SDK with scene support.
+          - xcode: "27"
+            runner: xcode-27
+            xcode_app: /Applications/Xcode_27*.app
+            ios: "27.0"
+            contracts: false
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -243,23 +245,38 @@ jobs:
       - name: Install dependencies
         run: bun install --ignore-scripts --frozen-lockfile
 
-      ## Xcode 26.6 (Swift 6.2) - latest stable
-      - run: sudo xcode-select -s /Applications/Xcode_26.6.app
-
-      - name: Install simulator tooling
-        run: brew install wix/brew/applesimutils
-
-      - name: Select and boot simulator
+      - name: Select Xcode ${{ matrix.xcode }}
         run: |
-          SIMULATOR_ID="$(
-            xcrun simctl list devices available 'iOS 26.5' |
-              sed -n 's/^[[:space:]]*iPhone 17 Pro (\([0-9A-F-][0-9A-F-]*\)) (.*/\1/p' |
-              head -n 1
-          )"
-          if [ -z "$SIMULATOR_ID" ]; then
-            echo "Unable to find an available iPhone 17 Pro with iOS 26.5." >&2
+          XCODE_APP="$(ls -d ${{ matrix.xcode_app }} 2>/dev/null | sort -V | tail -n 1)"
+          if [ -z "$XCODE_APP" ]; then
+            echo "No Xcode matching '${{ matrix.xcode_app }}' on this runner." >&2
             exit 1
           fi
+          sudo xcode-select -s "$XCODE_APP"
+          xcodebuild -version
+
+      - name: Install simulator tooling
+        if: matrix.contracts
+        run: brew install wix/brew/applesimutils
+
+      # The device set differs per Xcode (Xcode 26 ships iPhone 17 Pro, Xcode 27 ships iPhone 18
+      # Pro), so pick the newest non-Max "iPhone N Pro" the runtime offers rather than a fixed name.
+      - name: Select and boot simulator
+        if: matrix.contracts
+        run: |
+          DEVICE_LINE="$(
+            xcrun simctl list devices available 'iOS ${{ matrix.ios }}' |
+              grep -E '^[[:space:]]*iPhone [0-9]+ Pro \(' |
+              sort -V |
+              tail -n 1
+          )"
+          SIMULATOR_ID="$(printf '%s\n' "$DEVICE_LINE" | sed -n 's/^[[:space:]]*iPhone [0-9]* Pro (\([0-9A-F-][0-9A-F-]*\)) (.*/\1/p')"
+          if [ -z "$SIMULATOR_ID" ]; then
+            echo "Unable to find an available iPhone Pro simulator with iOS ${{ matrix.ios }}." >&2
+            xcrun simctl list devices available >&2
+            exit 1
+          fi
+          echo "Using simulator: $DEVICE_LINE"
           echo "SIMULATOR_ID=$SIMULATOR_ID" >> "$GITHUB_ENV"
           # Kick off the boot now and let data migration run while we build.
           # The contract runner waits on `simctl bootstatus` before using it.
@@ -275,30 +292,65 @@ jobs:
         working-directory: apps/example
         run: bunx expo prebuild --platform ios
 
+      # Without a booted simulator (build-only legs) the generic simulator destination is enough.
       - name: Build iOS project
         working-directory: apps/example/ios
         run: |
+          if [ -n "${SIMULATOR_ID:-}" ]; then
+            DESTINATION="id=$SIMULATOR_ID"
+          else
+            DESTINATION="generic/platform=iOS Simulator"
+          fi
           xcodebuild \
             -quiet \
             -workspace RNHealthKit.xcworkspace \
             -scheme RNHealthKit \
             -configuration Debug \
             -sdk iphonesimulator \
-            -destination "id=$SIMULATOR_ID" \
+            -destination "$DESTINATION" \
             ONLY_ACTIVE_ARCH=YES \
             COMPILER_INDEX_STORE_ENABLE=NO \
             DEBUG_INFORMATION_FORMAT=dwarf \
             build
 
       - name: Run HealthKit contracts
+        if: matrix.contracts
         run: bun run test:contracts
         env:
           CONTRACT_DIAGNOSTICS_DIR: ${{ runner.temp }}/healthkit-contract-diagnostics
 
       - name: Upload contract diagnostics
-        if: failure()
+        if: failure() && matrix.contracts
         uses: actions/upload-artifact@v4
         with:
-          name: healthkit-contract-diagnostics
+          name: healthkit-contract-diagnostics-xcode-${{ matrix.xcode }}
           path: ${{ runner.temp }}/healthkit-contract-diagnostics
           if-no-files-found: ignore
+
+  # Branch protection requires a check named `build-ios`. The matrix legs above report as
+  # `build-ios (Xcode 26)` / `build-ios (Xcode 27)`, so this job carries the required name and
+  # fails if any leg failed. A skipped matrix (no native changes) passes, as build-ios did before.
+  build-ios:
+    needs: [changes, build-ios-xcode]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check build-ios results
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          BUILD_RESULT: ${{ needs.build-ios-xcode.result }}
+        run: |
+          echo "changes: $CHANGES_RESULT, build-ios matrix: $BUILD_RESULT"
+          if [ "$CHANGES_RESULT" != "success" ]; then
+            echo "The changes job did not succeed." >&2
+            exit 1
+          fi
+          case "$BUILD_RESULT" in
+            success|skipped) exit 0 ;;
+            *)
+              echo "At least one build-ios leg did not succeed." >&2
+              exit 1
+              ;;
+          esac
