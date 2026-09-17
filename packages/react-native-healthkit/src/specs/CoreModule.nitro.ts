@@ -118,6 +118,25 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
     typeIdentifier: PerObjectTypeIdentifier,
   ): Promise<void>
 
+  /**
+   * Reports, for each of the given object types, the earliest date from which the app is
+   * authorized to read samples when the user has granted only limited access.
+   *
+   * A type is only present in the result when the user has imposed a lower time bound on
+   * the app's read access for it - types without such a bound are omitted. Use it to clamp
+   * the `startDate` of a query filter so you don't request data you can't read.
+   *
+   * Requires iOS 27. On earlier versions there is no limited-access lower bound, so this
+   * resolves to an empty object. It also resolves to an empty object - and logs a warning -
+   * when running on iOS 27 in an app built with an SDK older than iOS 27, since the
+   * underlying API cannot be called from such a binary.
+   *
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/earliestauthorizedsampledate(for:) Apple Docs }
+   */
+  getEarliestAuthorizedSampleDates(
+    objectTypeIdentifiers: readonly ObjectTypeIdentifier[],
+  ): Promise<Record<string, Date>>
+
   deleteObjects(
     objectTypeIdentifier: SampleTypeIdentifierWriteable,
     filter: FilterForSamples,
