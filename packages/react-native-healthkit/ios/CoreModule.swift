@@ -103,7 +103,7 @@ class CoreModule: HybridCoreModuleSpec {
             return [String: Date]()
           }
 
-          let earliestDates = try await store.earliestAuthorizedSampleDate(for: objectTypes)
+          let earliestDates = try await healthStore.earliestAuthorizedSampleDate(for: objectTypes)
 
           return earliestDates.reduce(into: [String: Date]()) { result, entry in
             result[entry.key.identifier] = entry.value
