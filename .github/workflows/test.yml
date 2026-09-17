@@ -253,18 +253,23 @@ jobs:
       - name: Install simulator tooling
         run: brew install wix/brew/applesimutils
 
+      # The device set differs per Xcode (Xcode 26 ships iPhone 17 Pro, Xcode 27 ships iPhone 18
+      # Pro), so pick the newest non-Max "iPhone N Pro" the runtime offers rather than a fixed name.
       - name: Select and boot simulator
         run: |
-          SIMULATOR_ID="$(
+          DEVICE_LINE="$(
             xcrun simctl list devices available 'iOS ${{ matrix.ios }}' |
-              sed -n 's/^[[:space:]]*iPhone 17 Pro (\([0-9A-F-][0-9A-F-]*\)) (.*/\1/p' |
-              head -n 1
+              grep -E '^[[:space:]]*iPhone [0-9]+ Pro \(' |
+              sort -V |
+              tail -n 1
           )"
+          SIMULATOR_ID="$(printf '%s\n' "$DEVICE_LINE" | sed -n 's/^[[:space:]]*iPhone [0-9]* Pro (\([0-9A-F-][0-9A-F-]*\)) (.*/\1/p')"
           if [ -z "$SIMULATOR_ID" ]; then
-            echo "Unable to find an available iPhone 17 Pro with iOS ${{ matrix.ios }}." >&2
+            echo "Unable to find an available iPhone Pro simulator with iOS ${{ matrix.ios }}." >&2
             xcrun simctl list devices available >&2
             exit 1
           fi
+          echo "Using simulator: $DEVICE_LINE"
           echo "SIMULATOR_ID=$SIMULATOR_ID" >> "$GITHUB_ENV"
           # Kick off the boot now and let data migration run while we build.
           # The contract runner waits on `simctl bootstatus` before using it.
