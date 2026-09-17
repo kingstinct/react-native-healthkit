@@ -127,7 +127,9 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
    * the `startDate` of a query filter so you don't request data you can't read.
    *
    * Requires iOS 27. On earlier versions there is no limited-access lower bound, so this
-   * resolves to an empty object.
+   * resolves to an empty object. It also resolves to an empty object - and logs a warning -
+   * when running on iOS 27 in an app built with an SDK older than iOS 27, since the
+   * underlying API cannot be called from such a binary.
    *
    * @see {@link https://developer.apple.com/documentation/healthkit/hkhealthstore/earliestauthorizedsampledate(for:) Apple Docs }
    */

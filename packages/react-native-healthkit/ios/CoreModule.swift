@@ -113,7 +113,7 @@ class CoreModule: HybridCoreModuleSpec {
       #else
         if #available(iOS 27.0, *) {
           warnWithPrefix(
-            "getEarliestAuthorizedSampleDates needs to be built with XCode 27.0 or later to report limited-access dates"
+            "getEarliestAuthorizedSampleDates needs to be built with Xcode 27.0 or later to report limited-access dates"
           )
         }
       #endif
