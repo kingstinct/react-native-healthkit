@@ -92,6 +92,37 @@ class CoreModule: HybridCoreModuleSpec {
     }
   }
 
+  func getEarliestAuthorizedSampleDates(objectTypeIdentifiers: [ObjectTypeIdentifier]) -> Promise<
+    [String: Date]
+  > {
+    return Promise.async {
+      #if compiler(>=6.4)
+        if #available(iOS 27.0, *) {
+          let objectTypes = objectTypesFromArray(typeIdentifiers: objectTypeIdentifiers)
+
+          if objectTypes.isEmpty {
+            return [String: Date]()
+          }
+
+          let earliestDates = try await store.earliestAuthorizedSampleDate(for: objectTypes)
+
+          return earliestDates.reduce(into: [String: Date]()) { result, entry in
+            result[entry.key.identifier] = entry.value
+          }
+        }
+      #else
+        if #available(iOS 27.0, *) {
+          warnWithPrefix(
+            "getEarliestAuthorizedSampleDates needs to be built with XCode 27.0 or later to report limited-access dates"
+          )
+        }
+      #endif
+
+      // Before iOS 27 there is no limited-access earliest date, so no type has one.
+      return [String: Date]()
+    }
+  }
+
   func currentAppSource() -> any HybridSourceProxySpec {
     return SourceProxy(source: HKSource.default())
   }

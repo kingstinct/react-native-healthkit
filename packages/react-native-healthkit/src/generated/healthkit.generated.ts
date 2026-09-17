@@ -99,6 +99,7 @@ export type QuantityTypeIdentifierWriteable =
   | 'HKQuantityTypeIdentifierHeadphoneAudioExposure'
   | 'HKQuantityTypeIdentifierHeartRate'
   | 'HKQuantityTypeIdentifierHeartRateRecoveryOneMinute'
+  | 'HKQuantityTypeIdentifierHeartRateVariabilityRMSSD'
   | 'HKQuantityTypeIdentifierHeartRateVariabilitySDNN'
   | 'HKQuantityTypeIdentifierHeight'
   | 'HKQuantityTypeIdentifierInhalerUsage'
@@ -299,6 +300,7 @@ export const QUANTITY_IDENTIFIER_IOS_AVAILABILITY = {
   HKQuantityTypeIdentifierHeadphoneAudioExposure: '13.0',
   HKQuantityTypeIdentifierHeartRate: '8.0',
   HKQuantityTypeIdentifierHeartRateRecoveryOneMinute: '16.0',
+  HKQuantityTypeIdentifierHeartRateVariabilityRMSSD: '27.0',
   HKQuantityTypeIdentifierHeartRateVariabilitySDNN: '11.0',
   HKQuantityTypeIdentifierHeight: '8.0',
   HKQuantityTypeIdentifierInhalerUsage: '8.0',
@@ -495,6 +497,7 @@ export const QUANTITY_IDENTIFIER_CANONICAL_UNITS = {
   HKQuantityTypeIdentifierHeadphoneAudioExposure: 'dBASPL',
   HKQuantityTypeIdentifierHeartRate: 'count/s',
   HKQuantityTypeIdentifierHeartRateRecoveryOneMinute: 'count/min',
+  HKQuantityTypeIdentifierHeartRateVariabilityRMSSD: 'ms',
   HKQuantityTypeIdentifierHeartRateVariabilitySDNN: 'ms',
   HKQuantityTypeIdentifierHeight: 'm',
   HKQuantityTypeIdentifierInhalerUsage: 'count',
@@ -1267,6 +1270,7 @@ export interface QuantityUnitByIdentifierMap {
   readonly HKQuantityTypeIdentifierHeadphoneAudioExposure: PressureUnit
   readonly HKQuantityTypeIdentifierHeartRate: CountPerTime<TimeUnit>
   readonly HKQuantityTypeIdentifierHeartRateRecoveryOneMinute: CountPerTime<TimeUnit>
+  readonly HKQuantityTypeIdentifierHeartRateVariabilityRMSSD: string
   readonly HKQuantityTypeIdentifierHeartRateVariabilitySDNN: string
   readonly HKQuantityTypeIdentifierHeight: LengthUnit
   readonly HKQuantityTypeIdentifierInhalerUsage: 'count'
