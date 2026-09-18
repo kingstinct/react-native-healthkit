@@ -1,6 +1,6 @@
 {
   "name": "@react-native-healthkit/core",
-  "version": "15.1.0",
+  "version": "16.0.0",
   "description": "Shared types, helpers and native code for the react-native-healthkit packages",
   "main": "lib/commonjs/index.js",
   "types": "lib/typescript/index.d.ts",

@@ -1,6 +1,6 @@
 {
   "name": "@react-native-healthkit/health-records",
-  "version": "15.1.0",
+  "version": "16.0.0",
   "description": "React Native bindings for HealthKit clinical health records (FHIR)",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
@@ -98,7 +98,7 @@
     "typescript": "~5.9.3"
   },
   "dependencies": {
-    "@react-native-healthkit/core": "15.1.0"
+    "@react-native-healthkit/core": "16.0.0"
   },
   "peerDependencies": {
     "react": ">=19",
