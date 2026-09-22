@@ -49,29 +49,11 @@ class HealthRecordsModule: HybridHealthRecordsModuleSpec {
         return .unnecessary
       }
 
-      return try await withCheckedThrowingContinuation { continuation in
-        // HealthKit can raise an Objective-C exception synchronously here;
-        // convert it into a rejection instead of letting it take the app down.
-        do {
-          try runCatchingObjCExceptions {
-            healthStore.getRequestStatusForAuthorization(toShare: [], read: types) { status, error in
-              DispatchQueue.main.async {
-                if let error = error {
-                  return continuation.resume(throwing: error)
-                }
-                if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
-                  return continuation.resume(returning: authStatus)
-                }
-                continuation.resume(
-                  throwing: runtimeErrorWithPrefix(
-                    "Unrecognized authStatus returned: \(status.rawValue)"))
-              }
-            }
-          }
-        } catch {
-          continuation.resume(throwing: error)
-        }
+      let status = try await getRequestStatusForAuthorizationSafe(toShare: [], read: types)
+      guard let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) else {
+        throw runtimeErrorWithPrefix("Unrecognized authStatus returned: \(status.rawValue)")
       }
+      return authStatus
     }
   }
 
@@ -83,22 +65,7 @@ class HealthRecordsModule: HybridHealthRecordsModuleSpec {
         throw runtimeErrorWithPrefix("requestAuthorization: no valid clinical types to request")
       }
 
-      return try await withCheckedThrowingContinuation { continuation in
-        do {
-          try runCatchingObjCExceptions {
-            healthStore.requestAuthorization(toShare: nil, read: types) { success, error in
-              DispatchQueue.main.async {
-                if let error = error {
-                  return continuation.resume(throwing: error)
-                }
-                continuation.resume(returning: success)
-              }
-            }
-          }
-        } catch {
-          continuation.resume(throwing: error)
-        }
-      }
+      return try await requestAuthorizationSafe(toShare: [], read: types)
     }
   }
 
