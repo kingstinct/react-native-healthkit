@@ -15,7 +15,7 @@ React Native bindings for HealthKit with full TypeScript and Promise support cov
 | 75+ Workout Activity Types  | ✅    | ✅    | ✅       | Swimming, running, table tennis etc..  |
 | Correlation Types           | ✅    | ✅    | ✅       | Food and blood pressure                |
 | Document Types              | ✅    | ❌    | ✅       | [CDA documents](https://developer.apple.com/documentation/healthkit/hkcdadocument) exposed as Base64 data  |
-| Clinical Records            | ⚠️    | ❌    | ⚠️       | Lab results etc in [FHIR JSON format](https://www.hl7.org/fhir/json.html) (see [Clinical Records](https://github.com/kingstinct/react-native-healthkit#clinical-records))  |
+| Clinical Records            | ✅    | ❌    | ✅       | Lab results, immunizations etc. as [FHIR](https://www.hl7.org/fhir/json.html) via [`@react-native-healthkit/health-records`](#clinical-records) |
 
 ### Disclaimer
 
@@ -206,7 +206,22 @@ We're striving to do as straight a mapping as possible to the Native Libraries. 
 
 ## Clinical Records
 
-For accessing Clinical Records use old version (3.x) or use specific branch "including-clinical-records". The reason is we cannot refer to this code natively in apps without getting approval from Apple, this could probably be solved by the config plugin but we haven't had time to look into it yet.
+Clinical health records (allergies, conditions, immunizations, lab results, medications, procedures, vital signs, clinical notes and coverage) live in a separate package, [`@react-native-healthkit/health-records`](https://github.com/kingstinct/react-native-healthkit/tree/master/packages/health-records), so apps that don't need them avoid the extra entitlement and App Review scrutiny.
+
+- Records are read-only and delivered as FHIR resources, with anchored queries, change subscriptions and background delivery.
+- The app needs the HealthKit **Clinical Health Records** capability (`health-records` in `com.apple.developer.healthkit.access`) and an `NSHealthClinicalHealthRecordsShareUsageDescription`. Its Expo config plugin sets up both.
+- Health Records are only available in supported regions and never on the simulator, so check `supportsHealthRecords()` before offering the feature.
+
+```ts
+import { supportsHealthRecords, requestAuthorization, queryClinicalRecords } from '@react-native-healthkit/health-records'
+
+if (supportsHealthRecords()) {
+  await requestAuthorization(['HKClinicalTypeIdentifierLabResultRecord'])
+  const labResults = await queryClinicalRecords('HKClinicalTypeIdentifierLabResultRecord', { limit: 0 })
+}
+```
+
+See the [health-records README](https://github.com/kingstinct/react-native-healthkit/blob/master/packages/health-records/README.md) for installation, configuration and the full API.
 
 ## Android alternatives
 
