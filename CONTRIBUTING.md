@@ -49,7 +49,7 @@ bun run test
 
 You can use `bunx solidarity` to make sure everything is set up correctly, for example [make sure you haft `swiftlint` installed](https://github.com/realm/SwiftLint#installation) since we use this as a pre-commit git hook.
 
-To edit the native files, open `apps/example/ios/ReactNativeHealthkitExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > @kingstinct/react-native-healthkit`.
+To edit the native files, open `apps/example/ios/RNHealthKit.xcworkspace` in Xcode and find the source files at `Pods > Development Pods > @kingstinct/react-native-healthkit`.
 
 We use [changesets](https://github.com/changesets/changesets) to handle releases. Either run `bun run create-changeset` locally to generate a changeset or do it in the PR UI. A changeset is required to generate changelogs and trigger the NPM publish. Publishing runs from `.github/workflows/autopublish.yml` via npm [trusted publishing](https://docs.npmjs.com/trusted-publishers) (OIDC), so no npm token is stored in the repo; a package's first-ever version still has to be published manually before its trusted publisher can be configured on npmjs.com.
 

@@ -20,12 +20,17 @@ bun codegen # or bun codegen:healthkit / bun codegen:health-records for one pack
 cd apps/example && bun start
 ```
 
+## Skills
+Step-by-step workflows live in agent skills (loaded on demand):
+- `.agents/skills/react-native-healthkit-contributing` - changing this repo: adding identifiers, adding native (Nitro/Swift) APIs, codegen troubleshooting, verification and releases.
+- `skills/react-native-healthkit` - using the library from an app (also published via `npx skills add kingstinct/react-native-healthkit`). Keep it in sync when public APIs, plugin options or behaviour change.
+
 ## Build Verification Rule
 
 IMPORTANT: After making code changes, you MUST:
 - if you've changed anything in the `src/specs` directory of either package, run `bun codegen` to regenerate types.
 - first run `bun typecheck` and `bun lint` to ensure code quality and type safety. Iterate on these until they pass.
-- finally use xcodebuild to build and verify the project compiles without errors. Build the reactnativehealthkitexample scheme for iOS Simulator using specific simulator UUID to avoid conflicts. Note: Using simulatorId instead of simulatorName to avoid conflicts when multiple simulators have the same name.
+- finally use xcodebuild to build and verify the project compiles without errors. Build the RNHealthKit scheme (`apps/example/ios/RNHealthKit.xcworkspace`, created by `bunx expo prebuild --platform ios`) for iOS Simulator using specific simulator UUID to avoid conflicts. Note: Using simulatorId instead of simulatorName to avoid conflicts when multiple simulators have the same name.
 - For any features or bug fixes, add changesets. Easily done by running `bun changeset` and following the prompts, follow semver best practices.
 
 If there are build or validation errors, fix them before considering the task complete.
