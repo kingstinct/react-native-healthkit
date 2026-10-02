@@ -770,6 +770,7 @@ export enum HeartRateRecoveryTestType {
   maxExercise = 1,
   predictionSubMaxExercise = 2,
   predictionNonExercise = 3,
+  stepTest = 4,
 }
 export enum HeartRateSensorLocation {
   other = 0,
