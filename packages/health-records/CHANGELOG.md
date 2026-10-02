@@ -1,5 +1,10 @@
 # @react-native-healthkit/health-records
 
+## 16.1.0
+### Patch Changes
+
+  - @react-native-healthkit/core@16.1.0
+
 ## 16.0.0
 ### Major Changes
 

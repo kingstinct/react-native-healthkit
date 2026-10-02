@@ -1,5 +1,15 @@
 # @kingstinct/react-native-healthkit
 
+## 16.1.0
+### Minor Changes
+
+- 0a72f7c: Add `HeartRateRecoveryTestType.stepTest` (new in the iOS 27.2 SDK) to the generated HealthKit schema.
+
+### Patch Changes
+
+- 97dc099: docs: point the README's Clinical Records section to `@react-native-healthkit/health-records` instead of the obsolete 3.x release
+  - @react-native-healthkit/core@16.1.0
+
 ## 16.0.0
 ### Major Changes
 
