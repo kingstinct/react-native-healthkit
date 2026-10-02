@@ -2104,6 +2104,11 @@
           "name": "predictionNonExercise",
           "swiftName": "HKHeartRateRecoveryTestTypePredictionNonExercise",
           "rawValue": 3
+        },
+        {
+          "name": "stepTest",
+          "swiftName": "HKHeartRateRecoveryTestTypeStepTest",
+          "rawValue": 4
         }
       ]
     },
