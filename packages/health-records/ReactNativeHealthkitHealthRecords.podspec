@@ -1,6 +1,11 @@
 require "json"
+require "pathname"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
+
+# Resolved like Node resolves the dependency, so monorepo and node_modules layouts both work.
+core_ios_dir = Pathname.new(File.join(File.dirname(`node --print "require.resolve('@react-native-healthkit/core/package.json', { paths: ['#{__dir__}'] })"`.strip), "ios"))
+  .relative_path_from(Pathname.new(__dir__)).to_s
 
 Pod::Spec.new do |s|
   s.name         = "ReactNativeHealthkitHealthRecords"
@@ -22,7 +27,9 @@ Pod::Spec.new do |s|
     # C++ compiler flags, mainly for folly.
     "GCC_PREPROCESSOR_DEFINITIONS" => "$(inherited) FOLLY_NO_CONFIG FOLLY_CFG_NO_COROUTINES",
     # Allow importing Objective-C headers in Swift without bridging header
-    "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES" => "YES"
+    "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES" => "YES",
+    # Core's `internal import ReactNativeHealthkitCore_Private` must resolve here too (explicit module builds).
+    "SWIFT_INCLUDE_PATHS" => "$(inherited) \"$(PODS_TARGET_SRCROOT)/#{core_ios_dir}\""
   }
 
   load 'nitrogen/generated/ios/ReactNativeHealthkitHealthRecords+autolinking.rb'
