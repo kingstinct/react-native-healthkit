@@ -1,5 +1,11 @@
 # @react-native-healthkit/health-records
 
+## 16.1.0
+### Patch Changes
+
+- 9854ae3: Fix iOS builds failing with `Unable to resolve module dependency: 'ReactNativeHealthkitCore_Private'` when React Native is built from source with static frameworks (explicit module builds). The pods that depend on `ReactNativeHealthkitCore` now add the core's `ios/` directory to their `SWIFT_INCLUDE_PATHS`, resolved the way Node resolves the dependency.
+  - @react-native-healthkit/core@16.1.0
+
 ## 16.0.0
 ### Major Changes
 
