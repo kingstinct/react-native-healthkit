@@ -549,4 +549,44 @@ class CoreModule: HybridCoreModuleSpec {
     return Double(successCounts.filter { $0 }.count)
   }
 
+  func queryActivitySummary(filter: ActivitySummaryQueryFilter?) -> Promise<[ActivitySummary]> {
+    return Promise.async {
+      let calendar = Calendar.current
+      let toComponents: (Date?) -> DateComponents? = { date in
+        guard let date else { return nil }
+        var comps = calendar.dateComponents([.year, .month, .day, .era], from: date)
+        comps.calendar = calendar
+        return comps
+      }
+
+      let start = toComponents(filter?.date?.startDate)
+      let end = toComponents(filter?.date?.endDate)
+
+      let predicate: NSPredicate? = switch (start, end) {
+      case let (.some(start), .some(end)):
+        HKQuery.predicate(forActivitySummariesBetweenStart: start, end: end)
+      case let (.some(start), .none):
+        HKQuery.predicateForActivitySummary(with: start)
+      case let (.none, .some(end)):
+        HKQuery.predicateForActivitySummary(with: end)
+      default:
+        nil
+      }
+
+      return try await withCheckedThrowingContinuation { continuation in
+        let query = HKActivitySummaryQuery(predicate: predicate) { (_, summaries, error) in
+          if let error = error {
+            continuation.resume(throwing: error)
+            return
+          }
+
+          let serialized = (summaries ?? []).map { serializeActivitySummary($0) }
+          continuation.resume(returning: serialized)
+        }
+
+        healthStore.execute(query)
+      }
+    }
+  }
+
 }

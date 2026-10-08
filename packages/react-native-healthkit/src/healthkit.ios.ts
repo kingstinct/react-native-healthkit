@@ -407,7 +407,10 @@ export const getFitzpatrickSkinTypeAsync =
 export const getWheelchairUseAsync =
   Characteristics.getWheelchairUseAsync.bind(Characteristics)
 
+export const queryActivitySummary = Core.queryActivitySummary.bind(Core)
+
 export default {
+  queryActivitySummary,
   authorizationStatusFor,
   isObjectTypeAvailable,
   isObjectTypeAvailableAsync,
