@@ -180,36 +180,16 @@ class CoreModule: HybridCoreModuleSpec {
       let toShare = sampleTypesFromArray(typeIdentifiersWriteable: toCheck.toShare ?? [])
       let toRead = objectTypesFromArray(typeIdentifiers: toCheck.toRead ?? [])
 
-      return try await withCheckedThrowingContinuation { continuation in
-        if toShare.isEmpty && toRead.isEmpty {
-          warnWithPrefix("Both toRead and toShare are empty, returning 'unnecessary' status")
-          return continuation.resume(
-            returning: .unnecessary
-          )
-        }
-        do {
-          try runCatchingObjCExceptions {
-            healthStore.getRequestStatusForAuthorization(toShare: toShare, read: toRead) {
-              status, error in
-              DispatchQueue.main.async {
-                if let error = error {
-                  continuation.resume(throwing: error)
-                } else {
-                  if let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) {
-                    continuation.resume(returning: authStatus)
-                  } else {
-                    continuation.resume(
-                      throwing: runtimeErrorWithPrefix(
-                        "Unrecognized authStatus returned: \(status.rawValue)"))
-                  }
-                }
-              }
-            }
-          }
-        } catch {
-          continuation.resume(throwing: error)
-        }
+      if toShare.isEmpty && toRead.isEmpty {
+        warnWithPrefix("Both toRead and toShare are empty, returning 'unnecessary' status")
+        return .unnecessary
       }
+
+      let status = try await getRequestStatusForAuthorizationSafe(toShare: toShare, read: toRead)
+      guard let authStatus = AuthorizationRequestStatus(rawValue: Int32(status.rawValue)) else {
+        throw runtimeErrorWithPrefix("Unrecognized authStatus returned: \(status.rawValue)")
+      }
+      return authStatus
     }
   }
 
@@ -218,23 +198,7 @@ class CoreModule: HybridCoreModuleSpec {
       let share = sampleTypesFromArray(typeIdentifiersWriteable: toRequest.toShare ?? [])
       let toRead = objectTypesFromArray(typeIdentifiers: toRequest.toRead ?? [])
 
-      return try await withCheckedThrowingContinuation { continuation in
-        do {
-          try runCatchingObjCExceptions {
-            healthStore.requestAuthorization(toShare: share, read: toRead) { status, error in
-              DispatchQueue.main.async {
-                if let error = error {
-                  continuation.resume(throwing: error)
-                } else {
-                  continuation.resume(returning: status)
-                }
-              }
-            }
-          }
-        } catch {
-          continuation.resume(throwing: error)
-        }
-      }
+      return try await requestAuthorizationSafe(toShare: share, read: toRead)
     }
   }
 
