@@ -57,6 +57,7 @@ func createPredicateForWorkoutBase(_ filter: FilterForWorkoutsBase?) -> NSPredic
       createDatePredicate(filter.date),
       createWorkoutActivityTypeFilter(filter.workoutActivityType),
       createDurationFilter(filter.duration),
+      createWasUserEnteredPredicate(filter.wasUserEntered),
       createSourcePredicate(filter.sources),
     ].compactMap { $0 }
 
@@ -77,6 +78,7 @@ func getPredicateForWorkoutBase(_ filter: FilterForWorkouts?) -> FilterForWorkou
       sources: filter.sources,
       uuids: filter.uuids,
       date: filter.date,
+      wasUserEntered: filter.wasUserEntered
     )
   }
   return nil
@@ -176,6 +178,18 @@ extension PredicateWithMetadataKey: MetadataPredicateConvertible {
   }
 }
 
+func createWasUserEnteredPredicate(_ wasUserEntered: Bool?) -> NSPredicate? {
+  guard let wasUserEntered = wasUserEntered else {
+    return nil
+  }
+
+  return HKQuery.predicateForObjects(
+    withMetadataKey: HKMetadataKeyWasUserEntered,
+    operatorType: wasUserEntered ? .equalTo : .notEqualTo,
+    value: true
+  )
+}
+
 func createPredicateForSamplesBase(_ filter: FilterForSamplesBase?) -> NSPredicate? {
   if let filter = filter {
     let w = filter.workout as? WorkoutProxy
@@ -186,6 +200,7 @@ func createPredicateForSamplesBase(_ filter: FilterForSamplesBase?) -> NSPredica
       createDatePredicate(filter.date),
       w?.workoutPredicate,
       createMetadataPredicate(filter.metadata),
+      createWasUserEnteredPredicate(filter.wasUserEntered),
       createSourcePredicate(filter.sources),
     ].compactMap { $0 }
 
@@ -240,6 +255,7 @@ func getPredicateForSamplesBase(_ filter: FilterForSamples?) -> FilterForSamples
       metadata: filter.metadata,
       date: filter.date,
       workout: filter.workout,
+      wasUserEntered: filter.wasUserEntered,
       sources: filter.sources
     )
   }
