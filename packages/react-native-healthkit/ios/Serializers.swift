@@ -270,3 +270,75 @@ func serializeSampleType(_ sampleType: HKSampleType) -> SampleType {
     isMaximumDurationRestricted: sampleType.isMaximumDurationRestricted
   )
 }
+
+func serializeActivitySummary(_ summary: HKActivitySummary) -> ActivitySummary {
+  let dateComponents = summary.dateComponents(for: Calendar.current)
+  let serializedDateComponents = ActivitySummaryDateComponents(
+    era: dateComponents.era.map(Double.init),
+    year: dateComponents.year.map(Double.init),
+    month: dateComponents.month.map(Double.init),
+    day: dateComponents.day.map(Double.init)
+  )
+
+  let moveMode: ActivityMoveMode
+  if summary.activityMoveMode == .appleMoveTime {
+    moveMode = .applemovetime
+  } else {
+    moveMode = .activeenergy
+  }
+
+  let activeEnergyBurned = serializeQuantityTyped(
+    unit: HKUnit.kilocalorie(),
+    quantity: summary.activeEnergyBurned
+  )
+  let activeEnergyBurnedGoal = serializeQuantityTyped(
+    unit: HKUnit.kilocalorie(),
+    quantity: summary.activeEnergyBurnedGoal
+  )
+  let appleExerciseTime = serializeQuantityTyped(
+    unit: HKUnit.minute(),
+    quantity: summary.appleExerciseTime
+  )
+  let appleExerciseTimeGoal = serializeQuantityTyped(
+    unit: HKUnit.minute(),
+    quantity: summary.appleExerciseTimeGoal
+  )
+  let appleStandHours = serializeQuantityTyped(
+    unit: HKUnit.count(),
+    quantity: summary.appleStandHours
+  )
+  let appleStandHoursGoal = serializeQuantityTyped(
+    unit: HKUnit.count(),
+    quantity: summary.appleStandHoursGoal
+  )
+
+  let appleMoveTime = serializeQuantityTyped(
+    unit: HKUnit.minute(),
+    quantityNullable: summary.appleMoveTime
+  )
+  let appleMoveTimeGoal = serializeQuantityTyped(
+    unit: HKUnit.minute(),
+    quantityNullable: summary.appleMoveTimeGoal
+  )
+
+  var isPaused: Bool?
+  #if compiler(>=6)
+    if #available(iOS 18.0, *) {
+      isPaused = summary.isPaused
+    }
+  #endif
+
+  return ActivitySummary(
+    dateComponents: serializedDateComponents,
+    activityMoveMode: moveMode,
+    activeEnergyBurned: activeEnergyBurned,
+    activeEnergyBurnedGoal: activeEnergyBurnedGoal,
+    appleExerciseTime: appleExerciseTime,
+    appleExerciseTimeGoal: appleExerciseTimeGoal,
+    appleStandHours: appleStandHours,
+    appleStandHoursGoal: appleStandHoursGoal,
+    appleMoveTime: appleMoveTime,
+    appleMoveTimeGoal: appleMoveTimeGoal,
+    isPaused: isPaused
+  )
+}

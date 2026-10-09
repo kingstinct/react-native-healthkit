@@ -1,5 +1,9 @@
 import type { HybridObject } from 'react-native-nitro-modules'
 import type {
+  ActivitySummary,
+  ActivitySummaryQueryFilter,
+} from '../types/ActivitySummary'
+import type {
   AuthorizationRequestStatus,
   AuthorizationStatus,
 } from '../types/Auth'
@@ -155,4 +159,12 @@ export interface CoreModule extends HybridObject<{ ios: 'swift' }> {
   isObjectTypeAvailableAsync(
     objectTypeIdentifier: ObjectTypeIdentifier,
   ): Promise<boolean>
+
+  /**
+   * Queries activity summary objects from HealthKit.
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkactivitysummaryquery Apple Docs HKActivitySummaryQuery}
+   */
+  queryActivitySummary(
+    filter?: ActivitySummaryQueryFilter,
+  ): Promise<readonly ActivitySummary[]>
 }

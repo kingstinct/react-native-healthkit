@@ -32,6 +32,7 @@ const mockModule = {
   queryHeartbeatSeriesSamplesWithAnchor: jest.fn(),
   queryQuantitySamples: jest.fn(),
   querySources: jest.fn(),
+  queryActivitySummary: jest.fn(),
   queryStatisticsForQuantity: jest.fn(),
   queryStatisticsCollectionForQuantity: jest.fn(),
   queryWorkoutSamples: jest.fn(),

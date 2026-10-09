@@ -104,6 +104,10 @@ export const querySources = UnavailableFnFromModule(
   'querySources',
   Promise.resolve([]),
 )
+export const queryActivitySummary = UnavailableFnFromModule(
+  'queryActivitySummary',
+  Promise.resolve([]),
+)
 export const requestAuthorization = UnavailableFnFromModule(
   'requestAuthorization',
   Promise.resolve(false),
@@ -566,6 +570,7 @@ const HealthkitModule = {
   queryStatisticsCollectionForQuantitySeparateBySource,
   queryWorkoutSamples,
   queryWorkoutSamplesWithAnchor,
+  queryActivitySummary,
   querySources,
   requestAuthorization,
   deleteObjects,
