@@ -49,3 +49,9 @@ export const HKVisionPrescriptionTypeIdentifier =
  * @see {@link https://developer.apple.com/documentation/healthkit/HKAudiogramSampleType Apple Docs HKAudiogramSampleType}
  */
 export const AudiogramTypeIdentifier = 'HKAudiogramSampleType' as const
+
+/**
+ * Metadata key indicating whether the sample was manually entered by the user.
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkmetadatakeywasuserentered Apple Docs HKMetadataKeyWasUserEntered}
+ */
+export const MetadataKeyWasUserEntered = 'HKMetadataKeyWasUserEntered' as const

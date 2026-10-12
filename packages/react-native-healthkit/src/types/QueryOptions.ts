@@ -15,6 +15,7 @@ export interface FilterForSamplesBase {
   readonly metadata?: PredicateWithMetadataKey
   readonly date?: DateFilter
   readonly workout?: WorkoutProxy
+  readonly wasUserEntered?: boolean
   sources?: SourceProxy[]
 }
 
