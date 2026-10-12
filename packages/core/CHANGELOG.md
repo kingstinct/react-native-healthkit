@@ -1,5 +1,10 @@
 # @react-native-healthkit/core
 
+## 16.2.0
+### Patch Changes
+
+- b6de7dd: fix: call `getRequestStatusForAuthorization` and `requestAuthorization` from Objective-C so an exception HealthKit raises is caught instead of trapping (`EXC_BREAKPOINT`), and resume each continuation at most once
+
 ## 16.1.0
 
 ## 16.0.0

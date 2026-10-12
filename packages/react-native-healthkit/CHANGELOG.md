@@ -1,5 +1,16 @@
 # @kingstinct/react-native-healthkit
 
+## 16.2.0
+### Minor Changes
+
+- c21a9e9: Add support for executing `HKActivitySummaryQuery` via `queryActivitySummary`
+
+### Patch Changes
+
+- b6de7dd: fix: call `getRequestStatusForAuthorization` and `requestAuthorization` from Objective-C so an exception HealthKit raises is caught instead of trapping (`EXC_BREAKPOINT`), and resume each continuation at most once
+- Updated dependencies [b6de7dd]
+  - @react-native-healthkit/core@16.2.0
+
 ## 16.1.0
 ### Minor Changes
 
