@@ -367,6 +367,7 @@ export const saveCorrelationSample =
 export const saveQuantitySample =
   QuantityTypes.saveQuantitySample.bind(QuantityTypes)
 export const saveWorkoutSample = WorkoutBindings.saveWorkoutSample
+export const createWorkoutBuilder = Workouts.createWorkoutBuilder.bind(Workouts)
 export const startWatchApp =
   Workouts.startWatchAppWithWorkoutConfiguration.bind(Workouts)
 export const isProtectedDataAvailable = Core.isProtectedDataAvailable.bind(Core)
@@ -465,6 +466,7 @@ export default {
   saveCorrelationSample,
   saveQuantitySample,
   saveWorkoutSample,
+  createWorkoutBuilder,
   subscribeToChanges,
   subscribeToQuantitySamples,
   startWatchApp,

@@ -220,6 +220,10 @@ class WorkoutsModule: HybridWorkoutsModuleSpec {
     }
   }
 
+  func createWorkoutBuilder(workoutConfiguration: WorkoutConfiguration) -> any HybridWorkoutBuilderSpec {
+    return WorkoutBuilder(workoutConfiguration: workoutConfiguration)
+  }
+
   func queryWorkoutSamplesWithAnchor(options: WorkoutQueryOptionsWithAnchor) -> Promise<
     QueryWorkoutSamplesWithAnchorResponse
   > {

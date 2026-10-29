@@ -182,6 +182,52 @@ func saveWorkoutRouteInternal(
   }
 }
 
+func serializeWorkoutEvents(_ events: [HKWorkoutEvent]) -> [WorkoutEvent] {
+  return events.compactMap { event in
+    if let type = WorkoutEventType.init(
+      rawValue: Int32(event.type.rawValue)
+    ) {
+      return WorkoutEvent(
+        type: type,
+        startDate: event.dateInterval.start,
+        endDate: event.dateInterval.end,
+        metadata: serializeMetadata(event.metadata)
+      )
+    }
+    warnWithPrefix(
+      "Failed to initialize WorkoutEventType with rawValue: \(event.type.rawValue)"
+    )
+    return nil
+  }
+}
+
+@available(iOS 16.0, *)
+func serializeWorkoutActivityType(_ activity: HKWorkoutActivity) -> WorkoutActivityType {
+  let rawActivityType = activity.workoutConfiguration.activityType.rawValue
+  let activityType = Int32(exactly: rawActivityType).flatMap {
+    WorkoutActivityType.init(rawValue: $0)
+  }
+
+  if activityType == nil {
+    warnWithPrefix(
+      "Unknown workoutActivityType with rawValue: \(rawActivityType), falling back to 'other'"
+    )
+  }
+
+  return activityType ?? WorkoutActivityType.other
+}
+
+@available(iOS 16.0, *)
+func serializeWorkoutActivity(_ activity: HKWorkoutActivity) -> WorkoutActivity {
+  return WorkoutActivity(
+    startDate: activity.startDate,
+    endDate: activity.endDate ?? activity.startDate,
+    uuid: activity.uuid.uuidString,
+    duration: activity.duration,
+    activityType: serializeWorkoutActivityType(activity)
+  )
+}
+
 class WorkoutProxy: HybridWorkoutProxySpec {
   // Return a Promise instead of directly returning the value; wrap async logic.
   func getStatistic(quantityType: QuantityTypeIdentifier, unitOverride: String?) throws -> Promise<
@@ -351,50 +397,14 @@ class WorkoutProxy: HybridWorkoutProxySpec {
 
   var events: [WorkoutEvent]? {
     if let hkWorkoutEvents = workout.workoutEvents {
-      return hkWorkoutEvents.compactMap { event in
-        if let type = WorkoutEventType.init(
-          rawValue: Int32(event.type.rawValue)
-        ) {
-          return WorkoutEvent(
-            type: type,
-            startDate: event.dateInterval.start,
-            endDate: event.dateInterval.end,
-            metadata: serializeMetadata(event.metadata)
-          )
-        }
-        warnWithPrefix(
-          "Failed to initialize WorkoutEventType with rawValue: \(event.type.rawValue)"
-        )
-        return nil
-      }
+      return serializeWorkoutEvents(hkWorkoutEvents)
     }
     return nil
   }
 
   var activities: [WorkoutActivity]? {
     if #available(iOS 16.0, *) {
-      let hkActivities = workout.workoutActivities
-
-      return hkActivities.map { activity in
-        let rawActivityType = activity.workoutConfiguration.activityType.rawValue
-        let activityType = Int32(exactly: rawActivityType).flatMap {
-          WorkoutActivityType.init(rawValue: $0)
-        }
-
-        if activityType == nil {
-          warnWithPrefix(
-            "Unknown workoutActivityType with rawValue: \(rawActivityType), falling back to 'other'"
-          )
-        }
-
-        return WorkoutActivity(
-          startDate: activity.startDate,
-          endDate: activity.endDate ?? activity.startDate,
-          uuid: activity.uuid.uuidString,
-          duration: activity.duration,
-          activityType: activityType ?? WorkoutActivityType.other
-        )
-      }
+      return workout.workoutActivities.map(serializeWorkoutActivity)
     }
     return nil
   }

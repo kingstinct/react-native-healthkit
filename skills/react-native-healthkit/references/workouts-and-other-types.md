@@ -64,7 +64,35 @@ await workout.saveWorkoutRoute(locations) // LocationForSaving[]: latitude, long
 ```
 
 - Request `toShare` for the workout type, every associated quantity type, and `HKWorkoutRouteTypeIdentifier` if you save a route.
-- There is **no live `HKWorkoutSession` / `HKWorkoutBuilder` API** (those are watchOS-centric). `startWatchApp({ activityType, locationType })` launches your companion watchOS app to start a session there.
+- `saveWorkoutSample` can't save events (pauses, laps) or activities. Use the workout builder for those.
+- There is **no live `HKWorkoutSession` / `HKLiveWorkoutBuilder` API** (those are watchOS-centric). `startWatchApp({ activityType, locationType })` launches your companion watchOS app to start a session there.
+
+### Saving a workout with pauses or activities (`HKWorkoutBuilder`)
+
+`createWorkoutBuilder` wraps `HKWorkoutBuilder`: one JS call per builder method, then `finishWorkout()` saves the workout and returns the same proxy as `saveWorkoutSample`. A saved workout can't be changed, so add everything before finishing.
+
+```ts
+import { createWorkoutBuilder, WorkoutActivityType, WorkoutEventType } from '@kingstinct/react-native-healthkit'
+
+const builder = createWorkoutBuilder({ activityType: WorkoutActivityType.walking })
+await builder.beginCollection(start)
+await builder.add([ // quantity samples; HealthKit derives totals from them, prorating any sample that spans a pause
+  { quantityType: 'HKQuantityTypeIdentifierDistanceWalkingRunning', quantity: 2500, unit: 'm', startDate: start, endDate: end },
+])
+await builder.addWorkoutEvents([ // pause must be followed by resume, and resume by pause
+  { type: WorkoutEventType.pause, startDate: pausedAt, endDate: pausedAt },
+  { type: WorkoutEventType.resume, startDate: resumedAt, endDate: resumedAt },
+])
+await builder.addMetadata({ HKIndoorWorkout: false })
+await builder.endCollection(end)
+const workout = await builder.finishWorkout() // undefined if saved while the device is locked
+await workout?.saveWorkoutRoute(locations)
+// workout.duration excludes the paused interval
+```
+
+- Activities (iOS 16+, e.g. multisport): `const uuid = await builder.addWorkoutActivity({ workoutConfiguration: { activityType }, startDate, endDate? })`, then `updateActivityEndDate(uuid, endDate)` / `updateActivityMetadata(uuid, metadata)`.
+- `builder.elapsedTime(date)` gives the active duration so far; `startDate`, `endDate`, `metadata`, `workoutEvents` and `workoutActivities` mirror the builder's state.
+- `builder.discardWorkout()` cancels without saving. To remove a saved workout, use `deleteObjects`.
 
 ## State of mind (iOS 18+)
 
@@ -104,6 +132,7 @@ Request the matching `HKCharacteristicTypeIdentifier...` in `toRead`.
 - [HKWorkout](https://developer.apple.com/documentation/healthkit/hkworkout.md)
 - [HKWorkoutActivityType](https://developer.apple.com/documentation/healthkit/hkworkoutactivitytype.md)
 - [HKWorkoutRoute](https://developer.apple.com/documentation/healthkit/hkworkoutroute.md)
+- [HKWorkoutBuilder](https://developer.apple.com/documentation/healthkit/hkworkoutbuilder.md)
 - [Workout metadata keys](https://developer.apple.com/documentation/healthkit/workout-metadata-keys.md)
 - [HKStateOfMind](https://developer.apple.com/documentation/healthkit/hkstateofmind.md)
 - [HKUserAnnotatedMedication](https://developer.apple.com/documentation/healthkit/hkuserannotatedmedication.md)

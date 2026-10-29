@@ -66,3 +66,23 @@ BOOL HKRequestAuthorizationCatchingExceptions(HKHealthStore *store,
         return NO;
     }
 }
+
+HKWorkoutEvent * _Nullable HKWorkoutEventCatchingExceptions(HKWorkoutEventType type,
+                                                            NSDateInterval *dateInterval,
+                                                            NSDictionary<NSString *, id> *metadata,
+                                                            NSError **outError) {
+    if (outError) { *outError = nil; }
+    @try {
+        return [HKWorkoutEvent workoutEventWithType:type dateInterval:dateInterval metadata:metadata];
+    }
+    @catch (NSException *exception) {
+        if (outError) {
+            NSMutableDictionary *userInfo = [(exception.userInfo ?: @{}) mutableCopy];
+            if (exception.reason) {
+                userInfo[NSLocalizedDescriptionKey] = exception.reason;
+            }
+            *outError = [NSError errorWithDomain:exception.name code:0 userInfo:userInfo];
+        }
+        return nil;
+    }
+}

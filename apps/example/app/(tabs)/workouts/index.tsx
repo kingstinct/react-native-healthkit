@@ -1,11 +1,13 @@
 import { Button, Host, List, VStack } from '@expo/ui/swift-ui'
 import {
   ComparisonPredicateOperator,
+  createWorkoutBuilder,
   queryWorkoutSamplesWithAnchor,
   saveWorkoutSample,
 } from '@kingstinct/react-native-healthkit'
 import {
   WorkoutActivityType,
+  WorkoutEventType,
   type WorkoutSample,
 } from '@kingstinct/react-native-healthkit/types/Workouts'
 import { router } from 'expo-router'
@@ -110,6 +112,47 @@ export default function WorkoutsScreen() {
             }}
           >
             Create workout
+          </Button>
+          <Button
+            onPress={async () => {
+              const start = new Date(Date.now() - 45 * 60 * 1000)
+              const pausedAt = new Date(start.getTime() + 15 * 60 * 1000)
+              const resumedAt = new Date(start.getTime() + 25 * 60 * 1000)
+              const end = new Date()
+
+              const builder = createWorkoutBuilder({
+                activityType: WorkoutActivityType.walking,
+              })
+              await builder.beginCollection(start)
+              await builder.add([
+                {
+                  startDate: start,
+                  endDate: end,
+                  quantity: 2500,
+                  quantityType:
+                    'HKQuantityTypeIdentifierDistanceWalkingRunning',
+                  unit: 'm',
+                },
+              ])
+              await builder.addWorkoutEvents([
+                {
+                  type: WorkoutEventType.pause,
+                  startDate: pausedAt,
+                  endDate: pausedAt,
+                },
+                {
+                  type: WorkoutEventType.resume,
+                  startDate: resumedAt,
+                  endDate: resumedAt,
+                },
+              ])
+              await builder.endCollection(end)
+              const workout = await builder.finishWorkout()
+              console.log(JSON.stringify(workout, null, 2))
+              queryWorkoutSamples(anchor)
+            }}
+          >
+            Create workout with pause
           </Button>
           {workouts.map((item) => (
             <ListItem

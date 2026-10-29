@@ -21,3 +21,11 @@ BOOL HKRequestAuthorizationCatchingExceptions(HKHealthStore * _Nonnull store,
                                               NSSet<HKObjectType *> * _Nonnull toRead,
                                               void (^_Nonnull completion)(BOOL success, NSError * _Nullable error),
                                               NSError * _Nullable * _Nullable outError);
+
+/// HKWorkoutEvent created from Objective-C, for the same reason as the
+/// authorization calls above. HealthKit raises for invalid input, e.g. a pause
+/// event with a non-zero duration. Returns nil and fills outError if it raised.
+HKWorkoutEvent * _Nullable HKWorkoutEventCatchingExceptions(HKWorkoutEventType type,
+                                                            NSDateInterval * _Nonnull dateInterval,
+                                                            NSDictionary<NSString *, id> * _Nullable metadata,
+                                                            NSError * _Nullable * _Nullable outError);

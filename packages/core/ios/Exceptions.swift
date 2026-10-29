@@ -33,6 +33,19 @@ public func parseUnitStringSafe(_ unitString: String) throws -> HKUnit {
   throw makeRuntimeError("Supplied invalid '\(unitString)' as HKUnit")
 }
 
+/// `HKWorkoutEvent` raises an Objective-C exception for invalid input, e.g. a
+/// pause event with a non-zero duration.
+public func createWorkoutEventSafe(
+  type: HKWorkoutEventType, dateInterval: DateInterval, metadata: [String: Any]?
+) throws -> HKWorkoutEvent {
+  var err: NSError?
+  if let event = HKWorkoutEventCatchingExceptions(type, dateInterval, metadata, &err) {
+    return event
+  }
+
+  throw makeRuntimeError(err?.localizedDescription ?? "Invalid workout event")
+}
+
 /// Resumes a checked continuation at most once. HealthKit can raise after it has
 /// registered its completion and then still call that completion, so the raise
 /// and the completion can both try to resume. The second resume is dropped

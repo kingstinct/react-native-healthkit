@@ -40,6 +40,7 @@ const mockModule = {
   saveCategorySample: jest.fn(),
   saveCorrelationSample: jest.fn(),
   saveWorkoutSample: jest.fn(),
+  createWorkoutBuilder: jest.fn(),
   subscribeToObserverQuery: jest.fn(),
   unsubscribeQuery: jest.fn(),
   saveWorkoutRoute: jest.fn(),
