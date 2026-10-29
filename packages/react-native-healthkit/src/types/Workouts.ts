@@ -16,7 +16,9 @@ import type {
   WithOptionalTypedMetadata,
   WithTypedMetadata,
 } from './Shared'
+import type { WorkoutConfiguration } from './WorkoutKit'
 
+export type { WorkoutBuilder } from '../specs/WorkoutBuilder.nitro'
 export { WorkoutActivityType, WorkoutEventType }
 
 export interface WorkoutEvent {
@@ -37,6 +39,27 @@ export interface WorkoutActivity {
   readonly uuid: string
   readonly duration: number
   readonly activityType: WorkoutActivityType
+}
+
+/**
+ * An activity in a `WorkoutBuilder`. `endDate` is unset until the activity has ended.
+ */
+export interface WorkoutBuilderActivity {
+  readonly startDate: Date
+  readonly endDate?: Date
+  readonly uuid: string
+  readonly duration: number
+  readonly activityType: WorkoutActivityType
+}
+
+/**
+ * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutactivity/init(workoutconfiguration:start:end:metadata:) Apple Docs }
+ */
+export interface WorkoutActivityForSaving {
+  readonly workoutConfiguration: WorkoutConfiguration
+  readonly startDate: Date
+  readonly endDate?: Date
+  readonly metadata?: AnyMap
 }
 
 export interface WorkoutRoute {

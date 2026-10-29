@@ -213,6 +213,24 @@ func parseWorkoutConfiguration(_ config: WorkoutConfiguration) -> HKWorkoutConfi
   return configuration
 }
 
+func serializeWorkoutConfiguration(_ configuration: HKWorkoutConfiguration) -> WorkoutConfiguration {
+  let rawActivityType = configuration.activityType.rawValue
+  let activityType = Int32(exactly: rawActivityType).flatMap {
+    WorkoutActivityType(rawValue: $0)
+  }
+
+  if activityType == nil {
+    warnWithPrefix(
+      "Unknown workoutActivityType with rawValue: \(rawActivityType), falling back to 'other'"
+    )
+  }
+
+  return WorkoutConfiguration(
+    activityType: activityType ?? WorkoutActivityType.other,
+    locationType: WorkoutSessionLocationType(rawValue: Int32(configuration.locationType.rawValue))
+  )
+}
+
 func anyMapToDictionaryOptional(_ anyMap: AnyMap?) -> [String: Any]? {
   if let anyMap = anyMap {
     return anyMapToDictionary(anyMap)

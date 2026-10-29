@@ -8,9 +8,14 @@ import type {
   WorkoutQueryOptionsWithAnchor,
   WorkoutTotals,
 } from '../types/Workouts'
+import type { WorkoutBuilder } from './WorkoutBuilder.nitro'
 import type { WorkoutProxy } from './WorkoutProxy.nitro'
 
 export interface WorkoutsModule extends HybridObject<{ ios: 'swift' }> {
+  /**
+   * Saves a workout without events or activities. To save pauses, laps or activities, use
+   * `createWorkoutBuilder` instead. Uses the `HKWorkout` initializers deprecated in iOS 17.
+   */
   saveWorkoutSample(
     workoutActivityType: WorkoutActivityType,
     quantities: readonly QuantitySampleForSaving[],
@@ -19,6 +24,13 @@ export interface WorkoutsModule extends HybridObject<{ ios: 'swift' }> {
     totals?: WorkoutTotals,
     metadata?: AnyMap,
   ): Promise<WorkoutProxy>
+
+  /**
+   * @see {@link https://developer.apple.com/documentation/healthkit/hkworkoutbuilder/init(healthstore:configuration:device:) Apple Docs }
+   */
+  createWorkoutBuilder(
+    workoutConfiguration: WorkoutConfiguration,
+  ): WorkoutBuilder
 
   queryWorkoutSamplesWithAnchor(
     options: WorkoutQueryOptionsWithAnchor,

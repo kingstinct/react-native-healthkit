@@ -8,6 +8,7 @@ import { createUnavailableHelpers } from '@react-native-healthkit/core'
 // It assumes that index.ios.ts exports a default object matching the Healthkit native module structure.
 import type ReactNativeHealthkit from './healthkit.ios'
 import type { SourceProxy } from './specs/SourceProxy.nitro'
+import type { WorkoutBuilder } from './specs/WorkoutBuilder.nitro'
 import type { WorkoutProxy } from './specs/WorkoutProxy.nitro'
 import { AuthorizationRequestStatus, AuthorizationStatus } from './types/Auth'
 import type {
@@ -345,6 +346,11 @@ export const saveWorkoutSample = UnavailableFnFromModule(
   // biome-ignore lint/suspicious/noExplicitAny: it works
   Promise.resolve(undefined as any as WorkoutProxy),
 )
+export const createWorkoutBuilder = UnavailableFnFromModule(
+  'createWorkoutBuilder',
+  // biome-ignore lint/suspicious/noExplicitAny: it works
+  undefined as any as WorkoutBuilder,
+)
 export const startWatchApp = UnavailableFnFromModule(
   'startWatchApp',
   Promise.resolve(false),
@@ -578,6 +584,7 @@ const HealthkitModule = {
   saveCorrelationSample,
   saveQuantitySample,
   saveWorkoutSample,
+  createWorkoutBuilder,
   subscribeToChanges,
   startWatchApp,
   isProtectedDataAvailable,
