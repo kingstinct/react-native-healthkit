@@ -10,6 +10,13 @@ counterpart of `apps/example` for the React Native package. It has three tabs:
   distance.
 - **Log:** save a body weight to Health and see the last ones.
 
+| Before access | Today | Workouts | A workout | Log |
+| --- | --- | --- | --- | --- |
+| ![Before access](screenshots/ask.png) | ![Today](screenshots/today.png) | ![Workouts](screenshots/workouts.png) | ![A workout](screenshots/workout.png) | ![Log, after saving 71.9 kg](screenshots/log.png) |
+
+Screenshots: iPhone 18 Pro simulator, under Exact's agent over the package's
+fixture.
+
 Nothing is read until the person allows Health access. Reads are live, so a save
 here or a change in the Health app shows without a refresh.
 
