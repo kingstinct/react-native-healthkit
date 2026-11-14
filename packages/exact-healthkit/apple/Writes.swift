@@ -55,6 +55,18 @@ extension Live {
         }
     }
 
+    /// The stored copy of `sample`: the object an app makes has no source
+    /// revision until HealthKit stores it, so a save answers what it reads back.
+    func stored<T: HKSample>(_ sample: T) async throws -> T {
+        let found: [HKSample] = try await withCheckedThrowingContinuation { c in
+            store.execute(HKSampleQuery(sampleType: sample.sampleType, predicate: HKQuery.predicateForObject(with: sample.uuid),
+                                        limit: 1, sortDescriptors: nil) { _, samples, error in
+                if let error { c.resume(throwing: error) } else { c.resume(returning: samples ?? []) }
+            })
+        }
+        return found.first as? T ?? sample
+    }
+
     private func dates(_ args: [String: Any]) throws -> (Date, Date) {
         let start = Convert.date(try Convert.number(args, "startDate")), end = Convert.date(try Convert.number(args, "endDate"))
         guard start <= end else { throw Failure.type("`endDate` is before `startDate`") }
@@ -90,13 +102,13 @@ extension Live {
     func saveQuantity(_ args: [String: Any]) async throws -> Any {
         let sample = try quantitySample(args)
         try await save([sample])
-        return Convert.quantitySample(sample, try Convert.unit(try Convert.string(args, "unit")))
+        return Convert.quantitySample(try await stored(sample), try Convert.unit(try Convert.string(args, "unit")))
     }
 
     func saveCategory(_ args: [String: Any]) async throws -> Any {
         let sample = try categorySample(args)
         try await save([sample])
-        return Convert.categorySample(sample)
+        return Convert.categorySample(try await stored(sample))
     }
 
     func saveCorrelation(_ args: [String: Any]) async throws -> Any {
@@ -110,7 +122,7 @@ extension Live {
         let correlation = HKCorrelation(type: type, start: start, end: end, objects: objects,
                                         metadata: try Convert.metadata(entries: args["metadata"] as? [[String: Any]]))
         try await save([correlation])
-        return try await correlations([correlation]).first ?? NSNull()
+        return try await correlations([try await stored(correlation)]).first ?? NSNull()
     }
 
     func saveWorkout(_ args: [String: Any]) async throws -> Any {
@@ -179,7 +191,7 @@ extension Live {
                                        valence: try Convert.number(args, "valence"), labels: labels, associations: associations,
                                        metadata: try Convert.metadata(entries: args["metadata"] as? [[String: Any]]))
             try await save([sample])
-            return Convert.stateOfMind(sample)
+            return Convert.stateOfMind(try await stored(sample))
         }
         #endif
         throw Failure("NotSupportedError", "State of mind needs iOS 18")
