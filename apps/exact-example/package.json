@@ -1,0 +1,11 @@
+{
+  "name": "react-native-healthkit-exact-example",
+  "private": true,
+  "scripts": {
+    "build": "bun exact.mjs web-build --out dist",
+    "start": "bun exact.mjs serve dist"
+  },
+  "dependencies": {
+    "@kingstinct/exact-healthkit": "file:../../packages/exact-healthkit"
+  }
+}

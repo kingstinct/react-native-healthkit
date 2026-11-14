@@ -1,0 +1,15 @@
+{
+  "lockfileVersion": 2,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "react-native-healthkit-exact-example",
+      "dependencies": {
+        "@kingstinct/exact-healthkit": "file:../../packages/exact-healthkit",
+      },
+    },
+  },
+  "packages": {
+    "@kingstinct/exact-healthkit": ["@kingstinct/exact-healthkit@file:../../packages/exact-healthkit", {}],
+  }
+}

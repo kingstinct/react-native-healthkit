@@ -1,0 +1,196 @@
+// HealthKit Exact: @kingstinct/exact-healthkit in an Exact app. Three tabs:
+// Today (today's activity and the week's steps), Workouts (a list that pushes
+// a workout) and Log (save a weight, see the last ones). Nothing is read until
+// the person allows access; HealthKit's reads are live, so a save or a change
+// in the Health app shows without a refresh.
+use EmptyState from "exact:content"
+use requestAuthorization, getRequestStatusForAuthorization, saveQuantitySample, QuantitySample from "@kingstinct/exact-healthkit"
+
+routes nav
+  tab today "/"
+  tab workouts "/workouts"
+    workout "/workout/:id"
+  tab log "/log"
+
+shape Time
+  epochAtZero: number
+  utcOffset: number
+
+shape Summary
+  steps: number
+  energy: number
+  distance: number
+  heartRate: option<number>
+
+shape Day
+  day: string
+  label: string
+  steps: number
+
+shape Workout
+  id: string
+  name: string
+  symbol: string
+  start: number
+  minutes: number
+  energy: option<number>
+  distance: option<number>
+
+shape Weight
+  id: string
+  at: number
+  kg: number
+
+fn workoutName(workouts: Workout[], id: string): string = match first(workouts.filter(w => w.id == id)) { case some(w) => w.name, case none => "" }
+fn km(meters: number): string = `${round(meters / 100) / 10} km`
+
+component App
+  state now = 0
+  state weightText = ""
+  resource time = exactTime() as shape Time
+  derive shown = time.epochAtZero + now
+  // 1: HealthKit should ask (HKAuthorizationRequestStatus.shouldRequest).
+  resource status = getRequestStatusForAuthorization(toRead=["HKQuantityTypeIdentifierStepCount", "HKQuantityTypeIdentifierActiveEnergyBurned", "HKQuantityTypeIdentifierDistanceWalkingRunning", "HKQuantityTypeIdentifierHeartRate", "HKQuantityTypeIdentifierBodyMass", "HKWorkoutTypeIdentifier"], toShare=["HKQuantityTypeIdentifierBodyMass"]) as shape number else empty()
+  derive allowed = not pending(status) and status != 1
+  resource summary = todaySummary(time.utcOffset) with shown when allowed as shape Summary else empty()
+  resource week = weekSteps(time.utcOffset) with shown when allowed as shape Day[] else empty()
+  resource workouts = recentWorkouts() when allowed as shape Workout[] else empty()
+  resource weights = recentWeights() when allowed as shape Weight[] else empty()
+  mutation asked as shape bool
+  mutation saved as shape QuantitySample
+  derive weightKg = match parseNumber(weightText) { case some(v) => v, case none => 0 }
+  derive weightValid = weightKg > 20 and weightKg < 400
+  task tick mount
+    every(60000, step)
+  action step
+    now = performanceNow()
+  action pick(name: string)
+    nav = select(nav, name)
+  action follow(url: string)
+    nav = go(nav, url)
+  action ask
+    send asked = requestAuthorization(toRead=["HKQuantityTypeIdentifierStepCount", "HKQuantityTypeIdentifierActiveEnergyBurned", "HKQuantityTypeIdentifierDistanceWalkingRunning", "HKQuantityTypeIdentifierHeartRate", "HKQuantityTypeIdentifierBodyMass", "HKWorkoutTypeIdentifier"], toShare=["HKQuantityTypeIdentifierBodyMass"])
+  action typeWeight(v: string)
+    weightText = v
+  action saveWeight
+    let at = time.epochAtZero + performanceNow()
+    send saved = saveQuantitySample(identifier="HKQuantityTypeIdentifierBodyMass", unit="kg", value=weightKg, startDate=at, endDate=at)
+    weightText = ""
+  view
+    main navigationKey=`${top(nav).id}` navigationBack="back" navigate=follow testId="app" width="100%" height="100%"
+      display="flex" flex-direction="column"
+      column flex=1 min-height=0 position="relative"
+        for t in nav.tabs key=t.name
+          column role="tabpanel" id=`panel-${t.name}` position="absolute" inset=0
+            for e in t.stack key=e.id
+              column navigationKey=`${e.id}` navigationScroll=`content-${e.id}` position="absolute" inset=0
+                display="flex" flex-direction="column" min-height=0
+                header display="flex" align-items="center" padding="8px 16px"
+                  text (e.name == "today" ? "Today" : e.name == "workouts" ? "Workouts" : e.name == "log" ? "Log" : workoutName(workouts, e.params.id))
+                    role="heading" aria-level=(e.name == "workout" ? 2 : 1) flex=1
+                if not allowed
+                  // Nothing is read before the person chooses; Health's own sheet asks.
+                  column flex=1 min-height=0 align-items="center" justify-content="center" gap=16 padding=24
+                    EmptyState(symbol="symbol:heart", title="Health Data", message="Allow access to see your steps, workouts and weight from Apple Health.")
+                    button press=ask buttonStyle="filled" testId=`allow-${t.name}`
+                      text "Allow Health Access"
+                else if e.name == "today"
+                  list id=`content-${e.id}` appearance="auto" listStyle="inset-grouped" flex=1 min-height=0
+                    section
+                      row
+                        text "Steps"
+                        text formatNumber(round(summary.steps), "decimal") font-variant-numeric="tabular-nums" testId="steps"
+                      row
+                        text "Active Energy"
+                        text `${formatNumber(round(summary.energy), "decimal")} kcal` font-variant-numeric="tabular-nums" testId="energy"
+                      row
+                        text "Walking + Running"
+                        text km(summary.distance) font-variant-numeric="tabular-nums" testId="distance"
+                      row
+                        text "Heart Rate"
+                        match summary.heartRate
+                          case some(bpm)
+                            text `${round(bpm)} bpm` font-variant-numeric="tabular-nums" testId="heart-rate"
+                          case none
+                            text "–" color="-exact-secondary-label" testId="heart-rate"
+                    section
+                      header
+                        text "Steps, Last 7 Days"
+                      for d in week key=d.day
+                        row testId=`day-${d.day}`
+                          text d.label
+                          text formatNumber(round(d.steps), "decimal") font-variant-numeric="tabular-nums"
+                else if e.name == "workouts"
+                  if workouts.length == 0 and not pending(workouts)
+                    EmptyState(symbol="symbol:activity", title="No Workouts", message="Workouts you record with Apple Watch or another app show here.")
+                  else
+                    list id=`content-${e.id}` appearance="auto" listStyle="inset-grouped" flex=1 min-height=0
+                      section
+                        for w in workouts key=w.id
+                          link href=path("workout", w.id) testId=`workout-${w.id}`
+                            image w.symbol
+                            column flex=1 min-width=0 gap=2 padding-top=4 padding-bottom=4
+                              text w.name
+                              text formatDay(w.start, shown, time.utcOffset, "day-time") font="-exact-subheadline" color="-exact-secondary-label"
+                            image "symbol:forward-chevron"
+                else if e.name == "workout"
+                  list id=`content-${e.id}` appearance="auto" listStyle="inset-grouped" flex=1 min-height=0
+                    for w in workouts.filter(x => x.id == e.params.id) key=w.id
+                      section
+                        row
+                          text "Started"
+                          text formatDay(w.start, shown, time.utcOffset, "day-time")
+                        row
+                          text "Duration"
+                          text `${round(w.minutes)} min` font-variant-numeric="tabular-nums" testId="workout-minutes"
+                        match w.energy
+                          case some(kcal)
+                            row
+                              text "Active Energy"
+                              text `${round(kcal)} kcal` font-variant-numeric="tabular-nums" testId="workout-energy"
+                          case none
+                            row
+                              text "Active Energy"
+                              text "–" color="-exact-secondary-label"
+                        match w.distance
+                          case some(m)
+                            row
+                              text "Distance"
+                              text km(m) font-variant-numeric="tabular-nums" testId="workout-distance"
+                          case none
+                            row
+                              text "Distance"
+                              text "–" color="-exact-secondary-label"
+                else
+                  list id=`content-${e.id}` appearance="auto" listStyle="inset-grouped" flex=1 min-height=0
+                    section
+                      row
+                        text "Weight (kg)"
+                        input type="text" inputmode="decimal" value=weightText input=typeWeight placeholder="72.5"
+                          aria-label="Weight in kilograms" testId="weight-input" text-align="end" flex=1
+                      row
+                        button press=saveWeight disabled=(not weightValid) testId="save-weight" flex=1
+                          text "Save to Health"
+                    section
+                      header
+                        text "Recent"
+                      if weights.length == 0 and not pending(weights)
+                        row
+                          text "No weights yet" color="-exact-secondary-label"
+                      for w in weights key=w.id
+                        row testId=`weight-${w.id}`
+                          text formatDay(w.at, shown, time.utcOffset, "day-time")
+                          text `${w.kg} kg` font-variant-numeric="tabular-nums"
+      row role="tablist" testId="tabs"
+        button role="tab" aria-controls="panel-today" aria-selected=(nav.tab == "today") press=pick("today")
+          testId="tab-today" flex=1
+          image "symbol:heart"
+          text "Today"
+        button role="tab" aria-controls="panel-workouts" aria-selected=(nav.tab == "workouts") press=pick("workouts")
+          testId="tab-workouts" flex=1
+          image "symbol:activity"
+          text "Workouts"
+        button role="tab" aria-controls="panel-log" aria-selected=(nav.tab == "log") press=pick("log")
+          testId="tab-log" flex=1
+          image "symbol:add"
+          text "Log"

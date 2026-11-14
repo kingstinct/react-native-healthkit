@@ -68,7 +68,7 @@
     },
     "packages/core": {
       "name": "@react-native-healthkit/core",
-      "version": "15.1.0",
+      "version": "16.2.0",
       "devDependencies": {
         "@types/react": "~19.1.17",
         "react": "19.1.0",
@@ -82,11 +82,15 @@
         "react-native-nitro-modules": ">=0.35",
       },
     },
+    "packages/exact-healthkit": {
+      "name": "@kingstinct/exact-healthkit",
+      "version": "0.0.0",
+    },
     "packages/health-records": {
       "name": "@react-native-healthkit/health-records",
-      "version": "15.1.0",
+      "version": "16.2.0",
       "dependencies": {
-        "@react-native-healthkit/core": "15.1.0",
+        "@react-native-healthkit/core": "16.2.0",
       },
       "devDependencies": {
         "@types/react": "~19.1.17",
@@ -104,9 +108,9 @@
     },
     "packages/react-native-healthkit": {
       "name": "@kingstinct/react-native-healthkit",
-      "version": "15.1.0",
+      "version": "16.2.0",
       "dependencies": {
-        "@react-native-healthkit/core": "15.1.0",
+        "@react-native-healthkit/core": "16.2.0",
       },
       "devDependencies": {
         "@testing-library/react-native": "^13.3.3",
@@ -510,6 +514,8 @@
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
     "@jsdevtools/ez-spawn": ["@jsdevtools/ez-spawn@3.0.4", "", { "dependencies": { "call-me-maybe": "^1.0.1", "cross-spawn": "^7.0.3", "string-argv": "^0.3.1", "type-detect": "^4.0.8" } }, "sha512-f5DRIOZf7wxogefH03RjMPMdBF7ADTWUMoOs9kaJo06EfwF+aFhMZMDZxHg/Xe12hptN9xoZjGso2fdjapBRIA=="],
+
+    "@kingstinct/exact-healthkit": ["@kingstinct/exact-healthkit@workspace:packages/exact-healthkit"],
 
     "@kingstinct/react-native-healthkit": ["@kingstinct/react-native-healthkit@workspace:packages/react-native-healthkit"],
 

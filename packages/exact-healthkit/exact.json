@@ -1,0 +1,2010 @@
+{
+  "kind": "interface",
+  "name": "@kingstinct/exact-healthkit",
+  "version": "0.0.0",
+  "grants": [
+    "device.health-read",
+    "device.health-write"
+  ],
+  "substitute": "implementation",
+  "permission": [
+    {
+      "name": "healthkit.read.HKWorkoutTypeIdentifier",
+      "grants": [
+        "device.health-read"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.read.HKWorkoutRouteTypeIdentifier",
+      "grants": [
+        "device.health-read"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.read.HKDataTypeIdentifierHeartbeatSeries",
+      "grants": [
+        "device.health-read"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.read.HKElectrocardiogramType",
+      "grants": [
+        "device.health-read"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.read.HKDataTypeStateOfMind",
+      "grants": [
+        "device.health-read"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.read.HKActivitySummaryTypeIdentifier",
+      "grants": [
+        "device.health-read"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.read.HKMedicationDoseEventTypeIdentifierMedicationDoseEvent",
+      "grants": [
+        "device.health-read"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.read.HKCharacteristicTypeIdentifierBiologicalSex",
+      "grants": [
+        "device.health-read"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.read.HKCharacteristicTypeIdentifierBloodType",
+      "grants": [
+        "device.health-read"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.read.HKCharacteristicTypeIdentifierDateOfBirth",
+      "grants": [
+        "device.health-read"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.read.HKCharacteristicTypeIdentifierFitzpatrickSkinType",
+      "grants": [
+        "device.health-read"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.read.HKCharacteristicTypeIdentifierWheelchairUse",
+      "grants": [
+        "device.health-read"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.share.HKWorkoutTypeIdentifier",
+      "grants": [
+        "device.health-write"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.share.HKWorkoutRouteTypeIdentifier",
+      "grants": [
+        "device.health-write"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.share.HKDataTypeStateOfMind",
+      "grants": [
+        "device.health-write"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.read.*",
+      "grants": [
+        "device.health-read"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    },
+    {
+      "name": "healthkit.share.*",
+      "grants": [
+        "device.health-write"
+      ],
+      "denied": "NotAllowedError",
+      "whilePrompt": {
+        "error": "NotAllowedError",
+        "message": "requestAuthorization"
+      },
+      "answered": {
+        "ios": "unknown"
+      }
+    }
+  ],
+  "agent": {
+    "store": "string",
+    "now": "string"
+  },
+  "shapes": {
+    "Source": {
+      "name": "string",
+      "bundleIdentifier": "string"
+    },
+    "SourceRevision": {
+      "source": "Source",
+      "version": "option<string>",
+      "operatingSystemVersion": "string",
+      "productType": "option<string>"
+    },
+    "Device": {
+      "name": "option<string>",
+      "firmwareVersion": "option<string>",
+      "hardwareVersion": "option<string>",
+      "localIdentifier": "option<string>",
+      "manufacturer": "option<string>",
+      "model": "option<string>",
+      "softwareVersion": "option<string>",
+      "udiDeviceIdentifier": "option<string>"
+    },
+    "Quantity": {
+      "unit": "string",
+      "quantity": "number"
+    },
+    "DateInterval": {
+      "from": "number",
+      "to": "number"
+    },
+    "MetadataEntry": {
+      "key": "string",
+      "stringValue": "option<string>",
+      "numberValue": "option<number>",
+      "boolValue": "option<bool>",
+      "dateValue": "option<number>",
+      "quantityValue": "option<Quantity>"
+    },
+    "SampleType": {
+      "identifier": "string",
+      "allowsRecalibrationForEstimates": "bool",
+      "isMinimumDurationRestricted": "bool",
+      "isMaximumDurationRestricted": "bool"
+    },
+    "DeletedSample": {
+      "uuid": "string",
+      "metadata": "MetadataEntry[]"
+    },
+    "QuantitySample": {
+      "uuid": "string",
+      "sourceRevision": "SourceRevision",
+      "device": "option<Device>",
+      "metadata": "MetadataEntry[]",
+      "sampleType": "SampleType",
+      "startDate": "number",
+      "endDate": "number",
+      "hasUndeterminedDuration": "bool",
+      "quantityType": "string",
+      "quantity": "number",
+      "unit": "string"
+    },
+    "QuantitySamplesWithAnchorResponse": {
+      "samples": "QuantitySample[]",
+      "deletedSamples": "DeletedSample[]",
+      "newAnchor": "string"
+    },
+    "CategorySample": {
+      "uuid": "string",
+      "sourceRevision": "SourceRevision",
+      "device": "option<Device>",
+      "metadata": "MetadataEntry[]",
+      "sampleType": "SampleType",
+      "startDate": "number",
+      "endDate": "number",
+      "hasUndeterminedDuration": "bool",
+      "categoryType": "string",
+      "value": "number"
+    },
+    "CategorySamplesWithAnchorResponse": {
+      "samples": "CategorySample[]",
+      "deletedSamples": "DeletedSample[]",
+      "newAnchor": "string"
+    },
+    "CorrelationSample": {
+      "uuid": "string",
+      "sourceRevision": "SourceRevision",
+      "device": "option<Device>",
+      "metadata": "MetadataEntry[]",
+      "sampleType": "SampleType",
+      "startDate": "number",
+      "endDate": "number",
+      "hasUndeterminedDuration": "bool",
+      "correlationType": "string",
+      "quantitySamples": "QuantitySample[]",
+      "categorySamples": "CategorySample[]"
+    },
+    "QueryCorrelationSamplesWithAnchorResponse": {
+      "correlations": "CorrelationSample[]",
+      "deletedSamples": "DeletedSample[]",
+      "newAnchor": "string"
+    },
+    "QueryStatisticsResponse": {
+      "averageQuantity": "option<Quantity>",
+      "maximumQuantity": "option<Quantity>",
+      "minimumQuantity": "option<Quantity>",
+      "sumQuantity": "option<Quantity>",
+      "mostRecentQuantity": "option<Quantity>",
+      "mostRecentQuantityDateInterval": "option<DateInterval>",
+      "duration": "option<Quantity>",
+      "startDate": "option<number>",
+      "endDate": "option<number>",
+      "sources": "Source[]"
+    },
+    "QueryStatisticsResponseFromSingleSource": {
+      "averageQuantity": "option<Quantity>",
+      "maximumQuantity": "option<Quantity>",
+      "minimumQuantity": "option<Quantity>",
+      "sumQuantity": "option<Quantity>",
+      "mostRecentQuantity": "option<Quantity>",
+      "mostRecentQuantityDateInterval": "option<DateInterval>",
+      "duration": "option<Quantity>",
+      "startDate": "option<number>",
+      "endDate": "option<number>",
+      "source": "Source"
+    },
+    "WorkoutEvent": {
+      "type": "number",
+      "startDate": "number",
+      "endDate": "number",
+      "metadata": "MetadataEntry[]"
+    },
+    "WorkoutActivity": {
+      "uuid": "string",
+      "startDate": "number",
+      "endDate": "number",
+      "duration": "number",
+      "activityType": "number",
+      "locationType": "number",
+      "metadata": "MetadataEntry[]"
+    },
+    "WorkoutSample": {
+      "uuid": "string",
+      "sourceRevision": "SourceRevision",
+      "device": "option<Device>",
+      "metadata": "MetadataEntry[]",
+      "sampleType": "SampleType",
+      "startDate": "number",
+      "endDate": "number",
+      "hasUndeterminedDuration": "bool",
+      "workoutActivityType": "number",
+      "duration": "Quantity",
+      "totalEnergyBurned": "option<Quantity>",
+      "totalDistance": "option<Quantity>",
+      "totalSwimmingStrokeCount": "option<Quantity>",
+      "totalFlightsClimbed": "option<Quantity>",
+      "events": "WorkoutEvent[]",
+      "activities": "WorkoutActivity[]"
+    },
+    "QueryWorkoutSamplesWithAnchorResponse": {
+      "workouts": "WorkoutSample[]",
+      "deletedSamples": "DeletedSample[]",
+      "newAnchor": "string"
+    },
+    "WorkoutRouteLocation": {
+      "altitude": "number",
+      "course": "number",
+      "date": "number",
+      "distance": "option<number>",
+      "horizontalAccuracy": "number",
+      "latitude": "number",
+      "longitude": "number",
+      "speed": "number",
+      "speedAccuracy": "number",
+      "verticalAccuracy": "number"
+    },
+    "WorkoutRoute": {
+      "uuid": "string",
+      "locations": "WorkoutRouteLocation[]",
+      "syncIdentifier": "option<string>",
+      "syncVersion": "option<number>"
+    },
+    "WorkoutPlan": {
+      "id": "string",
+      "activityType": "number"
+    },
+    "WorkoutStatistic": {
+      "quantityType": "string",
+      "statistics": "QueryStatisticsResponse"
+    },
+    "Heartbeat": {
+      "timeSinceSeriesStart": "number",
+      "precededByGap": "bool"
+    },
+    "HeartbeatSeriesSample": {
+      "uuid": "string",
+      "sourceRevision": "SourceRevision",
+      "device": "option<Device>",
+      "metadata": "MetadataEntry[]",
+      "sampleType": "SampleType",
+      "startDate": "number",
+      "endDate": "number",
+      "hasUndeterminedDuration": "bool",
+      "heartbeats": "Heartbeat[]"
+    },
+    "HeartbeatSeriesSamplesWithAnchorResponse": {
+      "samples": "HeartbeatSeriesSample[]",
+      "deletedSamples": "DeletedSample[]",
+      "newAnchor": "string"
+    },
+    "ElectrocardiogramVoltage": {
+      "timeSinceSampleStart": "number",
+      "voltage": "number",
+      "lead": "enum<appleWatchSimilarToLeadI|unknown>"
+    },
+    "ElectrocardiogramSample": {
+      "uuid": "string",
+      "sourceRevision": "SourceRevision",
+      "device": "option<Device>",
+      "metadata": "MetadataEntry[]",
+      "sampleType": "SampleType",
+      "startDate": "number",
+      "endDate": "number",
+      "hasUndeterminedDuration": "bool",
+      "classification": "enum<notSet|sinusRhythm|atrialFibrillation|inconclusiveLowHeartRate|inconclusiveHighHeartRate|inconclusivePoorReading|inconclusiveOther|unrecognized>",
+      "symptomsStatus": "enum<notSet|none|present>",
+      "averageHeartRateBpm": "option<number>",
+      "samplingFrequencyHz": "option<number>",
+      "numberOfVoltageMeasurements": "number",
+      "voltages": "option<ElectrocardiogramVoltage[]>"
+    },
+    "ElectrocardiogramSamplesWithAnchorResponse": {
+      "samples": "ElectrocardiogramSample[]",
+      "deletedSamples": "DeletedSample[]",
+      "newAnchor": "string"
+    },
+    "StateOfMindSample": {
+      "uuid": "string",
+      "sourceRevision": "SourceRevision",
+      "device": "option<Device>",
+      "metadata": "MetadataEntry[]",
+      "sampleType": "SampleType",
+      "startDate": "number",
+      "endDate": "number",
+      "hasUndeterminedDuration": "bool",
+      "valence": "number",
+      "kind": "number",
+      "valenceClassification": "number",
+      "associations": "number[]",
+      "labels": "number[]"
+    },
+    "StateOfMindSamplesWithAnchorResponse": {
+      "samples": "StateOfMindSample[]",
+      "deletedSamples": "DeletedSample[]",
+      "newAnchor": "string"
+    },
+    "RelatedCoding": {
+      "system": "string",
+      "code": "string",
+      "version": "option<string>"
+    },
+    "MedicationConcept": {
+      "identifier": "string",
+      "displayText": "string",
+      "generalForm": "enum<capsule|cream|device|drops|foam|gel|inhaler|injection|liquid|lotion|ointment|patch|powder|spray|suppository|tablet|topical|unknown>",
+      "relatedCodings": "RelatedCoding[]"
+    },
+    "UserAnnotatedMedication": {
+      "isArchived": "bool",
+      "hasSchedule": "bool",
+      "nickname": "option<string>",
+      "medication": "MedicationConcept"
+    },
+    "MedicationDoseEvent": {
+      "uuid": "string",
+      "sourceRevision": "SourceRevision",
+      "device": "option<Device>",
+      "metadata": "MetadataEntry[]",
+      "sampleType": "SampleType",
+      "startDate": "number",
+      "endDate": "number",
+      "hasUndeterminedDuration": "bool",
+      "scheduleType": "number",
+      "medicationConceptIdentifier": "string",
+      "medicationDisplayText": "option<string>",
+      "scheduledDate": "option<number>",
+      "scheduledDoseQuantity": "option<number>",
+      "doseQuantity": "option<number>",
+      "logStatus": "number",
+      "unit": "string"
+    },
+    "MedicationDoseEventsWithAnchorResponse": {
+      "samples": "MedicationDoseEvent[]",
+      "deletedSamples": "DeletedSample[]",
+      "newAnchor": "string"
+    },
+    "ActivitySummaryDateComponents": {
+      "era": "option<number>",
+      "year": "option<number>",
+      "month": "option<number>",
+      "day": "option<number>"
+    },
+    "ActivitySummary": {
+      "dateComponents": "ActivitySummaryDateComponents",
+      "activityMoveMode": "number",
+      "activeEnergyBurned": "Quantity",
+      "activeEnergyBurnedGoal": "Quantity",
+      "appleExerciseTime": "Quantity",
+      "appleExerciseTimeGoal": "Quantity",
+      "appleStandHours": "Quantity",
+      "appleStandHoursGoal": "Quantity",
+      "appleMoveTime": "option<Quantity>",
+      "appleMoveTimeGoal": "option<Quantity>",
+      "isPaused": "option<bool>"
+    },
+    "ObjectTypeAvailability": {
+      "identifier": "string",
+      "available": "bool"
+    },
+    "EarliestAuthorizedSampleDate": {
+      "identifier": "string",
+      "date": "option<number>"
+    },
+    "IdentifierWithUnit": {
+      "typeIdentifier": "string",
+      "unit": "string"
+    },
+    "DateFilter": {
+      "startDate": "option<number>",
+      "endDate": "option<number>",
+      "strictStartDate": "option<bool>",
+      "strictEndDate": "option<bool>"
+    },
+    "MetadataPredicate": {
+      "withMetadataKey": "string",
+      "operatorType": "option<number>",
+      "stringValue": "option<string>",
+      "numberValue": "option<number>",
+      "boolValue": "option<bool>",
+      "dateValue": "option<number>"
+    },
+    "SampleFilterBase": {
+      "uuid": "option<string>",
+      "uuids": "option<string[]>",
+      "metadata": "option<MetadataPredicate>",
+      "date": "option<DateFilter>",
+      "workoutUuid": "option<string>",
+      "sourceBundleIdentifiers": "option<string[]>"
+    },
+    "SampleFilter": {
+      "uuid": "option<string>",
+      "uuids": "option<string[]>",
+      "metadata": "option<MetadataPredicate>",
+      "date": "option<DateFilter>",
+      "workoutUuid": "option<string>",
+      "sourceBundleIdentifiers": "option<string[]>",
+      "anyOf": "option<SampleFilterBase[]>",
+      "allOf": "option<SampleFilterBase[]>",
+      "noneOf": "option<SampleFilterBase[]>"
+    },
+    "WorkoutDurationPredicate": {
+      "predicateOperator": "number",
+      "durationInSeconds": "number"
+    },
+    "WorkoutFilterBase": {
+      "uuid": "option<string>",
+      "uuids": "option<string[]>",
+      "metadata": "option<MetadataPredicate>",
+      "date": "option<DateFilter>",
+      "workoutUuid": "option<string>",
+      "sourceBundleIdentifiers": "option<string[]>",
+      "workoutActivityType": "option<number>",
+      "duration": "option<WorkoutDurationPredicate>"
+    },
+    "WorkoutFilter": {
+      "uuid": "option<string>",
+      "uuids": "option<string[]>",
+      "metadata": "option<MetadataPredicate>",
+      "date": "option<DateFilter>",
+      "workoutUuid": "option<string>",
+      "sourceBundleIdentifiers": "option<string[]>",
+      "workoutActivityType": "option<number>",
+      "duration": "option<WorkoutDurationPredicate>",
+      "anyOf": "option<WorkoutFilterBase[]>",
+      "allOf": "option<WorkoutFilterBase[]>",
+      "noneOf": "option<WorkoutFilterBase[]>"
+    },
+    "ActivitySummaryQueryFilter": {
+      "date": "option<DateFilter>"
+    },
+    "IntervalComponents": {
+      "minute": "option<number>",
+      "hour": "option<number>",
+      "day": "option<number>",
+      "month": "option<number>",
+      "year": "option<number>"
+    },
+    "QuantitySampleForSaving": {
+      "startDate": "number",
+      "endDate": "number",
+      "quantityType": "string",
+      "quantity": "number",
+      "unit": "string",
+      "metadata": "option<MetadataEntry[]>"
+    },
+    "CategorySampleForSaving": {
+      "startDate": "number",
+      "endDate": "number",
+      "categoryType": "string",
+      "value": "number",
+      "metadata": "option<MetadataEntry[]>"
+    },
+    "WorkoutTotals": {
+      "distance": "option<number>",
+      "energyBurned": "option<number>"
+    },
+    "LocationForSaving": {
+      "altitude": "number",
+      "course": "number",
+      "date": "number",
+      "horizontalAccuracy": "number",
+      "latitude": "number",
+      "longitude": "number",
+      "speed": "number",
+      "verticalAccuracy": "number"
+    },
+    "WorkoutConfiguration": {
+      "activityType": "number",
+      "locationType": "option<number>"
+    }
+  },
+  "names": [
+    {
+      "source": "isHealthDataAvailable",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "permission": false,
+      "options": {},
+      "answers": "bool"
+    },
+    {
+      "source": "isProtectedDataAvailable",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "permission": false,
+      "options": {},
+      "answers": "bool"
+    },
+    {
+      "source": "isObjectTypeAvailable",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "permission": false,
+      "options": {
+        "identifier": "string"
+      },
+      "answers": "bool"
+    },
+    {
+      "source": "areObjectTypesAvailable",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "permission": false,
+      "options": {
+        "identifiers": "string[]"
+      },
+      "answers": "ObjectTypeAvailability[]"
+    },
+    {
+      "source": "authorizationStatusFor",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "permission": false,
+      "options": {
+        "identifier": "string"
+      },
+      "answers": "number"
+    },
+    {
+      "source": "getRequestStatusForAuthorization",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "permission": false,
+      "options": {
+        "toShare": "option<string[]>",
+        "toRead": "option<string[]>"
+      },
+      "answers": "number"
+    },
+    {
+      "source": "getEarliestAuthorizedSampleDates",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "permission": false,
+      "options": {
+        "identifiers": "string[]"
+      },
+      "answers": "EarliestAuthorizedSampleDate[]"
+    },
+    {
+      "source": "getPreferredUnits",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "permission": false,
+      "options": {
+        "identifiers": "string[]",
+        "forceUpdate": "option<bool>"
+      },
+      "answers": "IdentifierWithUnit[]"
+    },
+    {
+      "source": "currentAppSource",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "permission": false,
+      "options": {},
+      "answers": "Source"
+    },
+    {
+      "send": "requestAuthorization",
+      "request": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "permission": false,
+      "permissionEach": {
+        "toShare": "healthkit.share.{}",
+        "toRead": "healthkit.read.{}"
+      },
+      "options": {
+        "toShare": "option<string[]>",
+        "toRead": "option<string[]>"
+      },
+      "answers": "bool"
+    },
+    {
+      "send": "requestPerObjectReadAuthorization",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.read.{}"
+      },
+      "options": {
+        "identifier": "string"
+      },
+      "answers": "unit"
+    },
+    {
+      "send": "requestMedicationsAuthorization",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "options": {},
+      "answers": "bool"
+    },
+    {
+      "source": "getBiologicalSex",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKCharacteristicTypeIdentifierBiologicalSex",
+      "options": {},
+      "answers": "number"
+    },
+    {
+      "source": "getBloodType",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKCharacteristicTypeIdentifierBloodType",
+      "options": {},
+      "answers": "number"
+    },
+    {
+      "source": "getDateOfBirth",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKCharacteristicTypeIdentifierDateOfBirth",
+      "options": {},
+      "answers": "option<number>"
+    },
+    {
+      "source": "getFitzpatrickSkinType",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKCharacteristicTypeIdentifierFitzpatrickSkinType",
+      "options": {},
+      "answers": "number"
+    },
+    {
+      "source": "getWheelchairUse",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKCharacteristicTypeIdentifierWheelchairUse",
+      "options": {},
+      "answers": "number"
+    },
+    {
+      "source": "querySources",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.read.{}"
+      },
+      "options": {
+        "identifier": "string",
+        "filter": "option<SampleFilter>"
+      },
+      "answers": "Source[]"
+    },
+    {
+      "source": "queryQuantitySamples",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.read.{}"
+      },
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "ascending": "option<bool>",
+        "filter": "option<SampleFilter>",
+        "identifier": "string",
+        "unit": "option<string>"
+      },
+      "answers": "QuantitySample[]"
+    },
+    {
+      "source": "queryQuantitySamplesWithAnchor",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.read.{}"
+      },
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "anchor": "option<string>",
+        "filter": "option<SampleFilter>",
+        "identifier": "string",
+        "unit": "option<string>"
+      },
+      "answers": "QuantitySamplesWithAnchorResponse"
+    },
+    {
+      "source": "queryStatisticsForQuantity",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.read.{}"
+      },
+      "options": {
+        "identifier": "string",
+        "statistics": "enum<cumulativeSum|discreteAverage|discreteMax|discreteMin|duration|mostRecent>[]",
+        "unit": "option<string>",
+        "filter": "option<SampleFilter>"
+      },
+      "answers": "QueryStatisticsResponse"
+    },
+    {
+      "source": "queryStatisticsCollectionForQuantity",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.read.{}"
+      },
+      "options": {
+        "identifier": "string",
+        "statistics": "enum<cumulativeSum|discreteAverage|discreteMax|discreteMin|duration|mostRecent>[]",
+        "unit": "option<string>",
+        "filter": "option<SampleFilter>",
+        "anchorDate": "number",
+        "intervalComponents": "IntervalComponents"
+      },
+      "answers": "QueryStatisticsResponse[]"
+    },
+    {
+      "source": "queryStatisticsForQuantitySeparateBySource",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.read.{}"
+      },
+      "options": {
+        "identifier": "string",
+        "statistics": "enum<cumulativeSum|discreteAverage|discreteMax|discreteMin|duration|mostRecent>[]",
+        "unit": "option<string>",
+        "filter": "option<SampleFilter>"
+      },
+      "answers": "QueryStatisticsResponseFromSingleSource[]"
+    },
+    {
+      "source": "queryStatisticsCollectionForQuantitySeparateBySource",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.read.{}"
+      },
+      "options": {
+        "identifier": "string",
+        "statistics": "enum<cumulativeSum|discreteAverage|discreteMax|discreteMin|duration|mostRecent>[]",
+        "unit": "option<string>",
+        "filter": "option<SampleFilter>",
+        "anchorDate": "number",
+        "intervalComponents": "IntervalComponents"
+      },
+      "answers": "QueryStatisticsResponseFromSingleSource[]"
+    },
+    {
+      "source": "isQuantityCompatibleWithUnit",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "permission": false,
+      "options": {
+        "identifier": "string",
+        "unit": "string"
+      },
+      "answers": "bool"
+    },
+    {
+      "send": "saveQuantitySample",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.share.{}"
+      },
+      "options": {
+        "identifier": "string",
+        "unit": "string",
+        "value": "number",
+        "startDate": "number",
+        "endDate": "number",
+        "metadata": "option<MetadataEntry[]>"
+      },
+      "answers": "QuantitySample"
+    },
+    {
+      "source": "queryCategorySamples",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.read.{}"
+      },
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "ascending": "option<bool>",
+        "filter": "option<SampleFilter>",
+        "identifier": "string"
+      },
+      "answers": "CategorySample[]"
+    },
+    {
+      "source": "queryCategorySamplesWithAnchor",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.read.{}"
+      },
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "anchor": "option<string>",
+        "filter": "option<SampleFilter>",
+        "identifier": "string"
+      },
+      "answers": "CategorySamplesWithAnchorResponse"
+    },
+    {
+      "send": "saveCategorySample",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.share.{}"
+      },
+      "options": {
+        "identifier": "string",
+        "value": "number",
+        "startDate": "number",
+        "endDate": "number",
+        "metadata": "option<MetadataEntry[]>"
+      },
+      "answers": "CategorySample"
+    },
+    {
+      "source": "queryCorrelationSamples",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.read.{}"
+      },
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "ascending": "option<bool>",
+        "filter": "option<SampleFilter>",
+        "identifier": "string"
+      },
+      "answers": "CorrelationSample[]"
+    },
+    {
+      "source": "queryCorrelationSamplesWithAnchor",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.read.{}"
+      },
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "anchor": "option<string>",
+        "filter": "option<SampleFilter>",
+        "identifier": "string"
+      },
+      "answers": "QueryCorrelationSamplesWithAnchorResponse"
+    },
+    {
+      "send": "saveCorrelationSample",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.share.{}"
+      },
+      "options": {
+        "identifier": "string",
+        "quantitySamples": "option<QuantitySampleForSaving[]>",
+        "categorySamples": "option<CategorySampleForSaving[]>",
+        "startDate": "number",
+        "endDate": "number",
+        "metadata": "option<MetadataEntry[]>"
+      },
+      "answers": "CorrelationSample"
+    },
+    {
+      "source": "queryWorkoutSamples",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKWorkoutTypeIdentifier",
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "ascending": "option<bool>",
+        "filter": "option<WorkoutFilter>"
+      },
+      "answers": "WorkoutSample[]"
+    },
+    {
+      "source": "queryWorkoutSamplesWithAnchor",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKWorkoutTypeIdentifier",
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "anchor": "option<string>",
+        "filter": "option<WorkoutFilter>"
+      },
+      "answers": "QueryWorkoutSamplesWithAnchorResponse"
+    },
+    {
+      "source": "getWorkoutRoutes",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKWorkoutRouteTypeIdentifier",
+      "options": {
+        "workoutUuid": "string"
+      },
+      "answers": "WorkoutRoute[]"
+    },
+    {
+      "source": "getWorkoutPlan",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKWorkoutTypeIdentifier",
+      "options": {
+        "workoutUuid": "string"
+      },
+      "answers": "option<WorkoutPlan>"
+    },
+    {
+      "source": "getWorkoutStatistic",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKWorkoutTypeIdentifier",
+      "options": {
+        "workoutUuid": "string",
+        "quantityType": "string",
+        "unit": "option<string>"
+      },
+      "answers": "option<QueryStatisticsResponse>"
+    },
+    {
+      "source": "getAllWorkoutStatistics",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKWorkoutTypeIdentifier",
+      "options": {
+        "workoutUuid": "string"
+      },
+      "answers": "WorkoutStatistic[]"
+    },
+    {
+      "send": "saveWorkoutSample",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.share.HKWorkoutTypeIdentifier",
+      "options": {
+        "workoutActivityType": "number",
+        "quantities": "option<QuantitySampleForSaving[]>",
+        "startDate": "number",
+        "endDate": "number",
+        "totals": "option<WorkoutTotals>",
+        "metadata": "option<MetadataEntry[]>"
+      },
+      "answers": "WorkoutSample"
+    },
+    {
+      "send": "saveWorkoutRoute",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.share.HKWorkoutRouteTypeIdentifier",
+      "options": {
+        "workoutUuid": "string",
+        "locations": "LocationForSaving[]"
+      },
+      "answers": "bool"
+    },
+    {
+      "send": "startWatchAppWithWorkoutConfiguration",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "permission": "healthkit.share.HKWorkoutTypeIdentifier",
+      "options": {
+        "workoutConfiguration": "WorkoutConfiguration"
+      },
+      "answers": "bool"
+    },
+    {
+      "source": "queryHeartbeatSeriesSamples",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKDataTypeIdentifierHeartbeatSeries",
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "ascending": "option<bool>",
+        "filter": "option<SampleFilter>"
+      },
+      "answers": "HeartbeatSeriesSample[]"
+    },
+    {
+      "source": "queryHeartbeatSeriesSamplesWithAnchor",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKDataTypeIdentifierHeartbeatSeries",
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "anchor": "option<string>",
+        "filter": "option<SampleFilter>"
+      },
+      "answers": "HeartbeatSeriesSamplesWithAnchorResponse"
+    },
+    {
+      "source": "queryElectrocardiogramSamples",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKElectrocardiogramType",
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "ascending": "option<bool>",
+        "filter": "option<SampleFilter>",
+        "includeVoltages": "option<bool>"
+      },
+      "answers": "ElectrocardiogramSample[]"
+    },
+    {
+      "source": "queryElectrocardiogramSamplesWithAnchor",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKElectrocardiogramType",
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "anchor": "option<string>",
+        "filter": "option<SampleFilter>",
+        "includeVoltages": "option<bool>"
+      },
+      "answers": "ElectrocardiogramSamplesWithAnchorResponse"
+    },
+    {
+      "source": "queryStateOfMindSamples",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKDataTypeStateOfMind",
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "ascending": "option<bool>",
+        "filter": "option<SampleFilter>"
+      },
+      "answers": "StateOfMindSample[]"
+    },
+    {
+      "source": "queryStateOfMindSamplesWithAnchor",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKDataTypeStateOfMind",
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "anchor": "option<string>",
+        "filter": "option<SampleFilter>"
+      },
+      "answers": "StateOfMindSamplesWithAnchorResponse"
+    },
+    {
+      "send": "saveStateOfMindSample",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.share.HKDataTypeStateOfMind",
+      "options": {
+        "date": "number",
+        "kind": "number",
+        "valence": "number",
+        "labels": "number[]",
+        "associations": "number[]",
+        "metadata": "option<MetadataEntry[]>"
+      },
+      "answers": "StateOfMindSample"
+    },
+    {
+      "source": "queryMedications",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "permission": false,
+      "options": {},
+      "answers": "UserAnnotatedMedication[]"
+    },
+    {
+      "source": "queryMedicationEvents",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKMedicationDoseEventTypeIdentifierMedicationDoseEvent",
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "ascending": "option<bool>",
+        "filter": "option<SampleFilter>"
+      },
+      "answers": "MedicationDoseEvent[]"
+    },
+    {
+      "source": "queryMedicationEventsWithAnchor",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKMedicationDoseEventTypeIdentifierMedicationDoseEvent",
+      "options": {
+        "limit": {
+          "type": "option<number>",
+          "min": 0,
+          "default": 0
+        },
+        "anchor": "option<string>",
+        "filter": "option<SampleFilter>"
+      },
+      "answers": "MedicationDoseEventsWithAnchorResponse"
+    },
+    {
+      "source": "queryActivitySummary",
+      "live": true,
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": "healthkit.read.HKActivitySummaryTypeIdentifier",
+      "options": {
+        "filter": "option<ActivitySummaryQueryFilter>"
+      },
+      "answers": "ActivitySummary[]"
+    },
+    {
+      "send": "deleteObjects",
+      "origin": "app",
+      "foreground": true,
+      "substitute": {
+        "unsupported": [
+          "web",
+          "macos",
+          "linux",
+          "windows",
+          "tvos",
+          "android"
+        ]
+      },
+      "person": true,
+      "permission": false,
+      "permissionBy": {
+        "identifier": "healthkit.share.{}"
+      },
+      "options": {
+        "identifier": "string",
+        "filter": "SampleFilter"
+      },
+      "answers": "number"
+    }
+  ]
+}

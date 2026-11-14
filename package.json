@@ -43,7 +43,7 @@
     "*.json": "bunx @biomejs/biome check --fix --no-errors-on-unmatched"
   },
   "workspaces": [
-    "apps/*",
+    "apps/example",
     "packages/*"
   ],
   "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",

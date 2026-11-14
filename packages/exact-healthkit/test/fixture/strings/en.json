@@ -1,0 +1,4 @@
+{
+  "purpose.health": "The conformance suite reads the fixture's health data.",
+  "purpose.healthWrite": "The conformance suite saves steps."
+}

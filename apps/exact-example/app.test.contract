@@ -1,0 +1,9 @@
+// Under the agent, the package answers from its fixture: 12 October 2026 in UTC.
+
+test "nothing is read until the person allows Health access" on ios
+  epoch "2026-10-12T20:00:00Z"
+  expect tree has "allow-today"
+  expect tree missing "steps"
+
+// What Health shares once allowed is test/drive.mjs's: a test here cannot answer
+// the permission ticket.

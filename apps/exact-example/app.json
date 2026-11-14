@@ -1,0 +1,26 @@
+{
+  "$schema": "../../../exact/scripts/app.schema.json",
+  "name": "HealthKit Exact",
+  "short_name": "HealthKit Exact",
+  "id": "com.kingstinct.exacthealthkit",
+  "start_url": "/",
+  "display": "standalone",
+  "app": {
+    "id": "com.kingstinct.exacthealthkit",
+    "name": "HealthKit Exact"
+  },
+  "host": {
+    "web": {},
+    "ios": {
+      "minimumOS": "17.0",
+      "deviceFamily": ["iphone", "ipad"]
+    }
+  },
+  "deploy": {
+    "store": {
+      "web": "0",
+      "ios": "0"
+    }
+  },
+  "privacy_policy": "https://github.com/kingstinct/react-native-healthkit"
+}

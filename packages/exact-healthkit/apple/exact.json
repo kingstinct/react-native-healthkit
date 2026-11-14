@@ -1,0 +1,26 @@
+{
+  "kind": "implementation",
+  "implements": "@kingstinct/exact-healthkit@^0",
+  "platform": "apple",
+  "targets": ["ios"],
+  "shapes": {},
+  "options": {},
+  "names": [],
+  "views": [],
+  "hatches": ["healthStore"],
+  "sources": {
+    "swift": [
+      "HealthKitModule.swift",
+      "Identifiers.swift",
+      "Units.swift",
+      "Tables.swift",
+      "Convert.swift",
+      "Predicates.swift",
+      "Queries.swift",
+      "Writes.swift",
+      "AgentStore.swift"
+    ]
+  },
+  "artifacts": [],
+  "class": "HealthKitModule"
+}

@@ -5,6 +5,8 @@ This file contains instructions for Copilot to follow when working with code in 
 ## Project Overview
 This repository is a monorepo centering around the package react-native-healthkit (`packages/react-native-healthkit`, published as `@kingstinct/react-native-healthkit`), with a sibling package `packages/health-records` (published as `@react-native-healthkit/health-records`) for clinical health records. Both depend on `packages/core` (published as `@react-native-healthkit/core`), which holds their shared TypeScript types, Expo config plugin building blocks and the `ReactNativeHealthkitCore` pod (shared `HKHealthStore`, queries, predicates, metadata serialization, background delivery). Core has no Nitro specs of its own; the other packages import its types into theirs, so nitrogen generates per-package copies of them. Core must be built (`bun run build:core`) before the other packages build, codegen or typecheck on their own; `bun install` does this in `postinstall`. They expose Apple Healthkit APIs to React Native and use react-native-nitro-modules with nitrogen to generate type-safe types. We use React Native and Expo.
 
+`packages/exact-healthkit` (published as `@kingstinct/exact-healthkit`) is separate: the same functionality for [Exact](https://github.com/expo/exact) apps, an `exact.json` interface with a Swift implementation, no Nitro, no React Native and no dependency on core. `apps/exact-example` is its example app, outside the Bun workspace (Exact builds packages only from the app's own `node_modules`). Its README covers generation, testing and the Exact checkout it needs.
+
 ## Development Commands
 ```bash
 # install dependencies (after adding any packages, can be run on root level)
