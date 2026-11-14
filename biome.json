@@ -77,7 +77,11 @@
       "!**/ios",
       "!.vscode/*",
       "!.claude/*",
-      "!packages/exact-healthkit/exact.json"
+      "!packages/exact-healthkit/exact.json",
+      "!apps/exact-example/app.contract.d.ts",
+      "!apps/exact-example/.exact",
+      "!apps/exact-example/target",
+      "!apps/exact-example/.vscode"
     ]
   }
 }

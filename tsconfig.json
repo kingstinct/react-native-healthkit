@@ -23,5 +23,9 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
-  "exclude": ["node_modules", "packages/exact-healthkit/test/fixture"]
+  "exclude": [
+    "node_modules",
+    "packages/exact-healthkit/test/fixture",
+    "apps/exact-example"
+  ]
 }

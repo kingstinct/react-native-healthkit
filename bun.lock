@@ -90,7 +90,7 @@
       "name": "@react-native-healthkit/health-records",
       "version": "16.2.0",
       "dependencies": {
-        "@react-native-healthkit/core": "15.1.0",
+        "@react-native-healthkit/core": "16.2.0",
       },
       "devDependencies": {
         "@types/react": "~19.1.17",
@@ -110,7 +110,7 @@
       "name": "@kingstinct/react-native-healthkit",
       "version": "16.2.0",
       "dependencies": {
-        "@react-native-healthkit/core": "15.1.0",
+        "@react-native-healthkit/core": "16.2.0",
       },
       "devDependencies": {
         "@testing-library/react-native": "^13.3.3",

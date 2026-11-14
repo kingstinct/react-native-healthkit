@@ -160,13 +160,13 @@ const save = ['tap save', 'clock +300', 'clock settle', 'tree']
     JSON.stringify(before),
   )
   check(
-    "12 October's steps: 18 samples, 8,402",
-    allowed?.['step-samples'] === '18' && allowed?.['step-sum'] === '8402',
+    "the fixture's steps: 24 samples, 55,449",
+    allowed?.['step-samples'] === '24' && allowed?.['step-sum'] === '55449',
     JSON.stringify(allowed),
   )
   check(
     'statistics sum the same',
-    allowed?.total === '8402 count',
+    allowed?.total === '55449 count',
     allowed?.total,
   )
   check(
@@ -188,7 +188,7 @@ const save = ['tap save', 'clock +300', 'clock settle', 'tree']
   )
   check(
     'a save is read back, by samples and statistics',
-    saved?.['step-samples'] === '19' && saved?.total === '9402 count',
+    saved?.['step-samples'] === '25' && saved?.total === '56449 count',
     JSON.stringify(saved),
   )
 }

@@ -190,6 +190,134 @@
       "startDate": "2026-10-11T06:30:00Z",
       "endDate": "2026-10-11T06:30:00Z",
       "uuid": "00000000-0000-4000-8002-000000000000"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierStepCount",
+      "unit": "count",
+      "quantity": 6120,
+      "startDate": "2026-10-06T08:00:00Z",
+      "endDate": "2026-10-06T20:00:00Z",
+      "uuid": "00000000-0000-4000-8005-000000000000"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierStepCount",
+      "unit": "count",
+      "quantity": 9480,
+      "startDate": "2026-10-07T08:00:00Z",
+      "endDate": "2026-10-07T20:00:00Z",
+      "uuid": "00000000-0000-4000-8005-000000000001"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierStepCount",
+      "unit": "count",
+      "quantity": 7302,
+      "startDate": "2026-10-08T08:00:00Z",
+      "endDate": "2026-10-08T20:00:00Z",
+      "uuid": "00000000-0000-4000-8005-000000000002"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierStepCount",
+      "unit": "count",
+      "quantity": 11240,
+      "startDate": "2026-10-09T08:00:00Z",
+      "endDate": "2026-10-09T20:00:00Z",
+      "uuid": "00000000-0000-4000-8005-000000000003"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierStepCount",
+      "unit": "count",
+      "quantity": 4890,
+      "startDate": "2026-10-10T08:00:00Z",
+      "endDate": "2026-10-10T20:00:00Z",
+      "uuid": "00000000-0000-4000-8005-000000000004"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierStepCount",
+      "unit": "count",
+      "quantity": 8015,
+      "startDate": "2026-10-11T08:00:00Z",
+      "endDate": "2026-10-11T20:00:00Z",
+      "uuid": "00000000-0000-4000-8005-000000000005"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierActiveEnergyBurned",
+      "unit": "kcal",
+      "quantity": 42,
+      "startDate": "2026-10-12T07:00:00Z",
+      "endDate": "2026-10-12T07:45:00Z",
+      "uuid": "00000000-0000-4000-8006-000000000000"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierDistanceWalkingRunning",
+      "unit": "m",
+      "quantity": 610,
+      "startDate": "2026-10-12T07:00:00Z",
+      "endDate": "2026-10-12T07:45:00Z",
+      "uuid": "00000000-0000-4000-8007-000000000000"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierActiveEnergyBurned",
+      "unit": "kcal",
+      "quantity": 88,
+      "startDate": "2026-10-12T12:00:00Z",
+      "endDate": "2026-10-12T12:45:00Z",
+      "uuid": "00000000-0000-4000-8006-000000000001"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierDistanceWalkingRunning",
+      "unit": "m",
+      "quantity": 1240,
+      "startDate": "2026-10-12T12:00:00Z",
+      "endDate": "2026-10-12T12:45:00Z",
+      "uuid": "00000000-0000-4000-8007-000000000001"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierActiveEnergyBurned",
+      "unit": "kcal",
+      "quantity": 412,
+      "startDate": "2026-10-12T17:00:00Z",
+      "endDate": "2026-10-12T17:45:00Z",
+      "uuid": "00000000-0000-4000-8006-000000000002"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierDistanceWalkingRunning",
+      "unit": "m",
+      "quantity": 7200,
+      "startDate": "2026-10-12T17:00:00Z",
+      "endDate": "2026-10-12T17:45:00Z",
+      "uuid": "00000000-0000-4000-8007-000000000002"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierActiveEnergyBurned",
+      "unit": "kcal",
+      "quantity": 35,
+      "startDate": "2026-10-12T19:00:00Z",
+      "endDate": "2026-10-12T19:45:00Z",
+      "uuid": "00000000-0000-4000-8006-000000000003"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierDistanceWalkingRunning",
+      "unit": "m",
+      "quantity": 520,
+      "startDate": "2026-10-12T19:00:00Z",
+      "endDate": "2026-10-12T19:45:00Z",
+      "uuid": "00000000-0000-4000-8007-000000000003"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierBodyMass",
+      "unit": "kg",
+      "quantity": 73.1,
+      "startDate": "2026-10-05T06:30:00Z",
+      "endDate": "2026-10-05T06:30:00Z",
+      "uuid": "00000000-0000-4000-8002-000000000001"
+    },
+    {
+      "identifier": "HKQuantityTypeIdentifierBodyMass",
+      "unit": "kg",
+      "quantity": 72.8,
+      "startDate": "2026-10-08T06:30:00Z",
+      "endDate": "2026-10-08T06:30:00Z",
+      "uuid": "00000000-0000-4000-8002-000000000002"
     }
   ],
   "categories": [
