@@ -1,0 +1,47 @@
+// The package's conformance fixture: its names read and sent as an app
+// would, each answer shown by testId for test/drive.mjs.
+use isHealthDataAvailable, requestAuthorization, queryQuantitySamples, queryStatisticsForQuantity, queryCategorySamples, queryWorkoutSamples, getBiologicalSex, saveQuantitySample, QuantitySample, QueryStatisticsResponse, CategorySample, WorkoutSample from "@kingstinct/exact-healthkit"
+
+shape Line
+  text: string
+
+component Fixture
+  resource available = isHealthDataAvailable() as shape bool else empty()
+  resource steps = queryQuantitySamples(identifier="HKQuantityTypeIdentifierStepCount", limit=0, ascending=true) as shape QuantitySample[] else empty()
+  resource total = queryStatisticsForQuantity(identifier="HKQuantityTypeIdentifierStepCount", statistics=["cumulativeSum"], unit="count") as shape QueryStatisticsResponse else empty()
+  resource sleep = queryCategorySamples(identifier="HKCategoryTypeIdentifierSleepAnalysis", limit=10) as shape CategorySample[] else empty()
+  resource workouts = queryWorkoutSamples(limit=10, ascending=true) as shape WorkoutSample[] else empty()
+  resource sex = getBiologicalSex() as shape number else empty()
+  // Data code's reads: heart rate in count/min with a daily collection, and a filtered read.
+  resource heart = heart() as shape Line
+  resource filtered = filtered() as shape Line
+  mutation asked as shape bool
+  mutation saved as shape QuantitySample
+  action ask
+    send asked = requestAuthorization(toRead=["HKQuantityTypeIdentifierStepCount", "HKQuantityTypeIdentifierHeartRate", "HKCategoryTypeIdentifierSleepAnalysis", "HKWorkoutTypeIdentifier", "HKCharacteristicTypeIdentifierBiologicalSex"], toShare=["HKQuantityTypeIdentifierStepCount"])
+  action save
+    send saved = saveQuantitySample(identifier="HKQuantityTypeIdentifierStepCount", unit="count", value=1000, startDate=1791820800000, endDate=1791821400000)
+  view
+    column gap=8 padding=16
+      text `${available}` testId="available"
+      text `${steps.length}` testId="step-samples"
+      text `${sum(steps.map(s => s.quantity))}` testId="step-sum"
+      match total.sumQuantity
+        case some(q)
+          text `${q.quantity} ${q.unit}` testId="total"
+        case none
+          text "-" testId="total"
+      text sleep.map(s => `${s.value}`).join(",") testId="sleep"
+      text workouts.map(w => `${w.workoutActivityType}`).join(",") testId="workouts"
+      text `${sex}` testId="sex"
+      text heart.text testId="heart"
+      text filtered.text testId="filtered"
+      match failure(steps)
+        case some(f)
+          text f.code testId="steps-error"
+        case none
+          text "" testId="steps-error"
+      button press=ask testId="ask"
+        text "Allow"
+      button press=save testId="save"
+        text "Save 1,000 steps"

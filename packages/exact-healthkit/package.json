@@ -1,0 +1,41 @@
+{
+  "name": "@kingstinct/exact-healthkit",
+  "version": "0.0.0",
+  "description": "Apple HealthKit for Exact apps: the functionality of @kingstinct/react-native-healthkit as an Exact package.",
+  "license": "MIT",
+  "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kingstinct/react-native-healthkit.git",
+    "directory": "packages/exact-healthkit"
+  },
+  "homepage": "https://github.com/kingstinct/react-native-healthkit/tree/master/packages/exact-healthkit#readme",
+  "bugs": {
+    "url": "https://github.com/kingstinct/react-native-healthkit/issues"
+  },
+  "keywords": [
+    "exact",
+    "healthkit",
+    "apple-health",
+    "ios"
+  ],
+  "exports": {
+    ".": "./exact.json",
+    "./apple": "./apple/exact.json"
+  },
+  "files": [
+    "exact.json",
+    "apple",
+    "fixture",
+    "README.md"
+  ],
+  "scripts": {
+    "manifest": "bun scripts/manifest.mjs",
+    "tables": "bun scripts/tables.mjs",
+    "check": "bun scripts/manifest.mjs --check && bun scripts/tables.mjs --check"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}

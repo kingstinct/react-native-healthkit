@@ -76,7 +76,8 @@
       "!apps/example/expo-env.d.ts",
       "!**/ios",
       "!.vscode/*",
-      "!.claude/*"
+      "!.claude/*",
+      "!packages/exact-healthkit/exact.json"
     ]
   }
 }
